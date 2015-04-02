@@ -1,0 +1,12 @@
+# 60CO ( 1925.28 D )
+#  Excitation   Halflife Mode       Daughter Ex  Intensity           Q
+P       0.0000   1.6634e+08
+                         BetaMinus       0.0000   1.0000e+00
+                         BetaMinus    1332.5180   1.2000e-01    1491.3820    uniqueSecondForbidden
+                         BetaMinus    2158.6400   1.0000e-27     665.2600    uniqueSecondForbidden
+                         BetaMinus    2505.7660   9.9880e+01     318.1340
+P      58.5900   6.2802e+02
+                         BetaMinus       0.0000   2.4000e-03
+                                IT       0.0000   9.9760e-01
+                         BetaMinus    1332.5180   2.3154e-01    1549.7120
+                         BetaMinus    2158.6400   8.4592e-03     723.5900
