@@ -46,11 +46,12 @@
 EventAction::EventAction(RunAction* run, HistoManager* histo)
     :G4UserEventAction(),
       fRunAct(run),fHistoManager(histo),
-      fEnergyAbs(0.), fEnergyGap(0.),
-      fTrackLAbs(0.), fTrackLGap(0.),
       fPrintModulo(0)
 {
-    fPrintModulo = 100; }
+    numberOfHits = 0;
+    numberOfSteps = 0;
+    fPrintModulo = 100;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -66,10 +67,6 @@ void EventAction::BeginOfEventAction(const G4Event* evt)
         //    G4cout << "\n---> Begin of event: " << evtNb << G4endl;
         printf( " ---> Ev.# %5d\r", evtNb);
     G4cout.flush();
-
-    // initialisation per event
-    fEnergyAbs = fEnergyGap = 0.;
-    fTrackLAbs = fTrackLGap = 0.;
 
     ClearVariables();
 }
@@ -90,6 +87,9 @@ void EventAction::EndOfEventAction(const G4Event*)
     for (G4int i = 0 ; i < numberOfHits; i++) {
         fHistoManager->FillHitNtuple(hitTrackerI[0][i], hitTrackerI[1][i], hitTrackerI[2][i], hitTrackerI[3][i],  hitTrackerI[4][i], hitTrackerI[5][i], hitTrackerI[6][i], hitTrackerI[7][i], hitTrackerI[8][i], hitTrackerD[0][i]/keV, hitTrackerD[1][i]/mm, hitTrackerD[2][i]/mm, hitTrackerD[3][i]/mm, hitTrackerD[4][i]/second);
     }
+    for (G4int i = 0 ; i < numberOfSteps; i++) {
+        fHistoManager->FillStepNtuple(stepTrackerI[0][i], stepTrackerI[1][i], stepTrackerI[2][i], stepTrackerI[3][i],  stepTrackerI[4][i], stepTrackerI[5][i], stepTrackerI[6][i], stepTrackerI[7][i], stepTrackerI[8][i], stepTrackerD[0][i]/keV, stepTrackerD[1][i]/mm, stepTrackerD[2][i]/mm, stepTrackerD[3][i]/mm, stepTrackerD[4][i]/second);
+    }
 
     ClearVariables();
 }
@@ -103,9 +103,11 @@ void EventAction::ClearVariables()
 {
     if(fHistoManager->GetStepTrackerBool()) {
         stepIndex = 0;
+        numberOfSteps = 0;
         for (G4int i = 0 ; i < MAXSTEPS; i++) {
             for (G4int j = 0 ; j < NUMSTEPVARS; j++) {
-                stepTracker[j][i] = 0;
+                stepTrackerI[j][i] = 0;
+                stepTrackerD[j][i] = 0.0;
             }
         }
     }
@@ -373,4 +375,35 @@ void EventAction::AddHitTracker(G4String mnemonic, G4int eventNumber, G4int trac
         }
     }
 }
+
+
+void EventAction::AddStepTracker(G4String mnemonic, G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time)
+{
+    G4bool newstep = true;
+    if (newstep) { // new step
+        stepTrackerI[0][stepIndex] = eventNumber;
+        stepTrackerI[1][stepIndex] = trackID;
+        stepTrackerI[2][stepIndex] = parentID;
+        stepTrackerI[3][stepIndex] = stepNumber;
+        stepTrackerI[4][stepIndex] = particleType;
+        stepTrackerI[5][stepIndex] = processType;
+        stepTrackerI[6][stepIndex] = systemID;
+        stepTrackerI[7][stepIndex] = cryNumber;
+        stepTrackerI[8][stepIndex] = detNumber;
+        stepTrackerD[0][stepIndex] = depEnergy;
+        stepTrackerD[1][stepIndex] = posx;
+        stepTrackerD[2][stepIndex] = posy;
+        stepTrackerD[3][stepIndex] = posz;
+        stepTrackerD[4][stepIndex] = time;
+
+        stepIndex++;
+
+        numberOfSteps = stepIndex;
+        if(numberOfSteps >= MAXSTEPS) {
+            G4cout << "ERROR! Too many steps!" << G4endl;
+        }
+    }
+}
+
+
 

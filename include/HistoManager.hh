@@ -539,8 +539,9 @@ public:
     void FillHisto(G4int ih, G4double e, G4double weight = 1.0);
     void Normalize(G4int id, G4double fac);
 
-    void FillNtuple(G4double eventNumber, G4double stepNumber, G4double cryNumber, G4double detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time);
+//    void FillNtuple(G4double eventNumber, G4double stepNumber, G4double cryNumber, G4double detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time);
     void FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time);
+    void FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time);
 
     void PrintStatistic();
 
@@ -557,8 +558,10 @@ private:
 
     G4int         fHistId[MAXHISTO];
     G4AnaH1*      fHistPt[MAXHISTO];
+
     G4int         fNtColId[MAXNTCOL];
     G4int         fNtColIdHit[MAXNTCOL];
+    G4int         fNtColIdStep[MAXNTCOL];
 
     G4bool stepTrackerBool;
     G4bool hitTrackerBool;

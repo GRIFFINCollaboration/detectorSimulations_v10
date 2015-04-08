@@ -44,9 +44,9 @@
 class RunAction;
 class HistoManager;
 
-static const int MAXSTEPS = 1000;
-static const int MAXHITS = 100;
-static const int NUMSTEPVARS = 14;
+static const int MAXSTEPS       = 1000;
+static const int MAXHITS        = 100;
+static const int NUMSTEPVARS    = 14;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -58,9 +58,6 @@ public:
 
     virtual void  BeginOfEventAction(const G4Event*);
     virtual void    EndOfEventAction(const G4Event*);
-    
-    void AddAbs(G4double de, G4double dl) {fEnergyAbs += de; fTrackLAbs += dl;};
-    void AddGap(G4double de, G4double dl) {fEnergyGap += de; fTrackLGap += dl;};
 
     G4int GetEventNumber(){return evtNb;};
 
@@ -88,15 +85,12 @@ public:
     void AddGridCellNeutron(G4double de, G4double dl, G4int det) {GridCellNeutronEKinDet[det] += de; GridCellNeutronTrackDet[det] += dl;} ;
 
     void AddHitTracker(G4String mnemonic, G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time);
+    void AddStepTracker(G4String mnemonic, G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time);
 
 
 private:
     RunAction*    fRunAct;
     HistoManager* fHistoManager;
-
-
-    G4double  fEnergyAbs, fEnergyGap;
-    G4double  fTrackLAbs, fTrackLGap;
 
     G4int     fPrintModulo;
     G4int     evtNb;
@@ -110,20 +104,20 @@ private:
     void FillSceptar() ;
     void FillGridCell() ;
 
-    // tracking info
-    G4double stepTracker[NUMSTEPVARS][MAXSTEPS];
-
-    G4String stepVolume[MAXSTEPS]; // volume at each step
-    G4int    stepIndex;
-
+    // Tracking info
     G4int    hitTrackerI[NUMSTEPVARS][MAXHITS];
     G4double hitTrackerD[NUMSTEPVARS][MAXHITS];
     G4int    hitIndex;
-    G4int    pTrackID;
-    G4int    pParentID;
-
     G4int    numberOfHits;
     G4String pHitMnemonic[MAXHITS];
+
+    G4int    stepTrackerI[NUMSTEPVARS][MAXSTEPS];
+    G4double stepTrackerD[NUMSTEPVARS][MAXSTEPS];
+    G4int    stepIndex;
+    G4int    numberOfSteps;
+
+    G4int    pTrackID;
+    G4int    pParentID;
 
 
     // Particle types in simulation

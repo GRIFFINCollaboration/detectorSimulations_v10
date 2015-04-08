@@ -63,11 +63,11 @@ SteppingAction::~SteppingAction()
 
 void SteppingAction::UserSteppingAction(const G4Step* aStep)
 {
-
-    G4int particleType = 0;
-    G4int processType = 0;
+    G4bool trackSteps   = false;
+    G4int particleType  = 0;
+    G4int processType   = 0;
+    G4int systemID      = 9999;
     G4int evntNb;
-    G4int systemID;
 
     det = 0;
     cry = 0;
@@ -426,6 +426,9 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     //      mnemonic.replace(5,1,GetCrystalColour(cry));
     //      fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, ekin, pos2.x(), pos2.y(), pos2.z(), time2);
     //  }
+
+    if(trackSteps)
+        fEventAction->AddStepTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
 
 }
 

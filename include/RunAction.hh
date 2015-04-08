@@ -54,16 +54,8 @@ public:
     virtual void BeginOfRunAction(const G4Run*);
     virtual void   EndOfRunAction(const G4Run*);
     
-    //    void fillPerEvent(G4double, G4double, G4double, G4double);
-
 private:
     HistoManager* fHistoManager;
-
-    //    G4double fSumEAbs, fSum2EAbs;
-    //    G4double fSumEGap, fSum2EGap;
-    
-    //    G4double fSumLAbs, fSum2LAbs;
-    //    G4double fSumLGap, fSum2LGap;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
