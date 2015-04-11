@@ -93,25 +93,37 @@ private:
     G4String liquid_material;
     G4String lead_material;
 
+    // Saint Gobain data files, 6 points around the front face of the can, and 6 on the back
+    // from Dan Brennan
     G4double blue_detector[12][3];
     G4double green_detector[12][3];
     G4double red_detector[12][3];
     G4double white_detector[12][3];
     G4double yellow_detector[12][3];
 
+    // These are the angles of the cuts for each of the 6 sides of the detectors
     G4double blue_phi[6];
     G4double green_phi[6];
     G4double red_phi[6];
     G4double white_phi[6];
     G4double yellow_phi[6];
 
+    // The Euler angles from James' MSc thesis which gives us the detector positions
+    // Some of the angles for the green and yellow detectors are wrong in James' thesis,
+    // note the +180 on a few angles.
+    G4double blue_alpha_beta_gamma[15][3];
+    G4double green_alpha_beta_gamma[10][3];
+    G4double red_alpha_beta_gamma[15][3];
+    G4double white_alpha_beta_gamma[20][3];
+    G4double yellow_alpha_beta_gamma[10][3];
+
+    // The colours of the detectors
     G4Colour blue_colour;
     G4Colour green_colour;
     G4Colour red_colour;
     G4Colour white_colour;
     G4Colour yellow_colour;
-
-    G4Colour liquid_colour;
+    G4Colour liquid_colour; // Scintillator colour
 
     G4int BuildCanVolume();
     G4int BuildDetectorVolume();
@@ -120,7 +132,6 @@ private:
 
 
     G4SubtractionSolid* CanVolume(G4bool insideVol, G4double volume_length, G4double detector[12][3], G4double detector_phi[6]);
-
     G4SubtractionSolid* CutVolumeOnFourPoints(G4int idx, G4bool insideVol, G4double volume_length, G4double detector_phi[6], G4SubtractionSolid* volume, G4ThreeVector front_p1, G4ThreeVector front_p2, G4ThreeVector back_p1, G4ThreeVector back_p2);
 
     G4ThreeVector GetDirectionXYZ(G4double theta, G4double phi);
@@ -132,7 +143,6 @@ private:
     G4ThreeVector SolveLineEquationX(G4ThreeVector p1, G4ThreeVector p2, G4double x);
     G4ThreeVector SolveLineEquationY(G4ThreeVector p1, G4ThreeVector p2, G4double y);
     G4ThreeVector SolveLineEquationZ(G4ThreeVector p1, G4ThreeVector p2, G4double z);
-
 };
 
 #endif

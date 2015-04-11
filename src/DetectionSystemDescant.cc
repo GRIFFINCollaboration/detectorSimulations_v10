@@ -52,7 +52,8 @@ DetectionSystemDescant::DetectionSystemDescant() :
     lead_shield_thickness   = 6.35*mm;
     includeLead             = true;
 
-    radial_distance = 50.0*cm;
+    // The face of the detector is 50 cm from the origin, this does NOT include the lead shield.
+    radial_distance         = 50.0*cm;
 
     // Saint Gobain data files, 6 points around the front face of the can, and 6 on the back
     // from Dan Brennan
@@ -137,7 +138,8 @@ DetectionSystemDescant::DetectionSystemDescant() :
     memcpy(white_detector,  white,  sizeof(white_detector));
     memcpy(yellow_detector, yellow, sizeof(yellow_detector));
 
-
+    // These are the angles of the cuts for each of the 6 sides of the detectors
+    // These were worked out by hand.
     G4double blue_phi_array[6] = {
         (90.0*deg),
         (180.0*deg-(33.4731*deg)),
@@ -160,7 +162,7 @@ DetectionSystemDescant::DetectionSystemDescant() :
         (90.0*deg + 2.4242*deg),
         (180.0*deg-(31.0557*deg)),
         -1.0*(180.0*deg-(31.0557*deg)),
-        -1.0*(90.0*deg - 2.4242*deg),
+        -1.0*(90.0*deg + 2.4242*deg),
         -1.0*(22.2424*deg),
         (22.2424*deg)
     };
@@ -186,8 +188,106 @@ DetectionSystemDescant::DetectionSystemDescant() :
     memcpy(blue_phi,    blue_phi_array,     sizeof(blue_phi));
     memcpy(green_phi,   green_phi_array,    sizeof(green_phi));
     memcpy(red_phi,     red_phi_array,      sizeof(red_phi));
-    memcpy(white_phi,   white_phi_array,    sizeof(white_phi));
+    memcpy(white_phi,   white_phi_array,   sizeof(white_phi));
     memcpy(yellow_phi,  yellow_phi_array,   sizeof(yellow_phi));
+
+    // The Euler angles from James' MSc thesis which gives us the detector positions
+    // Some of the angles for the green and yellow detectors are wrong in James' thesis,
+    // note the +180 on a few angles.
+    G4double blue_alpha_beta_gamma_array[15][3] = {
+        {	-22.39*deg,	-33.76*deg,	-71.19*deg},
+        {	-49.61*deg,	-33.76*deg,	71.19*deg},
+        {	-36.00*deg,	-46.06*deg,	180.00*deg},
+        {	85.61*deg,	33.76*deg,	108.81*deg},
+        {	58.39*deg,	33.76*deg,	251.19*deg},
+        {	72.00*deg,	46.06*deg,	360.00*deg},
+        {	13.61*deg,	33.76*deg,	108.81*deg},
+        {	-13.61*deg,	33.76*deg,	251.19*deg},
+        {	0.00*deg,	46.06*deg,	360.00*deg},
+        {	-58.39*deg,	33.76*deg,	108.81*deg},
+        {	-85.61*deg,	33.76*deg,	251.19*deg},
+        {	-72.00*deg,	46.06*deg,	360.00*deg},
+        {	49.61*deg,	-33.76*deg,	-71.19*deg},
+        {	22.39*deg,	-33.76*deg,	71.19*deg},
+        {	36.00*deg,	-46.06*deg,	180.00*deg}
+    };
+
+    memcpy(blue_alpha_beta_gamma, blue_alpha_beta_gamma_array, sizeof(blue_alpha_beta_gamma));
+
+    G4double green_alpha_beta_gamma_array[10][3] = {
+        {	-12.45*deg,	-60.47*deg,	-12.45*deg},
+        {	-27.73*deg,	-58.55*deg,	-4.54*deg},
+        {	-84.45*deg,	-60.47*deg,	-12.45*deg},
+        {	80.27*deg,	58.55*deg,	(-4.54+180)*deg},
+        {	23.55*deg,	60.47*deg,	167.55*deg},
+        {	8.27*deg,	58.55*deg,	175.46*deg},
+        {	-48.45*deg,	60.47*deg,	167.55*deg},
+        {	-63.73*deg,	58.55*deg,	175.46*deg},
+        {	59.55*deg,	-60.47*deg,	-12.45*deg},
+        {	44.27*deg,	-58.55*deg,	-4.54*deg}
+    };
+
+    memcpy(green_alpha_beta_gamma, green_alpha_beta_gamma_array, sizeof(green_alpha_beta_gamma));
+
+    G4double red_alpha_beta_gamma_array[15][3] = {
+        {	-36.00*deg,	-20.39*deg,	180.00*deg},
+        {	-16.04*deg,	-47.84*deg,	45.10*deg},
+        {	-55.96*deg,	-47.84*deg,	314.90*deg},
+        {	72.00*deg,	20.39*deg,	0.00*deg},
+        {	-88.04*deg,	-47.84*deg,	45.10*deg},
+        {	52.04*deg,	47.84*deg,	134.90*deg},
+        {	0.00*deg,	20.39*deg,	0.00*deg},
+        {	19.96*deg,	47.84*deg,	225.10*deg},
+        {	-19.96*deg,	47.84*deg,	134.90*deg},
+        {	-72.00*deg,	20.39*deg,	0.00*deg},
+        {	-52.04*deg,	47.84*deg,	225.10*deg},
+        {	88.04*deg,	-47.84*deg,	314.90*deg},
+        {	36.00*deg,	-20.39*deg,	180.00*deg},
+        {	55.96*deg,	-47.84*deg,	45.10*deg},
+        {	16.04*deg,	-47.84*deg,	314.90*deg}
+    };
+
+    memcpy(red_alpha_beta_gamma, red_alpha_beta_gamma_array, sizeof(red_alpha_beta_gamma));
+
+    G4double white_alpha_beta_gamma_array[20][3] = {
+        {	0.00*deg,	-11.37*deg,	90.00*deg},
+        {	0.00*deg,	-24.67*deg,	90.00*deg},
+        {	0.00*deg,	-38.76*deg,	-90.00*deg},
+        {	0.00*deg,	-52.06*deg,	-90.00*deg},
+        {	-72.00*deg,	-11.37*deg,	90.00*deg},
+        {	-72.00*deg,	-24.67*deg,	90.00*deg},
+        {	-72.00*deg,	-38.76*deg,	-90.00*deg},
+        {	-72.00*deg,	-52.06*deg,	-90.00*deg},
+        {	36.00*deg,	11.37*deg,	270.00*deg},
+        {	36.00*deg,	24.67*deg,	270.00*deg},
+        {	36.00*deg,	38.76*deg,	90.00*deg},
+        {	36.00*deg,	52.06*deg,	90.00*deg},
+        {	-36.00*deg,	11.37*deg,	270.00*deg},
+        {	-36.00*deg,	24.67*deg,	270.00*deg},
+        {	-36.00*deg,	38.76*deg,	90.00*deg},
+        {	-36.00*deg,	52.06*deg,	90.00*deg},
+        {	72.00*deg,	-11.37*deg,	90.00*deg},
+        {	72.00*deg,	-24.67*deg,	90.00*deg},
+        {	72.00*deg,	-38.76*deg,	-90.00*deg},
+        {	72.00*deg,	-52.06*deg,	-90.00*deg}
+    };
+
+    memcpy(white_alpha_beta_gamma, white_alpha_beta_gamma_array, sizeof(white_alpha_beta_gamma));
+
+    G4double yellow_alpha_beta_gamma_array[10][3] = {
+        {	-44.27*deg,	-58.55*deg,	(4.54+180)*deg},
+        {	-59.55*deg,	-60.47*deg,	192.45*deg},
+        {	63.73*deg,	58.55*deg,	4.54*deg},
+        {	48.45*deg,	60.47*deg,	(192.45+180)*deg},
+        {	-8.27*deg,	58.55*deg,	(184.54+180)*deg},
+        {	-23.55*deg,	60.47*deg,	372.45*deg},
+        {	-80.27*deg,	58.55*deg,	(184.54+180)*deg},
+        {	84.45*deg,	-60.47*deg,	(372.45+180)*deg},
+        {	27.73*deg,	-58.55*deg,	(4.54+180)*deg},
+        {	12.45*deg,	-60.47*deg,	192.45*deg}
+    };
+
+    memcpy(yellow_alpha_beta_gamma, yellow_alpha_beta_gamma_array, sizeof(yellow_alpha_beta_gamma));
 
     blue_colour     = G4Colour(0.0/255.0,0.0/255.0,255.0/255.0);
     green_colour    = G4Colour(0.0/255.0,255.0/255.0,0.0/255.0);
@@ -223,7 +323,7 @@ G4int DetectionSystemDescant::Build()
 {
     // Build assembly volumes
     // assemblyBlue contains non-sensitive volumes of the blue detector
-    // assemblyBlue contains non-sensitive volumes of the blue detector
+    // assemblyBlueScintillator contains only sensitive volumes of the blue detector
     G4AssemblyVolume* myAssemblyBlue = new G4AssemblyVolume();
     this->assemblyBlue = myAssemblyBlue;
     G4AssemblyVolume* myassemblyBlueScintillator = new G4AssemblyVolume();
@@ -258,14 +358,9 @@ G4int DetectionSystemDescant::Build()
 
 G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int detector_number)
 {
-    G4int detector_copy_ID = 0;
-
-    G4cout << "DESCANT Detector Number = " << detector_number << G4endl;
-
-    G4int copy_number = detector_copy_ID + detector_number;
-
     G4double position = radial_distance;
 
+    G4int idx;
     G4double x = 0;
     G4double y = 0;
     G4double z = position;
@@ -273,103 +368,80 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
     G4ThreeVector move;
     G4RotationMatrix* rotate;
 
-    G4double ftheta   = 15.0*deg;
-    G4double fphi     = 72.0*deg;
-    G4double theta;
-    G4double phi;
+    for(G4int i=0; i<(detector_number-55); i++){
+        move = G4ThreeVector(x,y,z);
+        idx = i;
+        move.rotateZ(blue_alpha_beta_gamma[idx][2]);
+        move.rotateY(blue_alpha_beta_gamma[idx][1]);
+        move.rotateZ(blue_alpha_beta_gamma[idx][0]);
+        rotate = new G4RotationMatrix;
+        rotate->rotateY(M_PI); // flip the detector so that the face is pointing upstream.
+        rotate->rotateZ(blue_alpha_beta_gamma[idx][2]);
+        rotate->rotateY(blue_alpha_beta_gamma[idx][1]);
+        rotate->rotateZ(blue_alpha_beta_gamma[idx][0]);
+        assemblyBlue->MakeImprint(exp_hall_log, move, rotate, i);
+        assemblyBlueScintillator->MakeImprint(exp_hall_log, move, rotate, i);
+    }
 
-    // Place the assembly volumes
-    theta = ftheta;
-    phi = 0*fphi;
-    move = G4ThreeVector(transX(x,y,z,theta,phi), transY(x,y,z,theta,phi), transZ(x,y,z,theta,phi));
-    rotate = new G4RotationMatrix;
-    rotate->rotateY(M_PI);
-    rotate->rotateY(1.0*theta);
-    rotate->rotateZ(1.0*phi);
-    assemblyBlue->MakeImprint(exp_hall_log, move, rotate, copy_number);
+    for(G4int i=15; i<(detector_number-45); i++){
+        idx = i-15;
+        move = G4ThreeVector(x,y,z);
+        move.rotateZ(green_alpha_beta_gamma[idx][2]);
+        move.rotateY(green_alpha_beta_gamma[idx][1]);
+        move.rotateZ(green_alpha_beta_gamma[idx][0]);
+        rotate = new G4RotationMatrix;
+        rotate->rotateY(M_PI); // flip the detector so that the face is pointing upstream.
+        rotate->rotateZ(green_alpha_beta_gamma[idx][2]);
+        rotate->rotateY(green_alpha_beta_gamma[idx][1]);
+        rotate->rotateZ(green_alpha_beta_gamma[idx][0]);
+        assemblyGreen->MakeImprint(exp_hall_log, move, rotate, i);
+        assemblyGreenScintillator->MakeImprint(exp_hall_log, move, rotate, i);
+    }
 
-    theta = ftheta;
-    phi = 1*fphi;
-    move = G4ThreeVector(transX(x,y,z,theta,phi), transY(x,y,z,theta,phi), transZ(x,y,z,theta,phi));
-    rotate = new G4RotationMatrix;
-    rotate->rotateY(M_PI);
-    rotate->rotateY(1.0*theta);
-    rotate->rotateZ(1.0*phi);
-    assemblyGreen->MakeImprint(exp_hall_log, move, rotate, copy_number);
+    for(G4int i=25; i<(detector_number-30); i++){
+        idx = i-25;
+        move = G4ThreeVector(x,y,z);
+        move.rotateZ(red_alpha_beta_gamma[idx][2]);
+        move.rotateY(red_alpha_beta_gamma[idx][1]);
+        move.rotateZ(red_alpha_beta_gamma[idx][0]);
+        rotate = new G4RotationMatrix;
+        rotate->rotateY(M_PI); // flip the detector so that the face is pointing upstream.
+        rotate->rotateZ(red_alpha_beta_gamma[idx][2]);
+        rotate->rotateY(red_alpha_beta_gamma[idx][1]);
+        rotate->rotateZ(red_alpha_beta_gamma[idx][0]);
+        assemblyRed->MakeImprint(exp_hall_log, move, rotate, i);
+        assemblyRedScintillator->MakeImprint(exp_hall_log, move, rotate, i);
+    }
 
-    theta = ftheta;
-    phi = 2*fphi;
-    move = G4ThreeVector(transX(x,y,z,theta,phi), transY(x,y,z,theta,phi), transZ(x,y,z,theta,phi));
-    rotate = new G4RotationMatrix;
-    rotate->rotateY(M_PI);
-    rotate->rotateY(1.0*theta);
-    rotate->rotateZ(1.0*phi);
-    assemblyRed->MakeImprint(exp_hall_log, move, rotate, copy_number);
+    for(G4int i=40; i<(detector_number-10); i++){
+        idx = i-40;
+        move = G4ThreeVector(x,y,z);
+        move.rotateZ(white_alpha_beta_gamma[idx][2]);
+        move.rotateY(white_alpha_beta_gamma[idx][1]);
+        move.rotateZ(white_alpha_beta_gamma[idx][0]);
+        rotate = new G4RotationMatrix;
+        rotate->rotateY(M_PI); // flip the detector so that the face is pointing upstream.
+        rotate->rotateZ(white_alpha_beta_gamma[idx][2]);
+        rotate->rotateY(white_alpha_beta_gamma[idx][1]);
+        rotate->rotateZ(white_alpha_beta_gamma[idx][0]);
+        assemblyWhite->MakeImprint(exp_hall_log, move, rotate, i);
+        assemblyWhiteScintillator->MakeImprint(exp_hall_log, move, rotate, i);
+    }
 
-    theta = ftheta;
-    phi = 3*fphi;
-    move = G4ThreeVector(transX(x,y,z,theta,phi), transY(x,y,z,theta,phi), transZ(x,y,z,theta,phi));
-    rotate = new G4RotationMatrix;
-    rotate->rotateY(M_PI);
-    rotate->rotateY(1.0*theta);
-    rotate->rotateZ(1.0*phi);
-    assemblyWhite->MakeImprint(exp_hall_log, move, rotate, copy_number);
-
-    theta = ftheta;
-    phi = 4*fphi;
-    move = G4ThreeVector(transX(x,y,z,theta,phi), transY(x,y,z,theta,phi), transZ(x,y,z,theta,phi));
-    rotate = new G4RotationMatrix;
-    rotate->rotateY(M_PI);
-    rotate->rotateY(1.0*theta);
-    rotate->rotateZ(1.0*phi);
-    assemblyYellow->MakeImprint(exp_hall_log, move, rotate, copy_number);
-
-
-    // Place the assembly scintillator volumes
-    theta = ftheta;
-    phi = 0*fphi;
-    move = G4ThreeVector(transX(x,y,z,theta,phi), transY(x,y,z,theta,phi), transZ(x,y,z,theta,phi));
-    rotate = new G4RotationMatrix;
-    rotate->rotateY(M_PI);
-    rotate->rotateY(1.0*theta);
-    rotate->rotateZ(1.0*phi);
-    assemblyBlueScintillator->MakeImprint(exp_hall_log, move, rotate, copy_number);
-
-    theta = ftheta;
-    phi = 1*fphi;
-    move = G4ThreeVector(transX(x,y,z,theta,phi), transY(x,y,z,theta,phi), transZ(x,y,z,theta,phi));
-    rotate = new G4RotationMatrix;
-    rotate->rotateY(M_PI);
-    rotate->rotateY(1.0*theta);
-    rotate->rotateZ(1.0*phi);
-    assemblyGreenScintillator->MakeImprint(exp_hall_log, move, rotate, copy_number);
-
-    theta = ftheta;
-    phi = 2*fphi;
-    move = G4ThreeVector(transX(x,y,z,theta,phi), transY(x,y,z,theta,phi), transZ(x,y,z,theta,phi));
-    rotate = new G4RotationMatrix;
-    rotate->rotateY(M_PI);
-    rotate->rotateY(1.0*theta);
-    rotate->rotateZ(1.0*phi);
-    assemblyRedScintillator->MakeImprint(exp_hall_log, move, rotate, copy_number);
-
-    theta = ftheta;
-    phi = 3*fphi;
-    move = G4ThreeVector(transX(x,y,z,theta,phi), transY(x,y,z,theta,phi), transZ(x,y,z,theta,phi));
-    rotate = new G4RotationMatrix;
-    rotate->rotateY(M_PI);
-    rotate->rotateY(1.0*theta);
-    rotate->rotateZ(1.0*phi);
-    assemblyWhiteScintillator->MakeImprint(exp_hall_log, move, rotate, copy_number);
-
-    theta = ftheta;
-    phi = 4*fphi;
-    move = G4ThreeVector(transX(x,y,z,theta,phi), transY(x,y,z,theta,phi), transZ(x,y,z,theta,phi));
-    rotate = new G4RotationMatrix;
-    rotate->rotateY(M_PI);
-    rotate->rotateY(1.0*theta);
-    rotate->rotateZ(1.0*phi);
-    assemblyYellowScintillator->MakeImprint(exp_hall_log, move, rotate, copy_number);
+    for(G4int i=60; i<(detector_number); i++){
+        idx = i-60;
+        move = G4ThreeVector(x,y,z);
+        move.rotateZ(yellow_alpha_beta_gamma[idx][2]);
+        move.rotateY(yellow_alpha_beta_gamma[idx][1]);
+        move.rotateZ(yellow_alpha_beta_gamma[idx][0]);
+        rotate = new G4RotationMatrix;
+        rotate->rotateY(M_PI); // flip the detector so that the face is pointing upstream.
+        rotate->rotateZ(yellow_alpha_beta_gamma[idx][2]);
+        rotate->rotateY(yellow_alpha_beta_gamma[idx][1]);
+        rotate->rotateZ(yellow_alpha_beta_gamma[idx][0]);
+        assemblyYellow->MakeImprint(exp_hall_log, move, rotate, i);
+        assemblyYellowScintillator->MakeImprint(exp_hall_log, move, rotate, i);
+    }
 
     return 1;
 }
@@ -966,7 +1038,7 @@ G4ThreeVector DetectionSystemDescant::GetDirectionXYZ(G4double theta, G4double p
     G4ThreeVector direction = G4ThreeVector(x,y,z);
 
     return direction;
-}//end ::GetDirection
+}
 
 G4double DetectionSystemDescant::transX(G4double x, G4double y, G4double z, G4double theta, G4double phi){
     return ( pow(x*x+y*y+z*z,0.5)*sin(theta)*cos(phi) );
