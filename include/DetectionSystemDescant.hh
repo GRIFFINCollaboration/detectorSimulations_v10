@@ -92,6 +92,7 @@ private:
     G4String can_material;
     G4String liquid_material;
     G4String lead_material;
+    G4bool   includeLead;
 
     // Saint Gobain data files, 6 points around the front face of the can, and 6 on the back
     // from Dan Brennan
@@ -127,9 +128,6 @@ private:
 
     G4int BuildCanVolume();
     G4int BuildDetectorVolume();
-
-    G4bool includeLead;
-
 
     G4SubtractionSolid* CanVolume(G4bool insideVol, G4double volume_length, G4double detector[12][3], G4double detector_phi[6]);
     G4SubtractionSolid* CutVolumeOnFourPoints(G4int idx, G4bool insideVol, G4double volume_length, G4double detector_phi[6], G4SubtractionSolid* volume, G4ThreeVector front_p1, G4ThreeVector front_p2, G4ThreeVector back_p1, G4ThreeVector back_p2);

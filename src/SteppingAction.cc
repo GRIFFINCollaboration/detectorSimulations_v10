@@ -357,7 +357,56 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         theTrack->SetTrackStatus(fStopAndKill);
     }
 
+    // DESCANT Detectors ////////////////////////////////////////////////////////////////////////////////
+    found = volname.find("blue_scintillator_volume_log");
+    if (edep != 0 && found!=G4String::npos) {
+        SetDetNumberForGenericDetector(volname);
+        mnemonic.replace(0,3,"DSC");
+        mnemonic.replace(3,2,G4intToG4String(det));
+        mnemonic.replace(5,1,GetCrystalColour(cry));
+        systemID = 8010;
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, ekin, pos2.x(), pos2.y(), pos2.z(), time2);
+    }
 
+    found = volname.find("green_scintillator_volume_log");
+    if (edep != 0 && found!=G4String::npos) {
+        SetDetNumberForGenericDetector(volname);
+        mnemonic.replace(0,3,"DSC");
+        mnemonic.replace(3,2,G4intToG4String(det));
+        mnemonic.replace(5,1,GetCrystalColour(cry));
+        systemID = 8020;
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, ekin, pos2.x(), pos2.y(), pos2.z(), time2);
+    }
+
+    found = volname.find("red_scintillator_volume_log");
+    if (edep != 0 && found!=G4String::npos) {
+        SetDetNumberForGenericDetector(volname);
+        mnemonic.replace(0,3,"DSC");
+        mnemonic.replace(3,2,G4intToG4String(det));
+        mnemonic.replace(5,1,GetCrystalColour(cry));
+        systemID = 8030;
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, ekin, pos2.x(), pos2.y(), pos2.z(), time2);
+    }
+
+    found = volname.find("white_scintillator_volume_log");
+    if (edep != 0 && found!=G4String::npos) {
+        SetDetNumberForGenericDetector(volname);
+        mnemonic.replace(0,3,"DSC");
+        mnemonic.replace(3,2,G4intToG4String(det));
+        mnemonic.replace(5,1,GetCrystalColour(cry));
+        systemID = 8040;
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, ekin, pos2.x(), pos2.y(), pos2.z(), time2);
+    }
+
+    found = volname.find("yellow_scintillator_volume_log");
+    if (edep != 0 && found!=G4String::npos) {
+        SetDetNumberForGenericDetector(volname);
+        mnemonic.replace(0,3,"DSC");
+        mnemonic.replace(3,2,G4intToG4String(det));
+        mnemonic.replace(5,1,GetCrystalColour(cry));
+        systemID = 8050;
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, ekin, pos2.x(), pos2.y(), pos2.z(), time2);
+    }
 
     //  // gamma angular correlations in world
     //  found = volname.find("World");
