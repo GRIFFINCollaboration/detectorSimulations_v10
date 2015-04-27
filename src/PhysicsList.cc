@@ -37,6 +37,7 @@
 #include "G4EmStandardPhysics.hh"
 #include "G4EmStandardPhysics_option4.hh"
 #include "G4EmLivermorePhysics.hh"
+#include "G4EmLivermorePolarizedPhysics.hh"
 #include "G4EmPenelopePhysics.hh"
 #include "PhysListHadron.hh"
 #include "G4RegionStore.hh"
@@ -167,6 +168,9 @@ void PhysicsList::SelectPhysicsList(const G4String& name)
     } else if (name == "emlivermore") {
         delete fEmPhysicsList;
         fEmPhysicsList = new G4EmLivermorePhysics(verboseLevel);
+    } else if (name == "emlivermorepolarized") {
+        delete fEmPhysicsList;
+        fEmPhysicsList = new G4EmLivermorePolarizedPhysics(verboseLevel);
     } else if (name == "empenelope") {
         delete fEmPhysicsList;
         fEmPhysicsList = new G4EmPenelopePhysics(verboseLevel);

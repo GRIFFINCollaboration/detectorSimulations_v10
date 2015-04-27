@@ -68,6 +68,9 @@ private:
     G4UIcmdWith3Vector*            efficiencyDirectionCmd;
     G4UIcmdWith3VectorAndUnit*     efficiencyPositionCmd;
     G4UIcmdWithAString*            efficiencyParticleCmd;
+    G4UIcmdWith3Vector*            efficiencyPolarizationCmd;
+    G4UIcmdWithADoubleAndUnit*     efficiencyBeamRadiusCmd;
+
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

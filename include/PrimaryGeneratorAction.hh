@@ -41,6 +41,8 @@
 #include "globals.hh"
 #include "G4ThreeVector.hh"
 
+#include "G4SystemOfUnits.hh"
+
 class G4ParticleGun;
 class G4Event;
 class DetectorConstruction;
@@ -61,7 +63,8 @@ public:
     void SetEfficiencyDirection( G4ThreeVector num ) {effDirection = num; effDirectionBool = true;} ;
     void SetEfficiencyPosition( G4ThreeVector num ) {effPosition = num; effPositionBool = true;} ;
     void SetEfficiencyParticle( G4String val ) {effParticle = val; effParticleBool = true;} ;
-
+    void SetEfficiencyPolarization( G4ThreeVector num ) {effPolarizationVector = num; effPolarization = true;} ;
+    void SetEfficiencyBeamRadius( G4double num ) {effBeamRadius = num; effBeam = true;} ;
 
 private:
     G4ParticleGun*                fParticleGun;  //pointer a to G4 class
@@ -77,6 +80,10 @@ private:
     G4String effParticle;
     G4bool effParticleBool;
     G4double detectorAnglesLaBr3[8][5];
+    G4bool effPolarization;
+    G4ThreeVector effPolarizationVector;
+    G4bool effBeam;
+    G4double effBeamRadius;
 
     G4double transX(G4double x, G4double y, G4double z, G4double theta, G4double phi);
     G4double transY(G4double x, G4double y, G4double z, G4double theta, G4double phi);

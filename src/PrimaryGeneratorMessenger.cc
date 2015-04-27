@@ -72,6 +72,15 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun
     efficiencyParticleCmd = new G4UIcmdWithAString("/DetSys/gun/particle",this);
     efficiencyParticleCmd->SetGuidance("Set particle.");
     efficiencyParticleCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+    efficiencyPolarizationCmd = new G4UIcmdWith3Vector("/DetSys/gun/polarization",this);
+    efficiencyPolarizationCmd->SetGuidance("Set gamma polarization direction.");
+    efficiencyPolarizationCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+    efficiencyBeamRadiusCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/beamRadius",this);
+    efficiencyBeamRadiusCmd->SetGuidance("Set beam radius");
+    efficiencyBeamRadiusCmd->SetUnitCategory("Length");
+    efficiencyBeamRadiusCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -81,6 +90,8 @@ PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger()
     delete numberOfDecayingLaBrDetectorsCmd;
     delete efficiencyEnergyCmd;
     delete efficiencyDirectionCmd;
+    delete efficiencyPolarizationCmd;
+    delete efficiencyBeamRadiusCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -101,6 +112,12 @@ void PrimaryGeneratorMessenger::SetNewValue( G4UIcommand* command, G4String newV
     }
     if( command == efficiencyParticleCmd ) {
         Action->SetEfficiencyParticle(newValue);
+    }
+    if( command == efficiencyPolarizationCmd ) {
+        Action->SetEfficiencyPolarization(efficiencyPolarizationCmd->GetNew3VectorValue(newValue));
+    }
+    if( command == efficiencyBeamRadiusCmd ) {
+        Action->SetEfficiencyBeamRadius(efficiencyBeamRadiusCmd->GetNewDoubleValue(newValue));
     }
 }
 
