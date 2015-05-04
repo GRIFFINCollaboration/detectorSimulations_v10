@@ -58,7 +58,11 @@ DetectionSystemSpice::DetectionSystemSpice() :
 
 DetectionSystemSpice::~DetectionSystemSpice()
 {    // LogicalVolumes in ConstructSPICEDetectionSystem
-    delete [] siDetSpiceRing_log;
+  for(int i = 0; i < 10; ++i) {
+    if(siDetSpiceRing_log[i] != NULL) {
+      delete siDetSpiceRing_log[i];
+    }
+  }
 
     delete siInnerGuardRing_log;
     delete siOuterGuardRing_log;

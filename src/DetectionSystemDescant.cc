@@ -753,7 +753,7 @@ G4int DetectionSystemDescant::BuildDetectorVolume()
 
     // BLUE
     // Set visualization attributes
-    G4VisAttributes* blue_vis_att = new G4VisAttributes(liquid_colour);
+    G4VisAttributes* blue_vis_att = new G4VisAttributes(blue_colour);
     blue_vis_att->SetVisibility(true);
 
     G4SubtractionSolid* blue_volume_1_cut  = CanVolume(true, this->can_length-this->can_thickness, blue_detector, blue_phi);
@@ -776,7 +776,7 @@ G4int DetectionSystemDescant::BuildDetectorVolume()
 
     //GREEN
     // Set visualization attributes
-    G4VisAttributes* green_vis_att = new G4VisAttributes(liquid_colour);
+    G4VisAttributes* green_vis_att = new G4VisAttributes(green_colour);
     green_vis_att->SetVisibility(true);
 
     G4SubtractionSolid* green_volume_1_cut  = CanVolume(true, this->can_length-this->can_thickness, green_detector, green_phi);
@@ -799,7 +799,7 @@ G4int DetectionSystemDescant::BuildDetectorVolume()
 
     // RED
     // Set visualization attributes
-    G4VisAttributes* red_vis_att = new G4VisAttributes(liquid_colour);
+    G4VisAttributes* red_vis_att = new G4VisAttributes(red_colour);
     red_vis_att->SetVisibility(true);
 
     G4SubtractionSolid* red_volume_1_cut  = CanVolume(true, this->can_length-this->can_thickness, red_detector, red_phi);
@@ -822,7 +822,7 @@ G4int DetectionSystemDescant::BuildDetectorVolume()
 
     // WHITE
     // Set visualization attributes
-    G4VisAttributes* white_vis_att = new G4VisAttributes(liquid_colour);
+    G4VisAttributes* white_vis_att = new G4VisAttributes(white_colour);
     white_vis_att->SetVisibility(true);
 
     G4SubtractionSolid* white_volume_1_cut  = CanVolume(true, this->can_length-this->can_thickness, white_detector, white_phi);
@@ -845,7 +845,7 @@ G4int DetectionSystemDescant::BuildDetectorVolume()
 
     // YELLOW
     // Set visualization attributes
-    G4VisAttributes* yellow_vis_att = new G4VisAttributes(liquid_colour);
+    G4VisAttributes* yellow_vis_att = new G4VisAttributes(yellow_colour);
     yellow_vis_att->SetVisibility(true);
 
     G4SubtractionSolid* yellow_volume_1_cut  = CanVolume(true, this->can_length-this->can_thickness, yellow_detector, yellow_phi);
