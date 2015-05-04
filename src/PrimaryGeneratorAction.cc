@@ -70,6 +70,9 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* DC)
     effParticleBool = false;
     effDirection = G4ThreeVector(0.0*mm,0.0*mm,0.0*mm);
 
+    effPolarization = false;
+    effBeam = false;
+
     // LaBr properties
     G4double triangleThetaAngle = 54.735610317245360*deg;
     // theta
@@ -237,7 +240,29 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         G4ThreeVector effdirection;
         if(effDirectionBool) {
             effdirection = effDirection;
+            // If we want to simulate a realistic beam spot, instead of perfect pencil beam.
+            if(effBeam) {
+                G4double x_monte = 10000.0*m;
+                G4double y_monte = 10000.0*m;
+                G4double z_monte = 0.0*m;
+                G4ThreeVector vec_monte;
+
+                G4double directionTheta = effDirection.theta();
+                G4double directionPhi = effDirection.phi();
+
+                while( pow(x_monte,2) + pow(y_monte,2) > pow(effBeamRadius,2) ) {
+                    x_monte = (2.*G4UniformRand()-1.0)*effBeamRadius;
+                    y_monte = (2.*G4UniformRand()-1.0)*effBeamRadius;
+                }
+
+                vec_monte = G4ThreeVector(x_monte,y_monte,z_monte);
+                vec_monte.rotateY(directionTheta);
+                vec_monte.rotateZ(directionPhi);
+
+                thiseffposition = thiseffposition + vec_monte;
+            }
         }
+
         else {
             // random direction
             effrandcostheta = 2.*G4UniformRand()-1.0;
@@ -252,6 +277,11 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         fParticleGun->SetParticleEnergy(effEnergy);
     }
     else if (fParticleGun->GetParticleDefinition() == G4Geantino::Geantino()) {
+    }
+
+    // Set Optional Polarization
+    if(effPolarization) {
+        fParticleGun->SetParticlePolarization(effPolarizationVector);
     }
 
     //create vertex

@@ -43,7 +43,7 @@ DetectionSystemDescant::DetectionSystemDescant() :
     white_lead_volume_log(0),
     yellow_lead_volume_log(0)
 {
-    // can //
+    // can properties
     can_length              = 150.0*mm;
     can_thickness           = 1.5*mm;
     can_material            = "G4_Al";
@@ -349,8 +349,12 @@ G4int DetectionSystemDescant::Build()
     G4AssemblyVolume* myassemblyYellowScintillator = new G4AssemblyVolume();
     this->assemblyYellowScintillator = myassemblyYellowScintillator;
 
+    G4cout << "Building DESCANT..." << G4endl;
+
     G4cout << "BuildCanVolume" << G4endl;
     BuildCanVolume();
+
+    G4cout << "BuildDetectorVolume" << G4endl;
     BuildDetectorVolume();
 
     return 1;
@@ -368,6 +372,7 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
     G4ThreeVector move;
     G4RotationMatrix* rotate;
 
+    // Place Blue Detector
     for(G4int i=0; i<(detector_number-55); i++){
         move = G4ThreeVector(x,y,z);
         idx = i;
@@ -382,7 +387,7 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
         assemblyBlue->MakeImprint(exp_hall_log, move, rotate, i);
         assemblyBlueScintillator->MakeImprint(exp_hall_log, move, rotate, i);
     }
-
+    // Place Green Detector
     for(G4int i=15; i<(detector_number-45); i++){
         idx = i-15;
         move = G4ThreeVector(x,y,z);
@@ -397,7 +402,7 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
         assemblyGreen->MakeImprint(exp_hall_log, move, rotate, i);
         assemblyGreenScintillator->MakeImprint(exp_hall_log, move, rotate, i);
     }
-
+    // Place Red Detector
     for(G4int i=25; i<(detector_number-30); i++){
         idx = i-25;
         move = G4ThreeVector(x,y,z);
@@ -412,7 +417,7 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
         assemblyRed->MakeImprint(exp_hall_log, move, rotate, i);
         assemblyRedScintillator->MakeImprint(exp_hall_log, move, rotate, i);
     }
-
+    // Place White Detector
     for(G4int i=40; i<(detector_number-10); i++){
         idx = i-40;
         move = G4ThreeVector(x,y,z);
@@ -427,7 +432,7 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
         assemblyWhite->MakeImprint(exp_hall_log, move, rotate, i);
         assemblyWhiteScintillator->MakeImprint(exp_hall_log, move, rotate, i);
     }
-
+    // Place Yellow Detector
     for(G4int i=60; i<(detector_number); i++){
         idx = i-60;
         move = G4ThreeVector(x,y,z);
@@ -867,8 +872,9 @@ G4int DetectionSystemDescant::BuildDetectorVolume()
 ///////////////////////////////////////////////////////////////////////
 // Methods used to build shapes
 ///////////////////////////////////////////////////////////////////////
+// This function constructs a generic 6 sided shape defined by 12 input points, and the cut phi angles.
 G4SubtractionSolid* DetectionSystemDescant::CanVolume(G4bool insideVol, G4double volume_length, G4double detector[12][3], G4double detector_phi[6])
-{ // Generic 5 sided shape, defined by 12 points
+{
     G4int idx1;
     G4int idx2;
 
@@ -902,7 +908,6 @@ G4SubtractionSolid* DetectionSystemDescant::CanVolume(G4bool insideVol, G4double
 
     // snip snip
     G4SubtractionSolid* can_volume_cut_1 = new G4SubtractionSolid("can_volume_cut_1", can_volume, cut_plate, rotate_cut, move_cut);
-
 
     // first set of points
     idx1 = 0;
@@ -969,6 +974,7 @@ G4SubtractionSolid* DetectionSystemDescant::CanVolume(G4bool insideVol, G4double
     return can_volume_cut_7;
 }
 
+// This method does the actual cutting of the surface.
 G4SubtractionSolid* DetectionSystemDescant::CutVolumeOnFourPoints(G4int idx, G4bool insideVol, G4double volume_length, G4double detector_phi[6], G4SubtractionSolid* volume, G4ThreeVector front_p1, G4ThreeVector front_p2, G4ThreeVector back_p1, G4ThreeVector back_p2)
 {
     G4double maxZ = 500.0*mm;
