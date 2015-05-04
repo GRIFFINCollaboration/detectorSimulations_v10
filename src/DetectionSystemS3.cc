@@ -52,8 +52,12 @@ DetectionSystemS3::DetectionSystemS3() :
 }
 
 DetectionSystemS3::~DetectionSystemS3()
-{   
-    delete [] siDetS3Ring_log;
+{
+  for(int i = 0; i < 24; ++i) {
+    if(siDetS3Ring_log[i] != NULL) {
+      delete siDetS3Ring_log[i];
+    }
+  }
     delete S3InnerGuardRing_log;
     delete S3OuterGuardRing_log;
 

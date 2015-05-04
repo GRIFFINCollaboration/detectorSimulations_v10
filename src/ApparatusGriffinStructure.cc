@@ -257,19 +257,19 @@ G4int ApparatusGriffinStructure::Place(G4LogicalVolume* exp_hall_log, G4int sele
         iTriangle1 =0;
         iTriangle2 =7;
     }
-    else if(selector == 1) { // upstream-half of structure, corona plus lampshade
+    else if(selector == 1) { // upstream-half of structure: corona plus upstream lampshade
         iSquare1 = 4;
         iSquare2 = 15;
         iTriangle1 =4;
         iTriangle2 =7;
     }
-    else if(selector == 2) { // downstream-half of structure, corona plus lampshade
+    else if(selector == 2) { // downstream-half of structure: corona plus downstream lampshade
         iSquare1 = 0;
         iSquare2 = 11;
         iTriangle1 =0;
         iTriangle2 =3;
     }
-    else if(selector == 3) { // downstream-half of structure, corona plus lampshade
+    else if(selector == 3) { // just the corona, no lampshades
         iSquare1 = 4;
         iSquare2 = 11;
         iTriangle1 =4;
