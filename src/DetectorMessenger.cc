@@ -513,9 +513,9 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     //  if( command == AddDetectionSystemSpiceV02Cmd ) {
     //    Detector->AddDetectionSystemSpiceV02(AddDetectionSystemSpiceV02Cmd->GetNewIntValue(newValue));
     //  }
-    //  if( command == AddDetectionSystemPacesCmd ) {
-    //    Detector->AddDetectionSystemPaces(AddDetectionSystemPacesCmd->GetNewIntValue(newValue));
-    //  }
+      if( command == AddDetectionSystemPacesCmd ) {
+        Detector->AddDetectionSystemPaces(AddDetectionSystemPacesCmd->GetNewIntValue(newValue));
+      }
     if( command == UseTIGRESSPositionsCmd ) {
         Detector->UseTIGRESSPositions(UseTIGRESSPositionsCmd->GetNewBoolValue(newValue));
     }

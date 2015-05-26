@@ -851,10 +851,10 @@ void DetectorConstruction::AddDetectionSystemDescant(G4int ndet)
 
 //}
 
-//void DetectorConstruction::AddDetectionSystemPaces(G4int ndet)
-//{
-//    DetectionSystemPaces* pPaces = new DetectionSystemPaces() ;
-//    pPaces->Build() ;
+void DetectorConstruction::AddDetectionSystemPaces(G4int ndet)
+{
+    DetectionSystemPaces* pPaces = new DetectionSystemPaces() ;
+    pPaces->Build() ;
 
-//    pPaces->PlaceDetector( logicWorld, ndet ) ;
-//}
+    pPaces->PlaceDetector( logicWorld, ndet ) ;
+}
