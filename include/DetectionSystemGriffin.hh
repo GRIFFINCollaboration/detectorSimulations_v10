@@ -89,6 +89,8 @@ private:
     G4double cut_clearance;
     G4double extra_cut_length;
 
+    G4bool surfCheck;
+
     double coords[20][5];
     
     //Jun 21, 2005, Epapr7.80: modification to the prototype suppressor shield,
@@ -409,6 +411,7 @@ private:
     G4SubtractionSolid* backSuppressorQuarter();
     G4SubtractionSolid* frontSlantSuppressor(G4String sidePosition, G4bool choppingSuppressor) ;
     G4SubtractionSolid* sideSuppressorExtension(G4String sidePosition, G4bool choppingSuppressor) ;
+    G4Trap*             sideSuppressorExtensionUncut() ;
 
     //internal methods for New SuppressorCasingWithShells
     G4SubtractionSolid* shellForBackSuppressorQuarter();

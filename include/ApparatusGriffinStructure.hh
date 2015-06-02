@@ -96,6 +96,8 @@ private:
     G4double griffinCoords[16][5];
     G4double ancillaryCoords[8][5];
 
+    G4bool surfCheck;
+
     // Methods
     G4int BuildSquarePiece();
     G4int BuildTrianglePiece();

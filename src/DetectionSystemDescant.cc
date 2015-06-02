@@ -55,6 +55,20 @@ DetectionSystemDescant::DetectionSystemDescant() :
     // The face of the detector is 50 cm from the origin, this does NOT include the lead shield.
     radial_distance         = 50.0*cm;
 
+    // Check surfaces to determine any problematic overlaps. Turn this on to have Geant4 check the surfaces.
+    // Do not leave this on, it will slow the DetectorConstruction process!
+    // This was last check on May 29th, 2015. - GOOD!, but...
+    // The green, yellow and blue detectors had small overlaps, this is probably due to taking the pure mathematical model
+    // of DESCANT, and then Saint Gobain rounding the result to generate the data files (below).
+    surfCheck               = false;
+
+    // Geometry overlaps were found for green, yellow and blue detectors.
+    // We need to squeeze the green and yellow detectors along the y direction,
+    // and we need to squeeze the blue detectors on one x edge of the blue detector.
+    trim_green_y    = 10.0*um;
+    trim_yellow_y   = 10.0*um;
+    trim_blue_x     = 2.2*um;
+
     // Saint Gobain data files, 6 points around the front face of the can, and 6 on the back
     // from Dan Brennan
     G4double blue[12][3] = {
@@ -63,27 +77,27 @@ DetectionSystemDescant::DetectionSystemDescant() :
         {-75.10*mm,   0.00*mm,    0.00*mm},
         {-34.70*mm, -61.10*mm,    0.00*mm},
         { 40.60*mm, -61.10*mm,    0.00*mm},
-        { 76.30*mm,   0.00*mm,    0.00*mm},
+        { 76.30*mm-trim_blue_x,   0.00*mm,    0.00*mm},
         { 52.80*mm,  79.40*mm, -150.00*mm},
         {-45.10*mm,  79.40*mm, -150.00*mm},
         {-97.60*mm,   0.00*mm, -150.00*mm},
         {-45.10*mm, -79.40*mm, -150.00*mm},
         { 52.80*mm, -79.40*mm, -150.00*mm},
-        { 99.20*mm,   0.00*mm, -150.00*mm}
+        { 99.20*mm-trim_blue_x,   0.00*mm, -150.00*mm}
     };
 
     G4double green[12][3] = {
-        { 31.90*mm,  61.20*mm,    0.00*mm},
-        {-31.90*mm,  61.20*mm,    0.00*mm},
+        { 31.90*mm,  61.20*mm-trim_green_y,    0.00*mm},
+        {-31.90*mm,  61.20*mm-trim_green_y,    0.00*mm},
         {-71.50*mm,   0.00*mm,    0.00*mm},
-        {-31.90*mm, -55.30*mm,    0.00*mm},
-        { 31.90*mm, -55.30*mm,    0.00*mm},
+        {-31.90*mm, -55.30*mm+trim_green_y,    0.00*mm},
+        { 31.90*mm, -55.30*mm+trim_green_y,    0.00*mm},
         { 47.90*mm,  36.60*mm,    0.00*mm},
-        { 41.50*mm,  79.60*mm, -150.00*mm},
-        {-41.50*mm,  79.60*mm, -150.00*mm},
+        { 41.50*mm,  79.60*mm-trim_green_y, -150.00*mm},
+        {-41.50*mm,  79.60*mm-trim_green_y, -150.00*mm},
         {-93.00*mm,   0.00*mm, -150.00*mm},
-        {-41.50*mm, -71.90*mm, -150.00*mm},
-        { 41.50*mm, -71.90*mm, -150.00*mm},
+        {-41.50*mm, -71.90*mm+trim_green_y, -150.00*mm},
+        { 41.50*mm, -71.90*mm+trim_green_y, -150.00*mm},
         { 62.30*mm,  47.60*mm, -150.00*mm}
     };
 
@@ -118,17 +132,17 @@ DetectionSystemDescant::DetectionSystemDescant() :
     };
 
     G4double yellow[12][3] = {
-        { 31.90*mm,   61.20*mm,    0.00*mm},
-        {-31.90*mm,   61.20*mm,    0.00*mm},
+        { 31.90*mm,   61.20*mm-trim_yellow_y,    0.00*mm},
+        {-31.90*mm,   61.20*mm-trim_yellow_y,    0.00*mm},
         {-47.90*mm,   36.60*mm,    0.00*mm},
-        {-31.90*mm,  -55.30*mm,    0.00*mm},
-        { 31.90*mm,  -55.30*mm,    0.00*mm},
+        {-31.90*mm,  -55.30*mm+trim_yellow_y,    0.00*mm},
+        { 31.90*mm,  -55.30*mm+trim_yellow_y,    0.00*mm},
         { 71.50*mm,    0.00*mm,    0.00*mm},
-        { 41.50*mm,   79.60*mm, -150.00*mm},
-        {-41.50*mm,   79.60*mm, -150.00*mm},
+        { 41.50*mm,   79.60*mm-trim_yellow_y, -150.00*mm},
+        {-41.50*mm,   79.60*mm-trim_yellow_y, -150.00*mm},
         {-62.30*mm,   47.60*mm, -150.00*mm},
-        {-41.50*mm,  -71.90*mm, -150.00*mm},
-        { 41.50*mm,  -71.90*mm, -150.00*mm},
+        {-41.50*mm,  -71.90*mm+trim_yellow_y, -150.00*mm},
+        { 41.50*mm,  -71.90*mm+trim_yellow_y, -150.00*mm},
         { 93.00*mm,    0.00*mm, -150.00*mm}
     };
 
@@ -384,8 +398,10 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
         rotate->rotateZ(blue_alpha_beta_gamma[idx][2]);
         rotate->rotateY(blue_alpha_beta_gamma[idx][1]);
         rotate->rotateZ(blue_alpha_beta_gamma[idx][0]);
-        assemblyBlue->MakeImprint(exp_hall_log, move, rotate, i);
-        assemblyBlueScintillator->MakeImprint(exp_hall_log, move, rotate, i);
+        assemblyBlue->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
+        assemblyBlueScintillator->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
+
+
     }
     // Place Green Detector
     for(G4int i=15; i<(detector_number-45); i++){
@@ -399,8 +415,8 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
         rotate->rotateZ(green_alpha_beta_gamma[idx][2]);
         rotate->rotateY(green_alpha_beta_gamma[idx][1]);
         rotate->rotateZ(green_alpha_beta_gamma[idx][0]);
-        assemblyGreen->MakeImprint(exp_hall_log, move, rotate, i);
-        assemblyGreenScintillator->MakeImprint(exp_hall_log, move, rotate, i);
+        assemblyGreen->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
+        assemblyGreenScintillator->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
     }
     // Place Red Detector
     for(G4int i=25; i<(detector_number-30); i++){
@@ -414,8 +430,8 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
         rotate->rotateZ(red_alpha_beta_gamma[idx][2]);
         rotate->rotateY(red_alpha_beta_gamma[idx][1]);
         rotate->rotateZ(red_alpha_beta_gamma[idx][0]);
-        assemblyRed->MakeImprint(exp_hall_log, move, rotate, i);
-        assemblyRedScintillator->MakeImprint(exp_hall_log, move, rotate, i);
+        assemblyRed->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
+        assemblyRedScintillator->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
     }
     // Place White Detector
     for(G4int i=40; i<(detector_number-10); i++){
@@ -429,8 +445,8 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
         rotate->rotateZ(white_alpha_beta_gamma[idx][2]);
         rotate->rotateY(white_alpha_beta_gamma[idx][1]);
         rotate->rotateZ(white_alpha_beta_gamma[idx][0]);
-        assemblyWhite->MakeImprint(exp_hall_log, move, rotate, i);
-        assemblyWhiteScintillator->MakeImprint(exp_hall_log, move, rotate, i);
+        assemblyWhite->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
+        assemblyWhiteScintillator->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
     }
     // Place Yellow Detector
     for(G4int i=60; i<(detector_number); i++){
@@ -444,8 +460,8 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
         rotate->rotateZ(yellow_alpha_beta_gamma[idx][2]);
         rotate->rotateY(yellow_alpha_beta_gamma[idx][1]);
         rotate->rotateZ(yellow_alpha_beta_gamma[idx][0]);
-        assemblyYellow->MakeImprint(exp_hall_log, move, rotate, i);
-        assemblyYellowScintillator->MakeImprint(exp_hall_log, move, rotate, i);
+        assemblyYellow->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
+        assemblyYellowScintillator->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
     }
 
     return 1;

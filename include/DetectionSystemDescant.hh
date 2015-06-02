@@ -102,6 +102,10 @@ private:
     G4double white_detector[12][3];
     G4double yellow_detector[12][3];
 
+    G4double trim_green_y;
+    G4double trim_yellow_y;
+    G4double trim_blue_x;
+
     // These are the angles of the cuts for each of the 6 sides of the detectors
     G4double blue_phi[6];
     G4double green_phi[6];
@@ -125,6 +129,8 @@ private:
     G4Colour white_colour;
     G4Colour yellow_colour;
     G4Colour liquid_colour; // Scintillator colour
+
+    G4bool surfCheck;
 
     G4int BuildCanVolume();
     G4int BuildDetectorVolume();

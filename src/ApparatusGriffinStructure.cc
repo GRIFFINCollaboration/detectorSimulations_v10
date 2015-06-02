@@ -57,6 +57,11 @@ ApparatusGriffinStructure::ApparatusGriffinStructure() :
     //G4double triangleThetaAngle = (180/M_PI)*(atan((1/sqrt(3))/sqrt((11/12) + (1/sqrt(2))) )+atan((sqrt(2))/(1+sqrt(2))))*deg;
     this->triangleThetaAngle = 54.735610317245360*deg;
 
+    // Check surfaces to determine any problematic overlaps. Turn this on to have Geant4 check the surfaces.
+    // Do not leave this on, it will slow the DetectorConstruction process!
+    // This was last check on May 29th, 2015. - GOOD!
+    surfCheck = false;
+
     /////////////////////////////////////////////////////////////////////
     // griffinCoords for GRIFFIN
     // Note that the GRIFFIN lampshade angles are rotated by 45 degrees with respect to those of TIGRESS.
@@ -290,7 +295,7 @@ G4int ApparatusGriffinStructure::Place(G4LogicalVolume* exp_hall_log, G4int sele
         rotate->rotateY(beta);
         rotate->rotateZ(gamma);
 
-        this->assemblySquare->MakeImprint(exp_hall_log, move, rotate, 0);
+        this->assemblySquare->MakeImprint(exp_hall_log, move, rotate, 0, surfCheck);
     }
 
     for(G4int i=iSquare1; i<=iSquare2; i++){ // loop over all rods
@@ -307,7 +312,7 @@ G4int ApparatusGriffinStructure::Place(G4LogicalVolume* exp_hall_log, G4int sele
         rotate->rotateY(beta);
         rotate->rotateZ(gamma);
 
-        this->assemblyRod->MakeImprint(exp_hall_log, move, rotate, 0);
+        this->assemblyRod->MakeImprint(exp_hall_log, move, rotate, 0, surfCheck);
     }
 
     for(G4int i=iTriangle1; i<=iTriangle2; i++){ // loop over all triangle pieces
@@ -324,16 +329,16 @@ G4int ApparatusGriffinStructure::Place(G4LogicalVolume* exp_hall_log, G4int sele
         rotate->rotateY(M_PI+beta);
         rotate->rotateZ(gamma);
 
-        this->assemblyTriangle->MakeImprint(exp_hall_log, move, rotate, 0);
+        this->assemblyTriangle->MakeImprint(exp_hall_log, move, rotate, 0, surfCheck);
     }
 
     rotate = new G4RotationMatrix;
     rotate->rotateY(0.0*deg);
-    this->assemblyRing->MakeImprint(exp_hall_log, move, rotate, 0);
+    this->assemblyRing->MakeImprint(exp_hall_log, move, rotate, 0, surfCheck);
 
     rotate = new G4RotationMatrix;
     rotate->rotateY(180.0*deg);
-    this->assemblyRing->MakeImprint(exp_hall_log, move, rotate, 0);
+    this->assemblyRing->MakeImprint(exp_hall_log, move, rotate, 0, surfCheck);
 
     return 1;
 }
