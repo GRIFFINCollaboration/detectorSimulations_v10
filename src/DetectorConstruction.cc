@@ -390,13 +390,7 @@ void DetectorConstruction::AddApparatusGriffinStructure(G4int selector)
     //Create Shell Around Vacuum Chamber
     ApparatusGriffinStructure* pApparatusGriffinStructure = new ApparatusGriffinStructure();
     pApparatusGriffinStructure->Build();
-
     pApparatusGriffinStructure->Place(logicWorld, selector);
-
-
-
-
-
 }
 //void DetectorConstruction::AddDetectionSystemGammaTracking(G4int ndet)
 //{

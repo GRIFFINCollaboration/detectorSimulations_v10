@@ -1,4 +1,44 @@
-// This ROOT macro appends 2 (up to 10) ntuple files together and then sorts them according to the event number
+// This ROOT macro appends 1 (up to 10) ntuple files together and then sorts them according to the event number
+
+void mergesort(const char *root1 = 0, const char *rootout = 0) {
+
+    // define strings
+    TString string1 = root1;
+    TString stringout = rootout;
+
+    // the ntuple in the g4out.root Geant4 files are in a directory "ntuple"
+    string1.Append("/ntuple/ntuple");
+
+    // we call the new merged ntuple mntuple, and add all ntuples.
+    TChain *fChain=new TChain("mntuple");
+    fChain->Add(string1);
+    fChain->Merge(".mergedroot.root");
+
+    // get the merged root file
+    TFile *oldfile = new TFile(".mergedroot.root");
+    TTree *oldtree = (TTree*)oldfile->Get("mntuple");
+    Long64_t nentries = oldtree->GetEntries();
+
+    // create a new root file
+    TFile *newfile = new TFile(stringout,"recreate");
+    TTree *newtree = oldtree->CloneTree(0);
+
+    // build the index from the eventNumber
+    oldtree->BuildIndex("eventNumber");
+    TTreeIndex *index = (TTreeIndex*)oldtree->GetTreeIndex();
+
+    // loop over this index and fill the new tree
+    for( int i = 0; i < index->GetN() ; ++i ) {
+        oldtree->GetEntry(index->GetIndex()[i]);
+        newtree->Fill();
+    }
+
+    newtree->Print();
+    newtree->AutoSave();
+
+    delete oldfile;
+    delete newfile;
+}
 
 void mergesort(const char *root1 = 0, const char *root2 = 0, const char *rootout = 0) {
     

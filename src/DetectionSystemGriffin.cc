@@ -89,6 +89,8 @@ DetectionSystemGriffin::~DetectionSystemGriffin()
 
     // LogicalVolumes in ConstructDetector
     delete tank_log;
+    delete tank_lid1_log;
+    delete tank_lid2_log;
     delete finger_shell_log;
     delete rear_plate_log;
     delete bottom_side_panel_log;
@@ -1251,10 +1253,14 @@ void DetectionSystemGriffin::ConstructDetector()
 
     G4Material* structureMaterial = G4Material::GetMaterial(this->structureMaterial);
     if( !structureMaterial ) {
-        G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
+        G4cout << " ----> Material " << this->structureMaterial << " not found, cannot build the detector shell! " << G4endl;
         exit(1);
     }
-
+    G4Material* liquidN2Material = G4Material::GetMaterial("Liquid_N2");
+    if( !liquidN2Material ) {
+        G4cout << " ----> Material " << "Liquid_N2" << " not found, cannot build the detector shell! " << G4endl;
+        exit(1);
+    }
     // first we make the can's front face
     G4Box* front_face = this->squareFrontFace();
     front_face_log = new G4LogicalVolume(front_face, structureMaterial, "front_face_log", 0, 0, 0);
@@ -1522,6 +1528,35 @@ void DetectionSystemGriffin::ConstructDetector()
 
     this->assembly->AddPlacedVolume(tank_log, move_tank, rotate_tank);
 
+    // lids
+    G4Tubs* lid = this->liquidNitrogenTankLid();
+
+    G4RotationMatrix* rotate_lid = new G4RotationMatrix;
+    rotate_lid->rotateY(M_PI/2.0);
+
+    G4ThreeVector move_lid1( this->coolant_length/2.0 - this->coolant_thickness/2.0 + (this->coolant_length -this->can_face_thickness)/2.0 + this->detector_total_length
+                            + this->cold_finger_shell_length + this->shift +this->applied_back_shift, 0, 0);
+    G4ThreeVector move_lid2( -1.0*this->coolant_length/2.0 + this->coolant_thickness/2.0 + (this->coolant_length -this->can_face_thickness)/2.0 + this->detector_total_length
+                            + this->cold_finger_shell_length + this->shift +this->applied_back_shift, 0, 0);
+
+    tank_lid1_log = new G4LogicalVolume(lid, structureMaterial, "tank_lid1_log", 0, 0, 0);
+    tank_lid2_log = new G4LogicalVolume(lid, structureMaterial, "tank_lid2_log", 0, 0, 0);
+
+    this->assembly->AddPlacedVolume(tank_lid1_log, move_lid1, rotate_lid);
+    this->assembly->AddPlacedVolume(tank_lid2_log, move_lid2, rotate_lid);
+
+    // LN2
+    G4Tubs* liquidn2 = this->liquidNitrogen();
+
+    G4RotationMatrix* rotate_liquidn2 = new G4RotationMatrix;
+    rotate_liquidn2->rotateY(M_PI/2.0);
+
+    G4ThreeVector move_liquidn2((this->coolant_length -this->can_face_thickness)/2.0 + this->detector_total_length
+                            + this->cold_finger_shell_length + this->shift +this->applied_back_shift, 0, 0);
+
+    tank_liquid_log = new G4LogicalVolume(liquidn2, liquidN2Material, "tank_lid1_log", 0, 0, 0);
+
+    this->assembly->AddPlacedVolume(tank_liquid_log, move_liquidn2, rotate_liquidn2);
 }// end::ConstructDetector
 
 ///////////////////////////////////////////////////////////////////////
@@ -2710,9 +2745,9 @@ G4Tubs* DetectionSystemGriffin::coldFingerShell()
 
 G4Tubs* DetectionSystemGriffin::liquidNitrogenTank()
 {
-    G4double inner_radius = 0.0;
+    G4double inner_radius = this->coolant_radius - this->coolant_thickness;
     G4double outer_radius = this->coolant_radius;
-    G4double half_length_z = this->coolant_length/2.0;
+    G4double half_length_z = (this->coolant_length - 2.0*this->coolant_thickness)/2.0;
     G4double start_angle = 0.0*M_PI;
     G4double final_angle = 2.0*M_PI;
 
@@ -2722,6 +2757,33 @@ G4Tubs* DetectionSystemGriffin::liquidNitrogenTank()
 
 }//end ::liquidNitrogenTank
 
+G4Tubs* DetectionSystemGriffin::liquidNitrogenTankLid()
+{
+    G4double inner_radius = 0.0*mm;
+    G4double outer_radius = this->coolant_radius;
+    G4double half_length_z = (this->coolant_thickness)/2.0;
+    G4double start_angle = 0.0*M_PI;
+    G4double final_angle = 2.0*M_PI;
+
+    G4Tubs* tank = new G4Tubs("tank", inner_radius, outer_radius, half_length_z, start_angle, final_angle);
+
+    return tank;
+
+}//end ::liquidNitrogenTankLid
+
+G4Tubs* DetectionSystemGriffin::liquidNitrogen()
+{
+    G4double inner_radius = 0.0*mm;
+    G4double outer_radius = this->coolant_radius - this->coolant_thickness;
+    G4double half_length_z = (this->coolant_length - 2.0*this->coolant_thickness)/2.0;
+    G4double start_angle = 0.0*M_PI;
+    G4double final_angle = 2.0*M_PI;
+
+    G4Tubs* tank = new G4Tubs("tank", inner_radius, outer_radius, half_length_z, start_angle, final_angle);
+
+    return tank;
+
+}//end ::liquidNitrogen
 
 ///////////////////////////////////////////////////////////////////////
 // methods used in ConstructBasicDetectorBlock()

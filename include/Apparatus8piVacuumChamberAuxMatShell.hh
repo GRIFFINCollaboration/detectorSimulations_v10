@@ -57,7 +57,7 @@ private:
 
     // LogicalVolumes used in Apparatus8piVacuumChamberAuxMatShell()
 
-    G4LogicalVolume* vacuum_chamber_sphere_log;
+    G4LogicalVolume* vacuum_chamber_aux_sphere_log;
 
     // Physical Volumes used in Apparatus8piVacuumChamberAuxMatShell()
 
