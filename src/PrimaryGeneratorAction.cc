@@ -219,6 +219,9 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
             if(effParticle == "electron" || effParticle == "e-") {
                 effpart = G4ParticleTable::GetParticleTable()->FindParticle("e-");
             }
+            if(effParticle == "positron" || effParticle == "e+") {
+                effpart = G4ParticleTable::GetParticleTable()->FindParticle("e+");
+            }
             else if (effParticle == "gamma" || effParticle == "photon"){
                 effpart = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
             }

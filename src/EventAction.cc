@@ -50,7 +50,7 @@ EventAction::EventAction(RunAction* run, HistoManager* histo)
 {
     numberOfHits = 0;
     numberOfSteps = 0;
-    fPrintModulo = 100;
+    fPrintModulo = 1000;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

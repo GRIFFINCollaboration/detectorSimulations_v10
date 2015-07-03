@@ -123,7 +123,8 @@ private:
     G4double cold_finger_length;
     G4double coolant_length;
     G4double coolant_radius;
-    
+    G4double coolant_thickness;
+
     //New cooling structures (Jan 2005)
     G4double extra_block_thickness;
     G4double extra_block_distance_from_back_plate;
@@ -351,6 +352,9 @@ private:
     G4LogicalVolume* rear_plate_log;
     G4LogicalVolume* finger_shell_log;
     G4LogicalVolume* tank_log;
+    G4LogicalVolume* tank_lid1_log;
+    G4LogicalVolume* tank_lid2_log;
+    G4LogicalVolume* tank_liquid_log;
 
     //Logical Volumes used in ConstructColdFinger:
     G4LogicalVolume* end_plate_log;
@@ -376,6 +380,9 @@ private:
     G4SubtractionSolid* rearPlate();
     G4Tubs* coldFingerShell();
     G4Tubs* liquidNitrogenTank();
+    G4Tubs* liquidNitrogenTankLid();
+    G4Tubs* liquidNitrogen();
+
 
     //internal methods for ConstructBasicDetectorBlock()
     G4Box* rectangularSegment();

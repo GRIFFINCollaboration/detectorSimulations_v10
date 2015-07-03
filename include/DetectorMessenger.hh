@@ -82,6 +82,8 @@ private:
     G4UIcmdWith3VectorAndUnit* FieldBoxMagneticFieldCmd;
 
     G4UIcmdWithoutParameter*   AddApparatusSpiceTargetChamberCmd;
+    //G4UIcmdWithAnInteger*   AddApparatus8piVacuumCmd;
+
     G4UIcmdWithoutParameter*   AddApparatus8piVacuumChamberCmd;
     G4UIcmdWithADoubleAndUnit*      AddApparatus8piVacuumChamberAuxMatShellCmd;
     G4UIcmdWithAnInteger*   AddApparatusGriffinStructureCmd;
