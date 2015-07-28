@@ -175,10 +175,6 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     AddApparatusSpiceTargetChamberCmd->SetGuidance("Add SPICE target chamber.");
     AddApparatusSpiceTargetChamberCmd->AvailableForStates(G4State_Idle);
 
-//    AddApparatus8piVacuumCmd = new G4UIcmdWithAnInteger("/DetSys/app/add8piVacuum",this);
-//    AddApparatus8piVacuumCmd->SetGuidance("Add 8pi vacuum where the integer is number of sceptar detectors.");
-//    AddApparatus8piVacuumCmd->AvailableForStates(G4State_Idle);
-
     AddApparatus8piVacuumChamberCmd = new G4UIcmdWithoutParameter("/DetSys/app/add8piVacuumChamber",this);
     AddApparatus8piVacuumChamberCmd->SetGuidance("Add 8pi vacuum chamber.");
     AddApparatus8piVacuumChamberCmd->AvailableForStates(G4State_Idle);
@@ -221,9 +217,21 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     AddDetectionSystem8piDetectorCmd->SetGuidance("Add 8pi Detector");
     AddDetectionSystem8piDetectorCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     AddDetectionSystemDescantCmd = new G4UIcmdWithAnInteger("/DetSys/det/addDescant",this);
     AddDetectionSystemDescantCmd->SetGuidance("Add Detection System DESCANT");
     AddDetectionSystemDescantCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    AddDetectionSystemDescantAuxPortsCmd = new G4UIcmdWith3Vector("/DetSys/det/addDescantAuxPorts",this);
+    AddDetectionSystemDescantAuxPortsCmd->SetGuidance("Add 8 DESCANT detectors in the auxillary LaBr3 detector locations");
+    AddDetectionSystemDescantAuxPortsCmd->SetGuidance("/DetSys/det/addDescantAuxPorts _nDet_ _radialPos_ _leadShield_");
+    AddDetectionSystemDescantAuxPortsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+    AddApparatusDescantStructureCmd = new G4UIcmdWithoutParameter("/DetSys/det/addDescantStructure",this);
+    AddApparatusDescantStructureCmd->SetGuidance("Add DESCANT structure");
+    AddApparatusDescantStructureCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
 
     AddDetectionSystemGriffinForwardCmd = new G4UIcmdWithAnInteger("/DetSys/det/addGriffinForward",this);
     AddDetectionSystemGriffinForwardCmd->SetGuidance("Add Detection System GriffinForward");
@@ -330,7 +338,6 @@ DetectorMessenger::~DetectorMessenger()
     delete addGridCmd;
     delete AddApparatusSpiceTargetChamberCmd;
     delete AddDetectionSystemGammaTrackingCmd;
-//    delete AddApparatus8piVacuumCmd;
     delete AddApparatus8piVacuumChamberCmd;
     delete AddApparatus8piVacuumChamberAuxMatShellCmd;
     delete AddApparatusGriffinStructureCmd;
@@ -342,7 +349,12 @@ DetectorMessenger::~DetectorMessenger()
 
     delete AddDetectionSystem8piCmd;
     delete AddDetectionSystem8piDetectorCmd;
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     delete AddDetectionSystemDescantCmd;
+    delete AddDetectionSystemDescantAuxPortsCmd;
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    delete AddApparatusDescantStructureCmd;
+
     delete AddDetectionSystemSceptarCmd;
     delete AddDetectionSystemSpiceCmd;
     delete AddDetectionSystemSpiceV02Cmd;
@@ -443,9 +455,6 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     //  if( command == AddApparatusSpiceTargetChamberCmd ) {
     //    Detector->AddApparatusSpiceTargetChamber();
     //  }
-//    if( command == AddApparatus8piVacuumCmd ) {
-//        Detector->AddApparatus8piVacuum(AddApparatus8piVacuumCmd->GetNewIntValue(newValue));
-//    }
     if( command == AddApparatus8piVacuumChamberCmd ) {
         Detector->AddApparatus8piVacuumChamber();
     }
@@ -473,9 +482,21 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     if( command == AddDetectionSystem8piDetectorCmd ) {
         Detector->AddDetectionSystem8piDetector(AddDetectionSystem8piDetectorCmd->GetNewIntValue(newValue));
     }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     if( command == AddDetectionSystemDescantCmd ) {
         Detector->AddDetectionSystemDescant(AddDetectionSystemDescantCmd->GetNewIntValue(newValue));
     }
+    if( command == AddDetectionSystemDescantAuxPortsCmd )  {
+        Detector->AddDetectionSystemDescantAuxPorts(AddDetectionSystemDescantAuxPortsCmd->GetNew3VectorValue(newValue));
+    }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    if( command == AddApparatusDescantStructureCmd ) {
+        Detector->AddApparatusDescantStructure();
+    }
+
+
+
+
     if( command == AddDetectionSystemSceptarCmd ) {
         Detector->AddDetectionSystemSceptar(AddDetectionSystemSceptarCmd->GetNewIntValue(newValue));
     }
@@ -521,9 +542,9 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     //  if( command == AddDetectionSystemSpiceV02Cmd ) {
     //    Detector->AddDetectionSystemSpiceV02(AddDetectionSystemSpiceV02Cmd->GetNewIntValue(newValue));
     //  }
-      if( command == AddDetectionSystemPacesCmd ) {
-        Detector->AddDetectionSystemPaces(AddDetectionSystemPacesCmd->GetNewIntValue(newValue));
-      }
+    //  if( command == AddDetectionSystemPacesCmd ) {
+    //    Detector->AddDetectionSystemPaces(AddDetectionSystemPacesCmd->GetNewIntValue(newValue));
+    //  }
     if( command == UseTIGRESSPositionsCmd ) {
         Detector->UseTIGRESSPositions(UseTIGRESSPositionsCmd->GetNewBoolValue(newValue));
     }

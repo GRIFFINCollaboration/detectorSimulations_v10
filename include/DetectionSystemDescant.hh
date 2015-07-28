@@ -45,11 +45,12 @@ class G4AssemblyVolume;
 class DetectionSystemDescant
 {
 public:
-    DetectionSystemDescant();
+    DetectionSystemDescant(G4bool leadShield);
     ~DetectionSystemDescant();
 
     G4int Build();
     G4int PlaceDetector(G4LogicalVolume* exp_hall_log, G4int detector_number);
+    G4int PlaceDetectorAuxPorts(G4LogicalVolume* exp_hall_log, G4int detector_number, G4double radialpos);
 
 private:
     // Logical volumes
@@ -102,10 +103,6 @@ private:
     G4double white_detector[12][3];
     G4double yellow_detector[12][3];
 
-    G4double trim_green_y;
-    G4double trim_yellow_y;
-    G4double trim_blue_x;
-
     // These are the angles of the cuts for each of the 6 sides of the detectors
     G4double blue_phi[6];
     G4double green_phi[6];
@@ -122,6 +119,10 @@ private:
     G4double white_alpha_beta_gamma[20][3];
     G4double yellow_alpha_beta_gamma[10][3];
 
+    // for LaBr3 detector locations
+    G4double detectorAngles[8][5];
+    G4double set_radial_pos;
+
     // The colours of the detectors
     G4Colour blue_colour;
     G4Colour green_colour;
@@ -129,8 +130,6 @@ private:
     G4Colour white_colour;
     G4Colour yellow_colour;
     G4Colour liquid_colour; // Scintillator colour
-
-    G4bool surfCheck;
 
     G4int BuildCanVolume();
     G4int BuildDetectorVolume();

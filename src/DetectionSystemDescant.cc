@@ -24,8 +24,10 @@
 
 #include "G4SystemOfUnits.hh"
 
+//#include "G4String.hh"
+#include <string>
 
-DetectionSystemDescant::DetectionSystemDescant() :
+DetectionSystemDescant::DetectionSystemDescant(G4bool leadShield) :
     // LogicalVolumes
     blue_volume_log(0),
     green_volume_log(0),
@@ -50,54 +52,43 @@ DetectionSystemDescant::DetectionSystemDescant() :
     liquid_material         = "Deuterated Scintillator";
     lead_material           = "G4_Pb";
     lead_shield_thickness   = 6.35*mm;
-    includeLead             = true;
+    //includeLead             = true;
+    includeLead = leadShield;
 
     // The face of the detector is 50 cm from the origin, this does NOT include the lead shield.
-    radial_distance         = 50.0*cm;
-
-    // Check surfaces to determine any problematic overlaps. Turn this on to have Geant4 check the surfaces.
-    // Do not leave this on, it will slow the DetectorConstruction process!
-    // This was last check on May 29th, 2015. - GOOD!, but...
-    // The green, yellow and blue detectors had small overlaps, this is probably due to taking the pure mathematical model
-    // of DESCANT, and then Saint Gobain rounding the result to generate the data files (below).
-    surfCheck               = false;
-
-    // Geometry overlaps were found for green, yellow and blue detectors.
-    // We need to squeeze the green and yellow detectors along the y direction,
-    // and we need to squeeze the blue detectors on one x edge of the blue detector.
-    trim_green_y    = 10.0*um;
-    trim_yellow_y   = 10.0*um;
-    trim_blue_x     = 2.2*um;
-
+    radial_distance         = 50*cm;
+	// the radial distance of 84 cm projects the detectors to approximately where they should be cut out of the partial sphere for the descant shell
+    //radial_distance 	    = 75.75*cm;
     // Saint Gobain data files, 6 points around the front face of the can, and 6 on the back
     // from Dan Brennan
+
     G4double blue[12][3] = {
         { 40.60*mm,  61.10*mm,    0.00*mm},
         {-34.70*mm,  61.10*mm,    0.00*mm},
         {-75.10*mm,   0.00*mm,    0.00*mm},
         {-34.70*mm, -61.10*mm,    0.00*mm},
         { 40.60*mm, -61.10*mm,    0.00*mm},
-        { 76.30*mm-trim_blue_x,   0.00*mm,    0.00*mm},
+        { 76.30*mm,   0.00*mm,    0.00*mm},
         { 52.80*mm,  79.40*mm, -150.00*mm},
         {-45.10*mm,  79.40*mm, -150.00*mm},
         {-97.60*mm,   0.00*mm, -150.00*mm},
         {-45.10*mm, -79.40*mm, -150.00*mm},
         { 52.80*mm, -79.40*mm, -150.00*mm},
-        { 99.20*mm-trim_blue_x,   0.00*mm, -150.00*mm}
+        { 99.20*mm,   0.00*mm, -150.00*mm}
     };
 
     G4double green[12][3] = {
-        { 31.90*mm,  61.20*mm-trim_green_y,    0.00*mm},
-        {-31.90*mm,  61.20*mm-trim_green_y,    0.00*mm},
+        { 31.90*mm,  61.20*mm,    0.00*mm},
+        {-31.90*mm,  61.20*mm,    0.00*mm},
         {-71.50*mm,   0.00*mm,    0.00*mm},
-        {-31.90*mm, -55.30*mm+trim_green_y,    0.00*mm},
-        { 31.90*mm, -55.30*mm+trim_green_y,    0.00*mm},
+        {-31.90*mm, -55.30*mm,    0.00*mm},
+        { 31.90*mm, -55.30*mm,    0.00*mm},
         { 47.90*mm,  36.60*mm,    0.00*mm},
-        { 41.50*mm,  79.60*mm-trim_green_y, -150.00*mm},
-        {-41.50*mm,  79.60*mm-trim_green_y, -150.00*mm},
+        { 41.50*mm,  79.60*mm, -150.00*mm},
+        {-41.50*mm,  79.60*mm, -150.00*mm},
         {-93.00*mm,   0.00*mm, -150.00*mm},
-        {-41.50*mm, -71.90*mm+trim_green_y, -150.00*mm},
-        { 41.50*mm, -71.90*mm+trim_green_y, -150.00*mm},
+        {-41.50*mm, -71.90*mm, -150.00*mm},
+        { 41.50*mm, -71.90*mm, -150.00*mm},
         { 62.30*mm,  47.60*mm, -150.00*mm}
     };
 
@@ -132,19 +123,21 @@ DetectionSystemDescant::DetectionSystemDescant() :
     };
 
     G4double yellow[12][3] = {
-        { 31.90*mm,   61.20*mm-trim_yellow_y,    0.00*mm},
-        {-31.90*mm,   61.20*mm-trim_yellow_y,    0.00*mm},
+        { 31.90*mm,   61.20*mm,    0.00*mm},
+        {-31.90*mm,   61.20*mm,    0.00*mm},
         {-47.90*mm,   36.60*mm,    0.00*mm},
-        {-31.90*mm,  -55.30*mm+trim_yellow_y,    0.00*mm},
-        { 31.90*mm,  -55.30*mm+trim_yellow_y,    0.00*mm},
+        {-31.90*mm,  -55.30*mm,    0.00*mm},
+        { 31.90*mm,  -55.30*mm,    0.00*mm},
         { 71.50*mm,    0.00*mm,    0.00*mm},
-        { 41.50*mm,   79.60*mm-trim_yellow_y, -150.00*mm},
-        {-41.50*mm,   79.60*mm-trim_yellow_y, -150.00*mm},
+        { 41.50*mm,   79.60*mm, -150.00*mm},
+        {-41.50*mm,   79.60*mm, -150.00*mm},
         {-62.30*mm,   47.60*mm, -150.00*mm},
-        {-41.50*mm,  -71.90*mm+trim_yellow_y, -150.00*mm},
-        { 41.50*mm,  -71.90*mm+trim_yellow_y, -150.00*mm},
+        {-41.50*mm,  -71.90*mm, -150.00*mm},
+        { 41.50*mm,  -71.90*mm, -150.00*mm},
         { 93.00*mm,    0.00*mm, -150.00*mm}
     };
+
+/////////////////////////////////////////////////////////////////////////////////////////////
 
     memcpy(blue_detector,   blue,   sizeof(blue_detector));
     memcpy(green_detector,  green,  sizeof(green_detector));
@@ -309,6 +302,60 @@ DetectionSystemDescant::DetectionSystemDescant() :
     white_colour    = G4Colour(255.0/255.0,255.0/255.0,255.0/255.0);
     yellow_colour   = G4Colour(255.0/255.0,255.0/255.0,0.0/255.0);
     liquid_colour   = G4Colour(0.0/255.0,255.0/255.0,225.0/255.0);
+
+
+    // for lanthinum bromide locations
+
+    {
+        //G4double triangleThetaAngle = (180/M_PI)*(atan((1/sqrt(3))/sqrt((11/12) + (1/sqrt(2))) )+atan((sqrt(2))/(1+sqrt(2))))*deg;
+        G4double triangleThetaAngle = 54.735610317245360*deg;
+
+        // theta
+        this->detectorAngles[0][0] 	= triangleThetaAngle;
+        this->detectorAngles[1][0] 	= triangleThetaAngle;
+        this->detectorAngles[2][0] 	= triangleThetaAngle;
+        this->detectorAngles[3][0] 	= triangleThetaAngle;
+        this->detectorAngles[4][0] 	= 180.0*deg - triangleThetaAngle;
+        this->detectorAngles[5][0] 	= 180.0*deg - triangleThetaAngle;
+        this->detectorAngles[6][0] 	= 180.0*deg - triangleThetaAngle;
+        this->detectorAngles[7][0] 	= 180.0*deg - triangleThetaAngle;
+        // phi
+        this->detectorAngles[0][1] 	= 22.5*deg;
+        this->detectorAngles[1][1] 	= 112.5*deg;
+        this->detectorAngles[2][1] 	= 202.5*deg;
+        this->detectorAngles[3][1] 	= 292.5*deg;
+        this->detectorAngles[4][1] 	= 22.5*deg;
+        this->detectorAngles[5][1] 	= 112.5*deg;
+        this->detectorAngles[6][1] 	= 202.5*deg;
+        this->detectorAngles[7][1] 	= 292.5*deg;
+        // yaw (alpha)
+        this->detectorAngles[0][2] 	= 0.0*deg;
+        this->detectorAngles[1][2] 	= 0.0*deg;
+        this->detectorAngles[2][2] 	= 0.0*deg;
+        this->detectorAngles[3][2] 	= 0.0*deg;
+        this->detectorAngles[4][2] 	= 0.0*deg;
+        this->detectorAngles[5][2] 	= 0.0*deg;
+        this->detectorAngles[6][2] 	= 0.0*deg;
+        this->detectorAngles[7][2] 	= 0.0*deg;
+        // pitch (beta)
+        this->detectorAngles[0][3] 	= triangleThetaAngle;
+        this->detectorAngles[1][3] 	= triangleThetaAngle;
+        this->detectorAngles[2][3] 	= triangleThetaAngle;
+        this->detectorAngles[3][3] 	= triangleThetaAngle;
+        this->detectorAngles[4][3] 	= 180.0*deg - triangleThetaAngle;
+        this->detectorAngles[5][3] 	= 180.0*deg - triangleThetaAngle;
+        this->detectorAngles[6][3] 	= 180.0*deg - triangleThetaAngle;
+        this->detectorAngles[7][3] 	= 180.0*deg - triangleThetaAngle;
+        // roll (gamma)
+        this->detectorAngles[0][4] 	= 22.5*deg;
+        this->detectorAngles[1][4] 	= 112.5*deg;
+        this->detectorAngles[2][4] 	= 202.5*deg;
+        this->detectorAngles[3][4] 	= 292.5*deg;
+        this->detectorAngles[4][4] 	= 22.5*deg;
+        this->detectorAngles[5][4] 	= 112.5*deg;
+        this->detectorAngles[6][4] 	= 202.5*deg;
+        this->detectorAngles[7][4] 	= 292.5*deg;
+    }
 }
 
 
@@ -398,9 +445,8 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
         rotate->rotateZ(blue_alpha_beta_gamma[idx][2]);
         rotate->rotateY(blue_alpha_beta_gamma[idx][1]);
         rotate->rotateZ(blue_alpha_beta_gamma[idx][0]);
-        assemblyBlue->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
-        assemblyBlueScintillator->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
-
+        assemblyBlue->MakeImprint(exp_hall_log, move, rotate, i);
+        assemblyBlueScintillator->MakeImprint(exp_hall_log, move, rotate, i);
 
     }
     // Place Green Detector
@@ -415,8 +461,8 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
         rotate->rotateZ(green_alpha_beta_gamma[idx][2]);
         rotate->rotateY(green_alpha_beta_gamma[idx][1]);
         rotate->rotateZ(green_alpha_beta_gamma[idx][0]);
-        assemblyGreen->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
-        assemblyGreenScintillator->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
+        assemblyGreen->MakeImprint(exp_hall_log, move, rotate, i);
+        assemblyGreenScintillator->MakeImprint(exp_hall_log, move, rotate, i);
     }
     // Place Red Detector
     for(G4int i=25; i<(detector_number-30); i++){
@@ -430,8 +476,8 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
         rotate->rotateZ(red_alpha_beta_gamma[idx][2]);
         rotate->rotateY(red_alpha_beta_gamma[idx][1]);
         rotate->rotateZ(red_alpha_beta_gamma[idx][0]);
-        assemblyRed->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
-        assemblyRedScintillator->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
+        assemblyRed->MakeImprint(exp_hall_log, move, rotate, i);
+        assemblyRedScintillator->MakeImprint(exp_hall_log, move, rotate, i);
     }
     // Place White Detector
     for(G4int i=40; i<(detector_number-10); i++){
@@ -445,8 +491,8 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
         rotate->rotateZ(white_alpha_beta_gamma[idx][2]);
         rotate->rotateY(white_alpha_beta_gamma[idx][1]);
         rotate->rotateZ(white_alpha_beta_gamma[idx][0]);
-        assemblyWhite->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
-        assemblyWhiteScintillator->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
+        assemblyWhite->MakeImprint(exp_hall_log, move, rotate, i);
+        assemblyWhiteScintillator->MakeImprint(exp_hall_log, move, rotate, i);
     }
     // Place Yellow Detector
     for(G4int i=60; i<(detector_number); i++){
@@ -460,12 +506,52 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
         rotate->rotateZ(yellow_alpha_beta_gamma[idx][2]);
         rotate->rotateY(yellow_alpha_beta_gamma[idx][1]);
         rotate->rotateZ(yellow_alpha_beta_gamma[idx][0]);
-        assemblyYellow->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
-        assemblyYellowScintillator->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
+        assemblyYellow->MakeImprint(exp_hall_log, move, rotate, i);
+        assemblyYellowScintillator->MakeImprint(exp_hall_log, move, rotate, i);
     }
 
     return 1;
 }
+
+G4int DetectionSystemDescant::PlaceDetectorAuxPorts(G4LogicalVolume* exp_hall_log, G4int detector_number, G4double radialpos)
+{
+    G4int detector_copy_ID = 0;
+
+    G4cout << "Descant Detector Number = " << detector_number << G4endl;
+
+    G4int copy_number = detector_copy_ID + detector_number;
+
+    //G4double position = radialpos + can_front_lid_thickness +( this->can_length_z / 2.0 ) ;
+    G4double position = radialpos + can_thickness_front +( this->can_length / 2.0 ) ;
+    set_radial_pos = radialpos;
+
+    G4double theta  = this->detectorAngles[detector_number][0];
+    G4double phi    = this->detectorAngles[detector_number][1];
+    G4double alpha  = this->detectorAngles[detector_number][2]; // yaw
+    G4double beta   = this->detectorAngles[detector_number][3]; // pitch
+    G4double gamma  = this->detectorAngles[detector_number][4]; // roll
+
+    G4double x = 0;
+    G4double y = 0;
+    G4double z = position;
+
+    G4RotationMatrix* rotate = new G4RotationMatrix;    // rotation matrix corresponding to direction vector
+    //rotate->rotateY(M_PI);
+    rotate->rotateZ(90.0*deg);
+    rotate->rotateY(M_PI+beta);
+    rotate->rotateZ(gamma);
+
+    G4ThreeVector move(transX(x,y,z,theta,phi), transY(x,y,z,theta,phi), transZ(x,y,z,theta,phi));
+
+    assemblyWhite->MakeImprint(exp_hall_log, move, rotate, copy_number);
+    assemblyWhiteScintillator->MakeImprint(exp_hall_log, move, rotate, copy_number);
+
+    return 1;
+
+
+
+}
+
 
 G4int DetectionSystemDescant::BuildCanVolume()
 {
@@ -477,7 +563,6 @@ G4int DetectionSystemDescant::BuildCanVolume()
 
     G4Material* can_g4material = G4Material::GetMaterial(this->can_material);
     if( !can_g4material ) {
-        G4cout << " ----> Material " << this->can_material << " not found, cannot build! " << G4endl;
         return 0;
     }
 
@@ -649,6 +734,7 @@ G4int DetectionSystemDescant::BuildCanVolume()
     // WHITE
     // Set visualization attributes
     G4VisAttributes* white_vis_att = new G4VisAttributes(white_colour);
+    //G4VisAttributes* white_vis_att = new G4VisAttributes(red_colour);
     white_vis_att->SetVisibility(true);
 
     G4SubtractionSolid* white_volume_1      = CanVolume(false, this->can_length, white_detector, white_phi);
@@ -678,6 +764,7 @@ G4int DetectionSystemDescant::BuildCanVolume()
     // WHITE LEAD
     // Set visualization attributes
     G4VisAttributes* white_lead_vis_att = new G4VisAttributes(white_colour);
+    //G4VisAttributes* white_lead_vis_att = new G4VisAttributes(red_colour);
     white_lead_vis_att->SetVisibility(true);
 
     G4SubtractionSolid* white_lead_volume_1 = CanVolume(false, this->lead_shield_thickness, white_detector, white_phi);

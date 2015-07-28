@@ -58,7 +58,12 @@
 
 //#include "DetectionSystemGammaTracking.hh"
 #include "DetectionSystem8pi.hh"
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "DetectionSystemDescant.hh"
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include "ApparatusDescantStructure.hh"
+
 
 #include "DetectionSystemGriffin.hh"
 #include "DetectionSystemSceptar.hh"
@@ -390,7 +395,13 @@ void DetectorConstruction::AddApparatusGriffinStructure(G4int selector)
     //Create Shell Around Vacuum Chamber
     ApparatusGriffinStructure* pApparatusGriffinStructure = new ApparatusGriffinStructure();
     pApparatusGriffinStructure->Build();
+
     pApparatusGriffinStructure->Place(logicWorld, selector);
+
+
+
+
+
 }
 //void DetectorConstruction::AddDetectionSystemGammaTracking(G4int ndet)
 //{
@@ -807,11 +818,40 @@ void DetectorConstruction::AddDetectionSystemSceptar(G4int ndet)
     pSceptar->PlaceDetector( logicWorld, ndet ) ;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void DetectorConstruction::AddDetectionSystemDescant(G4int ndet)
 {
-    DetectionSystemDescant* pDetectionSystemDescant = new DetectionSystemDescant() ;
+    DetectionSystemDescant* pDetectionSystemDescant = new DetectionSystemDescant(true) ;
     pDetectionSystemDescant->Build() ;
     pDetectionSystemDescant->PlaceDetector( logicWorld, ndet ) ;
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void DetectorConstruction::AddDetectionSystemDescantAuxPorts(G4ThreeVector input)
+{
+    G4int ndet = G4int(input.x());
+    G4double radialpos = input.y()*cm;
+    G4int leadShield = G4bool(input.z());
+
+    if( leadShield ) G4cout << "Building DESCANT detectors WITH lead shielding" << G4endl;
+    if( !leadShield )G4cout << "Building DESCANT detectors WITHOUT lead shielding" << G4endl;
+
+    DetectionSystemDescant *  pDetectionSystemDescant = new DetectionSystemDescant(leadShield) ;
+    pDetectionSystemDescant->Build() ;
+
+    for(G4int detector_number = 0; detector_number < ndet; detector_number++)
+    {
+        pDetectionSystemDescant->PlaceDetectorAuxPorts(logicWorld, detector_number, radialpos);
+    }
+}
+
+void DetectorConstruction::AddApparatusDescantStructure()
+{
+    ApparatusDescantStructure* pApparatusDescantStructure = new ApparatusDescantStructure() ;
+    pApparatusDescantStructure->Build() ;
+    pApparatusDescantStructure->PlaceDescantStructure( logicWorld );
+
+    //pApparatusDescantStructure->PlaceDetector( logicWorld, ndet ) ;
 }
 
 //void DetectorConstruction::AddDetectionSystemSpice(G4int ndet)
@@ -845,10 +885,10 @@ void DetectorConstruction::AddDetectionSystemDescant(G4int ndet)
 
 //}
 
-void DetectorConstruction::AddDetectionSystemPaces(G4int ndet)
-{
-    DetectionSystemPaces* pPaces = new DetectionSystemPaces() ;
-    pPaces->Build() ;
+//void DetectorConstruction::AddDetectionSystemPaces(G4int ndet)
+//{
+//    DetectionSystemPaces* pPaces = new DetectionSystemPaces() ;
+//    pPaces->Build() ;
 
-    pPaces->PlaceDetector( logicWorld, ndet ) ;
-}
+//    pPaces->PlaceDetector( logicWorld, ndet ) ;
+//}

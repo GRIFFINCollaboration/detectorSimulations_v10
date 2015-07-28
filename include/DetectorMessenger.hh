@@ -82,8 +82,6 @@ private:
     G4UIcmdWith3VectorAndUnit* FieldBoxMagneticFieldCmd;
 
     G4UIcmdWithoutParameter*   AddApparatusSpiceTargetChamberCmd;
-    //G4UIcmdWithAnInteger*   AddApparatus8piVacuumCmd;
-
     G4UIcmdWithoutParameter*   AddApparatus8piVacuumChamberCmd;
     G4UIcmdWithADoubleAndUnit*      AddApparatus8piVacuumChamberAuxMatShellCmd;
     G4UIcmdWithAnInteger*   AddApparatusGriffinStructureCmd;
@@ -110,7 +108,11 @@ private:
 
     G4UIcmdWithAnInteger*       AddDetectionSystem8piCmd;
     G4UIcmdWithAnInteger*       AddDetectionSystem8piDetectorCmd;
+
     G4UIcmdWithAnInteger*       AddDetectionSystemDescantCmd;
+    //G4UIcmdWithoutParameter*    AddDetectionSystemDescantLanthinumCmd;
+    G4UIcmdWith3Vector*         AddDetectionSystemDescantAuxPortsCmd;
+    G4UIcmdWithoutParameter*	AddApparatusDescantStructureCmd;
 
     G4UIcmdWithAnInteger*       AddDetectionSystemSceptarCmd;
     G4UIcmdWithAnInteger*       AddDetectionSystemGriffinForwardCmd;
