@@ -143,7 +143,6 @@ public:
 private:
     // Logical volumes
     //
-    G4LogicalVolume* exp_hall_log;
     G4LogicalVolume* germanium_block_log;
     G4LogicalVolume* germanium_dead_layer_log;
     G4LogicalVolume* germanium_vacuum_core_log;

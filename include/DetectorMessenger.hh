@@ -112,7 +112,11 @@ private:
     G4UIcmdWithAnInteger*       AddDetectionSystemDescantCmd;
     //G4UIcmdWithoutParameter*    AddDetectionSystemDescantLanthinumCmd;
     G4UIcmdWith3Vector*         AddDetectionSystemDescantAuxPortsCmd;
-    G4UIcmdWithoutParameter*	AddApparatusDescantStructureCmd;
+    G4UIcmdWithoutParameter*	  AddApparatusDescantStructureCmd;
+    G4UIcmdWithAString*         SetDetectionSystemDescantColorCmd;
+    G4UIcmdWith3Vector*         SetDetectionSystemDescantRotationCmd;
+    G4UIcmdWith3VectorAndUnit*  AddDetectionSystemDescantCartCmd;
+    G4UIcmdWith3VectorAndUnit*  AddDetectionSystemDescantSpherCmd;
 
     G4UIcmdWithAnInteger*       AddDetectionSystemSceptarCmd;
     G4UIcmdWithAnInteger*       AddDetectionSystemGriffinForwardCmd;
@@ -126,7 +130,7 @@ private:
     G4UIcmdWithAnInteger*       AddDetectionSystemGriffinHevimetCmd ;
 
     G4UIcmdWithAnInteger*       AddDetectionSystemGriffinCustomDetectorCmd ;
-    G4UIcmdWithAnInteger*	    AddDetectionSystemGriffinCustomCmd ;
+    G4UIcmdWithAnInteger*	     AddDetectionSystemGriffinCustomCmd ;
     G4UIcmdWithAnInteger*       AddDetectionSystemGriffinShieldSelectCmd ;
     G4UIcmdWithADoubleAndUnit*  AddDetectionSystemGriffinSetRadialDistanceCmd ;
     G4UIcmdWithAnInteger*       AddDetectionSystemGriffinSetExtensionSuppLocationCmd ;

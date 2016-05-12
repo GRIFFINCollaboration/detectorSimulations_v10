@@ -265,12 +265,12 @@ G4int ApparatusDescantStructure::BuildDescantShell()
     rotate->rotateZ(20.0*deg);
     moveCut = 120.0*mm;
     move = G4ThreeVector(1.0*subBoxX + moveCut, 0.0, 0.0);
-    G4SubtractionSolid * polyRedCut1 = new G4SubtractionSolid("poly_red_cut_1", polyRed, subtractionBox, rotate, move);
+    //G4SubtractionSolid * polyRedCut1 = new G4SubtractionSolid("poly_red_cut_1", polyRed, subtractionBox, rotate, move);
     rotate = new G4RotationMatrix;
     rotate->rotateZ(-20.0*deg);
     moveCut = 120.0*mm;
     move = G4ThreeVector(1.0*subBoxX + moveCut, 0.0, 0.0);
-    G4SubtractionSolid * polyRedCut2 = new G4SubtractionSolid("poly_red_cut_2", polyRedCut1, subtractionBox, rotate, move);
+    //G4SubtractionSolid * polyRedCut2 = new G4SubtractionSolid("poly_red_cut_2", polyRedCut1, subtractionBox, rotate, move);
         //white
     G4Polyhedra * polyWhite = new G4Polyhedra("poly_white", sPhi, dPhi, numSides, numZplanes, zPlanes, rInnerWhite, rOuterWhite);
         //green or yellow before cut
@@ -288,42 +288,42 @@ G4int ApparatusDescantStructure::BuildDescantShell()
 
     // for construction of the back plates of each DESCANT detector
         // general
-    rotate = new G4RotationMatrix;
-    move = G4ThreeVector(0.0, 0.0, 0.0);
-    G4Polyhedra * shellBack = new G4Polyhedra("shell_back", sPhi, dPhi, numSides, numZplanes, zPlanesBack, rInnerBack, rOuterBack);
-    G4Tubs * cylinder = new G4Tubs("cylinder", rMin, rMax, halfLength, sPhi, dPhi);
-    G4SubtractionSolid * shellBackHole = new G4SubtractionSolid("shell_back_with_holes", shellBack, cylinder, rotate, move);
+    //rotate = new G4RotationMatrix;
+    //move = G4ThreeVector(0.0, 0.0, 0.0);
+    //G4Polyhedra * shellBack = new G4Polyhedra("shell_back", sPhi, dPhi, numSides, numZplanes, zPlanesBack, rInnerBack, rOuterBack);
+    //G4Tubs * cylinder = new G4Tubs("cylinder", rMin, rMax, halfLength, sPhi, dPhi);
+    //G4SubtractionSolid * shellBackHole = new G4SubtractionSolid("shell_back_with_holes", shellBack, cylinder, rotate, move);
         // yellow
-    moveCut = 90.0*mm;
-    rotate = new G4RotationMatrix;
-    move = G4ThreeVector(-1.0*subBoxX - moveCut, 0.0, 0.0);
-    G4SubtractionSolid * shellBackYellow = new G4SubtractionSolid("shell_back_with_holes_yellow", shellBackHole, subtractionBox, rotate, move);
+    //moveCut = 90.0*mm;
+    //rotate = new G4RotationMatrix;
+    //move = G4ThreeVector(-1.0*subBoxX - moveCut, 0.0, 0.0);
+    //G4SubtractionSolid * shellBackYellow = new G4SubtractionSolid("shell_back_with_holes_yellow", shellBackHole, subtractionBox, rotate, move);
         // green
-    moveCut = 90.0*mm;
-    rotate = new G4RotationMatrix;
-    move = G4ThreeVector(1.0*subBoxX + moveCut, 0.0, 0.0);
-    G4SubtractionSolid * shellBackGreen = new G4SubtractionSolid("shell_back_with_holes_green", shellBackHole, subtractionBox, rotate, move);
+    //moveCut = 90.0*mm;
+    //rotate = new G4RotationMatrix;
+    //move = G4ThreeVector(1.0*subBoxX + moveCut, 0.0, 0.0);
+    //G4SubtractionSolid * shellBackGreen = new G4SubtractionSolid("shell_back_with_holes_green", shellBackHole, subtractionBox, rotate, move);
 
     // Colour
     G4VisAttributes* grey_vis_att = new G4VisAttributes(grey_colour);
     grey_vis_att->SetVisibility(true);
 
-	// Material
-	G4Material* structure_g4material = G4Material::GetMaterial(this->structure_material);
-   	if( !structure_g4material ) {
-        	G4cout << " ----> Material " << this->structure_material << " not found, cannot build! " << G4endl;
-       		return 0;
-    	}
-
-
-    G4LogicalVolume * logicBack = new G4LogicalVolume(shellBackHole, structure_g4material, "logic_back", 0, 0, 0);
-    logicBack->SetVisAttributes(grey_colour);
-
-    G4LogicalVolume * logicBackYellow = new G4LogicalVolume(shellBackYellow, structure_g4material, "logic_back_yellow", 0, 0, 0);
-    logicBackYellow->SetVisAttributes(grey_colour);
-
-    G4LogicalVolume * logicBackGreen = new G4LogicalVolume(shellBackGreen, structure_g4material, "logic_back_green", 0, 0, 0);
-    logicBackYellow->SetVisAttributes(grey_colour);
+	 // Material
+	 G4Material* structure_g4material = G4Material::GetMaterial(this->structure_material);
+	 if( !structure_g4material ) {
+		G4cout << " ----> Material " << this->structure_material << " not found, cannot build! " << G4endl;
+		return 0;
+	 }
+	 
+	 
+	 //G4LogicalVolume * logicBack = new G4LogicalVolume(shellBackHole, structure_g4material, "logic_back", 0, 0, 0);
+	 //logicBack->SetVisAttributes(grey_colour);
+	 
+	 //G4LogicalVolume * logicBackYellow = new G4LogicalVolume(shellBackYellow, structure_g4material, "logic_back_yellow", 0, 0, 0);
+	 //logicBackYellow->SetVisAttributes(grey_colour);
+	 
+    //G4LogicalVolume * logicBackGreen = new G4LogicalVolume(shellBackGreen, structure_g4material, "logic_back_green", 0, 0, 0);
+    //logicBackYellow->SetVisAttributes(grey_colour);
 
 
 

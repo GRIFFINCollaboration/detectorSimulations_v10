@@ -164,7 +164,7 @@ G4int DetectionSystemAncillaryBGO::PlaceDetector(G4LogicalVolume* exp_hall_log, 
 
     G4double theta  = this->detectorAngles[detector_number][0];
     G4double phi    = this->detectorAngles[detector_number][1];
-    G4double alpha  = this->detectorAngles[detector_number][2]; // yaw
+    //G4double alpha  = this->detectorAngles[detector_number][2]; // yaw
     G4double beta   = this->detectorAngles[detector_number][3]; // pitch
     G4double gamma  = this->detectorAngles[detector_number][4]; // roll
 

@@ -84,7 +84,7 @@ PhysicsList::PhysicsList() :
     fPMessenger(0),fDetectorCuts(0), fTargetCuts(0)
 {
     G4LossTableManager::Instance();
-    defaultCutValue =1.*mm;
+    defaultCutValue =0.1*mm;
 
     fPMessenger = new PhysicsListMessenger(this);
 

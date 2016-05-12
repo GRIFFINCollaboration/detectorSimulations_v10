@@ -39,8 +39,9 @@
 #include "EventAction.hh"
 
 #include "G4Step.hh"
-
-
+#include "G4VProcess.hh"
+#include "G4HadronicProcess.hh"
+#include "G4ProcessType.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -99,15 +100,37 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     else if (particleName == "e+")       particleType = 3;
     else if (particleName == "proton")   particleType = 4;
     else if (particleName == "neutron")  particleType = 5;
+    else if (particleName == "deuteron") particleType = 6;
+    else if (particleName == "C12")      particleType = 7;
     else particleType = 0;
 
+	 const G4VProcess* process = aStep->GetPostStepPoint()->GetProcessDefinedStep();
+	 G4int targetZ = 0;
+	 if(process->GetProcessType() == fHadronic) {
+		G4HadronicProcess* hadr_process = (G4HadronicProcess*) process;
+		const G4Isotope* target = NULL;
+		if(hadr_process != NULL) {
+		  target = hadr_process->GetTargetIsotope();
+		  if(target != NULL) {
+			 //	G4cout<<particleName<<", "<<process->GetProcessName()<<" on "<<target->GetName()<<G4endl;
+			 targetZ = target->GetZ();
+		  }
+		}
+	 }
+
     // this can be modified to add more processes
-    //  if (theTrack->GetCreatorProcess()->GetProcessName() == "RadioactiveDecay")      processType = 1;
-    //  else if (theTrack->GetCreatorProcess()->GetProcessName() == "eIoni")            processType = 2;
-    //  else if (theTrack->GetCreatorProcess()->GetProcessName() == "msc")              processType = 3;
-    //  else if (theTrack->GetCreatorProcess()->GetProcessName() == "Scintillation")    processType = 4;
-    //  else if (theTrack->GetCreatorProcess()->GetProcessName() == "Cerenkov")         processType = 5;
-    //  else  processType = 0;
+	 if(theTrack->GetCreatorProcess() != NULL) {
+		G4String processName = theTrack->GetCreatorProcess()->GetProcessName();
+		//G4cout<<"found secondary, particle "<<particleName<<", creation process "<<process<<G4endl;
+      if (processName == "RadioactiveDecay")      processType = 1;
+      else if (processName == "eIoni")            processType = 2;
+      else if (processName == "msc")              processType = 3;
+      else if (processName == "Scintillation")    processType = 4;
+      else if (processName == "Cerenkov")         processType = 5;
+      else  processType = 0;
+	 } else {
+		processType = -1;
+	 }
 
     fEventAction->AddParticleType(particleType);
     evntNb =  fEventAction->GetEventNumber();
@@ -126,7 +149,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     G4ThreeVector pos1 = point1->GetPosition();
     G4ThreeVector pos2 = point2->GetPosition();
 
-    G4double time1 = point1->GetGlobalTime();
+    //G4double time1 = point1->GetGlobalTime();
     G4double time2 = point2->GetGlobalTime();
 
     size_t found;
@@ -141,7 +164,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(5,1,GetCrystalColour(cry));
         mnemonic.replace(6,1,"G");
         systemID = 1000;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     found = volname.find("back_quarter_suppressor");
@@ -153,7 +176,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(5,1,GetCrystalColour(cry));
         mnemonic.replace(6,1,"E");
         systemID = 1050;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     found = volname.find("left_suppressor_extension");
@@ -165,7 +188,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(5,1,GetCrystalColour(cry));
         mnemonic.replace(6,1,"A");
         systemID = 1010;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     found = volname.find("right_suppressor_extension");
@@ -177,7 +200,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(5,1,GetCrystalColour(cry));
         mnemonic.replace(6,1,"B");
         systemID = 1020;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     found = volname.find("left_suppressor_casing");
@@ -189,7 +212,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(5,1,GetCrystalColour(cry));
         mnemonic.replace(6,1,"C");
         systemID = 1030;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     found = volname.find("right_suppressor_casing");
@@ -201,7 +224,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(5,1,GetCrystalColour(cry));
         mnemonic.replace(6,1,"D");
         systemID = 1040;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     // Dead layer specific code
@@ -214,7 +237,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(5,1,GetCrystalColour(cry));
         mnemonic.replace(6,1,"G");
         systemID = 1000;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     // LaBr detector energy deposits ////////////////////////////////////////////////////////////////////////////////
@@ -226,7 +249,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(3,2,G4intToG4String(det));
         mnemonic.replace(5,1,GetCrystalColour(cry));
         systemID = 2000;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     // Ancillary BGO detector energy deposits ////////////////////////////////////////////////////////////////////////////////
@@ -238,7 +261,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(3,2,G4intToG4String(det));
         mnemonic.replace(5,1,GetCrystalColour(cry));
         systemID = 3000;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     // NaI energy deposits ////////////////////////////////////////////////////////////////////////////////
@@ -249,7 +272,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(3,2,G4intToG4String(det));
         mnemonic.replace(5,1,GetCrystalColour(cry));
         systemID = 4000;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     // Sceptar energy deposits ////////////////////////////////////////////////////////////////////////////////
@@ -273,7 +296,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(3,2,G4intToG4String(det));
         mnemonic.replace(5,1,GetCrystalColour(cry));
         systemID = 5000;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
     found = volname.find("sceptar_angled_scintillator_log");
     if (edep != 0 && found!=G4String::npos) {
@@ -293,7 +316,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(3,2,G4intToG4String(det));
         mnemonic.replace(5,1,GetCrystalColour(cry));
         systemID = 5000;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     // 8PI energy deposits ////////////////////////////////////////////////////////////////////////////////
@@ -305,7 +328,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(3,2,G4intToG4String(det));
         mnemonic.replace(5,1,GetCrystalColour(cry));
         systemID = 6000;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     found = volname.find("8pi_inner_BGO_annulus");
@@ -316,7 +339,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(5,1,GetCrystalColour(cry));
         mnemonic.replace(6,1,"A");
         systemID = 6010;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     found = volname.find("8pi_outer_lower_BGO_annulus");
@@ -327,7 +350,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(5,1,GetCrystalColour(cry));
         mnemonic.replace(6,1,"B");
         systemID = 6020;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     found = volname.find("8pi_outer_upper_BGO_annulus");
@@ -338,7 +361,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(5,1,GetCrystalColour(cry));
         mnemonic.replace(6,1,"C");
         systemID = 6030;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     found = volname.find("gridcell_log");
@@ -352,7 +375,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(5,1,GetCrystalColour(cry));
         systemID = 7000;
         // edep is ekin in this case. It would be useful if we also had the momentum positiin of the particles...
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, ekin, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, ekin, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
         // Now kill the track!
         theTrack->SetTrackStatus(fStopAndKill);
     }
@@ -364,8 +387,9 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(0,3,"DSC");
         mnemonic.replace(3,2,G4intToG4String(det));
         mnemonic.replace(5,1,GetCrystalColour(cry));
+		  if(targetZ < 10) mnemonic.replace(6,1,G4intToG4String(targetZ));
         systemID = 8010;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     found = volname.find("green_scintillator_volume_log");
@@ -374,8 +398,9 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(0,3,"DSC");
         mnemonic.replace(3,2,G4intToG4String(det));
         mnemonic.replace(5,1,GetCrystalColour(cry));
+		  if(targetZ < 10) mnemonic.replace(6,1,G4intToG4String(targetZ));
         systemID = 8020;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     found = volname.find("red_scintillator_volume_log");
@@ -384,8 +409,9 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(0,3,"DSC");
         mnemonic.replace(3,2,G4intToG4String(det));
         mnemonic.replace(5,1,GetCrystalColour(cry));
+		  if(targetZ < 10) mnemonic.replace(6,1,G4intToG4String(targetZ));
         systemID = 8030;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     found = volname.find("white_scintillator_volume_log");
@@ -394,8 +420,9 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(0,3,"DSC");
         mnemonic.replace(3,2,G4intToG4String(det));
         mnemonic.replace(5,1,GetCrystalColour(cry));
+		  if(targetZ < 10) mnemonic.replace(6,1,G4intToG4String(targetZ));
         systemID = 8040;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     found = volname.find("yellow_scintillator_volume_log");
@@ -404,8 +431,9 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(0,3,"DSC");
         mnemonic.replace(3,2,G4intToG4String(det));
         mnemonic.replace(5,1,GetCrystalColour(cry));
+		  if(targetZ < 10) mnemonic.replace(6,1,G4intToG4String(targetZ));
         systemID = 8050;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     found = volname.find("paces_silicon_block_log");
@@ -416,7 +444,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         mnemonic.replace(3,2,G4intToG4String(det));
         mnemonic.replace(5,1,GetCrystalColour(cry));
         systemID = 9000;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     //  // gamma angular correlations in world
@@ -487,9 +515,9 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     //      fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, ekin, pos2.x(), pos2.y(), pos2.z(), time2);
     //  }
 
-    if(trackSteps)
-        fEventAction->AddStepTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2);
-
+    if(trackSteps) {
+        fEventAction->AddStepTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+	 }
 }
 
 void SteppingAction::SetDetAndCryNumberForGriffinComponent(G4String volname)
