@@ -51,7 +51,6 @@ public:
 
 private:
     // Logical volumes
-    G4LogicalVolume* exp_hall_log;
     G4LogicalVolume* aluminum_hemisphere_log;
     G4LogicalVolume* aluminum_annulus_top_log;
     G4LogicalVolume* aluminum_annulus_bot_log;

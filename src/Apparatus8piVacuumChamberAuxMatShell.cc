@@ -62,9 +62,9 @@ void Apparatus8piVacuumChamberAuxMatShell::BuildApparatus8piVacuumChamberAuxMatS
     G4double outer_radius = this->vacuum_chamber_outer_radius + thickness;
 
     G4Sphere* vacuum_chamber_sphere = new G4Sphere("vacuum_chamber_sphere",  inner_radius, outer_radius, startPhi, endPhi, startTheta, endTheta);
-    G4Material* vacuum_chamber_sphere_material = G4Material::GetMaterial(this->vacuum_chamber_sphere_material);
+    G4Material* vacuum_chamber_sphere_mat = G4Material::GetMaterial(vacuum_chamber_sphere_material);
 
-    vacuum_chamber_aux_sphere_log = new G4LogicalVolume(vacuum_chamber_sphere, vacuum_chamber_sphere_material, "vacuum_chamber_aux_sphere_log", 0, 0, 0);
+    vacuum_chamber_aux_sphere_log = new G4LogicalVolume(vacuum_chamber_sphere, vacuum_chamber_sphere_mat, "vacuum_chamber_aux_sphere_log", 0, 0, 0);
     vacuum_chamber_aux_sphere_log->SetVisAttributes(vis_att);
 
 }//end ::Apparatus8piVacuumChamberAuxMatShellCylinder

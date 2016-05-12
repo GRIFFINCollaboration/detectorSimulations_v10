@@ -157,7 +157,7 @@ G4int DetectionSystemSodiumIodide::PlaceDetector(G4LogicalVolume* exp_hall_log, 
 
     G4cout << "SodiumIodide Detector Number = " << detector_number << G4endl;
 
-    G4int copy_number = detector_copy_ID + detector_number;
+    copy_number = detector_copy_ID + detector_number;
 
     assembly->MakeImprint(exp_hall_log, move, rotate, copy_number);
 

@@ -51,7 +51,8 @@ public:
     G4int Build();
     G4int PlaceDetector(G4LogicalVolume* exp_hall_log, G4int detector_number);
     G4int PlaceDetectorAuxPorts(G4LogicalVolume* exp_hall_log, G4int detector_number, G4double radialpos);
-
+    G4int PlaceDetector(G4LogicalVolume* exp_hall_log, G4String color, G4ThreeVector pos, G4ThreeVector rot);
+  
 private:
     // Logical volumes
     G4LogicalVolume* blue_volume_log;

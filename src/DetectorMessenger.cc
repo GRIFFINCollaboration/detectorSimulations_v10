@@ -232,6 +232,22 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     AddApparatusDescantStructureCmd->SetGuidance("Add DESCANT structure");
     AddApparatusDescantStructureCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+	 SetDetectionSystemDescantColorCmd = new G4UIcmdWithAString("/DetSys/det/setDescantColor", this);
+	 SetDetectionSystemDescantColorCmd->SetGuidance("Set color of next descant detector to be added via addDescantCart or addDescantSpher");
+	 SetDetectionSystemDescantColorCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	 SetDetectionSystemDescantColorCmd->SetCandidates("white blue red green yellow");
+
+	 SetDetectionSystemDescantRotationCmd = new G4UIcmdWith3Vector("/DetSys/det/setDescantRotation", this);
+	 SetDetectionSystemDescantRotationCmd->SetGuidance("Set rotation of next descant detector to be added via addDescantCart or addDescantSpher (alhpa beta gamma)");
+	 SetDetectionSystemDescantRotationCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	 AddDetectionSystemDescantCartCmd = new G4UIcmdWith3VectorAndUnit("/DetSys/det/addDescantCart", this);
+	 AddDetectionSystemDescantCartCmd->SetGuidance("Add single DESCANT detector at provided cartesian coordinates");
+	 AddDetectionSystemDescantCartCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+
+	 AddDetectionSystemDescantSpherCmd = new G4UIcmdWith3VectorAndUnit("/DetSys/det/addDescantSpher", this);
+	 AddDetectionSystemDescantSpherCmd->SetGuidance("Add single DESCANT detector at provided spherical coordinates");
+	 AddDetectionSystemDescantSpherCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
     AddDetectionSystemGriffinForwardCmd = new G4UIcmdWithAnInteger("/DetSys/det/addGriffinForward",this);
     AddDetectionSystemGriffinForwardCmd->SetGuidance("Add Detection System GriffinForward");
@@ -354,6 +370,11 @@ DetectorMessenger::~DetectorMessenger()
     delete AddDetectionSystemDescantAuxPortsCmd;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     delete AddApparatusDescantStructureCmd;
+
+	 delete SetDetectionSystemDescantColorCmd;
+	 delete SetDetectionSystemDescantRotationCmd;	 
+	 delete AddDetectionSystemDescantCartCmd;
+	 delete AddDetectionSystemDescantSpherCmd;
 
     delete AddDetectionSystemSceptarCmd;
     delete AddDetectionSystemSpiceCmd;
@@ -494,7 +515,18 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
         Detector->AddApparatusDescantStructure();
     }
 
-
+	 if( command == SetDetectionSystemDescantColorCmd ) {
+		Detector->SetDetectionSystemDescantColor(newValue);
+	 }
+	 if( command == SetDetectionSystemDescantRotationCmd ) {
+		Detector->SetDetectionSystemDescantRotation(SetDetectionSystemDescantRotationCmd->GetNew3VectorValue(newValue));
+	 }
+	 if( command == AddDetectionSystemDescantCartCmd ) {
+		Detector->AddDetectionSystemDescantCart(AddDetectionSystemDescantCartCmd->GetNew3VectorValue(newValue));
+	 }
+	 if( command == AddDetectionSystemDescantSpherCmd ) {
+		Detector->AddDetectionSystemDescantSpher(AddDetectionSystemDescantSpherCmd->GetNew3VectorRawValue(newValue), AddDetectionSystemDescantSpherCmd->GetNewUnitValue(newValue));
+	 }
 
 
     if( command == AddDetectionSystemSceptarCmd ) {

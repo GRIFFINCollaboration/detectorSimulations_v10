@@ -50,7 +50,7 @@ public:
     
     G4int Build() ; //G4SDManager* mySDman);
     G4int PlaceDetector(G4LogicalVolume* exp_hall_log, G4ThreeVector move, G4RotationMatrix* rotate, G4int detector_number);
-    G4double const GetDetectorLengthOfUnitsCM() {return this->detector_length_z;};
+    G4double GetDetectorLengthOfUnitsCM() { return detector_length_z; }
 
 private:
     // Logical volumes

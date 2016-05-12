@@ -71,10 +71,10 @@ int main(int argc,char** argv)
     //  G4cout << "RUNNING MULTITHREADED" << G4endl;
     //  G4int nThreads = 2;
     //  G4MTRunManager * runManager = new G4MTRunManager;
-    //runManager->SetNumberOfThreads(nThreads);
+	 //	runManager->SetNumberOfThreads(nThreads);
     //#else
-    G4RunManager * runManager = new G4RunManager;
-    //#endif
+	 G4RunManager * runManager = new G4RunManager;
+	 //#endif
 
     // Set mandatory initialization classes
     //

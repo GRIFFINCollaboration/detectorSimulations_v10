@@ -63,8 +63,8 @@ void Apparatus8piVacuumChamber::BuildApparatus8piVacuumChamberSphere()
     G4double outer_radius = this->vacuum_chamber_outer_radius;
 
     G4Sphere* vacuum_chamber_sphere = new G4Sphere("vacuum_chamber_sphere",  inner_radius, outer_radius, startPhi, endPhi, startTheta, endTheta);
-    G4Material* vacuum_chamber_sphere_material = G4Material::GetMaterial(this->vacuum_chamber_sphere_material);
-    vacuum_chamber_sphere_log = new G4LogicalVolume(vacuum_chamber_sphere, vacuum_chamber_sphere_material, "vacuum_chamber_sphere_log", 0, 0, 0);
+    G4Material* vacuum_chamber_sphere_mat = G4Material::GetMaterial(vacuum_chamber_sphere_material);
+    vacuum_chamber_sphere_log = new G4LogicalVolume(vacuum_chamber_sphere, vacuum_chamber_sphere_mat, "vacuum_chamber_sphere_log", 0, 0, 0);
     vacuum_chamber_sphere_log->SetVisAttributes(vis_att);
 
     //   // Fill with Vacuum
