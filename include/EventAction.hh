@@ -46,7 +46,7 @@ class HistoManager;
 
 static const int MAXSTEPS       = 1000;
 static const int MAXHITS        = 100;
-static const int NUMSTEPVARS    = 14;
+static const int NUMSTEPVARS    = 15;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -84,8 +84,8 @@ public:
     void AddGridCellGamma(G4double de, G4double dl, G4int det) {GridCellGammaEKinDet[det] += de; GridCellGammaTrackDet[det] += dl;} ;
     void AddGridCellNeutron(G4double de, G4double dl, G4int det) {GridCellNeutronEKinDet[det] += de; GridCellNeutronTrackDet[det] += dl;} ;
 
-    void AddHitTracker(G4String mnemonic, G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time);
-    void AddStepTracker(G4String mnemonic, G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time);
+    void AddHitTracker(G4String mnemonic, G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int trackerZ);
+    void AddStepTracker(G4String mnemonic, G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int trackerZ);
 
 
 private:

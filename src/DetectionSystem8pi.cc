@@ -28,7 +28,6 @@
 
 DetectionSystem8pi::~DetectionSystem8pi()
 {
-    delete exp_hall_log;
     delete germanium_block_log;
     delete germanium_dead_layer_log;
     delete germanium_vacuum_core_log;
@@ -134,9 +133,9 @@ G4int DetectionSystem8pi::Build()//G4SDManager* mySDman)
 
 G4int DetectionSystem8pi::PlaceDetector(G4LogicalVolume* exp_hall_log, G4ThreeVector move, G4RotationMatrix* rotate, G4int detector_number)
 {
-    G4int detector_copy_ID = 0;
+    //G4int detector_copy_ID = 0;
 
-    G4int copy_number = detector_copy_ID + detector_number;
+    //G4int copy_number = detector_copy_ID + detector_number;
 
     assemblyGe->MakeImprint(exp_hall_log, move, rotate, detector_number);
     assemblyInnerBGO->MakeImprint(exp_hall_log, move, rotate, detector_number+(20*1));

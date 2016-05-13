@@ -152,7 +152,6 @@ DetectionSystemPaces::DetectionSystemPaces() :
 DetectionSystemPaces::~DetectionSystemPaces()
 {
     // logical volumes
-    delete exp_hall_log;
     delete aluminum_hemisphere_log;
     delete aluminum_annulus_top_log;
     delete aluminum_annulus_bot_log;

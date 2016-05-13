@@ -131,7 +131,7 @@ G4int DetectionSystemSceptar::Build()
 G4int DetectionSystemSceptar::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int detectorNumber)
 {
 
-    G4RotationMatrix* rotate_null = new G4RotationMatrix;
+    //G4RotationMatrix* rotate_null = new G4RotationMatrix;
     G4ThreeVector move_null(0.0,0.0,0.0);
 
     G4double extra = 2.0*this->mylar_thickness;
@@ -475,7 +475,7 @@ G4int DetectionSystemSceptar::ConstructScintillator()
     G4VisAttributes* mylar_vis_att = new G4VisAttributes(G4Colour(0.6,0.6,0.6));
     mylar_vis_att->SetVisibility(true);
 
-    G4double extra = 2.0*this->mylar_thickness;
+    //G4double extra = 2.0*this->mylar_thickness;
 
     //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
     //&&&&&&& Making the square-ish shaped scintillators 1-5 are &&&&&&&

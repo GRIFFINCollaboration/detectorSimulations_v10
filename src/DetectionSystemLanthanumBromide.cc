@@ -65,99 +65,99 @@ DetectionSystemLanthanumBromide::DetectionSystemLanthanumBromide() :
     //
 
 
-    this->detail_view_end_angle	      = 360.0*deg;
-    this->crystal_material            = "Cerium_Doped_Lanthanum_Bromide";
+    detail_view_end_angle	      = 360.0*deg;
+    crystal_material            = "Cerium_Doped_Lanthanum_Bromide";
 
-    this->can_material                = "G4_Al";
-    this->seal_material               = "G4_RUBBER_NEOPRENE";
-    this->disc_material               = "G4_POLYETHYLENE";
-    this->packing_material            = "G4_ALUMINUM_OXIDE";
+    can_material                = "G4_Al";
+    seal_material               = "G4_RUBBER_NEOPRENE";
+    disc_material               = "G4_POLYETHYLENE";
+    packing_material            = "G4_ALUMINUM_OXIDE";
 
-    this->crystal_length_z            = 2.0*inchtocm*cm;
-    this->crystal_inner_radius 		  = 0.0*cm;
-    this->crystal_outer_radius 		  = 1.0*inchtocm*cm;
+    crystal_length_z            = 2.0*inchtocm*cm;
+    crystal_inner_radius 		  = 0.0*cm;
+    crystal_outer_radius 		  = 1.0*inchtocm*cm;
 
-    this->packing_length_z            = this->crystal_length_z;
-    this->packing_inner_radius 		  = this->crystal_outer_radius;
-    this->packing_outer_radius 		  = 0.0625*inchtocm*cm + this->crystal_outer_radius;
+    packing_length_z            = crystal_length_z;
+    packing_inner_radius 		  = crystal_outer_radius;
+    packing_outer_radius 		  = 0.0625*inchtocm*cm + crystal_outer_radius;
 
-    this->packing_lid_inner_radius    = 0.0*cm;
-    this->packing_lid_outer_radius 	  = this->packing_outer_radius;
-    this->packing_front_lid_thickness = 0.0625*inchtocm*cm;
+    packing_lid_inner_radius    = 0.0*cm;
+    packing_lid_outer_radius 	  = packing_outer_radius;
+    packing_front_lid_thickness = 0.0625*inchtocm*cm;
 
-    this->disc_lid_inner_radius       = 0.0*cm;
-    this->disc_lid_outer_radius       = this->packing_lid_outer_radius;
-    this->disc_front_lid_thickness	= 0.006*inchtocm*cm;
+    disc_lid_inner_radius       = 0.0*cm;
+    disc_lid_outer_radius       = packing_lid_outer_radius;
+    disc_front_lid_thickness	= 0.006*inchtocm*cm;
 
-    this->seal_lid_inner_radius       = 0.0*cm;
-    this->seal_lid_outer_radius       = this->packing_lid_outer_radius;
-    this->seal_front_lid_thickness	  = 0.04*inchtocm*cm;
+    seal_lid_inner_radius       = 0.0*cm;
+    seal_lid_outer_radius       = packing_lid_outer_radius;
+    seal_front_lid_thickness	  = 0.04*inchtocm*cm;
 
-    this->can_length_z                = this->crystal_length_z + this->packing_front_lid_thickness + this->disc_front_lid_thickness + this->seal_front_lid_thickness;
-    this->can_inner_radius            = this->packing_outer_radius;
-    this->can_outer_radius            = 0.019*inchtocm*cm + this->packing_outer_radius;
+    can_length_z                = crystal_length_z + packing_front_lid_thickness + disc_front_lid_thickness + seal_front_lid_thickness;
+    can_inner_radius            = packing_outer_radius;
+    can_outer_radius            = 0.019*inchtocm*cm + packing_outer_radius;
 
-    this->can_lid_inner_radius        = 0.0*cm;
-    this->can_lid_outer_radius        = this->can_outer_radius;
-    this->can_front_lid_thickness     = 0.019*inchtocm*cm;
-    this->can_back_lid_thickness      = 0.019*inchtocm*cm;
+    can_lid_inner_radius        = 0.0*cm;
+    can_lid_outer_radius        = can_outer_radius;
+    can_front_lid_thickness     = 0.019*inchtocm*cm;
+    can_back_lid_thickness      = 0.019*inchtocm*cm;
 
 
-    this->detector_length_z           = this->crystal_length_z +
-            this->packing_front_lid_thickness +
-            this->disc_front_lid_thickness +
-            this->seal_front_lid_thickness +
-            this->can_front_lid_thickness +
-            this->can_back_lid_thickness;
+    detector_length_z           = crystal_length_z +
+            packing_front_lid_thickness +
+            disc_front_lid_thickness +
+            seal_front_lid_thickness +
+            can_front_lid_thickness +
+            can_back_lid_thickness;
     {
         //G4double triangleThetaAngle = (180/M_PI)*(atan((1/sqrt(3))/sqrt((11/12) + (1/sqrt(2))) )+atan((sqrt(2))/(1+sqrt(2))))*deg;
         G4double triangleThetaAngle = 54.735610317245360*deg;
 
         // theta
-        this->detectorAngles[0][0] 	= triangleThetaAngle;
-        this->detectorAngles[1][0] 	= triangleThetaAngle;
-        this->detectorAngles[2][0] 	= triangleThetaAngle;
-        this->detectorAngles[3][0] 	= triangleThetaAngle;
-        this->detectorAngles[4][0] 	= 180.0*deg - triangleThetaAngle;
-        this->detectorAngles[5][0] 	= 180.0*deg - triangleThetaAngle;
-        this->detectorAngles[6][0] 	= 180.0*deg - triangleThetaAngle;
-        this->detectorAngles[7][0] 	= 180.0*deg - triangleThetaAngle;
+        detectorAngles[0][0] 	= triangleThetaAngle;
+        detectorAngles[1][0] 	= triangleThetaAngle;
+        detectorAngles[2][0] 	= triangleThetaAngle;
+        detectorAngles[3][0] 	= triangleThetaAngle;
+        detectorAngles[4][0] 	= 180.0*deg - triangleThetaAngle;
+        detectorAngles[5][0] 	= 180.0*deg - triangleThetaAngle;
+        detectorAngles[6][0] 	= 180.0*deg - triangleThetaAngle;
+        detectorAngles[7][0] 	= 180.0*deg - triangleThetaAngle;
         // phi
-        this->detectorAngles[0][1] 	= 22.5*deg;
-        this->detectorAngles[1][1] 	= 112.5*deg;
-        this->detectorAngles[2][1] 	= 202.5*deg;
-        this->detectorAngles[3][1] 	= 292.5*deg;
-        this->detectorAngles[4][1] 	= 22.5*deg;
-        this->detectorAngles[5][1] 	= 112.5*deg;
-        this->detectorAngles[6][1] 	= 202.5*deg;
-        this->detectorAngles[7][1] 	= 292.5*deg;
+        detectorAngles[0][1] 	= 22.5*deg;
+        detectorAngles[1][1] 	= 112.5*deg;
+        detectorAngles[2][1] 	= 202.5*deg;
+        detectorAngles[3][1] 	= 292.5*deg;
+        detectorAngles[4][1] 	= 22.5*deg;
+        detectorAngles[5][1] 	= 112.5*deg;
+        detectorAngles[6][1] 	= 202.5*deg;
+        detectorAngles[7][1] 	= 292.5*deg;
         // yaw (alpha)
-        this->detectorAngles[0][2] 	= 0.0*deg;
-        this->detectorAngles[1][2] 	= 0.0*deg;
-        this->detectorAngles[2][2] 	= 0.0*deg;
-        this->detectorAngles[3][2] 	= 0.0*deg;
-        this->detectorAngles[4][2] 	= 0.0*deg;
-        this->detectorAngles[5][2] 	= 0.0*deg;
-        this->detectorAngles[6][2] 	= 0.0*deg;
-        this->detectorAngles[7][2] 	= 0.0*deg;
+        detectorAngles[0][2] 	= 0.0*deg;
+        detectorAngles[1][2] 	= 0.0*deg;
+        detectorAngles[2][2] 	= 0.0*deg;
+        detectorAngles[3][2] 	= 0.0*deg;
+        detectorAngles[4][2] 	= 0.0*deg;
+        detectorAngles[5][2] 	= 0.0*deg;
+        detectorAngles[6][2] 	= 0.0*deg;
+        detectorAngles[7][2] 	= 0.0*deg;
         // pitch (beta)
-        this->detectorAngles[0][3] 	= triangleThetaAngle;
-        this->detectorAngles[1][3] 	= triangleThetaAngle;
-        this->detectorAngles[2][3] 	= triangleThetaAngle;
-        this->detectorAngles[3][3] 	= triangleThetaAngle;
-        this->detectorAngles[4][3] 	= 180.0*deg - triangleThetaAngle;
-        this->detectorAngles[5][3] 	= 180.0*deg - triangleThetaAngle;
-        this->detectorAngles[6][3] 	= 180.0*deg - triangleThetaAngle;
-        this->detectorAngles[7][3] 	= 180.0*deg - triangleThetaAngle;
+        detectorAngles[0][3] 	= triangleThetaAngle;
+        detectorAngles[1][3] 	= triangleThetaAngle;
+        detectorAngles[2][3] 	= triangleThetaAngle;
+        detectorAngles[3][3] 	= triangleThetaAngle;
+        detectorAngles[4][3] 	= 180.0*deg - triangleThetaAngle;
+        detectorAngles[5][3] 	= 180.0*deg - triangleThetaAngle;
+        detectorAngles[6][3] 	= 180.0*deg - triangleThetaAngle;
+        detectorAngles[7][3] 	= 180.0*deg - triangleThetaAngle;
         // roll (gamma)
-        this->detectorAngles[0][4] 	= 22.5*deg;
-        this->detectorAngles[1][4] 	= 112.5*deg;
-        this->detectorAngles[2][4] 	= 202.5*deg;
-        this->detectorAngles[3][4] 	= 292.5*deg;
-        this->detectorAngles[4][4] 	= 22.5*deg;
-        this->detectorAngles[5][4] 	= 112.5*deg;
-        this->detectorAngles[6][4] 	= 202.5*deg;
-        this->detectorAngles[7][4] 	= 292.5*deg;
+        detectorAngles[0][4] 	= 22.5*deg;
+        detectorAngles[1][4] 	= 112.5*deg;
+        detectorAngles[2][4] 	= 202.5*deg;
+        detectorAngles[3][4] 	= 292.5*deg;
+        detectorAngles[4][4] 	= 22.5*deg;
+        detectorAngles[5][4] 	= 112.5*deg;
+        detectorAngles[6][4] 	= 202.5*deg;
+        detectorAngles[7][4] 	= 292.5*deg;
     }
 }
 
@@ -181,7 +181,7 @@ G4int DetectionSystemLanthanumBromide::Build()//G4SDManager* mySDman)
 
     // Build assembly volume
     G4AssemblyVolume* myAssembly = new G4AssemblyVolume();
-    this->assembly = myAssembly;
+    assembly = myAssembly;
 
     G4cout << "BuildCrystalVolume" << G4endl;
     BuildCrystalVolume();
@@ -209,7 +209,7 @@ G4double DetectionSystemLanthanumBromide::GetTheta(G4int i)
 {
     // to crystal face
 
-    G4double theta  = this->detectorAngles[i][0];
+    G4double theta  = detectorAngles[i][0];
 
     return theta;
 }
@@ -218,28 +218,28 @@ G4double DetectionSystemLanthanumBromide::GetPhi(G4int i)
 {
     // to crystal face
 
-    G4double phi    = this->detectorAngles[i][1];
+    G4double phi    = detectorAngles[i][1];
     return phi;
 }
 G4double DetectionSystemLanthanumBromide::GetYaw(G4int i)
 {
     // to crystal face
 
-    G4double yaw    = this->detectorAngles[i][2];
+    G4double yaw    = detectorAngles[i][2];
     return yaw;
 }
 G4double DetectionSystemLanthanumBromide::GetPitch(G4int i)
 {
     // to crystal face
 
-    G4double pitch    = this->detectorAngles[i][3];
+    G4double pitch    = detectorAngles[i][3];
     return pitch;
 }
 G4double DetectionSystemLanthanumBromide::GetRoll(G4int i)
 {
     // to crystal face
 
-    G4double roll    = this->detectorAngles[i][4];
+    G4double roll    = detectorAngles[i][4];
     return roll;
 }
 
@@ -249,16 +249,16 @@ G4int DetectionSystemLanthanumBromide::PlaceDetector(G4LogicalVolume* exp_hall_l
 
     G4cout << "LanthanumBromide Detector Number = " << detector_number << G4endl;
 
-    G4int copy_number = detector_copy_ID + detector_number;
+    copy_number = detector_copy_ID + detector_number;
 
-    G4double position = radialpos + can_front_lid_thickness +( this->can_length_z / 2.0 ) ;
+    G4double position = radialpos + can_front_lid_thickness +( can_length_z / 2.0 ) ;
     set_radial_pos = radialpos;
 
-    G4double theta  = this->detectorAngles[detector_number][0];
-    G4double phi    = this->detectorAngles[detector_number][1];
-    G4double alpha  = this->detectorAngles[detector_number][2]; // yaw
-    G4double beta   = this->detectorAngles[detector_number][3]; // pitch
-    G4double gamma  = this->detectorAngles[detector_number][4]; // roll
+    G4double theta  = detectorAngles[detector_number][0];
+    G4double phi    = detectorAngles[detector_number][1];
+    //G4double alpha  = detectorAngles[detector_number][2]; // yaw
+    G4double beta   = detectorAngles[detector_number][3]; // pitch
+    G4double gamma  = detectorAngles[detector_number][4]; // roll
 
     G4double x = 0;
     G4double y = 0;
@@ -278,9 +278,9 @@ G4int DetectionSystemLanthanumBromide::PlaceDetector(G4LogicalVolume* exp_hall_l
 
 G4int DetectionSystemLanthanumBromide::BuildCrystalVolume()
 {
-    G4Material* material = G4Material::GetMaterial(this->crystal_material);
+    G4Material* material = G4Material::GetMaterial(crystal_material);
     if( !material ) {
-        G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
+        G4cout << " ----> Material " << crystal_material << " not found, cannot build the detector shell! " << G4endl;
         return 0;
     }
 
@@ -303,16 +303,16 @@ G4int DetectionSystemLanthanumBromide::BuildCrystalVolume()
         crystal_block_log->SetVisAttributes(vis_att);
     }
 
-    this->assembly->AddPlacedVolume(crystal_block_log, move, rotate);
+    assembly->AddPlacedVolume(crystal_block_log, move, rotate);
 
     return 1;
 }
 
 G4int DetectionSystemLanthanumBromide::BuildAluminumCanVolume()
 {
-    G4Material* material = G4Material::GetMaterial(this->can_material);
+    G4Material* material = G4Material::GetMaterial(can_material);
     if( !material ) {
-        G4cout << " ----> Material " << this->can_material << " not found, cannot build the detector shell! " << G4endl;
+        G4cout << " ----> Material " << can_material << " not found, cannot build the detector shell! " << G4endl;
         return 0;
     }
 
@@ -342,7 +342,7 @@ G4int DetectionSystemLanthanumBromide::BuildAluminumCanVolume()
     move 		= z_position * direction;
 
     //add physical cylinder
-    this->assembly->AddPlacedVolume(can_cylinder_log, move, rotate);
+    assembly->AddPlacedVolume(can_cylinder_log, move, rotate);
 
     /////////////////////////////////////////////////////////////////////
     // Build and Place Aluminum Front Lid
@@ -362,7 +362,7 @@ G4int DetectionSystemLanthanumBromide::BuildAluminumCanVolume()
     move 		= z_position * direction;
 
     //add physical front can_lid
-    this->assembly->AddPlacedVolume(can_front_lid_log, move, rotate);
+    assembly->AddPlacedVolume(can_front_lid_log, move, rotate);
 
     /////////////////////////////////////////////////////////////////////
     // Build and Place Aluminum Back Lid
@@ -381,16 +381,16 @@ G4int DetectionSystemLanthanumBromide::BuildAluminumCanVolume()
     move 		= z_position * direction;
 
     // add physical back can_lid
-    this->assembly->AddPlacedVolume(can_back_lid_log, move, rotate);
+    assembly->AddPlacedVolume(can_back_lid_log, move, rotate);
 
     return 1;
 }
 
 G4int DetectionSystemLanthanumBromide::BuildPackingVolume()
 {
-    G4Material* material = G4Material::GetMaterial(this->packing_material);
+    G4Material* material = G4Material::GetMaterial(packing_material);
     if( !material ) {
-        G4cout << " ----> Material " << this->packing_material << " not found, cannot build the detector shell! " << G4endl;
+        G4cout << " ----> Material " << packing_material << " not found, cannot build the detector shell! " << G4endl;
         return 0;
     }
 
@@ -420,7 +420,7 @@ G4int DetectionSystemLanthanumBromide::BuildPackingVolume()
     move          = z_position * direction;
 
     //add physical cylinder
-    this->assembly->AddPlacedVolume(packing_cylinder_log, move, rotate);
+    assembly->AddPlacedVolume(packing_cylinder_log, move, rotate);
 
     /////////////////////////////////////////////////////////////////////
     // Build and Place Front Lid
@@ -439,16 +439,16 @@ G4int DetectionSystemLanthanumBromide::BuildPackingVolume()
     move 		= z_position * direction;
 
     //add physical front packing_lid
-    this->assembly->AddPlacedVolume(packing_front_lid_log, move, rotate);
+    assembly->AddPlacedVolume(packing_front_lid_log, move, rotate);
 
     return 1;
 }
 
 G4int DetectionSystemLanthanumBromide::BuildDiscVolume()
 {
-    G4Material* material = G4Material::GetMaterial(this->disc_material);
+    G4Material* material = G4Material::GetMaterial(disc_material);
     if( !material ) {
-        G4cout << " ----> Material " << this->disc_material << " not found, cannot build the detector shell! " << G4endl;
+        G4cout << " ----> Material " << disc_material << " not found, cannot build the detector shell! " << G4endl;
         return 0;
     }
 
@@ -478,16 +478,16 @@ G4int DetectionSystemLanthanumBromide::BuildDiscVolume()
     move 		= z_position * direction;
 
     //add physical front disc_lid
-    this->assembly->AddPlacedVolume(disc_front_lid_log, move, rotate);
+    assembly->AddPlacedVolume(disc_front_lid_log, move, rotate);
 
     return 1;
 }
 
 G4int DetectionSystemLanthanumBromide::BuildSealVolume()
 {
-    G4Material* material = G4Material::GetMaterial(this->seal_material);
+    G4Material* material = G4Material::GetMaterial(seal_material);
     if( !material ) {
-        G4cout << " ----> Material " << this->seal_material << " not found, cannot build the detector shell! " << G4endl;
+        G4cout << " ----> Material " << seal_material << " not found, cannot build the detector shell! " << G4endl;
         return 0;
     }
 
@@ -517,7 +517,7 @@ G4int DetectionSystemLanthanumBromide::BuildSealVolume()
     move 		= z_position * direction;
 
     //add physical front seal_lid
-    this->assembly->AddPlacedVolume(seal_front_lid_log, move, rotate);
+    assembly->AddPlacedVolume(seal_front_lid_log, move, rotate);
 
     return 1;
 }
@@ -528,7 +528,7 @@ G4int DetectionSystemLanthanumBromide::BuildSealVolume()
 G4Tubs* DetectionSystemLanthanumBromide::BuildCrystal()
 {
     G4double start_phi = 0.0;
-    G4double end_phi = this->detail_view_end_angle;
+    G4double end_phi = detail_view_end_angle;
 
     G4double inner_radius = crystal_inner_radius;
     G4double outer_radius = crystal_outer_radius;
@@ -543,7 +543,7 @@ G4Tubs* DetectionSystemLanthanumBromide::BuildCrystal()
 G4Tubs* DetectionSystemLanthanumBromide::BuildAluminumCan()
 {
     G4double start_phi = 0.0;
-    G4double end_phi = this->detail_view_end_angle;
+    G4double end_phi = detail_view_end_angle;
 
     G4double inner_radius 	= can_inner_radius;
     G4double outer_radius 	= can_outer_radius;
@@ -557,7 +557,7 @@ G4Tubs* DetectionSystemLanthanumBromide::BuildAluminumCan()
 G4Tubs* DetectionSystemLanthanumBromide::BuildAluminumCanFrontLid()
 {
     G4double start_phi = 0.0;
-    G4double end_phi = this->detail_view_end_angle;
+    G4double end_phi = detail_view_end_angle;
 
     G4double inner_radius = can_lid_inner_radius;
     G4double outer_radius = can_lid_outer_radius;
@@ -571,7 +571,7 @@ G4Tubs* DetectionSystemLanthanumBromide::BuildAluminumCanFrontLid()
 G4Tubs* DetectionSystemLanthanumBromide::BuildAluminumCanBackLid()
 {
     G4double start_phi = 0.0;
-    G4double end_phi = this->detail_view_end_angle;
+    G4double end_phi = detail_view_end_angle;
 
     G4double inner_radius = can_lid_inner_radius;
     G4double outer_radius = can_lid_outer_radius;
@@ -585,7 +585,7 @@ G4Tubs* DetectionSystemLanthanumBromide::BuildAluminumCanBackLid()
 G4Tubs* DetectionSystemLanthanumBromide::BuildPacking()
 {
     G4double start_phi = 0.0;
-    G4double end_phi = this->detail_view_end_angle;
+    G4double end_phi = detail_view_end_angle;
 
     G4double inner_radius 	= packing_inner_radius;
     G4double outer_radius 	= packing_outer_radius;
@@ -599,7 +599,7 @@ G4Tubs* DetectionSystemLanthanumBromide::BuildPacking()
 G4Tubs* DetectionSystemLanthanumBromide::BuildPackingFrontLid()
 {
     G4double start_phi = 0.0;
-    G4double end_phi = this->detail_view_end_angle;
+    G4double end_phi = detail_view_end_angle;
 
     G4double inner_radius = packing_lid_inner_radius;
     G4double outer_radius = packing_lid_outer_radius;
@@ -613,7 +613,7 @@ G4Tubs* DetectionSystemLanthanumBromide::BuildPackingFrontLid()
 G4Tubs* DetectionSystemLanthanumBromide::BuildDiscFrontLid()
 {
     G4double start_phi = 0.0;
-    G4double end_phi = this->detail_view_end_angle;
+    G4double end_phi = detail_view_end_angle;
 
     G4double inner_radius = disc_lid_inner_radius;
     G4double outer_radius = disc_lid_outer_radius;
@@ -627,7 +627,7 @@ G4Tubs* DetectionSystemLanthanumBromide::BuildDiscFrontLid()
 G4Tubs* DetectionSystemLanthanumBromide::BuildSealFrontLid()
 {
     G4double start_phi = 0.0;
-    G4double end_phi = this->detail_view_end_angle;
+    G4double end_phi = detail_view_end_angle;
 
     G4double inner_radius = seal_lid_inner_radius;
     G4double outer_radius = seal_lid_outer_radius;

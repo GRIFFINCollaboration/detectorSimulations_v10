@@ -549,37 +549,41 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
     return 1;
 }
 
-G4int DetectionSystemDescant::PlaceSingleDetector(G4LogicalVolume* exp_hall_log, G4int colour)
-{
-    G4int i = 0;
-    G4RotationMatrix * rotate = new G4RotationMatrix;
-    G4ThreeVector move = G4ThreeVector(0., 0., 0.);
 
-    if(colour == 1) {
-        assemblyWhite->MakeImprint(exp_hall_log, move, rotate, i);
-        assemblyWhiteScintillator->MakeImprint(exp_hall_log, move, rotate, i);
-    }
-    else if(colour == 2) {
-        assemblyRed->MakeImprint(exp_hall_log, move, rotate, i);
-        assemblyRedScintillator->MakeImprint(exp_hall_log, move, rotate, i);
-    }
-    else if(colour == 3) {
-        assemblyBlue->MakeImprint(exp_hall_log, move, rotate, i);
-        assemblyBlueScintillator->MakeImprint(exp_hall_log, move, rotate, i);
-    }
-    else if(colour == 4) {
-        assemblyGreen->MakeImprint(exp_hall_log, move, rotate, i);
-        assemblyGreenScintillator->MakeImprint(exp_hall_log, move, rotate, i);
-    }
-    else if(colour == 5) {
-        assemblyYellow->MakeImprint(exp_hall_log, move, rotate, i);
-        assemblyYellowScintillator->MakeImprint(exp_hall_log, move, rotate, i);
-    }
+G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4String color, G4ThreeVector pos, G4ThreeVector rot)
+{
+    G4RotationMatrix* rotate;
+
+	 G4double alpha = rot.x();
+	 G4double beta  = rot.y();
+	 G4double gamma = rot.z();
+
+    // Place Detector
+	 rotate = new G4RotationMatrix;
+	 rotate->rotateY(M_PI); // flip the detector so that the face is pointing upstream.
+	 rotate->rotateZ(gamma);
+	 rotate->rotateY(beta);
+	 rotate->rotateZ(alpha);
+
+	 if(color.compareTo("blue", G4String::ignoreCase) == 0) {
+		assemblyBlue->MakeImprint(exp_hall_log, pos, rotate, 1);
+		assemblyBlueScintillator->MakeImprint(exp_hall_log, pos, rotate, 1);
+	 } else if(color.compareTo("red", G4String::ignoreCase) == 0) {
+		assemblyRed->MakeImprint(exp_hall_log, pos, rotate, 1);
+		assemblyRedScintillator->MakeImprint(exp_hall_log, pos, rotate, 1);
+	 } else if(color.compareTo("white", G4String::ignoreCase) == 0) {
+		assemblyWhite->MakeImprint(exp_hall_log, pos, rotate, 1);
+		assemblyWhiteScintillator->MakeImprint(exp_hall_log, pos, rotate, 1);
+	 } else if(color.compareTo("green", G4String::ignoreCase) == 0) {
+		assemblyGreen->MakeImprint(exp_hall_log, pos, rotate, 1);
+		assemblyGreenScintillator->MakeImprint(exp_hall_log, pos, rotate, 1);
+	 } else if(color.compareTo("yellow", G4String::ignoreCase) == 0) {
+		assemblyYellow->MakeImprint(exp_hall_log, pos, rotate, 1);
+		assemblyYellowScintillator->MakeImprint(exp_hall_log, pos, rotate, 1);
+	 }
 
     return 1;
 }
-
-
 
 G4int DetectionSystemDescant::PlaceDetectorAuxPorts(G4LogicalVolume* exp_hall_log, G4int detector_number, G4double radialpos)
 {
@@ -595,7 +599,7 @@ G4int DetectionSystemDescant::PlaceDetectorAuxPorts(G4LogicalVolume* exp_hall_lo
 
     G4double theta  = this->detectorAngles[detector_number][0];
     G4double phi    = this->detectorAngles[detector_number][1];
-    G4double alpha  = this->detectorAngles[detector_number][2]; // yaw
+    //G4double alpha  = this->detectorAngles[detector_number][2]; // yaw
     G4double beta   = this->detectorAngles[detector_number][3]; // pitch
     G4double gamma  = this->detectorAngles[detector_number][4]; // roll
 

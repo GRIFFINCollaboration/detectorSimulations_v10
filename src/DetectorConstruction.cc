@@ -161,7 +161,10 @@ DetectorConstruction::DetectorConstruction() :
         griffinDetectorsMap[i] = 0;
     }
 
-
+	 descantColor = "white";
+	 descantRotation.setX(M_PI);
+	 descantRotation.setY(0.);
+	 descantRotation.setZ(0.);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -424,7 +427,7 @@ void DetectorConstruction::AddApparatusGriffinStructure(G4int selector)
 void DetectorConstruction::AddDetectionSystemSodiumIodide(G4int ndet)
 {
     // Describe Placement
-    G4double detectorAngles[8][2] = {0};
+ 	 G4double detectorAngles[8][2] = {{}};
     G4double theta,phi,position;
     G4ThreeVector move,direction;
 
@@ -845,16 +848,33 @@ void DetectorConstruction::AddDetectionSystemDescantAuxPorts(G4ThreeVector input
     }
 }
 
-void DetectorConstruction::AddDetectionSystemDescantSingle(G4ThreeVector input)
+void DetectorConstruction::SetDetectionSystemDescantRotation(G4ThreeVector input)
 {
-    G4int det_colour = G4int(input.x());
-    G4bool leadShield = G4bool(input.y());
-
-    DetectionSystemDescant * pDetectionSystemDescant = new DetectionSystemDescant(leadShield);
-    pDetectionSystemDescant->Build();
-    pDetectionSystemDescant->PlaceSingleDetector(logicWorld, det_colour);
+  //convert from degree to rad
+  descantRotation.setX(input.x()/180.*M_PI);
+  descantRotation.setY(input.y()/180.*M_PI);
+  descantRotation.setZ(input.z()/180.*M_PI);
 }
 
+void DetectorConstruction::SetDetectionSystemDescantColor(G4String input)
+{
+  descantColor = input;
+}
+
+void DetectorConstruction::AddDetectionSystemDescantCart(G4ThreeVector input)
+{
+    DetectionSystemDescant* pDetectionSystemDescant = new DetectionSystemDescant(true) ;
+    pDetectionSystemDescant->Build() ;
+    pDetectionSystemDescant->PlaceDetector( logicWorld, descantColor, input, descantRotation ) ;
+}
+
+void DetectorConstruction::AddDetectionSystemDescantSpher(G4ThreeVector input, G4double unit)
+{
+    G4ThreeVector sphericalVector;
+    //convert from degree to rad
+	 sphericalVector.setRThetaPhi(input.x()*unit, input.y()/180.*M_PI, input.z()/180.*M_PI);
+	 AddDetectionSystemDescantCart(sphericalVector);
+}
 
 void DetectorConstruction::AddApparatusDescantStructure()
 {

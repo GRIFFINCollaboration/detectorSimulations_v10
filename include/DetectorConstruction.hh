@@ -131,7 +131,11 @@ public:
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void AddDetectionSystemDescant(G4int ndet);
     void AddDetectionSystemDescantAuxPorts(G4ThreeVector input);
-    void AddDetectionSystemDescantSingle(G4ThreeVector input);
+ 
+    void SetDetectionSystemDescantRotation(G4ThreeVector input);
+    void SetDetectionSystemDescantColor(G4String input);
+    void AddDetectionSystemDescantCart(G4ThreeVector input);
+    void AddDetectionSystemDescantSpher(G4ThreeVector input, G4double unit);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void AddApparatusDescantStructure();
 
@@ -225,6 +229,9 @@ private:
     G4String matWorldName;
 
     DetectorMessenger* detectorMessenger;
+
+    G4ThreeVector descantRotation;
+    G4String descantColor;
 
 };
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
