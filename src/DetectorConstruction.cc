@@ -1,4 +1,4 @@
-//
+
 // ********************************************************************
 // * License and Disclaimer                                           *
 // *                                                                  *
@@ -845,6 +845,17 @@ void DetectorConstruction::AddDetectionSystemDescantAuxPorts(G4ThreeVector input
     }
 }
 
+void DetectorConstruction::AddDetectionSystemDescantSingle(G4ThreeVector input)
+{
+    G4int det_colour = G4int(input.x());
+    G4bool leadShield = G4bool(input.y());
+
+    DetectionSystemDescant * pDetectionSystemDescant = new DetectionSystemDescant(leadShield);
+    pDetectionSystemDescant->Build();
+    pDetectionSystemDescant->PlaceSingleDetector(logicWorld, det_colour);
+}
+
+
 void DetectorConstruction::AddApparatusDescantStructure()
 {
     ApparatusDescantStructure* pApparatusDescantStructure = new ApparatusDescantStructure() ;
@@ -885,10 +896,10 @@ void DetectorConstruction::AddApparatusDescantStructure()
 
 //}
 
-//void DetectorConstruction::AddDetectionSystemPaces(G4int ndet)
-//{
-//    DetectionSystemPaces* pPaces = new DetectionSystemPaces() ;
-//    pPaces->Build() ;
+void DetectorConstruction::AddDetectionSystemPaces(G4int ndet)
+{
+    DetectionSystemPaces* pPaces = new DetectionSystemPaces() ;
+    pPaces->Build() ;
 
-//    pPaces->PlaceDetector( logicWorld, ndet ) ;
-//}
+    pPaces->PlaceDetector( logicWorld, ndet ) ;
+}

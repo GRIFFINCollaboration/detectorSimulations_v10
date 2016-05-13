@@ -51,6 +51,7 @@ public:
     G4int Build();
     G4int PlaceDetector(G4LogicalVolume* exp_hall_log, G4int detector_number);
     G4int PlaceDetectorAuxPorts(G4LogicalVolume* exp_hall_log, G4int detector_number, G4double radialpos);
+    G4int PlaceSingleDetector(G4LogicalVolume * exp_hall_log, G4int colour);
 
 private:
     // Logical volumes
@@ -71,6 +72,9 @@ private:
     G4LogicalVolume* red_lead_volume_log;
     G4LogicalVolume* white_lead_volume_log;
     G4LogicalVolume* yellow_lead_volume_log;
+    
+    G4LogicalVolume* quartz_window_5inch_log;
+    G4LogicalVolume* quartz_window_3inch_log;   
 
     // Assembly volumes
     G4AssemblyVolume* assemblyBlue;                 // Contains all non-sensitive materials
@@ -95,6 +99,27 @@ private:
     G4String lead_material;
     G4bool   includeLead;
 
+
+
+    G4double can_back_thickness;
+
+
+
+    // for making PMT cuts
+    G4double start_phi;
+    G4double end_phi;
+    G4double inner_radius_window;
+    G4double outer_radius_window_5inch;
+    G4double outer_radius_window_3inch;
+    G4double half_length_z_window_cut;
+    G4double white_PMT_offset_Y;
+    G4double blue_PMT_offset_X;
+    G4double red_PMT_offset_X;
+    G4double yellow_green_PMT_offset_X;
+    G4double yellow_green_PMT_offset_Y;
+    G4String quartz_material;
+    G4double optical_window_half_thickness;
+
     // Saint Gobain data files, 6 points around the front face of the can, and 6 on the back
     // from Dan Brennan
     G4double blue_detector[12][3];
@@ -102,6 +127,10 @@ private:
     G4double red_detector[12][3];
     G4double white_detector[12][3];
     G4double yellow_detector[12][3];
+
+    G4double trim_green_y;
+    G4double trim_yellow_y;
+    G4double trim_blue_x;
 
     // These are the angles of the cuts for each of the 6 sides of the detectors
     G4double blue_phi[6];
@@ -130,6 +159,11 @@ private:
     G4Colour white_colour;
     G4Colour yellow_colour;
     G4Colour liquid_colour; // Scintillator colour
+    G4Colour grey_colour;   // stainless steel pmt tube colour
+    G4Colour magenta_colour;  // optical window colour
+    G4Colour black_colour;
+
+    G4bool surfCheck;
 
     G4int BuildCanVolume();
     G4int BuildDetectorVolume();

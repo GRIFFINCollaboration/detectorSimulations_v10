@@ -228,10 +228,13 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     AddDetectionSystemDescantAuxPortsCmd->SetGuidance("/DetSys/det/addDescantAuxPorts _nDet_ _radialPos_ _leadShield_");
     AddDetectionSystemDescantAuxPortsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+    AddDetectionSystemDescantSingleCmd = new G4UIcmdWith3Vector("/DetSys/det/addSingleDescantDetector",this);
+    AddDetectionSystemDescantSingleCmd->SetGuidance("Add a single DESCANT prototype detector at the origin");
+    AddDetectionSystemDescantSingleCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
     AddApparatusDescantStructureCmd = new G4UIcmdWithoutParameter("/DetSys/det/addDescantStructure",this);
     AddApparatusDescantStructureCmd->SetGuidance("Add DESCANT structure");
     AddApparatusDescantStructureCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
 
     AddDetectionSystemGriffinForwardCmd = new G4UIcmdWithAnInteger("/DetSys/det/addGriffinForward",this);
     AddDetectionSystemGriffinForwardCmd->SetGuidance("Add Detection System GriffinForward");
@@ -352,6 +355,7 @@ DetectorMessenger::~DetectorMessenger()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     delete AddDetectionSystemDescantCmd;
     delete AddDetectionSystemDescantAuxPortsCmd;
+    delete AddDetectionSystemDescantSingleCmd;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     delete AddApparatusDescantStructureCmd;
 
@@ -489,6 +493,9 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     if( command == AddDetectionSystemDescantAuxPortsCmd )  {
         Detector->AddDetectionSystemDescantAuxPorts(AddDetectionSystemDescantAuxPortsCmd->GetNew3VectorValue(newValue));
     }
+    if( command == AddDetectionSystemDescantSingleCmd ) {
+        Detector->AddDetectionSystemDescantSingle(AddDetectionSystemDescantSingleCmd->GetNew3VectorValue(newValue));
+    }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     if( command == AddApparatusDescantStructureCmd ) {
         Detector->AddApparatusDescantStructure();
@@ -536,15 +543,17 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     if( command == AddDetectionSystemGriffinSetDeadLayerCmd ) {
         Detector->AddDetectionSystemGriffinSetDeadLayer( AddDetectionSystemGriffinSetDeadLayerCmd->GetNew3VectorValue( newValue ) ) ;
     }
+    
     //  if( command == AddDetectionSystemSpiceCmd ) {
     //    Detector->AddDetectionSystemSpice(AddDetectionSystemSpiceCmd->GetNewIntValue(newValue));
     //  }
     //  if( command == AddDetectionSystemSpiceV02Cmd ) {
     //    Detector->AddDetectionSystemSpiceV02(AddDetectionSystemSpiceV02Cmd->GetNewIntValue(newValue));
     //  }
-    //  if( command == AddDetectionSystemPacesCmd ) {
-    //    Detector->AddDetectionSystemPaces(AddDetectionSystemPacesCmd->GetNewIntValue(newValue));
-    //  }
+    
+    if( command == AddDetectionSystemPacesCmd ) {
+        Detector->AddDetectionSystemPaces(AddDetectionSystemPacesCmd->GetNewIntValue(newValue));
+    }
     if( command == UseTIGRESSPositionsCmd ) {
         Detector->UseTIGRESSPositions(UseTIGRESSPositionsCmd->GetNewBoolValue(newValue));
     }
