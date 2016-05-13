@@ -113,8 +113,6 @@ private:
     G4double white_alpha_beta_gamma[20][3];
     G4double yellow_alpha_beta_gamma[10][3];
 
-
-
     // Descant Structure Colour
     G4Colour grey_colour;
 

@@ -288,21 +288,21 @@ G4int ApparatusDescantStructure::BuildDescantShell()
 
     // for construction of the back plates of each DESCANT detector
         // general
-    //rotate = new G4RotationMatrix;
-    //move = G4ThreeVector(0.0, 0.0, 0.0);
-    //G4Polyhedra * shellBack = new G4Polyhedra("shell_back", sPhi, dPhi, numSides, numZplanes, zPlanesBack, rInnerBack, rOuterBack);
-    //G4Tubs * cylinder = new G4Tubs("cylinder", rMin, rMax, halfLength, sPhi, dPhi);
-    //G4SubtractionSolid * shellBackHole = new G4SubtractionSolid("shell_back_with_holes", shellBack, cylinder, rotate, move);
+    rotate = new G4RotationMatrix;
+    move = G4ThreeVector(0.0, 0.0, 0.0);
+    G4Polyhedra * shellBack = new G4Polyhedra("shell_back", sPhi, dPhi, numSides, numZplanes, zPlanesBack, rInnerBack, rOuterBack);
+    G4Tubs * cylinder = new G4Tubs("cylinder", rMin, rMax, halfLength, sPhi, dPhi);
+    G4SubtractionSolid * shellBackHole = new G4SubtractionSolid("shell_back_with_holes", shellBack, cylinder, rotate, move);
         // yellow
-    //moveCut = 90.0*mm;
-    //rotate = new G4RotationMatrix;
-    //move = G4ThreeVector(-1.0*subBoxX - moveCut, 0.0, 0.0);
-    //G4SubtractionSolid * shellBackYellow = new G4SubtractionSolid("shell_back_with_holes_yellow", shellBackHole, subtractionBox, rotate, move);
+    moveCut = 90.0*mm;
+    rotate = new G4RotationMatrix;
+    move = G4ThreeVector(-1.0*subBoxX - moveCut, 0.0, 0.0);
+    G4SubtractionSolid * shellBackYellow = new G4SubtractionSolid("shell_back_with_holes_yellow", shellBackHole, subtractionBox, rotate, move);
         // green
-    //moveCut = 90.0*mm;
-    //rotate = new G4RotationMatrix;
-    //move = G4ThreeVector(1.0*subBoxX + moveCut, 0.0, 0.0);
-    //G4SubtractionSolid * shellBackGreen = new G4SubtractionSolid("shell_back_with_holes_green", shellBackHole, subtractionBox, rotate, move);
+    moveCut = 90.0*mm;
+    rotate = new G4RotationMatrix;
+    move = G4ThreeVector(1.0*subBoxX + moveCut, 0.0, 0.0);
+    G4SubtractionSolid * shellBackGreen = new G4SubtractionSolid("shell_back_with_holes_green", shellBackHole, subtractionBox, rotate, move);
 
     // Colour
     G4VisAttributes* grey_vis_att = new G4VisAttributes(grey_colour);
@@ -316,17 +316,14 @@ G4int ApparatusDescantStructure::BuildDescantShell()
 	 }
 	 
 	 
-	 //G4LogicalVolume * logicBack = new G4LogicalVolume(shellBackHole, structure_g4material, "logic_back", 0, 0, 0);
-	 //logicBack->SetVisAttributes(grey_colour);
+	 G4LogicalVolume * logicBack = new G4LogicalVolume(shellBackHole, structure_g4material, "logic_back", 0, 0, 0);
+	 logicBack->SetVisAttributes(grey_colour);
 	 
-	 //G4LogicalVolume * logicBackYellow = new G4LogicalVolume(shellBackYellow, structure_g4material, "logic_back_yellow", 0, 0, 0);
-	 //logicBackYellow->SetVisAttributes(grey_colour);
+	 G4LogicalVolume * logicBackYellow = new G4LogicalVolume(shellBackYellow, structure_g4material, "logic_back_yellow", 0, 0, 0);
+	 logicBackYellow->SetVisAttributes(grey_colour);
 	 
-    //G4LogicalVolume * logicBackGreen = new G4LogicalVolume(shellBackGreen, structure_g4material, "logic_back_green", 0, 0, 0);
-    //logicBackYellow->SetVisAttributes(grey_colour);
-
-
-
+     G4LogicalVolume * logicBackGreen = new G4LogicalVolume(shellBackGreen, structure_g4material, "logic_back_green", 0, 0, 0);
+     logicBackYellow->SetVisAttributes(grey_colour);
 
     // for making the DESCANT shell
     G4SubtractionSolid * pre_subtraction;
