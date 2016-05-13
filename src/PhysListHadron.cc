@@ -68,7 +68,10 @@
 //c-s
 #include "G4TripathiCrossSection.hh"
 #include "G4IonsShenCrossSection.hh"
-#include "G4GGNuclNuclCrossSection.hh"
+//-------------------------------------
+//#include "G4GGNuclNuclCrossSection.hh"
+#include "G4ComponentGGNuclNuclXsc.hh" 
+//-------------------------------------
 #include "G4ProtonInelasticCrossSection.hh"
 #include "G4NeutronInelasticCrossSection.hh"
 
@@ -260,7 +263,13 @@ void PhysListHadron::ConstructProcess()
 
     // Generic ion elastic
     G4NuclNuclDiffuseElastic* ionElasticModel = new G4NuclNuclDiffuseElastic;
-    G4GGNuclNuclCrossSection* ionElasticXS = new G4GGNuclNuclCrossSection;
+    
+    // ----------------------
+    //G4ComponentGGNuclNuclXsc * ionElasticXS = new G4ComponentGGNuclNuclXsc;
+    G4VCrossSectionDataSet* ionElasticXS = new G4VCrossSectionDataSet;
+    //G4GGNuclNuclCrossSection* ionElasticXS = new G4GGNuclNuclCrossSection;
+    //--------------------------
+
     ionElasticProcess.RegisterMe(ionElasticModel);
     ionElasticProcess.AddDataSet(ionElasticXS);
     pManager = G4GenericIon::GenericIon()->GetProcessManager();
