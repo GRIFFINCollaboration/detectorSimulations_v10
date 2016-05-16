@@ -118,6 +118,8 @@ private:
     G4UIcmdWith3VectorAndUnit*  AddDetectionSystemDescantCartCmd;
     G4UIcmdWith3VectorAndUnit*  AddDetectionSystemDescantSpherCmd;
 
+    G4UIcmdWith3Vector*         AddDetectionSystemTestcanCmd;
+
     G4UIcmdWithAnInteger*       AddDetectionSystemSceptarCmd;
     G4UIcmdWithAnInteger*       AddDetectionSystemGriffinForwardCmd;
     G4UIcmdWithAnInteger*       AddDetectionSystemGriffinForwardDetectorCmd;

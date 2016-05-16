@@ -64,6 +64,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "ApparatusDescantStructure.hh"
 
+#include "DetectionSystemTestcan.hh"
 
 #include "DetectionSystemGriffin.hh"
 #include "DetectionSystemSceptar.hh"
@@ -883,6 +884,16 @@ void DetectorConstruction::AddApparatusDescantStructure()
     pApparatusDescantStructure->PlaceDescantStructure( logicWorld );
 
     //pApparatusDescantStructure->PlaceDetector( logicWorld, ndet ) ;
+}
+
+void DetectorConstruction::AddDetectionSystemTestcan(G4ThreeVector input)
+{
+    G4double length = G4double(input.x())*cm;
+    G4double radius = G4double(input.y())*cm;
+
+    DetectionSystemTestcan* pDetectionSystemTestcan = new DetectionSystemTestcan(length, radius);
+    pDetectionSystemTestcan->Build();
+    pDetectionSystemTestcan->PlaceDetector(logicWorld);
 }
 
 //void DetectorConstruction::AddDetectionSystemSpice(G4int ndet)
