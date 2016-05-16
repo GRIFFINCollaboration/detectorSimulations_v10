@@ -105,8 +105,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     else particleType = 0;
 
 	 const G4VProcess* process = aStep->GetPostStepPoint()->GetProcessDefinedStep();
-	 G4int targetZ = 0;
-	 if(process->GetProcessType() == fHadronic) {
+	 G4int targetZ = -1;
+	 if(process != NULL && process->GetProcessType() == fHadronic) {
 		G4HadronicProcess* hadr_process = (G4HadronicProcess*) process;
 		const G4Isotope* target = NULL;
 		if(hadr_process != NULL) {
