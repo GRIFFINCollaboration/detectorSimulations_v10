@@ -37,6 +37,7 @@
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithAString.hh"
+#include "G4UIcmdWithABool.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -50,7 +51,8 @@ PhysicsListMessenger::PhysicsListMessenger(PhysicsList* pPhys)
       fAllCutCmd(0),
       fMCutCmd(0),
       fECutCmd(0),
-      fPListCmd(0)
+      fPListCmd(0),
+      fConstructOpCmd(0)
 {
     fPhysDir = new G4UIdirectory("/DetSys/phys/");
     fPhysDir->SetGuidance("physics control.");
@@ -101,6 +103,11 @@ PhysicsListMessenger::PhysicsListMessenger(PhysicsList* pPhys)
     fPListCmd->SetGuidance("Select modula physics list.");
     fPListCmd->SetParameterName("PList",false);
     fPListCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+    fConstructOpCmd = new G4UIcmdWithABool("/DetSys/phys/ConstructOpticalPhysics",this);
+    fConstructOpCmd->SetGuidance("Choose to build optical physics models");
+    fConstructOpCmd->SetDefaultValue(false);
+    fConstructOpCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -115,6 +122,7 @@ PhysicsListMessenger::~PhysicsListMessenger()
     delete fPListCmd;
     delete fECutCmd;
     delete fMCutCmd;
+    delete fConstructOpCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -147,6 +155,9 @@ void PhysicsListMessenger::SetNewValue(G4UIcommand* command,
 
     if( command == fPListCmd )
     { fPPhysicsList->SelectPhysicsList(newValue);}
+
+    if( command == fConstructOpCmd )
+    { fPPhysicsList->ConstructOp(fConstructOpCmd->GetNewBoolValue(newValue));}
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

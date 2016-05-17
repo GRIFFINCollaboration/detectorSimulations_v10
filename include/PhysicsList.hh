@@ -61,7 +61,7 @@ public:
     void SelectPhysicsList(const G4String& name);
     virtual void ConstructProcess();
 
-    void ConstructOp();
+    void ConstructOp(G4bool);
 
     void SetTargetCut(G4double val);
     void SetDetectorCut(G4double val);
