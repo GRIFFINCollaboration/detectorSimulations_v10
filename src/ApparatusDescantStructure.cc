@@ -288,21 +288,21 @@ G4int ApparatusDescantStructure::BuildDescantShell()
 
     // for construction of the back plates of each DESCANT detector
         // general
-    //rotate = new G4RotationMatrix;
-    //move = G4ThreeVector(0.0, 0.0, 0.0);
-    //G4Polyhedra * shellBack = new G4Polyhedra("shell_back", sPhi, dPhi, numSides, numZplanes, zPlanesBack, rInnerBack, rOuterBack);
-    //G4Tubs * cylinder = new G4Tubs("cylinder", rMin, rMax, halfLength, sPhi, dPhi);
-    //G4SubtractionSolid * shellBackHole = new G4SubtractionSolid("shell_back_with_holes", shellBack, cylinder, rotate, move);
+    rotate = new G4RotationMatrix;
+    move = G4ThreeVector(0.0, 0.0, 0.0);
+    G4Polyhedra * shellBack = new G4Polyhedra("shell_back", sPhi, dPhi, numSides, numZplanes, zPlanesBack, rInnerBack, rOuterBack);
+    G4Tubs * cylinder = new G4Tubs("cylinder", rMin, rMax, halfLength, sPhi, dPhi);
+    G4SubtractionSolid * shellBackHole = new G4SubtractionSolid("shell_back_with_holes", shellBack, cylinder, rotate, move);
         // yellow
-    //moveCut = 90.0*mm;
-    //rotate = new G4RotationMatrix;
-    //move = G4ThreeVector(-1.0*subBoxX - moveCut, 0.0, 0.0);
-    //G4SubtractionSolid * shellBackYellow = new G4SubtractionSolid("shell_back_with_holes_yellow", shellBackHole, subtractionBox, rotate, move);
+    moveCut = 90.0*mm;
+    rotate = new G4RotationMatrix;
+    move = G4ThreeVector(-1.0*subBoxX - moveCut, 0.0, 0.0);
+    G4SubtractionSolid * shellBackYellow = new G4SubtractionSolid("shell_back_with_holes_yellow", shellBackHole, subtractionBox, rotate, move);
         // green
-    //moveCut = 90.0*mm;
-    //rotate = new G4RotationMatrix;
-    //move = G4ThreeVector(1.0*subBoxX + moveCut, 0.0, 0.0);
-    //G4SubtractionSolid * shellBackGreen = new G4SubtractionSolid("shell_back_with_holes_green", shellBackHole, subtractionBox, rotate, move);
+    moveCut = 90.0*mm;
+    rotate = new G4RotationMatrix;
+    move = G4ThreeVector(1.0*subBoxX + moveCut, 0.0, 0.0);
+    G4SubtractionSolid * shellBackGreen = new G4SubtractionSolid("shell_back_with_holes_green", shellBackHole, subtractionBox, rotate, move);
 
     // Colour
     G4VisAttributes* grey_vis_att = new G4VisAttributes(grey_colour);
@@ -316,17 +316,14 @@ G4int ApparatusDescantStructure::BuildDescantShell()
 	 }
 	 
 	 
-	 //G4LogicalVolume * logicBack = new G4LogicalVolume(shellBackHole, structure_g4material, "logic_back", 0, 0, 0);
-	 //logicBack->SetVisAttributes(grey_colour);
+	 G4LogicalVolume * logicBack = new G4LogicalVolume(shellBackHole, structure_g4material, "logic_back", 0, 0, 0);
+	 logicBack->SetVisAttributes(grey_colour);
 	 
-	 //G4LogicalVolume * logicBackYellow = new G4LogicalVolume(shellBackYellow, structure_g4material, "logic_back_yellow", 0, 0, 0);
-	 //logicBackYellow->SetVisAttributes(grey_colour);
+	 G4LogicalVolume * logicBackYellow = new G4LogicalVolume(shellBackYellow, structure_g4material, "logic_back_yellow", 0, 0, 0);
+	 logicBackYellow->SetVisAttributes(grey_colour);
 	 
-    //G4LogicalVolume * logicBackGreen = new G4LogicalVolume(shellBackGreen, structure_g4material, "logic_back_green", 0, 0, 0);
-    //logicBackYellow->SetVisAttributes(grey_colour);
-
-
-
+     G4LogicalVolume * logicBackGreen = new G4LogicalVolume(shellBackGreen, structure_g4material, "logic_back_green", 0, 0, 0);
+     logicBackYellow->SetVisAttributes(grey_colour);
 
     // for making the DESCANT shell
     G4SubtractionSolid * pre_subtraction;
@@ -346,7 +343,7 @@ G4int ApparatusDescantStructure::BuildDescantShell()
         rotate->rotateZ(blue_alpha_beta_gamma[idx][2]);
         rotate->rotateY(blue_alpha_beta_gamma[idx][1]);
         rotate->rotateZ(blue_alpha_beta_gamma[idx][0]);
-        //if(i==4||i==6||i==8){assemblyDescantStructure->AddPlacedVolume(logicBack, move, rotate);}
+        if(i==4||i==6||i==8){assemblyDescantStructure->AddPlacedVolume(logicBack, move, rotate);}
         rotate->invert();
         std::stringstream temp;
         temp << "blue_subtraction_" << i;
@@ -372,7 +369,7 @@ G4int ApparatusDescantStructure::BuildDescantShell()
         rotate->rotateZ(green_alpha_beta_gamma[idx][2]);
         rotate->rotateY(green_alpha_beta_gamma[idx][1]);
         rotate->rotateZ(green_alpha_beta_gamma[idx][0]);
-        //if(i==19||i==20){assemblyDescantStructure->AddPlacedVolume(logicBackGreen, move, rotate);}
+        if(i==19||i==20){assemblyDescantStructure->AddPlacedVolume(logicBackGreen, move, rotate);}
         rotate->invert();
         std::stringstream temp;
         temp << "green_subtraction_" << i;
@@ -396,7 +393,7 @@ G4int ApparatusDescantStructure::BuildDescantShell()
         rotate->rotateZ(red_alpha_beta_gamma[idx][2]);
         rotate->rotateY(red_alpha_beta_gamma[idx][1]);
         rotate->rotateZ(red_alpha_beta_gamma[idx][0]);
-        //if(i==30||i==31||i==32){assemblyDescantStructure->AddPlacedVolume(logicBack, move, rotate);}
+        if(i==30||i==31||i==32){assemblyDescantStructure->AddPlacedVolume(logicBack, move, rotate);}
         rotate->invert();
         std::stringstream temp;
         temp << "red_subtraction_" << i;
@@ -421,7 +418,7 @@ G4int ApparatusDescantStructure::BuildDescantShell()
         rotate->rotateZ(white_alpha_beta_gamma[idx][2]);
         rotate->rotateY(white_alpha_beta_gamma[idx][1]);
         rotate->rotateZ(white_alpha_beta_gamma[idx][0]);
-        //if(i==48||i==49||i==50||i==51){assemblyDescantStructure->AddPlacedVolume(logicBack, move, rotate);}
+        if(i==48||i==49||i==50||i==51){assemblyDescantStructure->AddPlacedVolume(logicBack, move, rotate);}
         rotate->invert();
         std::stringstream temp;
         temp << "white_subtraction_" << i;
@@ -444,7 +441,7 @@ G4int ApparatusDescantStructure::BuildDescantShell()
         rotate->rotateZ(yellow_alpha_beta_gamma[idx][2]);
         rotate->rotateY(yellow_alpha_beta_gamma[idx][1]);
         rotate->rotateZ(yellow_alpha_beta_gamma[idx][0]);
-        //if(i==62||i==63){assemblyDescantStructure->AddPlacedVolume(logicBackYellow, move, rotate);}
+        if(i==62||i==63){assemblyDescantStructure->AddPlacedVolume(logicBackYellow, move, rotate);}
         rotate->invert();
         std::stringstream temp;
         temp << "yellow_subtraction_" << i;
@@ -465,17 +462,6 @@ G4int ApparatusDescantStructure::BuildDescantShell()
         rotate = new G4RotationMatrix;
         move = G4ThreeVector(0.0,0.0,0.0);
         this->assemblyDescantStructure->AddPlacedVolume(descant_structure_log, move, rotate);
-
-
-////////////////////////////////////////////////////////////
-
-
-        //G4LogicalVolume * red_cut = new G4LogicalVolume(polyRedCut2, structure_g4material, "red_test", 0, 0, 0);
-        //red_cut->SetVisAttributes(grey_vis_att);
-        //this->assemblyDescantStructure->AddPlacedVolume(red_cut, move, rotate);
-
-
-/////////////////////////////////////////////////////////////////
 
     return 1;
 }

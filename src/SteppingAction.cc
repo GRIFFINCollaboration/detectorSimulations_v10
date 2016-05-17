@@ -447,6 +447,17 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
+    found = volname.find("testcan_scintillator_log");
+    if (edep != 0 && found!=G4String::npos) {
+        SetDetNumberForGenericDetector(volname);
+        mnemonic.replace(0,3,"XXX");
+        mnemonic.replace(3,2,G4intToG4String(det));
+        mnemonic.replace(5,1,GetCrystalColour(cry));
+        systemID = 8500;
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+    }
+
+
     //  // gamma angular correlations in world
     //  found = volname.find("World");
     //  if (ekin != 0 && found!=G4String::npos && particleType == 1) {

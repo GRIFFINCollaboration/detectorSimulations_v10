@@ -55,6 +55,8 @@ class DetectionSystemDescant;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class ApparatusDescantStructure;
 
+class DetectionSystemDescant;
+
 class DetectionSystemSceptar;
 class DetectionSystemSpice;
 class DetectionSystemSpiceV02;
@@ -131,12 +133,15 @@ public:
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void AddDetectionSystemDescant(G4int ndet);
     void AddDetectionSystemDescantAuxPorts(G4ThreeVector input);
+ 
     void SetDetectionSystemDescantRotation(G4ThreeVector input);
     void SetDetectionSystemDescantColor(G4String input);
     void AddDetectionSystemDescantCart(G4ThreeVector input);
     void AddDetectionSystemDescantSpher(G4ThreeVector input, G4double unit);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void AddApparatusDescantStructure();
+
+    void AddDetectionSystemTestcan(G4ThreeVector input);
 
     void AddDetectionSystem8piDetector(G4int ndet);
     void AddDetectionSystemGriffinForward(G4int ndet);

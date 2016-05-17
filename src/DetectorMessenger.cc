@@ -232,6 +232,10 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     AddApparatusDescantStructureCmd->SetGuidance("Add DESCANT structure");
     AddApparatusDescantStructureCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+    AddDetectionSystemTestcanCmd = new G4UIcmdWith3Vector("/DetSys/det/addTestcan",this);
+    AddDetectionSystemTestcanCmd->SetGuidance("Add Testcan Detection System");
+    AddDetectionSystemTestcanCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
 	 SetDetectionSystemDescantColorCmd = new G4UIcmdWithAString("/DetSys/det/setDescantColor", this);
 	 SetDetectionSystemDescantColorCmd->SetGuidance("Set color of next descant detector to be added via addDescantCart or addDescantSpher");
 	 SetDetectionSystemDescantColorCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
@@ -370,6 +374,8 @@ DetectorMessenger::~DetectorMessenger()
     delete AddDetectionSystemDescantAuxPortsCmd;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     delete AddApparatusDescantStructureCmd;
+
+    delete AddDetectionSystemTestcanCmd;
 
 	 delete SetDetectionSystemDescantColorCmd;
 	 delete SetDetectionSystemDescantRotationCmd;	 
@@ -528,6 +534,9 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 		Detector->AddDetectionSystemDescantSpher(AddDetectionSystemDescantSpherCmd->GetNew3VectorRawValue(newValue), AddDetectionSystemDescantSpherCmd->GetNewUnitValue(newValue));
 	 }
 
+    if( command == AddDetectionSystemTestcanCmd ) { 
+        Detector->AddDetectionSystemTestcan(AddDetectionSystemTestcanCmd->GetNew3VectorValue(newValue));
+    }
 
     if( command == AddDetectionSystemSceptarCmd ) {
         Detector->AddDetectionSystemSceptar(AddDetectionSystemSceptarCmd->GetNewIntValue(newValue));
@@ -568,15 +577,17 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     if( command == AddDetectionSystemGriffinSetDeadLayerCmd ) {
         Detector->AddDetectionSystemGriffinSetDeadLayer( AddDetectionSystemGriffinSetDeadLayerCmd->GetNew3VectorValue( newValue ) ) ;
     }
+    
     //  if( command == AddDetectionSystemSpiceCmd ) {
     //    Detector->AddDetectionSystemSpice(AddDetectionSystemSpiceCmd->GetNewIntValue(newValue));
     //  }
     //  if( command == AddDetectionSystemSpiceV02Cmd ) {
     //    Detector->AddDetectionSystemSpiceV02(AddDetectionSystemSpiceV02Cmd->GetNewIntValue(newValue));
     //  }
-    //  if( command == AddDetectionSystemPacesCmd ) {
-    //    Detector->AddDetectionSystemPaces(AddDetectionSystemPacesCmd->GetNewIntValue(newValue));
-    //  }
+    
+    if( command == AddDetectionSystemPacesCmd ) {
+        Detector->AddDetectionSystemPaces(AddDetectionSystemPacesCmd->GetNewIntValue(newValue));
+    }
     if( command == UseTIGRESSPositionsCmd ) {
         Detector->UseTIGRESSPositions(UseTIGRESSPositionsCmd->GetNewBoolValue(newValue));
     }

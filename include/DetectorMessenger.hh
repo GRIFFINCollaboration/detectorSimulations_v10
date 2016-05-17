@@ -110,13 +110,15 @@ private:
     G4UIcmdWithAnInteger*       AddDetectionSystem8piDetectorCmd;
 
     G4UIcmdWithAnInteger*       AddDetectionSystemDescantCmd;
-    //G4UIcmdWithoutParameter*    AddDetectionSystemDescantLanthinumCmd;
     G4UIcmdWith3Vector*         AddDetectionSystemDescantAuxPortsCmd;
+    
     G4UIcmdWithoutParameter*	  AddApparatusDescantStructureCmd;
     G4UIcmdWithAString*         SetDetectionSystemDescantColorCmd;
     G4UIcmdWith3Vector*         SetDetectionSystemDescantRotationCmd;
     G4UIcmdWith3VectorAndUnit*  AddDetectionSystemDescantCartCmd;
     G4UIcmdWith3VectorAndUnit*  AddDetectionSystemDescantSpherCmd;
+
+    G4UIcmdWith3Vector*         AddDetectionSystemTestcanCmd;
 
     G4UIcmdWithAnInteger*       AddDetectionSystemSceptarCmd;
     G4UIcmdWithAnInteger*       AddDetectionSystemGriffinForwardCmd;

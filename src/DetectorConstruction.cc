@@ -1,4 +1,4 @@
-//
+
 // ********************************************************************
 // * License and Disclaimer                                           *
 // *                                                                  *
@@ -64,6 +64,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "ApparatusDescantStructure.hh"
 
+#include "DetectionSystemTestcan.hh"
 
 #include "DetectionSystemGriffin.hh"
 #include "DetectionSystemSceptar.hh"
@@ -885,6 +886,16 @@ void DetectorConstruction::AddApparatusDescantStructure()
     //pApparatusDescantStructure->PlaceDetector( logicWorld, ndet ) ;
 }
 
+void DetectorConstruction::AddDetectionSystemTestcan(G4ThreeVector input)
+{
+    G4double length = G4double(input.x())*cm;
+    G4double radius = G4double(input.y())*cm;
+
+    DetectionSystemTestcan* pDetectionSystemTestcan = new DetectionSystemTestcan(length, radius);
+    pDetectionSystemTestcan->Build();
+    pDetectionSystemTestcan->PlaceDetector(logicWorld);
+}
+
 //void DetectorConstruction::AddDetectionSystemSpice(G4int ndet)
 //{
 //    DetectionSystemSpice* pSpice = new DetectionSystemSpice() ;
@@ -916,10 +927,10 @@ void DetectorConstruction::AddApparatusDescantStructure()
 
 //}
 
-//void DetectorConstruction::AddDetectionSystemPaces(G4int ndet)
-//{
-//    DetectionSystemPaces* pPaces = new DetectionSystemPaces() ;
-//    pPaces->Build() ;
+void DetectorConstruction::AddDetectionSystemPaces(G4int ndet)
+{
+    DetectionSystemPaces* pPaces = new DetectionSystemPaces() ;
+    pPaces->Build() ;
 
-//    pPaces->PlaceDetector( logicWorld, ndet ) ;
-//}
+    pPaces->PlaceDetector( logicWorld, ndet ) ;
+}

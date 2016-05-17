@@ -41,6 +41,7 @@ class PhysicsList;
 class G4UIdirectory;
 class G4UIcmdWithADoubleAndUnit;
 class G4UIcmdWithAString;
+class G4UIcmdWithABool;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -65,6 +66,7 @@ private:
     G4UIcmdWithADoubleAndUnit* fMCutCmd;
     G4UIcmdWithADoubleAndUnit* fECutCmd;
     G4UIcmdWithAString*        fPListCmd;
+    G4UIcmdWithABool*          fConstructOpCmd;
 
 };
 

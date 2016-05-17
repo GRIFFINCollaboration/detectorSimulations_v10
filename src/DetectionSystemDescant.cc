@@ -24,7 +24,6 @@
 
 #include "G4SystemOfUnits.hh"
 
-//#include "G4String.hh"
 #include <string>
 
 DetectionSystemDescant::DetectionSystemDescant(G4bool leadShield) :
@@ -43,7 +42,9 @@ DetectionSystemDescant::DetectionSystemDescant(G4bool leadShield) :
     green_lead_volume_log(0),
     red_lead_volume_log(0),
     white_lead_volume_log(0),
-    yellow_lead_volume_log(0)
+    yellow_lead_volume_log(0),
+    quartz_window_5inch_log(0),
+    quartz_window_3inch_log(0)
 {
     // can properties
     can_length              = 150.0*mm;
@@ -52,13 +53,45 @@ DetectionSystemDescant::DetectionSystemDescant(G4bool leadShield) :
     liquid_material         = "Deuterated Scintillator";
     lead_material           = "G4_Pb";
     lead_shield_thickness   = 6.35*mm;
-    //includeLead             = true;
+    can_back_thickness      = 12.7*mm;   
+   
+    // set DESCANT lead shield on/off (set by run macro)
     includeLead = leadShield;
+
+    // for cutting the PMT port on the detectors
+    inner_radius_window         = 0.0*mm;     
+    outer_radius_window_5inch   = (127.0*mm)/2.0; 
+    outer_radius_window_3inch   = (76.0*mm)/2.0;  
+    half_length_z_window_cut    = 100.0*mm;
+    start_phi                   = 0.0*deg;
+    end_phi                     = 360.0*deg;
+
+    white_PMT_offset_Y          = 4.0*mm;
+    blue_PMT_offset_X           = 3.0*mm;
+    red_PMT_offset_X            = 12.7*mm;
+    yellow_green_PMT_offset_X   = 10.0*mm; 
+    yellow_green_PMT_offset_Y   = 5.0*mm;
+
+    quartz_material                 = "G4_SILICON_DIOXIDE";
+    optical_window_half_thickness   = (9.0*mm)/2.0;
 
     // The face of the detector is 50 cm from the origin, this does NOT include the lead shield.
     radial_distance         = 50*cm;
-	// the radial distance of 84 cm projects the detectors to approximately where they should be cut out of the partial sphere for the descant shell
-    //radial_distance 	    = 75.75*cm;
+    
+    // Check surfaces to determine any problematic overlaps. Turn this on to have Geant4 check the surfaces.
+    // Do not leave this on, it will slow the DetectorConstruction process!
+    // This was last check on May 29th, 2015. - GOOD!, but...
+    // The green, yellow and blue detectors had small overlaps, this is probably due to taking the pure mathematical model
+    // of DESCANT, and then Saint Gobain rounding the result to generate the data files (below).
+    surfCheck               = false;
+
+    // Geometry overlaps were found for green, yellow and blue detectors.               
+    // We need to squeeze the green and yellow detectors along the y direction,                
+    // and we need to squeeze the blue detectors on one x edge of the blue detector.           
+    trim_green_y    = 10.0*um;         
+    trim_yellow_y   = 10.0*um;         
+    trim_blue_x     = 2.2*um;
+
     // Saint Gobain data files, 6 points around the front face of the can, and 6 on the back
     // from Dan Brennan
 
@@ -68,27 +101,27 @@ DetectionSystemDescant::DetectionSystemDescant(G4bool leadShield) :
         {-75.10*mm,   0.00*mm,    0.00*mm},
         {-34.70*mm, -61.10*mm,    0.00*mm},
         { 40.60*mm, -61.10*mm,    0.00*mm},
-        { 76.30*mm,   0.00*mm,    0.00*mm},
+        { 76.30*mm-trim_blue_x,   0.00*mm,    0.00*mm},
         { 52.80*mm,  79.40*mm, -150.00*mm},
         {-45.10*mm,  79.40*mm, -150.00*mm},
         {-97.60*mm,   0.00*mm, -150.00*mm},
         {-45.10*mm, -79.40*mm, -150.00*mm},
         { 52.80*mm, -79.40*mm, -150.00*mm},
-        { 99.20*mm,   0.00*mm, -150.00*mm}
+        { 99.20*mm-trim_blue_x,   0.00*mm, -150.00*mm}
     };
 
     G4double green[12][3] = {
-        { 31.90*mm,  61.20*mm,    0.00*mm},
-        {-31.90*mm,  61.20*mm,    0.00*mm},
+        { 31.90*mm,  61.20*mm-trim_green_y,    0.00*mm},
+        {-31.90*mm,  61.20*mm-trim_green_y,    0.00*mm},
         {-71.50*mm,   0.00*mm,    0.00*mm},
-        {-31.90*mm, -55.30*mm,    0.00*mm},
-        { 31.90*mm, -55.30*mm,    0.00*mm},
+        {-31.90*mm, -55.30*mm+trim_green_y,    0.00*mm},
+        { 31.90*mm, -55.30*mm+trim_green_y,    0.00*mm},
         { 47.90*mm,  36.60*mm,    0.00*mm},
-        { 41.50*mm,  79.60*mm, -150.00*mm},
-        {-41.50*mm,  79.60*mm, -150.00*mm},
+        { 41.50*mm,  79.60*mm-trim_green_y, -150.00*mm},
+        {-41.50*mm,  79.60*mm-trim_green_y, -150.00*mm},
         {-93.00*mm,   0.00*mm, -150.00*mm},
-        {-41.50*mm, -71.90*mm, -150.00*mm},
-        { 41.50*mm, -71.90*mm, -150.00*mm},
+        {-41.50*mm, -71.90*mm+trim_green_y, -150.00*mm},
+        { 41.50*mm, -71.90*mm+trim_green_y, -150.00*mm},
         { 62.30*mm,  47.60*mm, -150.00*mm}
     };
 
@@ -123,21 +156,20 @@ DetectionSystemDescant::DetectionSystemDescant(G4bool leadShield) :
     };
 
     G4double yellow[12][3] = {
-        { 31.90*mm,   61.20*mm,    0.00*mm},
-        {-31.90*mm,   61.20*mm,    0.00*mm},
+        { 31.90*mm,   61.20*mm-trim_yellow_y,    0.00*mm},
+        {-31.90*mm,   61.20*mm-trim_yellow_y,    0.00*mm},
         {-47.90*mm,   36.60*mm,    0.00*mm},
-        {-31.90*mm,  -55.30*mm,    0.00*mm},
-        { 31.90*mm,  -55.30*mm,    0.00*mm},
+        {-31.90*mm,  -55.30*mm+trim_yellow_y,    0.00*mm},
+        { 31.90*mm,  -55.30*mm+trim_yellow_y,    0.00*mm},
         { 71.50*mm,    0.00*mm,    0.00*mm},
-        { 41.50*mm,   79.60*mm, -150.00*mm},
-        {-41.50*mm,   79.60*mm, -150.00*mm},
+        { 41.50*mm,   79.60*mm-trim_yellow_y, -150.00*mm},
+        {-41.50*mm,   79.60*mm-trim_yellow_y, -150.00*mm},
         {-62.30*mm,   47.60*mm, -150.00*mm},
-        {-41.50*mm,  -71.90*mm, -150.00*mm},
-        { 41.50*mm,  -71.90*mm, -150.00*mm},
+        {-41.50*mm,  -71.90*mm+trim_yellow_y, -150.00*mm},
+        { 41.50*mm,  -71.90*mm+trim_yellow_y, -150.00*mm},
         { 93.00*mm,    0.00*mm, -150.00*mm}
     };
 
-/////////////////////////////////////////////////////////////////////////////////////////////
 
     memcpy(blue_detector,   blue,   sizeof(blue_detector));
     memcpy(green_detector,  green,  sizeof(green_detector));
@@ -302,9 +334,11 @@ DetectionSystemDescant::DetectionSystemDescant(G4bool leadShield) :
     white_colour    = G4Colour(255.0/255.0,255.0/255.0,255.0/255.0);
     yellow_colour   = G4Colour(255.0/255.0,255.0/255.0,0.0/255.0);
     liquid_colour   = G4Colour(0.0/255.0,255.0/255.0,225.0/255.0);
+    grey_colour     = G4Colour(0.5, 0.5, 0.5); 
+    magenta_colour  = G4Colour(1.0, 0.0, 1.0); 
+    black_colour    = G4Colour(0.0, 0.0, 0.0);
 
-
-    // for lanthinum bromide locations
+    // for lanthanum bromide locations
 
     {
         //G4double triangleThetaAngle = (180/M_PI)*(atan((1/sqrt(3))/sqrt((11/12) + (1/sqrt(2))) )+atan((sqrt(2))/(1+sqrt(2))))*deg;
@@ -377,6 +411,8 @@ DetectionSystemDescant::~DetectionSystemDescant()
     delete red_lead_volume_log;
     delete white_lead_volume_log;
     delete yellow_lead_volume_log;
+    delete quartz_window_5inch_log;
+    delete quartz_window_3inch_log;
 }
 
 
@@ -445,8 +481,8 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
         rotate->rotateZ(blue_alpha_beta_gamma[idx][2]);
         rotate->rotateY(blue_alpha_beta_gamma[idx][1]);
         rotate->rotateZ(blue_alpha_beta_gamma[idx][0]);
-        assemblyBlue->MakeImprint(exp_hall_log, move, rotate, i);
-        assemblyBlueScintillator->MakeImprint(exp_hall_log, move, rotate, i);
+        assemblyBlue->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
+        assemblyBlueScintillator->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
 
     }
     // Place Green Detector
@@ -461,8 +497,8 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
         rotate->rotateZ(green_alpha_beta_gamma[idx][2]);
         rotate->rotateY(green_alpha_beta_gamma[idx][1]);
         rotate->rotateZ(green_alpha_beta_gamma[idx][0]);
-        assemblyGreen->MakeImprint(exp_hall_log, move, rotate, i);
-        assemblyGreenScintillator->MakeImprint(exp_hall_log, move, rotate, i);
+        assemblyGreen->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
+        assemblyGreenScintillator->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
     }
     // Place Red Detector
     for(G4int i=25; i<(detector_number-30); i++){
@@ -476,8 +512,8 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
         rotate->rotateZ(red_alpha_beta_gamma[idx][2]);
         rotate->rotateY(red_alpha_beta_gamma[idx][1]);
         rotate->rotateZ(red_alpha_beta_gamma[idx][0]);
-        assemblyRed->MakeImprint(exp_hall_log, move, rotate, i);
-        assemblyRedScintillator->MakeImprint(exp_hall_log, move, rotate, i);
+        assemblyRed->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
+        assemblyRedScintillator->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
     }
     // Place White Detector
     for(G4int i=40; i<(detector_number-10); i++){
@@ -491,8 +527,8 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
         rotate->rotateZ(white_alpha_beta_gamma[idx][2]);
         rotate->rotateY(white_alpha_beta_gamma[idx][1]);
         rotate->rotateZ(white_alpha_beta_gamma[idx][0]);
-        assemblyWhite->MakeImprint(exp_hall_log, move, rotate, i);
-        assemblyWhiteScintillator->MakeImprint(exp_hall_log, move, rotate, i);
+        assemblyWhite->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
+        assemblyWhiteScintillator->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
     }
     // Place Yellow Detector
     for(G4int i=60; i<(detector_number); i++){
@@ -506,12 +542,13 @@ G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int
         rotate->rotateZ(yellow_alpha_beta_gamma[idx][2]);
         rotate->rotateY(yellow_alpha_beta_gamma[idx][1]);
         rotate->rotateZ(yellow_alpha_beta_gamma[idx][0]);
-        assemblyYellow->MakeImprint(exp_hall_log, move, rotate, i);
-        assemblyYellowScintillator->MakeImprint(exp_hall_log, move, rotate, i);
+        assemblyYellow->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
+        assemblyYellowScintillator->MakeImprint(exp_hall_log, move, rotate, i, surfCheck);
     }
 
     return 1;
 }
+
 
 G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* exp_hall_log, G4String color, G4ThreeVector pos, G4ThreeVector rot)
 {
@@ -593,11 +630,12 @@ G4int DetectionSystemDescant::BuildCanVolume()
     G4ThreeVector move_cut, move, direction;
     G4RotationMatrix* rotate_cut;
     G4RotationMatrix* rotate;
-    G4double z_position;
+    G4double z_position, move_extra;
     G4double extra_cut_length = 100.0*mm;
 
     G4Material* can_g4material = G4Material::GetMaterial(this->can_material);
     if( !can_g4material ) {
+        G4cout << " ----> Material " << this->can_material << " not found, cannot build! " << G4endl;
         return 0;
     }
 
@@ -607,34 +645,72 @@ G4int DetectionSystemDescant::BuildCanVolume()
         return 0;
     }
 
+    G4Material* quartz_g4material = G4Material::GetMaterial(this->quartz_material);
+    if( !quartz_g4material ) {
+        G4cout << " ----> Material " << this->quartz_material << " not found, cannot build! " << G4endl;
+        return 0;
+    }
+
+    // for cutting PMT window
+    G4Tubs * window_cut_5inch = new G4Tubs("window_cut_5inch", inner_radius_window, outer_radius_window_5inch, half_length_z_window_cut, start_phi, end_phi);
+    G4Tubs * window_cut_3inch = new G4Tubs("window_cut_3inch", inner_radius_window, outer_radius_window_3inch, half_length_z_window_cut, start_phi, end_phi);
+
+    // quartz windows
+    //G4VisAttributes* quartz_vis_att = new G4VisAttributes(magenta_colour);
+    G4VisAttributes* quartz_vis_att = new G4VisAttributes(black_colour);
+    quartz_vis_att->SetForceWireframe(true);
+    quartz_vis_att->SetVisibility(true);
+
+    G4Tubs * quartz_window_5inch = new G4Tubs("window_5inch", inner_radius_window, outer_radius_window_5inch, optical_window_half_thickness, start_phi, end_phi);
+    G4Tubs * quartz_window_3inch = new G4Tubs("window_3inch", inner_radius_window, outer_radius_window_3inch, optical_window_half_thickness, start_phi, end_phi);
+
+    if( quartz_window_5inch_log == NULL )
+    {
+        quartz_window_5inch_log = new G4LogicalVolume(quartz_window_5inch, quartz_g4material, "quartz_window_5inch_log", 0, 0, 0);
+        quartz_window_5inch_log->SetVisAttributes(quartz_vis_att);
+    }
+    if( quartz_window_3inch_log == NULL )
+    {
+        quartz_window_3inch_log = new G4LogicalVolume(quartz_window_3inch, quartz_g4material, "quartz_window_3inch_log", 0, 0, 0);
+        quartz_window_3inch_log->SetVisAttributes(quartz_vis_att);
+    }
+
+
     // BLUE
     // Set visualization attributes
     G4VisAttributes* blue_vis_att = new G4VisAttributes(blue_colour);
     blue_vis_att->SetVisibility(true);
 
-    G4SubtractionSolid* blue_volume_1      = CanVolume(false, this->can_length, blue_detector, blue_phi);
-    G4SubtractionSolid* blue_volume_1_cut  = CanVolume(true, this->can_length+extra_cut_length, blue_detector, blue_phi);
+    G4SubtractionSolid* blue_volume_1      = CanVolume(false, this->can_length + this->can_back_thickness, blue_detector, blue_phi);
+    G4SubtractionSolid* blue_volume_1_cut  = CanVolume(true, this->can_length - this->can_thickness, blue_detector, blue_phi);
 
-    move_cut = G4ThreeVector(0.0*mm,0.0*mm,-1.0*(this->can_thickness + (extra_cut_length/2.0)));
+    move_cut = G4ThreeVector(0.0*mm,0.0*mm, (this->can_back_thickness)/2.0 - (this->can_thickness)/2.0);
     rotate_cut = new G4RotationMatrix;
-
     G4SubtractionSolid* blue_volume_2 = new G4SubtractionSolid("blue_volume_2", blue_volume_1, blue_volume_1_cut, rotate_cut, move_cut);
 
+    move_cut = G4ThreeVector( blue_PMT_offset_X, 0.0 , -1.0*(this->can_length) );
+    rotate_cut = new G4RotationMatrix;  
+    G4SubtractionSolid * blue_volume_3 = new G4SubtractionSolid("blue_volume_3", blue_volume_2, window_cut_5inch, rotate_cut, move_cut);
+    
     // Define rotation and movement objects
-    direction 	= G4ThreeVector(0,0,1);
-    z_position    = -1.0*(this->can_length)/2.0 ;
+    direction   = G4ThreeVector(0,0,1);
+    z_position    = -1.0*(this->can_length + this->can_back_thickness)/2.0 ;
     move          = z_position * direction;
-
     rotate = new G4RotationMatrix;
 
-    //logical volume
+    // logical volume blue
     if( blue_volume_log == NULL )
     {
-        blue_volume_log = new G4LogicalVolume(blue_volume_2, can_g4material, "descant_blue_volume_log", 0, 0, 0);
+        blue_volume_log = new G4LogicalVolume(blue_volume_3, can_g4material, "descant_blue_volume_log", 0, 0, 0);
         blue_volume_log->SetVisAttributes(blue_vis_att);
     }
-
     this->assemblyBlue->AddPlacedVolume(blue_volume_log, move, rotate);
+    
+    // quartz window blue
+    move_extra = 2.0*(1.85*mm);
+    move = G4ThreeVector( blue_PMT_offset_X, 0.0, -1.0*( this->can_length + (this->can_back_thickness)/2.0 + move_extra ) );
+    rotate = new G4RotationMatrix;
+    this->assemblyBlue->AddPlacedVolume(quartz_window_5inch_log, move, rotate);
 
     // BLUE LEAD
     // Set visualization attributes
@@ -665,17 +741,22 @@ G4int DetectionSystemDescant::BuildCanVolume()
     G4VisAttributes* green_vis_att = new G4VisAttributes(green_colour);
     green_vis_att->SetVisibility(true);
 
-    G4SubtractionSolid* green_volume_1      = CanVolume(false, this->can_length, green_detector, green_phi);
-    G4SubtractionSolid* green_volume_1_cut  = CanVolume(true, this->can_length+extra_cut_length, green_detector, green_phi);
+    G4SubtractionSolid* green_volume_1      = CanVolume(false, this->can_length + this->can_back_thickness, green_detector, green_phi);
+    G4SubtractionSolid* green_volume_1_cut  = CanVolume(true, this->can_length -  this->can_thickness, green_detector, green_phi);
 
-    move_cut = G4ThreeVector(0.0*mm,0.0*mm,-1.0*(this->can_thickness + (extra_cut_length/2.0)));
+    move_cut = G4ThreeVector(0.0*mm,0.0*mm, (this->can_back_thickness)/2.0 - (this->can_thickness)/2.0 );
     rotate_cut = new G4RotationMatrix;
 
     G4SubtractionSolid* green_volume_2 = new G4SubtractionSolid("green_volume_2", green_volume_1, green_volume_1_cut, rotate_cut, move_cut);
 
+    move_cut = G4ThreeVector( -1.0*yellow_green_PMT_offset_X, yellow_green_PMT_offset_Y , -1.0*(this->can_length) );
+    rotate_cut = new G4RotationMatrix;
+
+    G4SubtractionSolid * green_volume_3 = new G4SubtractionSolid("green_volume_3", green_volume_2, window_cut_3inch, rotate_cut, move_cut);
+
     // Define rotation and movement objects
-    direction 	= G4ThreeVector(0,0,1);
-    z_position    = -1.0*(this->can_length)/2.0 ;
+    direction   = G4ThreeVector(0,0,1);
+    z_position    = -1.0*(this->can_length + this->can_back_thickness)/2.0 ;
     move          = z_position * direction;
 
     rotate = new G4RotationMatrix;
@@ -683,11 +764,16 @@ G4int DetectionSystemDescant::BuildCanVolume()
     //logical volume
     if( green_volume_log == NULL )
     {
-        green_volume_log = new G4LogicalVolume(green_volume_2, can_g4material, "descant_green_volume_log", 0, 0, 0);
+        green_volume_log = new G4LogicalVolume(green_volume_3, can_g4material, "descant_green_volume_log", 0, 0, 0);
         green_volume_log->SetVisAttributes(green_vis_att);
     }
-
     this->assemblyGreen->AddPlacedVolume(green_volume_log, move, rotate);
+
+    // quartz window green
+    move_extra = 2.0*(1.85*mm);
+    move = G4ThreeVector( -1.0*yellow_green_PMT_offset_X, yellow_green_PMT_offset_Y, -1.0*( this->can_length + (this->can_back_thickness)/2.0 + move_extra ) );
+    rotate = new G4RotationMatrix;
+    this->assemblyGreen->AddPlacedVolume(quartz_window_3inch_log, move, rotate);
 
     // GREEN LEAD
     // Set visualization attributes
@@ -717,163 +803,191 @@ G4int DetectionSystemDescant::BuildCanVolume()
     // Set visualization attributes
     G4VisAttributes* red_vis_att = new G4VisAttributes(red_colour);
     red_vis_att->SetVisibility(true);
-
-    G4SubtractionSolid* red_volume_1      = CanVolume(false, this->can_length, red_detector, red_phi);
-    G4SubtractionSolid* red_volume_1_cut  = CanVolume(true, this->can_length+extra_cut_length, red_detector, red_phi);
-
-    move_cut = G4ThreeVector(0.0*mm,0.0*mm,-1.0*(this->can_thickness + (extra_cut_length/2.0)));
+    
+    G4SubtractionSolid* red_volume_1      = CanVolume(false, this->can_length + this->can_back_thickness, red_detector, red_phi);
+    G4SubtractionSolid* red_volume_1_cut  = CanVolume(true, this->can_length -  this->can_thickness, red_detector, red_phi);
+    
+    move_cut = G4ThreeVector(0.0*mm,0.0*mm, (this->can_back_thickness)/2.0 - (this->can_thickness)/2.0 );
     rotate_cut = new G4RotationMatrix;
-
+    
     G4SubtractionSolid* red_volume_2 = new G4SubtractionSolid("red_volume_2", red_volume_1, red_volume_1_cut, rotate_cut, move_cut);
-
+    
+    move_cut = G4ThreeVector( -1.0*red_PMT_offset_X , 0.0 , -1.0*(this->can_length) );
+    rotate_cut = new G4RotationMatrix;
+    
+    G4SubtractionSolid * red_volume_3 = new G4SubtractionSolid("red_volume_3", red_volume_2, window_cut_5inch, rotate_cut, move_cut);
+    
     // Define rotation and movement objects
     direction 	= G4ThreeVector(0,0,1);
-    z_position    = -1.0*(this->can_length)/2.0 ;
+    z_position    = -1.0*(this->can_length + this->can_back_thickness)/2.0 ;
     move          = z_position * direction;
-
+    
     rotate = new G4RotationMatrix;
-
+    
     //logical volume
     if( red_volume_log == NULL )
     {
-        red_volume_log = new G4LogicalVolume(red_volume_2, can_g4material, "descant_red_volume_log", 0, 0, 0);
+        red_volume_log = new G4LogicalVolume(red_volume_3, can_g4material, "descant_red_volume_log", 0, 0, 0);
         red_volume_log->SetVisAttributes(red_vis_att);
     }
-
     this->assemblyRed->AddPlacedVolume(red_volume_log, move, rotate);
-
+    
+    move_extra = 2.0*(1.85*mm);
+    move = G4ThreeVector( -1.0*red_PMT_offset_X, 0.0, -1.0*( this->can_length + (this->can_back_thickness)/2.0 + move_extra ) );
+    rotate = new G4RotationMatrix;
+    this->assemblyRed->AddPlacedVolume(quartz_window_5inch_log, move, rotate);
+    
     // RED LEAD
     // Set visualization attributes
     G4VisAttributes* red_lead_vis_att = new G4VisAttributes(red_colour);
     red_lead_vis_att->SetVisibility(true);
-
+    
     G4SubtractionSolid* red_lead_volume_1 = CanVolume(false, this->lead_shield_thickness, red_detector, red_phi);
-
+    
     // Define rotation and movement objects
     direction 	= G4ThreeVector(0,0,1);
     z_position    = this->lead_shield_thickness/2.0 ;
     move          = z_position * direction;
-
+    
     rotate = new G4RotationMatrix;
-
+    
     //logical volume
     if( red_lead_volume_log == NULL )
     {
         red_lead_volume_log = new G4LogicalVolume(red_lead_volume_1, lead_g4material, "descant_red_lead_volume_log", 0, 0, 0);
         red_lead_volume_log->SetVisAttributes(red_lead_vis_att);
     }
-
+    
     if(includeLead)
         this->assemblyRed->AddPlacedVolume(red_lead_volume_log, move, rotate);
-
+    
     // WHITE
     // Set visualization attributes
     G4VisAttributes* white_vis_att = new G4VisAttributes(white_colour);
-    //G4VisAttributes* white_vis_att = new G4VisAttributes(red_colour);
     white_vis_att->SetVisibility(true);
-
-    G4SubtractionSolid* white_volume_1      = CanVolume(false, this->can_length, white_detector, white_phi);
-    G4SubtractionSolid* white_volume_1_cut  = CanVolume(true, this->can_length+extra_cut_length, white_detector, white_phi);
-
-    move_cut = G4ThreeVector(0.0*mm,0.0*mm,-1.0*(this->can_thickness + (extra_cut_length/2.0)));
+    
+    G4SubtractionSolid* white_volume_1      = CanVolume(false, this->can_length + this->can_back_thickness, white_detector, white_phi);
+    G4SubtractionSolid* white_volume_1_cut  = CanVolume(true, this->can_length - this->can_thickness, white_detector, white_phi);
+    
+    move_cut = G4ThreeVector(0.0*mm,0.0*mm, (this->can_back_thickness)/2.0 - (this->can_thickness)/2.0 );
     rotate_cut = new G4RotationMatrix;
-
+    
     G4SubtractionSolid* white_volume_2 = new G4SubtractionSolid("white_volume_2", white_volume_1, white_volume_1_cut, rotate_cut, move_cut);
-
+    
+    move_cut = G4ThreeVector(0.0, white_PMT_offset_Y, -1.0*(this->can_length) );
+    rotate_cut = new G4RotationMatrix;
+    
+    G4SubtractionSolid * white_volume_3 = new G4SubtractionSolid("white_volume_3", white_volume_2, window_cut_5inch, rotate_cut, move_cut);
+    
     // Define rotation and movement objects
     direction 	= G4ThreeVector(0,0,1);
-    z_position    = -1.0*(this->can_length)/2.0 ;
+    z_position    = -1.0*(this->can_length + this->can_back_thickness)/2.0 ;
     move          = z_position * direction;
-
+    
     rotate = new G4RotationMatrix;
-
+    
     //logical volume
     if( white_volume_log == NULL )
     {
-        white_volume_log = new G4LogicalVolume(white_volume_2, can_g4material, "descant_white_volume_log", 0, 0, 0);
+        white_volume_log = new G4LogicalVolume(white_volume_3, can_g4material, "descant_white_volume_log", 0, 0, 0);
         white_volume_log->SetVisAttributes(white_vis_att);
+        
     }
-
     this->assemblyWhite->AddPlacedVolume(white_volume_log, move, rotate);
-
+    
+    // QUARTZ WINDOW
+    move_extra = 2.0*(1.85*mm);
+    move = G4ThreeVector(0.0, white_PMT_offset_Y, -1.0*(this->can_length + (this->can_back_thickness)/2.0 + move_extra ));
+    rotate = new G4RotationMatrix;
+    this->assemblyWhite->AddPlacedVolume(quartz_window_5inch_log, move, rotate);
+    
     // WHITE LEAD
     // Set visualization attributes
     G4VisAttributes* white_lead_vis_att = new G4VisAttributes(white_colour);
-    //G4VisAttributes* white_lead_vis_att = new G4VisAttributes(red_colour);
     white_lead_vis_att->SetVisibility(true);
-
+    
     G4SubtractionSolid* white_lead_volume_1 = CanVolume(false, this->lead_shield_thickness, white_detector, white_phi);
-
+    
     // Define rotation and movement objects
     direction 	= G4ThreeVector(0,0,1);
     z_position    = this->lead_shield_thickness/2.0 ;
     move          = z_position * direction;
-
+    
     rotate = new G4RotationMatrix;
-
+    
     //logical volume
     if( white_lead_volume_log == NULL )
     {
         white_lead_volume_log = new G4LogicalVolume(white_lead_volume_1, lead_g4material, "descant_white_lead_volume_log", 0, 0, 0);
         white_lead_volume_log->SetVisAttributes(white_lead_vis_att);
     }
-
+    
     if(includeLead)
         this->assemblyWhite->AddPlacedVolume(white_lead_volume_log, move, rotate);
-
+    
     // YELLOW
     // Set visualization attributes
     G4VisAttributes* yellow_vis_att = new G4VisAttributes(yellow_colour);
     yellow_vis_att->SetVisibility(true);
-
-    G4SubtractionSolid* yellow_volume_1      = CanVolume(false, this->can_length, yellow_detector, yellow_phi);
-    G4SubtractionSolid* yellow_volume_1_cut  = CanVolume(true, this->can_length+extra_cut_length, yellow_detector, yellow_phi);
-
-    move_cut = G4ThreeVector(0.0*mm,0.0*mm,-1.0*(this->can_thickness + (extra_cut_length/2.0)));
+    
+    G4SubtractionSolid* yellow_volume_1      = CanVolume(false, this->can_length + this->can_back_thickness, yellow_detector, yellow_phi);
+    G4SubtractionSolid* yellow_volume_1_cut  = CanVolume(true, this->can_length -  this->can_thickness, yellow_detector, yellow_phi);
+    
+    move_cut = G4ThreeVector(0.0*mm,0.0*mm, (this->can_back_thickness)/2.0 - (this->can_thickness)/2.0 );
     rotate_cut = new G4RotationMatrix;
-
+    
     G4SubtractionSolid* yellow_volume_2 = new G4SubtractionSolid("yellow_volume_2", yellow_volume_1, yellow_volume_1_cut, rotate_cut, move_cut);
-
+    
+    move_cut = G4ThreeVector( 1.0*yellow_green_PMT_offset_X, yellow_green_PMT_offset_Y , -1.0*(this->can_length) );
+    rotate_cut = new G4RotationMatrix;
+    
+    G4SubtractionSolid * yellow_volume_3 = new G4SubtractionSolid("yellow_volume_3", yellow_volume_2, window_cut_3inch, rotate_cut, move_cut);
+    
     // Define rotation and movement objects
-    direction 	= G4ThreeVector(0,0,1);
-    z_position    = -1.0*(this->can_length)/2.0 ;
+    direction   = G4ThreeVector(0,0,1);
+    z_position    = -1.0*(this->can_length + this->can_back_thickness)/2.0 ;
     move          = z_position * direction;
-
+    
     rotate = new G4RotationMatrix;
-
+    
     //logical volume
     if( yellow_volume_log == NULL )
     {
-        yellow_volume_log = new G4LogicalVolume(yellow_volume_2, can_g4material, "descant_yellow_volume_log", 0, 0, 0);
+        yellow_volume_log = new G4LogicalVolume(yellow_volume_3, can_g4material, "descant_yellow_volume_log", 0, 0, 0);
         yellow_volume_log->SetVisAttributes(yellow_vis_att);
     }
-
     this->assemblyYellow->AddPlacedVolume(yellow_volume_log, move, rotate);
-
+    
+    // QUARTZ WINDOW
+    move_extra = 2.0*(1.85*mm);
+    move = G4ThreeVector( 1.0*yellow_green_PMT_offset_X, yellow_green_PMT_offset_Y, -1.0*( this->can_length + (this->can_back_thickness)/2.0 + move_extra ) );
+    rotate = new G4RotationMatrix;
+    this->assemblyYellow->AddPlacedVolume(quartz_window_3inch_log, move, rotate);
+    
     // YELLOW LEAD
     // Set visualization attributes
     G4VisAttributes* yellow_lead_vis_att = new G4VisAttributes(yellow_colour);
     yellow_lead_vis_att->SetVisibility(true);
-
+    
     G4SubtractionSolid* yellow_lead_volume_1 = CanVolume(false, this->lead_shield_thickness, yellow_detector, yellow_phi);
-
+    
     // Define rotation and movement objects
     direction 	= G4ThreeVector(0,0,1);
     z_position    = this->lead_shield_thickness/2.0 ;
     move          = z_position * direction;
-
+    
     rotate = new G4RotationMatrix;
-
+    
     //logical volume
     if( yellow_lead_volume_log == NULL )
     {
         yellow_lead_volume_log = new G4LogicalVolume(yellow_lead_volume_1, lead_g4material, "descant_yellow_lead_volume_log", 0, 0, 0);
         yellow_lead_volume_log->SetVisAttributes(yellow_lead_vis_att);
     }
-
+    
     if(includeLead)
         this->assemblyYellow->AddPlacedVolume(yellow_lead_volume_log, move, rotate);
-
+    
     return 1;
 }
 
@@ -891,7 +1005,7 @@ G4int DetectionSystemDescant::BuildDetectorVolume()
 
     // BLUE
     // Set visualization attributes
-    G4VisAttributes* blue_vis_att = new G4VisAttributes(blue_colour);
+    G4VisAttributes* blue_vis_att = new G4VisAttributes(liquid_colour);
     blue_vis_att->SetVisibility(true);
 
     G4SubtractionSolid* blue_volume_1_cut  = CanVolume(true, this->can_length-this->can_thickness, blue_detector, blue_phi);
@@ -914,7 +1028,7 @@ G4int DetectionSystemDescant::BuildDetectorVolume()
 
     //GREEN
     // Set visualization attributes
-    G4VisAttributes* green_vis_att = new G4VisAttributes(green_colour);
+    G4VisAttributes* green_vis_att = new G4VisAttributes(liquid_colour);
     green_vis_att->SetVisibility(true);
 
     G4SubtractionSolid* green_volume_1_cut  = CanVolume(true, this->can_length-this->can_thickness, green_detector, green_phi);
@@ -937,7 +1051,7 @@ G4int DetectionSystemDescant::BuildDetectorVolume()
 
     // RED
     // Set visualization attributes
-    G4VisAttributes* red_vis_att = new G4VisAttributes(red_colour);
+    G4VisAttributes* red_vis_att = new G4VisAttributes(liquid_colour);
     red_vis_att->SetVisibility(true);
 
     G4SubtractionSolid* red_volume_1_cut  = CanVolume(true, this->can_length-this->can_thickness, red_detector, red_phi);
@@ -960,7 +1074,7 @@ G4int DetectionSystemDescant::BuildDetectorVolume()
 
     // WHITE
     // Set visualization attributes
-    G4VisAttributes* white_vis_att = new G4VisAttributes(white_colour);
+    G4VisAttributes* white_vis_att = new G4VisAttributes(liquid_colour);
     white_vis_att->SetVisibility(true);
 
     G4SubtractionSolid* white_volume_1_cut  = CanVolume(true, this->can_length-this->can_thickness, white_detector, white_phi);
@@ -983,7 +1097,7 @@ G4int DetectionSystemDescant::BuildDetectorVolume()
 
     // YELLOW
     // Set visualization attributes
-    G4VisAttributes* yellow_vis_att = new G4VisAttributes(yellow_colour);
+    G4VisAttributes* yellow_vis_att = new G4VisAttributes(liquid_colour);
     yellow_vis_att->SetVisibility(true);
 
     G4SubtractionSolid* yellow_volume_1_cut  = CanVolume(true, this->can_length-this->can_thickness, yellow_detector, yellow_phi);

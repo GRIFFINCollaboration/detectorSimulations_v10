@@ -23,76 +23,65 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-// $Id: PhysicsList.hh 68007 2013-03-13 11:28:03Z gcosmo $
 //
-/// \file radioactivedecay/rdecay02/include/PhysicsList.hh
-/// \brief Definition of the PhysicsList class
+// $Id: DetectorConstruction.hh,v 1.1 2010-10-18 15:56:17 maire Exp $
+// GEANT4 tag $Name: geant4-09-04-patch-02 $
+//
 //
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef PhysicsList_h
-#define PhysicsList_h 1
+#ifndef DetectionSystemTestcan_h
+#define DetectionSystemTestcan_h 1
 
-#include "G4VModularPhysicsList.hh"
+#include "G4SystemOfUnits.hh" // new version geant4.10 requires units
+#include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
-#include <vector>
 
-class G4VPhysicsConstructor;
-class PhysicsListMessenger;
-class G4ProductionCuts;
-class G4Scintillation;
+class G4AssemblyVolume;
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-class PhysicsList: public G4VModularPhysicsList
+class DetectionSystemTestcan
 {
 public:
-    PhysicsList();
-    virtual ~PhysicsList();
+    DetectionSystemTestcan(G4double length, G4double radius);
+    ~DetectionSystemTestcan();
 
-    virtual void ConstructParticle();
-
-    virtual void SetCuts();
-    void SetCutForGamma(G4double);
-    void SetCutForElectron(G4double);
-    void SetCutForPositron(G4double);
-
-    void SelectPhysicsList(const G4String& name);
-    virtual void ConstructProcess();
-
-    void ConstructOp(G4bool);
-
-    void SetTargetCut(G4double val);
-    void SetDetectorCut(G4double val);
+    G4int Build();
+    G4int PlaceDetector(G4LogicalVolume* exp_hall_log);
 
 private:
+    // Logical volumes
+    G4LogicalVolume* testcan_alum_casing_log;
+    G4LogicalVolume* testcan_scintillator_log;   
+    G4LogicalVolume* testcan_quartz_window_log;
 
-    void AddExtraBuilders(G4bool flagHP);
+    // Assembly volumes
+    G4AssemblyVolume* assemblyTestcan;                 // Contains all non-sensitive materials
 
-    // hide assignment operator
-    PhysicsList & operator=(const PhysicsList &right);
-    PhysicsList(const PhysicsList&);
+    G4double scintillator_length;
+    G4double scintillator_inner_radius;
+    G4double scintillator_outer_radius;
 
-    G4double fCutForGamma;
-    G4double fCutForElectron;
-    G4double fCutForPositron;
+    G4double alum_can_thickness;
+    G4double quartz_thickness;
+    G4double quartz_radius;
 
-    G4VPhysicsConstructor*  fEmPhysicsList;
-    G4VPhysicsConstructor*  fRaddecayList;
-    G4VPhysicsConstructor*  fParticleList;
-    G4VPhysicsConstructor*  fHadPhysicsList;
+    G4double start_phi;
+    G4double end_phi;
 
-    std::vector<G4VPhysicsConstructor*>  fHadronPhys;
-    G4int fNhadcomp;
+    G4String can_material;
+    G4String liquid_material;
+    G4String quartz_material;
 
-    PhysicsListMessenger* fPMessenger;
-    G4ProductionCuts* fDetectorCuts;
-    G4ProductionCuts* fTargetCuts;
+    // The colours of the detectors
+    G4Colour liquid_colour; // Scintillator colour
+    G4Colour grey_colour;   // can colour
+    G4Colour quartz_colour;
 
-    G4Scintillation * scintProcess;
+    G4int BuildTestcan();
+
 };
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 #endif
+
