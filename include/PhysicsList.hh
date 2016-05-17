@@ -41,6 +41,7 @@
 class G4VPhysicsConstructor;
 class PhysicsListMessenger;
 class G4ProductionCuts;
+class G4Scintillation;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -59,6 +60,8 @@ public:
 
     void SelectPhysicsList(const G4String& name);
     virtual void ConstructProcess();
+
+    void ConstructOp();
 
     void SetTargetCut(G4double val);
     void SetDetectorCut(G4double val);
@@ -87,6 +90,7 @@ private:
     G4ProductionCuts* fDetectorCuts;
     G4ProductionCuts* fTargetCuts;
 
+    G4Scintillation * scintProcess;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
