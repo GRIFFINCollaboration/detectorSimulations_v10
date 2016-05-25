@@ -1,30 +1,28 @@
-detectorSimulations
+detectorSimulations_v10
 ===================
 
-The detectorSimulations package contains the Geant4 simulations for GRIFFIN, TIGRESS, and all of their auxilary detectors.  Please note that in order to respect our non-disclosure agreements, all source containing third party IP have been omitted from this repo, and can be obtained from your colleagues directly at the lab.
+The detectorSimulations_v10 package contains the Geant4 simulations for GRIFFIN, TIGRESS, and all of their auxiliary detectors.  Please note that in order to respect our non-disclosure agreements, all source containing third party IP have been omitted from this repo, and can be obtained from your colleagues directly at the lab.
 
 
 #Setup
 
 ###Requirements
-detectorSimulations is confirmed to run on geant4.9.6.p01 and ROOT 5.34.11.
+detectorSimulations is confirmed to run on geant4.10.01 and ROOT 6.04.00.
 
 ###Getting the code
 
 To setup the simulation package on a computer with GEANT4 already present, just copy the code to your machine:
 
-    git clone https://github.com/GRIFFINCollaboration/detectorSimulations.git
+    git clone https://github.com/GRIFFINCollaboration/detectorSimulations_v10.git
     
-Then you'll need to get the files containing our NDA-protected parameters from one of your colleagues at the lab; place these in the /src directory, and everything should compile and run as expected. 
+Then you'll need to get the files containing our NDA-protected parameters from one of your colleagues at the lab; place these in the src-directory, and everything should compile and run as expected. 
 
 ###Building
 
-Before building the simulation itself, some extra stuff needs to be compiled: in `detectorSimulations/dataRootClass`, do `make`.
-
-The rest of the build process is pretty standard for a geant simulation; in a build directory (ie any clean new directory that isn't the source directory), do 
+The build process is pretty standard for a geant simulation; in a build directory (ie any clean new directory that isn't the source directory), do 
 
 ```
-cmake -DGeant4_DIR=/path/to/geant4.9.6.p01-install/lib64/Geant4-9.6.1 ~/path/to/detectorSimulations
+cmake path/to/detectorSimulations
 make clean
 make
 ```
@@ -37,6 +35,8 @@ Keep in mind that cmake does not regenerate all the files it uses every time it 
 
 
 #Usage
+
+The following might be out of date with the change to geant4.10, we haven't had time yet to verify the information below.
 
 ###Particle Emission
 
