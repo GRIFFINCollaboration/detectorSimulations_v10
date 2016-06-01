@@ -7,6 +7,11 @@ else
 	supp_dir=$1
 fi
 
+# to set the link properly, we need to convert the potentially relative path to an absolute path
+supp_dir=$(cd $supp_dir; pwd)
+
+echo "Using $supp_dir for suppressed files"
+
 # if the directory with the suppressed files doesn't exist, clone it
 if [ ! -d $supp_dir ]; then
 	if git clone ssh://git@gitlab.com/GRIFFINCollaboration/suppressed.git $supp_dir; then
