@@ -18,7 +18,7 @@ if [ ! -d $supp_dir ]; then
 fi
 
 # check that the two suppressed files exist (in case someone created the directory for the suppressed files but didn't clone)
-if [ ! -f $supp_dir/DetectionSystemGriffinSuppressed.cc || ! -f $supp_dir/DetectorConstructionSuppressed.cc ]; then
+if [[ ! -f $supp_dir/DetectionSystemGriffinSuppressed.cc || ! -f $supp_dir/DetectorConstructionSuppressed.cc ]]; then
 	if git clone https://gitlab.com/GRIFFINCollaboration/suppressed.git $supp_dir; then
 		echo "Successfully cloned the suppressed files!"
 	else
