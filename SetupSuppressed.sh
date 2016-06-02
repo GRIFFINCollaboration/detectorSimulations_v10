@@ -7,11 +7,6 @@ else
 	supp_dir=$1
 fi
 
-# to set the link properly, we need to convert the potentially relative path to an absolute path
-supp_dir=$(cd $supp_dir; pwd)
-
-echo "Using $supp_dir for suppressed files"
-
 # if the directory with the suppressed files doesn't exist, clone it
 if [ ! -d $supp_dir ]; then
 	if git clone ssh://git@gitlab.com/GRIFFINCollaboration/suppressed.git $supp_dir; then
@@ -21,6 +16,9 @@ if [ ! -d $supp_dir ]; then
 		exit;
 	fi
 fi
+
+# to set the link properly, we need to convert the potentially relative path to an absolute path
+supp_dir=$(cd $supp_dir; pwd)
 
 # check that the two suppressed files exist (in case someone created the directory for the suppressed files but didn't clone)
 if [[ ! -f $supp_dir/DetectionSystemGriffinSuppressed.cc || ! -f $supp_dir/DetectorConstructionSuppressed.cc ]]; then
