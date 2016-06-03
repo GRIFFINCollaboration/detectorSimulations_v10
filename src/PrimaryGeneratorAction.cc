@@ -150,6 +150,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         G4int detnumber;
 
         // Choose random detector
+		  // this is done in a weird way, why not just use numberOfDecayingLaBrDetectors*G4UniformRand() and cast it to a integer?
         prob = 1.0/((G4double)(numberOfDecayingLaBrDetectors));
         sumProb = 0.0;
         G4double random_det = G4UniformRand();
