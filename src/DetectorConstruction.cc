@@ -86,6 +86,8 @@
 
 #include "DetectionSystemAncillaryBGO.hh"
 
+#include "HistoManager.hh"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 DetectorConstruction::DetectorConstruction() :
@@ -468,6 +470,8 @@ void DetectorConstruction::AddDetectionSystemSodiumIodide(G4int ndet)
 
         pSodiumIodide->PlaceDetector( logicWorld, move, rotate, detector_number ) ;
     }
+
+	 HistoManager::Instance().NaI(true);
 }
 
 void DetectorConstruction::AddDetectionSystemLanthanumBromide(G4ThreeVector input)
@@ -482,6 +486,7 @@ void DetectorConstruction::AddDetectionSystemLanthanumBromide(G4ThreeVector inpu
     {
         pDetectionSystemLanthanumBromide->PlaceDetector(logicWorld, detector_number, radialpos);
     }
+	 HistoManager::Instance().LaBr(true);
 }
 
 void DetectorConstruction::AddDetectionSystemAncillaryBGO(G4ThreeVector input)
@@ -498,6 +503,7 @@ void DetectorConstruction::AddDetectionSystemAncillaryBGO(G4ThreeVector input)
     {
         pDetectionSystemAncillaryBGO->PlaceDetector(logicWorld, detector_number, radialpos, hevimetopt);
     }
+	 HistoManager::Instance().AncBgo(true);
 }
 
 
@@ -583,7 +589,7 @@ void DetectorConstruction::AddDetectionSystemGriffinCustomDetector( G4int ndet =
 
     pGriffinCustom->PlaceEverythingButCrystals( logicWorld, this->customDetectorNumber-1, this->customDetectorPosition-1, useTigressPositions ) ;
 
-
+	 HistoManager::Instance().Griffin(true);
 }
 
 void DetectorConstruction::AddDetectionSystemGriffinCustom(G4int ndet)
@@ -606,6 +612,7 @@ void DetectorConstruction::AddDetectionSystemGriffinCustom(G4int ndet)
         pGriffinCustom->PlaceEverythingButCrystals( logicWorld, det_num-1, pos_num-1, useTigressPositions ) ;
 
     }
+	 HistoManager::Instance().Griffin(true);
 }
 
 void DetectorConstruction::AddDetectionSystemGriffinShieldSelect( G4int ShieldSelect ){
@@ -666,6 +673,7 @@ void DetectorConstruction::AddDetectionSystemGriffinForward(G4int ndet)
         pGriffinDLS->PlaceEverythingButCrystals( logicWorld, det_num-1, pos_num-1, useTigressPositions ) ;
 
     }
+	 HistoManager::Instance().Griffin(true);
 }
 
 void DetectorConstruction::AddDetectionSystemGriffinForwardDetector(G4int ndet)
@@ -704,7 +712,7 @@ void DetectorConstruction::AddDetectionSystemGriffinForwardDetector(G4int ndet)
 
     pGriffinDLS->PlaceEverythingButCrystals( logicWorld, det_num-1, pos_num-1, useTigressPositions ) ;
 
-
+	 HistoManager::Instance().Griffin(true);
 }
 
 void DetectorConstruction::AddDetectionSystemGriffinBack(G4int ndet)
@@ -746,6 +754,7 @@ void DetectorConstruction::AddDetectionSystemGriffinBack(G4int ndet)
 
     }
 
+	 HistoManager::Instance().Griffin(true);
 }
 
 void DetectorConstruction::AddDetectionSystemGriffinBackDetector(G4int ndet)
@@ -778,6 +787,8 @@ void DetectorConstruction::AddDetectionSystemGriffinBackDetector(G4int ndet)
     pGriffinDLS->PlaceDeadLayerSpecificCrystal( logicWorld, det_num-1, pos_num-1, useTigressPositions ) ;
     pGriffinDLS->BuildEverythingButCrystals();
     pGriffinDLS->PlaceEverythingButCrystals( logicWorld, det_num-1, pos_num-1, useTigressPositions ) ;
+
+	 HistoManager::Instance().Griffin(true);
 }
 
 void DetectorConstruction::AddDetectionSystemGriffinHevimet(G4int input)
@@ -820,6 +831,8 @@ void DetectorConstruction::AddDetectionSystemSceptar(G4int ndet)
     DetectionSystemSceptar* pSceptar = new DetectionSystemSceptar() ;
     pSceptar->Build() ;
     pSceptar->PlaceDetector( logicWorld, ndet ) ;
+
+	 HistoManager::Instance().Sceptar(true);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -828,6 +841,8 @@ void DetectorConstruction::AddDetectionSystemDescant(G4int ndet)
     DetectionSystemDescant* pDetectionSystemDescant = new DetectionSystemDescant(true) ;
     pDetectionSystemDescant->Build() ;
     pDetectionSystemDescant->PlaceDetector( logicWorld, ndet ) ;
+
+	 HistoManager::Instance().Descant(true);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -847,6 +862,8 @@ void DetectorConstruction::AddDetectionSystemDescantAuxPorts(G4ThreeVector input
     {
         pDetectionSystemDescant->PlaceDetectorAuxPorts(logicWorld, detector_number, radialpos);
     }
+
+	 HistoManager::Instance().Descant(true);
 }
 
 void DetectorConstruction::SetDetectionSystemDescantRotation(G4ThreeVector input)
@@ -867,6 +884,8 @@ void DetectorConstruction::AddDetectionSystemDescantCart(G4ThreeVector input)
     DetectionSystemDescant* pDetectionSystemDescant = new DetectionSystemDescant(true) ;
     pDetectionSystemDescant->Build() ;
     pDetectionSystemDescant->PlaceDetector( logicWorld, descantColor, input, descantRotation ) ;
+
+	 HistoManager::Instance().Descant(true);
 }
 
 void DetectorConstruction::AddDetectionSystemDescantSpher(G4ThreeVector input, G4double unit)
@@ -875,6 +894,8 @@ void DetectorConstruction::AddDetectionSystemDescantSpher(G4ThreeVector input, G
     //convert from degree to rad
 	 sphericalVector.setRThetaPhi(input.x()*unit, input.y()/180.*M_PI, input.z()/180.*M_PI);
 	 AddDetectionSystemDescantCart(sphericalVector);
+
+	 HistoManager::Instance().Descant(true);
 }
 
 void DetectorConstruction::AddApparatusDescantStructure()
@@ -894,6 +915,8 @@ void DetectorConstruction::AddDetectionSystemTestcan(G4ThreeVector input)
     DetectionSystemTestcan* pDetectionSystemTestcan = new DetectionSystemTestcan(length, radius);
     pDetectionSystemTestcan->Build();
     pDetectionSystemTestcan->PlaceDetector(logicWorld);
+
+	 HistoManager::Instance().Testcan(true);
 }
 
 //void DetectorConstruction::AddDetectionSystemSpice(G4int ndet)
@@ -933,4 +956,6 @@ void DetectorConstruction::AddDetectionSystemPaces(G4int ndet)
     pPaces->Build() ;
 
     pPaces->PlaceDetector( logicWorld, ndet ) ;
+
+	 HistoManager::Instance().Paces(true);
 }

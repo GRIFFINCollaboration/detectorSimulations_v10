@@ -53,7 +53,7 @@ static const int NUMSTEPVARS    = 15;
 class EventAction : public G4UserEventAction
 {
 public:
-    EventAction(RunAction*, HistoManager*);
+    EventAction(RunAction*);
     virtual ~EventAction();
 
     virtual void  BeginOfEventAction(const G4Event*);
@@ -90,7 +90,6 @@ public:
 
 private:
     RunAction*    fRunAct;
-    HistoManager* fHistoManager;
 
     G4int     fPrintModulo;
     G4int     evtNb;
