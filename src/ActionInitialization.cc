@@ -29,7 +29,6 @@
 /// \brief Implementation of the ActionInitialization class
 
 #include "ActionInitialization.hh"
-#include "HistoManager.hh"
 #include "PrimaryGeneratorAction.hh"
 #include "RunAction.hh"
 #include "EventAction.hh"
@@ -51,28 +50,22 @@ ActionInitialization::~ActionInitialization()
 
 void ActionInitialization::BuildForMaster() const
 {
-    // Histo manager
-    HistoManager*  histo = new HistoManager();
-
     // Actions
-    SetUserAction(new RunAction(histo));
+    SetUserAction(new RunAction());
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void ActionInitialization::Build() const
 {
-    // Histo manager
-    HistoManager*  histo = new HistoManager();
-
     // Actions
     //
     SetUserAction(new PrimaryGeneratorAction(fDetector));
 
-    RunAction* runAction = new RunAction(histo);
+    RunAction* runAction = new RunAction();
     SetUserAction(runAction);
 
-    EventAction* eventAction = new EventAction(runAction, histo);
+    EventAction* eventAction = new EventAction(runAction);
     SetUserAction(eventAction);
 
     SteppingAction* steppingAction = new SteppingAction(fDetector, eventAction);

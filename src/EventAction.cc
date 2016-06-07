@@ -43,9 +43,9 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-EventAction::EventAction(RunAction* run, HistoManager* histo)
+EventAction::EventAction(RunAction* run)
     :G4UserEventAction(),
-      fRunAct(run),fHistoManager(histo),
+      fRunAct(run),
       fPrintModulo(0)
 {
     numberOfHits = 0;
@@ -85,10 +85,10 @@ void EventAction::EndOfEventAction(const G4Event*)
 
     //G4cout << "numberOfHits = " << numberOfHits << G4endl;
     for (G4int i = 0 ; i < numberOfHits; i++) {
-		fHistoManager->FillHitNtuple(hitTrackerI[0][i], hitTrackerI[1][i], hitTrackerI[2][i], hitTrackerI[3][i],  hitTrackerI[4][i], hitTrackerI[5][i], hitTrackerI[6][i], hitTrackerI[7][i], hitTrackerI[8][i], hitTrackerD[0][i]/keV, hitTrackerD[1][i]/mm, hitTrackerD[2][i]/mm, hitTrackerD[3][i]/mm, hitTrackerD[4][i]/second, hitTrackerI[9][i]);
+		HistoManager::Instance().FillHitNtuple(hitTrackerI[0][i], hitTrackerI[1][i], hitTrackerI[2][i], hitTrackerI[3][i],  hitTrackerI[4][i], hitTrackerI[5][i], hitTrackerI[6][i], hitTrackerI[7][i], hitTrackerI[8][i], hitTrackerD[0][i]/keV, hitTrackerD[1][i]/mm, hitTrackerD[2][i]/mm, hitTrackerD[3][i]/mm, hitTrackerD[4][i]/second, hitTrackerI[9][i]);
     }
     for (G4int i = 0 ; i < numberOfSteps; i++) {
-		fHistoManager->FillStepNtuple(stepTrackerI[0][i], stepTrackerI[1][i], stepTrackerI[2][i], stepTrackerI[3][i],  stepTrackerI[4][i], stepTrackerI[5][i], stepTrackerI[6][i], stepTrackerI[7][i], stepTrackerI[8][i], stepTrackerD[0][i]/keV, stepTrackerD[1][i]/mm, stepTrackerD[2][i]/mm, stepTrackerD[3][i]/mm, stepTrackerD[4][i]/second, stepTrackerI[9][i]);
+		HistoManager::Instance().FillStepNtuple(stepTrackerI[0][i], stepTrackerI[1][i], stepTrackerI[2][i], stepTrackerI[3][i],  stepTrackerI[4][i], stepTrackerI[5][i], stepTrackerI[6][i], stepTrackerI[7][i], stepTrackerI[8][i], stepTrackerD[0][i]/keV, stepTrackerD[1][i]/mm, stepTrackerD[2][i]/mm, stepTrackerD[3][i]/mm, stepTrackerD[4][i]/second, stepTrackerI[9][i]);
     }
 
     ClearVariables();
@@ -101,7 +101,7 @@ void EventAction::EndOfEventAction(const G4Event*)
 
 void EventAction::ClearVariables()
 {
-    if(fHistoManager->GetStepTrackerBool()) {
+    if(HistoManager::Instance().GetStepTrackerBool()) {
         stepIndex = 0;
         numberOfSteps = 0;
         for (G4int i = 0 ; i < MAXSTEPS; i++) {
@@ -112,7 +112,7 @@ void EventAction::ClearVariables()
         }
     }
 
-    if(fHistoManager->GetHitTrackerBool()) {
+    if(HistoManager::Instance().GetHitTrackerBool()) {
         hitIndex = 0;
         numberOfHits = 0;
         pTrackID = -1;
@@ -182,7 +182,7 @@ void EventAction::FillParticleType()
             for (G4int j = 0 ; j< particleTypes[i]; j++)
             { // loop over the number of time we saw it
                 G4cout << "particleTypes[" << i << "] = " << particleTypes[i] << G4endl;
-                fHistoManager->FillHisto(astats_particle_type_in_each_step, i);
+                HistoManager::Instance().FillHisto(astats_particle_type_in_each_step, i);
             }
         }
     }
@@ -193,7 +193,7 @@ void EventAction::FillParticleType()
         if (particleTypes[i] != 0)
             numParticleTypes++;
     }
-    fHistoManager->FillHisto(astats_particle_type_in_each_event, numParticleTypes);
+    HistoManager::Instance().FillHisto(astats_particle_type_in_each_event, numParticleTypes);
 }
 
 void EventAction::FillGriffinCryst()
@@ -233,34 +233,34 @@ void EventAction::FillGriffinCryst()
         for (G4int j=0; j < MAXNUMCRYGRIFFIN; j++) {
             if(GriffinCrystEnergyDet[i][j] > MINENERGYTHRES) {
                 // fill energies in each crystal
-                if(WRITEEDEPHISTOS)     fHistoManager->FillHisto((griffin_crystal_unsup_edep_det0_cry0+(MAXNUMDETGRIFFIN*j))+i, GriffinCrystEnergyDet[i][j]);
-                if(WRITEEDEPHISTOS)     fHistoManager->FillHisto(griffin_crystal_unsup_edep_cry, GriffinCrystEnergyDet[i][j]);
+                if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto((griffin_crystal_unsup_edep_det0_cry0+(MAXNUMDETGRIFFIN*j))+i, GriffinCrystEnergyDet[i][j]);
+                if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(griffin_crystal_unsup_edep_cry, GriffinCrystEnergyDet[i][j]);
                 if(!SuppressorBackFired[i] && !SuppressorExtensionFired[i] && !SuppressorSideFired[i]) { // Suppressor fired?
-                    if(WRITEEDEPHISTOS) fHistoManager->FillHisto((griffin_crystal_sup_edep_det0_cry0+(MAXNUMDETGRIFFIN*j))+i, GriffinCrystEnergyDet[i][j]);
-                    if(WRITEEDEPHISTOS) fHistoManager->FillHisto(griffin_crystal_sup_edep_cry, GriffinCrystEnergyDet[i][j]);
+                    if(WRITEEDEPHISTOS) HistoManager::Instance().FillHisto((griffin_crystal_sup_edep_det0_cry0+(MAXNUMDETGRIFFIN*j))+i, GriffinCrystEnergyDet[i][j]);
+                    if(WRITEEDEPHISTOS) HistoManager::Instance().FillHisto(griffin_crystal_sup_edep_cry, GriffinCrystEnergyDet[i][j]);
                 }
                 energySumDet += GriffinCrystEnergyDet[i][j];
             }
         }
         if(energySumDet > MINENERGYTHRES) {
             // fill energies in each detector
-            if(WRITEEDEPHISTOS)     fHistoManager->FillHisto(griffin_crystal_unsup_edep_det0+i, energySumDet);
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(griffin_crystal_unsup_edep_det0+i, energySumDet);
             // fill standard energy and track spectra
-            if(WRITEEDEPHISTOS)     fHistoManager->FillHisto(griffin_crystal_unsup_edep, energySumDet);
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(griffin_crystal_unsup_edep, energySumDet);
             if(!SuppressorBackFired[i] && !SuppressorExtensionFired[i] && !SuppressorSideFired[i]) {
                 // fill energies in each detector
-                if(WRITEEDEPHISTOS) fHistoManager->FillHisto(griffin_crystal_sup_edep_det0+i, energySumDet);
+                if(WRITEEDEPHISTOS) HistoManager::Instance().FillHisto(griffin_crystal_sup_edep_det0+i, energySumDet);
                 // fill standard energy and track spectra
-                if(WRITEEDEPHISTOS) fHistoManager->FillHisto(griffin_crystal_sup_edep, energySumDet);
+                if(WRITEEDEPHISTOS) HistoManager::Instance().FillHisto(griffin_crystal_sup_edep, energySumDet);
             }
         }
         energySum += energySumDet;
     }
 
     if(energySum > MINENERGYTHRES) {
-        if(WRITEEDEPHISTOS)     fHistoManager->FillHisto(griffin_crystal_unsup_edep_sum, energySum);
+        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(griffin_crystal_unsup_edep_sum, energySum);
         if(!SuppressorFired) {
-            if(WRITEEDEPHISTOS) fHistoManager->FillHisto(griffin_crystal_sup_edep_sum, energySum);
+            if(WRITEEDEPHISTOS) HistoManager::Instance().FillHisto(griffin_crystal_sup_edep_sum, energySum);
         }
     }
 }
@@ -270,13 +270,13 @@ void EventAction::Fill8piCryst()
     G4double energySumDet = 0;
     for (G4int j=0; j < MAXNUMDET; j++) {
         if(EightPiCrystEnergyDet[j] > MINENERGYTHRES) {
-            if(WRITEEDEPHISTOS)     fHistoManager->FillHisto(Eightpi_crystal_edep, EightPiCrystEnergyDet[j]);
-            if(WRITEEDEPHISTOS)     fHistoManager->FillHisto(Eightpi_crystal_edep_det0+j, EightPiCrystEnergyDet[j]);
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(Eightpi_crystal_edep, EightPiCrystEnergyDet[j]);
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(Eightpi_crystal_edep_det0+j, EightPiCrystEnergyDet[j]);
             energySumDet += EightPiCrystEnergyDet[j];
         }
     }
     if(energySumDet > MINENERGYTHRES) {
-        if(WRITEEDEPHISTOS)     fHistoManager->FillHisto(Eightpi_crystal_edep_sum, energySumDet);
+        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(Eightpi_crystal_edep_sum, energySumDet);
     }
 
 }
@@ -287,13 +287,13 @@ void EventAction::FillLaBrCryst()
     G4double energySumDet = 0;
     for (G4int j=0; j < MAXNUMDET; j++) {
         if(LaBrCrystEnergyDet[j] > MINENERGYTHRES) {
-            if(WRITEEDEPHISTOS)     fHistoManager->FillHisto(labr_crystal_edep, LaBrCrystEnergyDet[j]);
-            if(WRITEEDEPHISTOS)     fHistoManager->FillHisto(labr_crystal_edep_det0+j, LaBrCrystEnergyDet[j]);
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(labr_crystal_edep, LaBrCrystEnergyDet[j]);
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(labr_crystal_edep_det0+j, LaBrCrystEnergyDet[j]);
             energySumDet += LaBrCrystEnergyDet[j];
         }
     }
     if(energySumDet > MINENERGYTHRES) {
-        if(WRITEEDEPHISTOS)     fHistoManager->FillHisto(labr_crystal_edep_sum, energySumDet);
+        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(labr_crystal_edep_sum, energySumDet);
     }
 }
 
@@ -302,13 +302,13 @@ void EventAction::FillAncillaryBgo()
     G4double energySumDet = 0;
     for (G4int j=0; j < MAXNUMDET; j++) {
         if(AncillaryBgoEnergyDet[j] > MINENERGYTHRES) {
-            if(WRITEEDEPHISTOS)     fHistoManager->FillHisto(ancillary_bgo_crystal_edep, AncillaryBgoEnergyDet[j]);
-            if(WRITEEDEPHISTOS)     fHistoManager->FillHisto(ancillary_bgo_crystal_edep_det0+j, AncillaryBgoEnergyDet[j]);
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(ancillary_bgo_crystal_edep, AncillaryBgoEnergyDet[j]);
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(ancillary_bgo_crystal_edep_det0+j, AncillaryBgoEnergyDet[j]);
             energySumDet += AncillaryBgoEnergyDet[j];
         }
     }
     if(energySumDet > MINENERGYTHRES) {
-        if(WRITEEDEPHISTOS)     fHistoManager->FillHisto(ancillary_bgo_crystal_edep_sum, energySumDet);
+        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(ancillary_bgo_crystal_edep_sum, energySumDet);
     }
 }
 
@@ -317,13 +317,13 @@ void EventAction::FillSceptar()
     G4double energySumDet = 0;
     for (G4int j=0; j < MAXNUMDET; j++) {
         if(SceptarEnergyDet[j] > MINENERGYTHRES) {
-            if(WRITEEDEPHISTOS)     fHistoManager->FillHisto(sceptar_edep, SceptarEnergyDet[j]);
-            if(WRITEEDEPHISTOS)     fHistoManager->FillHisto(sceptar_edep_det0+j, SceptarEnergyDet[j]);
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(sceptar_edep, SceptarEnergyDet[j]);
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(sceptar_edep_det0+j, SceptarEnergyDet[j]);
             energySumDet += SceptarEnergyDet[j];
         }
     }
     if(energySumDet > MINENERGYTHRES) {
-        if(WRITEEDEPHISTOS)     fHistoManager->FillHisto(sceptar_edep_sum, energySumDet);
+        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(sceptar_edep_sum, energySumDet);
     }
 
 }
@@ -331,9 +331,9 @@ void EventAction::FillSceptar()
 void EventAction::FillGridCell()
 {
     for (G4int j=0; j < MAXNUMDET; j++) {
-        if(WRITEEKINHISTOS && GridCellElectronEKinDet[j] > MINENERGYTHRES)     fHistoManager->FillHisto(gridcell_electron_ekin_det0+j, GridCellElectronEKinDet[j]);
-        if(WRITEEKINHISTOS && GridCellGammaEKinDet[j] > MINENERGYTHRES)     fHistoManager->FillHisto(gridcell_gamma_ekin_det0+j, GridCellGammaEKinDet[j]);
-        if(WRITEEKINHISTOS && GridCellNeutronEKinDet[j] > MINENERGYTHRES)     fHistoManager->FillHisto(gridcell_neutron_ekin_det0+j, GridCellNeutronEKinDet[j]);
+        if(WRITEEKINHISTOS && GridCellElectronEKinDet[j] > MINENERGYTHRES)  HistoManager::Instance().FillHisto(gridcell_electron_ekin_det0+j, GridCellElectronEKinDet[j]);
+        if(WRITEEKINHISTOS && GridCellGammaEKinDet[j] > MINENERGYTHRES)     HistoManager::Instance().FillHisto(gridcell_gamma_ekin_det0+j, GridCellGammaEKinDet[j]);
+        if(WRITEEKINHISTOS && GridCellNeutronEKinDet[j] > MINENERGYTHRES)   HistoManager::Instance().FillHisto(gridcell_neutron_ekin_det0+j, GridCellNeutronEKinDet[j]);
     }
 }
 

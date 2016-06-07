@@ -38,17 +38,16 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-HistoManager::HistoManager()
-{
-    fileName[0] = "g4out";
-    factoryOn = false;
+HistoManager::HistoManager() {
+    fFileName[0] = "g4out";
+    fFactoryOn = false;
 
-    // Only fill one NTuple at a time. If stepTrackerBool is true, then hitTrackerBool should be false, or vise-versa.
+    // Only fill one NTuple at a time. If fStepTrackerBool is true, then fHitTrackerBool should be false, or vise-versa.
     // There is no need to have the hit NTuple and the step NTuple.
-    hitTrackerBool = true;
-    stepTrackerBool = false;
+    fHitTrackerBool = true;
+    fStepTrackerBool = false;
 
-    makeHistoIndex = 0;
+    fMakeHistoIndex = 0;
 
     // histograms
     for (G4int k=0; k<MAXHISTO; k++) {
@@ -61,6 +60,18 @@ HistoManager::HistoManager()
         fNtColIdHit[k] = 0;
         fNtColIdStep[k] = 0;
     }
+
+	 fGridCell = false;
+ 	 fGriffin  = false;
+	 fLaBr     = false;
+	 fAncBgo   = false;
+	 fNaI      = false;
+	 fSceptar  = false;
+	 fEightPi  = false;
+	 fSpice    = false;
+	 fPaces    = false;
+	 fDescant  = false;
+	 fTestcan  = false;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -70,9 +81,8 @@ HistoManager::~HistoManager()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void HistoManager::book()
-{
-    G4String filename;
+void HistoManager::Book() {
+    G4String name;
     G4String title;
     G4String detString;
     G4String cryString;
@@ -100,278 +110,290 @@ void HistoManager::book()
     // The choice of analysis technology is done via selection of a namespace
     // in HistoManager.hh
     G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-    analysisManager->SetVerboseLevel(2);
+    //analysisManager->SetVerboseLevel(2);
     G4String extension = analysisManager->GetFileType();
-    fileName[1] = fileName[0] + "." + extension;
+    fFileName[1] = fFileName[0] + "." + extension;
 
     // Create directories
     analysisManager->SetHistoDirectoryName("histo");
-    analysisManager->SetNtupleDirectoryName("ntuple");
+    //analysisManager->SetNtupleDirectoryName("ntuple");
 
     // Open an output file
-    G4bool fileOpen = analysisManager->OpenFile(fileName[0]);
+    G4bool fileOpen = analysisManager->OpenFile(fFileName[0]);
     if (!fileOpen) {
-        G4cout << "\n---> HistoManager::book(): cannot open " << fileName[1]
+        G4cout << "\n---> HistoManager::book(): cannot open " << fFileName[1]
                << G4endl;
         return;
     }
 
     // create selected histograms
     analysisManager->SetFirstHistoId(1);
-    filename  = "astats_particle_type_in_each_step";
+    name  = "astats_particle_type_in_each_step";
     title     = "Particle Creation";
     nbins     = 20;
     xmin      = 0.;
     xmax      = 20.;
-    MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-    filename  = "astats_particle_type_in_each_event";
+    name  = "astats_particle_type_in_each_event";
     title     = "Number of Particle Types in Event";
     nbins     = 100;
     xmin      = 0.;
     xmax      = 100.;
-    MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-    if(WRITEEKINHISTOS) {
+    if(fGridCell && WRITEEKINHISTOS) {
         for (G4int i=0; i < MAXNUMDET; i++) {
             detString = G4intToG4String(i);
-            filename  = "gridcell_electron_ekin_det" + detString;
+            name  = "gridcell_electron_ekin_det" + detString;
             title     = "EKin in cell (keV)";
             nbins     = EKINNBINS;
             xmin      = EKINXMIN;
             xmax      = EKINXMAX;
-            MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+            MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
         }
     }
 
-    if(WRITETRACKLHISTOS) {
+    if(fGridCell && WRITETRACKLHISTOS) {
         for (G4int i=0; i < MAXNUMDET; i++) {
             detString = G4intToG4String(i);
-            filename  = "gridcell_electron_trackl_det" + detString;
+            name  = "gridcell_electron_trackl_det" + detString;
             title     = "Trackl in cell (keV)";
             nbins     = TRACKLNBINS;
             xmin      = TRACKLXMIN;
             xmax      = TRACKLXMAX;
-            MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+            MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
         }
     }
 
-    if(WRITEEKINHISTOS) {
+    if(fGridCell && WRITEEKINHISTOS) {
         for (G4int i=0; i < MAXNUMDET; i++) {
             detString = G4intToG4String(i);
-            filename  = "gridcell_gamma_ekin_det" + detString;
+            name  = "gridcell_gamma_ekin_det" + detString;
             title     = "EKin in cell (keV)";
             nbins     = EKINNBINS;
             xmin      = EKINXMIN;
             xmax      = EKINXMAX;
-            MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+            MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
         }
     }
 
-    if(WRITETRACKLHISTOS) {
+    if(fGridCell && WRITETRACKLHISTOS) {
         for (G4int i=0; i < MAXNUMDET; i++) {
             detString = G4intToG4String(i);
-            filename  = "gridcell_gamma_trackl_det" + detString;
+            name  = "gridcell_gamma_trackl_det" + detString;
             title     = "Trackl in cell (keV)";
             nbins     = TRACKLNBINS;
             xmin      = TRACKLXMIN;
             xmax      = TRACKLXMAX;
-            MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+            MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
         }
     }
 
-    if(WRITEEKINHISTOS) {
+    if(fGridCell && WRITEEKINHISTOS) {
         for (G4int i=0; i < MAXNUMDET; i++) {
             detString = G4intToG4String(i);
-            filename  = "gridcell_neutron_ekin_det" + detString;
+            name  = "gridcell_neutron_ekin_det" + detString;
             title     = "EKin in cell (keV)";
             nbins     = EKINNBINS;
             xmin      = EKINXMIN;
             xmax      = EKINXMAX;
-            MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+            MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
         }
     }
 
-    if(WRITETRACKLHISTOS) {
+    if(fGridCell && WRITETRACKLHISTOS) {
         for (G4int i=0; i < MAXNUMDET; i++) {
             detString = G4intToG4String(i);
-            filename  = "gridcell_neutron_trackl_det" + detString;
+            name  = "gridcell_neutron_trackl_det" + detString;
             title     = "Trackl in cell (keV)";
             nbins     = TRACKLNBINS;
             xmin      = TRACKLXMIN;
             xmax      = TRACKLXMAX;
-            MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+            MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
         }
     }
 
 
-    if(WRITEEDEPHISTOS)
-    {
+    if(WRITEEDEPHISTOS) {
         // Variables and title used for all detectors
         nbins     = EDEPNBINS;
         xmin      = EDEPXMIN;
         xmax      = EDEPXMAX;
         title     = "Edep in crystal (keV)";
 
+		  if(fGriffin) {
+			 // Griffin Suppressors
+			 name  = "griffin_crystal_sup_edep";
+			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-        // Griffin Suppressors
-        filename  = "griffin_crystal_sup_edep";
-        MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+			 name  = "griffin_crystal_sup_edep_cry";
+			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-        filename  = "griffin_crystal_sup_edep_cry";
-        MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+			 name  = "griffin_crystal_sup_edep_sum";
+			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-        filename  = "griffin_crystal_sup_edep_sum";
-        MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
-
-        for (G4int i=0; i < MAXNUMDETGRIFFIN; i++) {
+			 for (G4int i=0; i < MAXNUMDETGRIFFIN; i++) {
             detString = G4intToG4String(i);
 
-            filename  = "griffin_crystal_sup_edep_det" + detString ;
-            MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
-        }
+            name  = "griffin_crystal_sup_edep_det" + detString ;
+            MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+			 }
 
-        for (G4int j=0; j < MAXNUMCRYGRIFFIN; j++) {
+			 for (G4int j=0; j < MAXNUMCRYGRIFFIN; j++) {
             for (G4int i=0; i < MAXNUMDETGRIFFIN; i++) {
-                detString = G4intToG4String(i);
-                cryString = G4intToG4String(j);
+				  detString = G4intToG4String(i);
+				  cryString = G4intToG4String(j);
 
-                filename  = "griffin_crystal_sup_edep_det" + detString + "_cry" + cryString;
-                MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+				  name  = "griffin_crystal_sup_edep_det" + detString + "_cry" + cryString;
+				  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
             }
-        }
+			 }
 
-        // Griffin Crystal Unsuppressed
-        filename  = "griffin_crystal_unsup_edep";
-        MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+			 // Griffin Crystal Unsuppressed
+			 name  = "griffin_crystal_unsup_edep";
+			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-        filename  = "griffin_crystal_unsup_edep_cry";
-        MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+			 name  = "griffin_crystal_unsup_edep_cry";
+			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-        filename  = "griffin_crystal_unsup_edep_sum";
-        MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+			 name  = "griffin_crystal_unsup_edep_sum";
+			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-        for (G4int i=0; i < MAXNUMDETGRIFFIN; i++) {
+			 for (G4int i=0; i < MAXNUMDETGRIFFIN; i++) {
             detString = G4intToG4String(i);
 
-            filename  = "griffin_crystal_unsup_edep_det" + detString;
-            MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
-        }
+            name  = "griffin_crystal_unsup_edep_det" + detString;
+            MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+			 }
 
-        for (G4int j=0; j < MAXNUMCRYGRIFFIN; j++) {
+			 for (G4int j=0; j < MAXNUMCRYGRIFFIN; j++) {
             for (G4int i=0; i < MAXNUMDETGRIFFIN; i++) {
-                detString = G4intToG4String(i);
-                cryString = G4intToG4String(j);
+				  detString = G4intToG4String(i);
+				  cryString = G4intToG4String(j);
 
-                filename  = "griffin_crystal_unsup_edep_det" + detString + "_cry" + cryString;
-                MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+				  name  = "griffin_crystal_unsup_edep_det" + detString + "_cry" + cryString;
+				  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
             }
-        }
+			 }
+		  }//if(fGriffin)
 
-        // Brilliance Detector
-        filename  = "labr_crystal_edep";
-        MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+		  if(fLaBr) {
+			 // Brilliance Detector
+			 name  = "labr_crystal_edep";
+			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-        filename  = "labr_crystal_edep_sum";
-        MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+			 name  = "labr_crystal_edep_sum";
+			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-        for (G4int i=0; i < MAXNUMDET; i++) {
+			 for (G4int i=0; i < MAXNUMDET; i++) {
             detString = G4intToG4String(i);
 
-            filename  = "labr_crystal_edep_det" + detString;
-            MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
-        }
+            name  = "labr_crystal_edep_det" + detString;
+            MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+			 }
+		  }//if(LaBr)
 
-        // Ancillary BGO Detector
-        filename  = "ancillary_bgo_crystal_edep";
-        MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+		  if(fAncBgo) {
+			 // Ancillary BGO Detector
+			 name  = "ancillary_bgo_crystal_edep";
+			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-        filename  = "ancillary_bgo_crystal_edep_sum";
-        MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+			 name  = "ancillary_bgo_crystal_edep_sum";
+			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-        for (G4int i=0; i < MAXNUMDET; i++) {
+			 for (G4int i=0; i < MAXNUMDET; i++) {
             detString = G4intToG4String(i);
 
-            filename  = "ancillary_bgo_crystal_edep_det" + detString;
-            MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
-        }
+            name  = "ancillary_bgo_crystal_edep_det" + detString;
+            MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+			 }
+		  }//if(fAncBgo)
 
+		  if(fNaI) {
+			 // Sodium Iodide detector
+			 name  = "sodiumIodide_crystal_edep";
+			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-        // Sodium Iodide detector
-        filename  = "sodiumIodide_crystal_edep";
-        MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+			 name  = "sodiumIodide_crystal_edep_sum";
+			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-        filename  = "sodiumIodide_crystal_edep_sum";
-        MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
-
-        for (G4int i=0; i < MAXNUMDET; i++) {
+			 for (G4int i=0; i < MAXNUMDET; i++) {
             detString = G4intToG4String(i);
 
-            filename  = "sodiumIodide_crystal_edep_det" + detString;
-            MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
-        }
+            name  = "sodiumIodide_crystal_edep_det" + detString;
+            MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+			 }
+		  }//if(fNaI)
 
-        // Sceptar detector
-        filename  = "sceptar_edep";
-        MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+		  if(fSceptar) {		  
+			 // Sceptar detector
+			 name  = "sceptar_edep";
+			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-        filename  = "sceptar_edep_sum";
-        MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+			 name  = "sceptar_edep_sum";
+			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-        for (G4int i=0; i < MAXNUMDET; i++) {
+			 for (G4int i=0; i < MAXNUMDET; i++) {
             detString = G4intToG4String(i);
 
-            filename  = "sceptar_edep_det" + detString;
-            MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
-        }
+            name  = "sceptar_edep_det" + detString;
+            MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+			 }
+		  }//if(fSceptar)
 
-        // 8pi detector
-        filename  = "Eightpi_crystal_edep";
-        MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+		  if(fEightPi) {
+			 // 8pi detector
+			 name  = "Eightpi_crystal_edep";
+			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-        filename  = "Eightpi_crystal_edep_sum";
-        MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+			 name  = "Eightpi_crystal_edep_sum";
+			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-        for (G4int i=0; i < MAXNUMDET; i++) {
+			 for (G4int i=0; i < MAXNUMDET; i++) {
             detString = G4intToG4String(i);
 
-            filename  = "Eightpi_crystal_edep_det" + detString;
-            MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
-        }
+            name  = "Eightpi_crystal_edep_det" + detString;
+            MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+			 }
+		  }//if(fEightPi)
 
-        // spice detector
-        filename  = "spice_crystal_edep";
-        MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+		  if(fSpice) {
+			 // spice detector
+			 name  = "spice_crystal_edep";
+			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-        filename  = "spice_crystal_edep_sum";
-        MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+			 name  = "spice_crystal_edep_sum";
+			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-        for (G4int i=0; i < MAXNUMDET; i++) {
+			 for (G4int i=0; i < MAXNUMDET; i++) {
             detString = G4intToG4String(i);
 
-            filename  = "spice_crystal_edep_det" + detString;
-            MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
-        }
+            name  = "spice_crystal_edep_det" + detString;
+            MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+			 }
+		  }//if(fSpice)
 
-        // paces detector
-        filename  = "paces_crystal_edep";
-        MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+		  if(fPaces) {
+			 // paces detector
+			 name  = "paces_crystal_edep";
+			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-        filename  = "paces_crystal_edep_sum";
-        MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
+			 name  = "paces_crystal_edep_sum";
+			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-        for (G4int i=0; i < MAXNUMDET; i++) {
+			 for (G4int i=0; i < MAXNUMDET; i++) {
             detString = G4intToG4String(i);
 
-            filename  = "paces_crystal_edep_det" + detString;
-            MakeHisto(analysisManager, filename,  title, xmin, xmax, nbins);
-        }
-    }
-
+            name  = "paces_crystal_edep_det" + detString;
+            MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+			 }
+		  }//if(fPaces)
+	 }//if(WRITEEDEPHISTOS)
 
     ///////////////////////////////////////////////////////////////////
     // Create 1 ntuple
-    if(hitTrackerBool) {
+    if(fHitTrackerBool) {
         analysisManager->CreateNtuple("ntuple", "HitTracker");
         fNtColIdHit[0] = analysisManager->CreateNtupleIColumn("eventNumber");
         fNtColIdHit[1] = analysisManager->CreateNtupleIColumn("trackID");
@@ -387,13 +409,15 @@ void HistoManager::book()
         fNtColIdHit[11] = analysisManager->CreateNtupleDColumn("posy");
         fNtColIdHit[12] = analysisManager->CreateNtupleDColumn("posz");
         fNtColIdHit[13] = analysisManager->CreateNtupleDColumn("time");
-        fNtColIdHit[14] = analysisManager->CreateNtupleIColumn("targetZ");
+		  if(fDescant) {
+			 fNtColIdHit[14] = analysisManager->CreateNtupleIColumn("targetZ");
+		  }
         analysisManager->FinishNtuple();
 		  G4cout<<"created ntuple HitTracker"<<G4endl;
     }
 
 
-    if(stepTrackerBool) {
+    if(fStepTrackerBool) {
         analysisManager->CreateNtuple("ntuple", "StepTracker");
         fNtColIdStep[0] = analysisManager->CreateNtupleIColumn("eventNumber");
         fNtColIdStep[1] = analysisManager->CreateNtupleIColumn("trackID");
@@ -409,47 +433,46 @@ void HistoManager::book()
         fNtColIdStep[11] = analysisManager->CreateNtupleDColumn("posy");
         fNtColIdStep[12] = analysisManager->CreateNtupleDColumn("posz");
         fNtColIdStep[13] = analysisManager->CreateNtupleDColumn("time");
-        fNtColIdStep[14] = analysisManager->CreateNtupleIColumn("targetZ");
+		  if(fDescant) {
+			 fNtColIdStep[14] = analysisManager->CreateNtupleIColumn("targetZ");
+		  }
         analysisManager->FinishNtuple();
     }
 
-    factoryOn = true;
-    G4cout << "\n----> Histogram Tree is opened in " << fileName[1] << G4endl;
+    fFactoryOn = true;
+    G4cout << "\n----> Histogram Tree is opened in " << fFileName[1] << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void HistoManager::save()
-{
-    if (factoryOn) {
+void HistoManager::Save() {
+    if (fFactoryOn) {
         G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
         analysisManager->Write();
         analysisManager->CloseFile();
-        G4cout << "\n----> Histogram Tree is saved in " << fileName[1] << G4endl;
+        G4cout << "\n----> Histogram Tree is saved in " << fFileName[1] << G4endl;
 
         delete G4AnalysisManager::Instance();
-        factoryOn = false;
+        fFactoryOn = false;
     }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void HistoManager::MakeHisto(G4AnalysisManager* analysisManager, G4String filename,  G4String title, G4double xmin, G4double xmax, G4int nbins)
-{
-    makeHistoIndex++;
-    if (makeHistoIndex >= MAXHISTO) {
+void HistoManager::MakeHisto(G4AnalysisManager* analysisManager, G4String name,  G4String title, G4double xmin, G4double xmax, G4int nbins) {
+    fMakeHistoIndex++;
+    if (fMakeHistoIndex >= MAXHISTO) {
         G4cout << "---> Exceeded maximum number of histograms. Increase MAXHISTO in HistoManager.hh" << G4endl;
         exit(1);
     }
-    fHistId[makeHistoIndex] = analysisManager->CreateH1(filename, title, nbins, xmin, xmax);
-    fHistPt[makeHistoIndex] = analysisManager->GetH1(fHistId[makeHistoIndex]);
+    fHistId[fMakeHistoIndex] = analysisManager->CreateH1(name, title, nbins, xmin, xmax);
+    fHistPt[fMakeHistoIndex] = analysisManager->GetH1(fHistId[fMakeHistoIndex]);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 
-void HistoManager::FillHisto(G4int ih, G4double xbin, G4double weight)
-{
+void HistoManager::FillHisto(G4int ih, G4double xbin, G4double weight) {
     if (ih > MAXHISTO) {
         G4cout << "---> warning from HistoManager::FillHisto() : histo " << ih
                << "does note xist; xbin= " << xbin << " w= " << weight << G4endl;
@@ -460,8 +483,7 @@ void HistoManager::FillHisto(G4int ih, G4double xbin, G4double weight)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void HistoManager::Normalize(G4int ih, G4double fac)
-{
+void HistoManager::Normalize(G4int ih, G4double fac) {
     if (ih >= MAXHISTO) {
         G4cout << "---> warning from HistoManager::Normalize() : histo " << ih
                << "  fac= " << fac << G4endl;
@@ -474,7 +496,7 @@ void HistoManager::Normalize(G4int ih, G4double fac)
 
 //void HistoManager::FillNtuple(G4double eventNumber, G4double stepNumber, G4double cryNumber, G4double detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time)
 //{
-//    if(stepTrackerBool) {
+//    if(fStepTrackerBool) {
 //        G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 //        analysisManager->FillNtupleDColumn(fNtColId[0], eventNumber);
 //        analysisManager->FillNtupleDColumn(fNtColId[1], stepNumber);
@@ -491,9 +513,8 @@ void HistoManager::Normalize(G4int ih, G4double fac)
 //}
 
 
-void HistoManager::FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ)
-{
-    if(hitTrackerBool) {
+void HistoManager::FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ) {
+    if(fHitTrackerBool) {
         G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
         analysisManager->FillNtupleIColumn(fNtColIdHit[0], eventNumber);
         analysisManager->FillNtupleIColumn(fNtColIdHit[1], trackID);
@@ -509,14 +530,15 @@ void HistoManager::FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentI
         analysisManager->FillNtupleDColumn(fNtColIdHit[11], posy);
         analysisManager->FillNtupleDColumn(fNtColIdHit[12], posz);
         analysisManager->FillNtupleDColumn(fNtColIdHit[13], time);
-        analysisManager->FillNtupleIColumn(fNtColIdHit[14], targetZ);
+		  if(fDescant) {
+			 analysisManager->FillNtupleIColumn(fNtColIdHit[14], targetZ);
+		  }
         analysisManager->AddNtupleRow();
     }
 }
 
-void HistoManager::FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ)
-{
-    if(stepTrackerBool) {
+void HistoManager::FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ) {
+    if(fStepTrackerBool) {
         G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
         analysisManager->FillNtupleIColumn(fNtColIdStep[0], eventNumber);
         analysisManager->FillNtupleIColumn(fNtColIdStep[1], trackID);
@@ -532,7 +554,9 @@ void HistoManager::FillStepNtuple(G4int eventNumber, G4int trackID, G4int parent
         analysisManager->FillNtupleDColumn(fNtColIdStep[11], posy);
         analysisManager->FillNtupleDColumn(fNtColIdStep[12], posz);
         analysisManager->FillNtupleDColumn(fNtColIdStep[13], time);
-        analysisManager->FillNtupleIColumn(fNtColIdStep[14], targetZ);
+		  if(fDescant) {
+			 analysisManager->FillNtupleIColumn(fNtColIdStep[14], targetZ);
+		  }
         analysisManager->AddNtupleRow();
     }
 }
@@ -540,14 +564,12 @@ void HistoManager::FillStepNtuple(G4int eventNumber, G4int trackID, G4int parent
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void HistoManager::PrintStatistic()
-{
+void HistoManager::PrintStatistic() {
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4String HistoManager::G4intToG4String(G4int value)
-{
+G4String HistoManager::G4intToG4String(G4int value) {
     G4String theString;
     std::stringstream out;
     out << value;

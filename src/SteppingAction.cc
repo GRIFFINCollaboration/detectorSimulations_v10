@@ -109,12 +109,10 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 	 if(process != NULL && process->GetProcessType() == fHadronic) {
 		G4HadronicProcess* hadr_process = (G4HadronicProcess*) process;
 		const G4Isotope* target = NULL;
-		if(hadr_process != NULL) {
-		  target = hadr_process->GetTargetIsotope();
-		  if(target != NULL) {
-			 //	G4cout<<particleName<<", "<<process->GetProcessName()<<" on "<<target->GetName()<<G4endl;
-			 targetZ = target->GetZ();
-		  }
+		target = hadr_process->GetTargetIsotope();
+		if(target != NULL) {
+		  //	G4cout<<particleName<<", "<<process->GetProcessName()<<" on "<<target->GetName()<<G4endl;
+		  targetZ = target->GetZ();
 		}
 	 }
 
