@@ -36,6 +36,7 @@
 #include "PrimaryGeneratorAction.hh"
 #include "PrimaryGeneratorMessenger.hh"
 
+#include "Global.hh"
 #include "DetectorConstruction.hh"
 
 #include "G4Event.hh"
@@ -166,14 +167,14 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         // 33.6% Beta Decay 788.742 keV Gamma-ray and 66.4% EC Decay 1435.795 keV Gamma-Ray
         prob = 0.336;
         sumProb = 0;
-        G4double thisenergy;
+        G4double thisEnergy;
         G4double randomEnergy = G4UniformRand();
 
         if(randomEnergy <= prob ) {
-            thisenergy = 788.742*keV;
+            thisEnergy = 788.742*keV;
         }
         else {
-            thisenergy = 1435.795*keV;
+            thisEnergy = 1435.795*keV;
         }
 
         G4double detTheta       = fDetectorAnglesLaBr3[detnumber][0];
@@ -198,7 +199,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         G4double y = pos2.y();
         G4double z = pos2.z();
 
-        G4ThreeVector thisposition(transX(x,y,z,detTheta,detPhi), transY(x,y,z,detTheta,detPhi), transZ(x,y,z,detTheta));
+        G4ThreeVector thisPosition(TransX(x,y,z,detTheta,detPhi), TransY(x,y,z,detTheta,detPhi), TransZ(x,y,z,detTheta));
 
         G4ParticleDefinition* agamma = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
 
@@ -206,12 +207,12 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         G4double randcostheta = 2.*G4UniformRand()-1.0;
         G4double randsintheta = sqrt( 1. - randcostheta*randcostheta );
         G4double randphi      = (360.*deg)*G4UniformRand();
-        G4ThreeVector thisdirection = G4ThreeVector(randsintheta*cos(randphi), randsintheta*sin(randphi), randcostheta);
+        G4ThreeVector thisDirection = G4ThreeVector(randsintheta*cos(randphi), randsintheta*sin(randphi), randcostheta);
 
         fParticleGun->SetParticleDefinition(agamma);
-        fParticleGun->SetParticlePosition(thisposition);
-        fParticleGun->SetParticleMomentumDirection(thisdirection);
-        fParticleGun->SetParticleEnergy(thisenergy);
+        fParticleGun->SetParticlePosition(thisPosition);
+        fParticleGun->SetParticleMomentumDirection(thisDirection);
+        fParticleGun->SetParticleEnergy(thisEnergy);
     }
     else if(fEffEnergy != 0.0) {
         G4ParticleDefinition* effPart;
@@ -293,15 +294,3 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     fParticleGun->GeneratePrimaryVertex(anEvent);
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-G4double PrimaryGeneratorAction::transX(G4double x, G4double y, G4double z, G4double theta, G4double phi) {
-    return ( pow(x*x+y*y+z*z,0.5)*sin(theta)*cos(phi) );
-}
-
-G4double PrimaryGeneratorAction::transY(G4double x, G4double y, G4double z, G4double theta, G4double phi) {
-    return ( pow(x*x+y*y+z*z,0.5)*sin(theta)*sin(phi) );
-}
-
-G4double PrimaryGeneratorAction::transZ(G4double x, G4double y, G4double z, G4double theta) {
-    return ( pow(x*x+y*y+z*z,0.5)*cos(theta) );
-}

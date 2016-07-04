@@ -174,10 +174,6 @@ private:
 
     G4ThreeVector GetDirectionXYZ(G4double theta, G4double phi);
 
-    G4double transX(G4double x, G4double y, G4double z, G4double theta, G4double phi);
-    G4double transY(G4double x, G4double y, G4double z, G4double theta, G4double phi);
-    G4double transZ(G4double x, G4double y, G4double z, G4double theta);
-
     G4ThreeVector SolveLineEquationX(G4ThreeVector p1, G4ThreeVector p2, G4double x);
     G4ThreeVector SolveLineEquationY(G4ThreeVector p1, G4ThreeVector p2, G4double y);
     G4ThreeVector SolveLineEquationZ(G4ThreeVector p1, G4ThreeVector p2, G4double z);

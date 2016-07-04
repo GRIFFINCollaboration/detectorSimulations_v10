@@ -126,15 +126,15 @@ void DetectionSystemGriffin::Build() {
 
 }//end ::Build
 
-G4double DetectionSystemGriffin::transX(G4double x, G4double y, G4double z, G4double theta, G4double phi) {
+G4double DetectionSystemGriffin::TransX(G4double x, G4double y, G4double z, G4double theta, G4double phi) {
     return (x*cos(theta)+z*sin(theta))*cos(phi)-y*sin(phi);
 }
 
-G4double DetectionSystemGriffin::transY(G4double x, G4double y, G4double z, G4double theta, G4double phi) {
+G4double DetectionSystemGriffin::TransY(G4double x, G4double y, G4double z, G4double theta, G4double phi) {
     return (x*cos(theta)+z*sin(theta))*sin(phi)+y*cos(phi);
 }
 
-G4double DetectionSystemGriffin::transZ(G4double x, G4double z, G4double theta) {
+G4double DetectionSystemGriffin::TransZ(G4double x, G4double z, G4double theta) {
     return -x*sin(theta)+z*cos(theta);
 }
 
@@ -173,14 +173,14 @@ G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* expHal
     y = 0;
     z = distFromOriginDet;
 
-    G4ThreeVector move(DetectionSystemGriffin::transX(x,y,z,theta,phi), DetectionSystemGriffin::transY(x,y,z,theta,phi), DetectionSystemGriffin::transZ(x,z,theta));
+    G4ThreeVector move(DetectionSystemGriffin::TransX(x,y,z,theta,phi), DetectionSystemGriffin::TransY(x,y,z,theta,phi), DetectionSystemGriffin::TransZ(x,z,theta));
 
     fAssembly->MakeImprint(expHallLog, move, rotate, 0, fSurfCheck);
     fBackAndSideSuppressorShellAssembly->MakeImprint(expHallLog, move, rotate, 0, fSurfCheck);
 
     z = distFromOrigin ; // This isolates the motion of the extension suppressors from the rest of the suppressors.
 
-    move = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi), DetectionSystemGriffin::transY(x,y,z,theta,phi), DetectionSystemGriffin::transZ(x,z,theta));
+    move = G4ThreeVector(DetectionSystemGriffin::TransX(x,y,z,theta,phi), DetectionSystemGriffin::TransY(x,y,z,theta,phi), DetectionSystemGriffin::TransZ(x,z,theta));
 
     fExtensionSuppressorShellAssembly->MakeImprint(expHallLog, move, rotate, 0, fSurfCheck);
     fHevimetAssembly->MakeImprint(expHallLog, move, rotate, 0, fSurfCheck) ;
@@ -208,7 +208,7 @@ G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* expHal
             y = -y0*pow(-1, floor((i+2)/2));
             z = z0;
 
-            moveBackQuarterSuppressor[i] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,z,theta));
+            moveBackQuarterSuppressor[i] = G4ThreeVector(DetectionSystemGriffin::TransX(x,y,z,theta,phi),DetectionSystemGriffin::TransY(x,y,z,theta,phi),DetectionSystemGriffin::TransZ(x,z,theta));
 
             fSuppressorBackAssembly->MakeImprint(expHallLog, moveBackQuarterSuppressor[i], rotateBackQuarterSuppressor[i], fCopyNumber++, fSurfCheck);
         }
@@ -277,7 +277,7 @@ G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* expHal
             y = -x0*sin((i-1)*M_PI/2.0) + y0*cos((i-1)*M_PI/2);
             z = z0;
 
-            moveInnerSuppressor[i*2] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,z,theta));
+            moveInnerSuppressor[i*2] = G4ThreeVector(DetectionSystemGriffin::TransX(x,y,z,theta,phi),DetectionSystemGriffin::TransY(x,y,z,theta,phi),DetectionSystemGriffin::TransZ(x,z,theta));
 
             fRightSuppressorCasingAssembly->MakeImprint(expHallLog, moveInnerSuppressor[2*i], rotateSideSuppressor[2*i], fCopyNumber++, fSurfCheck);
 
@@ -292,7 +292,7 @@ G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* expHal
             y = x0*cos(i*M_PI/2.0) - y0*sin(i*M_PI/2);
             z = z0;
 
-            moveInnerSuppressor[i*2+1] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,z,theta));
+            moveInnerSuppressor[i*2+1] = G4ThreeVector(DetectionSystemGriffin::TransX(x,y,z,theta,phi),DetectionSystemGriffin::TransY(x,y,z,theta,phi),DetectionSystemGriffin::TransZ(x,z,theta));
 
             fLeftSuppressorCasingAssembly->MakeImprint(expHallLog, moveInnerSuppressor[2*i+1], rotateSideSuppressor[2*i+1], fCopyNumberTwo++, fSurfCheck);
         }
@@ -359,7 +359,7 @@ G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* expHal
             y = -x0*sin((i-1)*M_PI/2.0) + y0*cos((i-1)*M_PI/2);
             z = z0;
 
-            moveInnerExtension[2*i] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,z,theta));
+            moveInnerExtension[2*i] = G4ThreeVector(DetectionSystemGriffin::TransX(x,y,z,theta,phi),DetectionSystemGriffin::TransY(x,y,z,theta,phi),DetectionSystemGriffin::TransZ(x,z,theta));
             fRightSuppressorExtensionAssembly->MakeImprint(expHallLog, moveInnerExtension[2*i], rotateExtension[2*i], fCopyNumber++, fSurfCheck);
 
             rotateExtension[2*i+1] = new G4RotationMatrix;
@@ -374,7 +374,7 @@ G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* expHal
             y = x0*cos(i*M_PI/2.0) - y0*sin(i*M_PI/2);
             z = z0;
 
-            moveInnerExtension[2*i+1] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,z,theta));
+            moveInnerExtension[2*i+1] = G4ThreeVector(DetectionSystemGriffin::TransX(x,y,z,theta,phi),DetectionSystemGriffin::TransY(x,y,z,theta,phi),DetectionSystemGriffin::TransZ(x,z,theta));
             fLeftSuppressorExtensionAssembly->MakeImprint(expHallLog, moveInnerExtension[2*i+1], rotateExtension[2*i+1], fCopyNumberTwo++, fSurfCheck);
         }
 
@@ -399,7 +399,7 @@ G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* expHal
             y = -x0*sin((i-1)*M_PI/2.0) + y0*cos((i-1)*M_PI/2);
             z = z0;
 
-            moveInnerExtension[2*i] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,z,theta));
+            moveInnerExtension[2*i] = G4ThreeVector(DetectionSystemGriffin::TransX(x,y,z,theta,phi),DetectionSystemGriffin::TransY(x,y,z,theta,phi),DetectionSystemGriffin::TransZ(x,z,theta));
             fRightSuppressorExtensionAssembly->MakeImprint(expHallLog, moveInnerExtension[2*i], rotateExtension[2*i], fCopyNumber++, fSurfCheck);
 
             rotateExtension[2*i+1] = new G4RotationMatrix;
@@ -414,7 +414,7 @@ G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* expHal
             y = x0*cos(i*M_PI/2.0) - y0*sin(i*M_PI/2);
             z = z0;
 
-            moveInnerExtension[2*i+1] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,z,theta));
+            moveInnerExtension[2*i+1] = G4ThreeVector(DetectionSystemGriffin::TransX(x,y,z,theta,phi),DetectionSystemGriffin::TransY(x,y,z,theta,phi),DetectionSystemGriffin::TransZ(x,z,theta));
             fLeftSuppressorExtensionAssembly->MakeImprint(expHallLog, moveInnerExtension[2*i+1], rotateExtension[2*i+1], fCopyNumberTwo++, fSurfCheck);
         }
 
@@ -472,7 +472,7 @@ G4int DetectionSystemGriffin::PlaceDeadLayerSpecificCrystal(G4LogicalVolume* exp
         y = -y0*pow(-1, floor((i+2)/2));
         z = z0;
 
-        moveGermanium[i] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi), DetectionSystemGriffin::transY(x,y,z,theta,phi), DetectionSystemGriffin::transZ(x,z,theta));
+        moveGermanium[i] = G4ThreeVector(DetectionSystemGriffin::TransX(x,y,z,theta,phi), DetectionSystemGriffin::TransY(x,y,z,theta,phi), DetectionSystemGriffin::TransZ(x,z,theta));
 
         fGermaniumAssemblyCry[i]->MakeImprint(expHallLog, moveGermanium[i], rotateGermanium[i], fCopyNumber++, fSurfCheck);
     }

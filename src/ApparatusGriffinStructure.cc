@@ -840,16 +840,3 @@ G4SubtractionSolid* ApparatusGriffinStructure::TruncatedThreeSidedCylinder()
 
     return holeCylinder3;
 }
-
-// General Spherical Translations
-G4double ApparatusGriffinStructure::transX(G4double x, G4double y, G4double z, G4double theta, G4double phi){
-    return ( pow(x*x+y*y+z*z,0.5)*sin(theta)*cos(phi) );
-}
-
-G4double ApparatusGriffinStructure::transY(G4double x, G4double y, G4double z, G4double theta, G4double phi){
-    return ( pow(x*x+y*y+z*z,0.5)*sin(theta)*sin(phi) );
-}
-
-G4double ApparatusGriffinStructure::transZ(G4double x, G4double y, G4double z, G4double theta){
-    return ( pow(x*x+y*y+z*z,0.5)*cos(theta) );
-}

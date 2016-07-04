@@ -1,6 +1,8 @@
 #include "DetectorConstruction.hh"
 #include "DetectorMessenger.hh"
 
+#include "Global.hh"
+
 #include "G4Material.hh"
 
 #include "G4Tubs.hh"
@@ -600,7 +602,7 @@ G4int DetectionSystemDescant::PlaceDetectorAuxPorts(G4LogicalVolume* expHallLog,
     rotate->rotateY(M_PI+beta);
     rotate->rotateZ(gamma);
 
-    G4ThreeVector move(transX(x,y,z,theta,phi), transY(x,y,z,theta,phi), transZ(x,y,z,theta));
+    G4ThreeVector move(TransX(x,y,z,theta,phi), TransY(x,y,z,theta,phi), TransZ(x,y,z,theta));
 
     fAssemblyWhite->MakeImprint(expHallLog, move, rotate, copyNumber);
     fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, copyNumber);
@@ -1247,18 +1249,6 @@ G4ThreeVector DetectionSystemDescant::GetDirectionXYZ(G4double theta, G4double p
     G4ThreeVector direction = G4ThreeVector(x,y,z);
 
     return direction;
-}
-
-G4double DetectionSystemDescant::transX(G4double x, G4double y, G4double z, G4double theta, G4double phi){
-    return (pow(x*x+y*y+z*z,0.5)*sin(theta)*cos(phi));
-}
-
-G4double DetectionSystemDescant::transY(G4double x, G4double y, G4double z, G4double theta, G4double phi){
-    return (pow(x*x+y*y+z*z,0.5)*sin(theta)*sin(phi));
-}
-
-G4double DetectionSystemDescant::transZ(G4double x, G4double y, G4double z, G4double theta){
-    return (pow(x*x+y*y+z*z,0.5)*cos(theta));
 }
 
 G4ThreeVector DetectionSystemDescant::SolveLineEquationX(G4ThreeVector p1, G4ThreeVector p2, G4double x){

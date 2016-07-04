@@ -1,6 +1,8 @@
 #include "DetectorConstruction.hh"
 #include "DetectorMessenger.hh"
 
+#include "Global.hh"
+
 #include "G4Material.hh"
 
 #include "G4Tubs.hh"
@@ -254,7 +256,7 @@ G4int DetectionSystemLanthanumBromide::PlaceDetector(G4LogicalVolume* expHallLog
     rotate->rotateY(M_PI+beta);
     rotate->rotateZ(gamma);
 
-    G4ThreeVector move(transX(x,y,z,theta,phi), transY(x,y,z,theta,phi), transZ(x,y,z,theta));
+    G4ThreeVector move(TransX(x,y,z,theta,phi), TransY(x,y,z,theta,phi), TransZ(x,y,z,theta));
 
     fAssembly->MakeImprint(expHallLog, move, rotate, fCopyNumber);
 
@@ -613,15 +615,3 @@ G4ThreeVector DetectionSystemLanthanumBromide::GetDirectionXYZ(G4double theta, G
 
     return direction;
 }//end ::GetDirection
-
-G4double DetectionSystemLanthanumBromide::transX(G4double x, G4double y, G4double z, G4double theta, G4double phi) {
-    return ( pow(x*x+y*y+z*z,0.5)*sin(theta)*cos(phi) );
-}
-
-G4double DetectionSystemLanthanumBromide::transY(G4double x, G4double y, G4double z, G4double theta, G4double phi) {
-    return ( pow(x*x+y*y+z*z,0.5)*sin(theta)*sin(phi) );
-}
-
-G4double DetectionSystemLanthanumBromide::transZ(G4double x, G4double y, G4double z, G4double theta) {
-    return ( pow(x*x+y*y+z*z,0.5)*cos(theta) );
-}

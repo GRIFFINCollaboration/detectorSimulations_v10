@@ -115,11 +115,6 @@ private:
     // Hole Shapes
     G4SubtractionSolid* SquareWithRoundedCorners();
     G4SubtractionSolid* TruncatedThreeSidedCylinder();
-
-    // General Spherical Translations
-    G4double transX(G4double x, G4double y, G4double z, G4double theta, G4double phi);
-    G4double transY(G4double x, G4double y, G4double z, G4double theta, G4double phi);
-    G4double transZ(G4double x, G4double y, G4double z, G4double theta);
 };
 
 #endif

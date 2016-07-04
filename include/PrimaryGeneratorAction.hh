@@ -84,10 +84,6 @@ private:
     G4ThreeVector fEffPolarizationVector;
     G4bool fEffBeam;
     G4double fEffBeamRadius;
-
-    G4double transX(G4double x, G4double y, G4double z, G4double theta, G4double phi);
-    G4double transY(G4double x, G4double y, G4double z, G4double theta, G4double phi);
-    G4double transZ(G4double x, G4double y, G4double z, G4double theta);
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

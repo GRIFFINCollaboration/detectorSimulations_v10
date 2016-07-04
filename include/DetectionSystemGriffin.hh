@@ -53,9 +53,9 @@ public:
     void BuildEverythingButCrystals();
     G4double GetCrystalDistanceFromOrigin() {return fCrystalDistFromOrigin;}
 
-    G4double transX(G4double x, G4double y, G4double z, G4double theta, G4double phi);
-    G4double transY(G4double x, G4double y, G4double z, G4double theta, G4double phi);
-    G4double transZ(G4double x, G4double z, G4double theta);
+    G4double TransX(G4double x, G4double y, G4double z, G4double theta, G4double phi);
+    G4double TransY(G4double x, G4double y, G4double z, G4double theta, G4double phi);
+    G4double TransZ(G4double x, G4double z, G4double theta);
 
     // For detector specific dead layers
     G4int PlaceDeadLayerSpecificCrystal(G4LogicalVolume* exp_hall_log, G4int detector_number, G4int position_number, G4bool posTigress);
