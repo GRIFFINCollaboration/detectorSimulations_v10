@@ -51,236 +51,235 @@ public:
     // For detector specific dead layers
     void BuildDeadLayerSpecificCrystal(G4int det);
     void BuildEverythingButCrystals();
-    G4double GetCrystalDistanceFromOrigin() {return crystal_dist_from_origin;}
+    G4double GetCrystalDistanceFromOrigin() {return fCrystalDistFromOrigin;}
 
-    G4double transX(G4double x, G4double y, G4double z, G4double theta, G4double phi);
-    G4double transY(G4double x, G4double y, G4double z, G4double theta, G4double phi);
-    G4double transZ(G4double x, G4double y, G4double z, G4double theta, G4double phi);
+    G4double TransX(G4double x, G4double y, G4double z, G4double theta, G4double phi);
+    G4double TransY(G4double x, G4double y, G4double z, G4double theta, G4double phi);
+    G4double TransZ(G4double x, G4double z, G4double theta);
 
-    G4int PlaceDetector(G4LogicalVolume* exp_hall_log, G4ThreeVector moveBAH, G4RotationMatrix* rotateBAH, G4int detector_number);
     // For detector specific dead layers
     G4int PlaceDeadLayerSpecificCrystal(G4LogicalVolume* exp_hall_log, G4int detector_number, G4int position_number, G4bool posTigress);
     G4int PlaceEverythingButCrystals(G4LogicalVolume* exp_hall_log, G4int detector_number, G4int position_number, G4bool posTigress);
 
 private:
-    G4String sdName0;
-    G4String sdName1;
-    G4String sdName2;
-    G4String sdName3;
-    G4String sdName4;
-    G4String sdName5;
-    G4String colNameGe;
-    G4String colNameLeftCasing;
-    G4String colNameRightCasing;
-    G4String colNameLeftExtension;
-    G4String colNameRightExtension;
-    G4String colNameBackPlug;
+    G4String fSdName0;
+    G4String fSdName1;
+    G4String fSdName2;
+    G4String fSdName3;
+    G4String fSdName4;
+    G4String fSdName5;
+    G4String fColNameGe;
+    G4String fColNameLeftCasing;
+    G4String fColNameRightCasing;
+    G4String fColNameLeftExtension;
+    G4String fColNameRightExtension;
+    G4String fColNameBackPlug;
 
-    G4bool include_extension_suppressors;
-    G4bool include_side_suppressors;
-    G4bool include_back_suppressors;
+    G4bool fIncludeExtensionSuppressors;
+    G4bool fIncludeSideSuppressors;
+    G4bool fIncludeBackSuppressors;
 
-    G4String back_suppressor_material;
-    G4String BGO_material;
+    G4String fBackSuppressorMaterial;
+    G4String fBGOMaterial;
 
-    G4RotationMatrix* rotate_null;
-    G4ThreeVector move_null;
+    G4RotationMatrix* fRotateNull;
+    G4ThreeVector fMoveNull;
 
-    G4double cut_clearance;
-    G4double extra_cut_length;
+    G4double fCutClearance;
+    G4double fExtraCutLength;
 
-    G4bool surfCheck;
+    G4bool fSurfCheck;
 
-    double coords[20][5];
+    double fCoords[20][5];
     
     //Jun 21, 2005, Epapr7.80: modification to the prototype suppressor shield,
     //since the hevimet collimators they provided were too big, and therefore the
     //extensions do not come far enough forward
-    G4double extension_accidental_back_shift;
+    G4double fExtensionAccidentalBackShift;
 
-    G4String hevimet_choice;
+    G4String fHevimetChoice;
 
     //Settings for the suppressor shield
-    G4double thickness_double;
-    G4double side_thickness_double;
-    G4double extension_thickness_double;
+    G4double fThicknessDouble;
+    G4double fSideThicknessDouble;
+    G4double fExtensionThicknessDouble;
 
-    G4double radial_distance;
-    G4int number_of_detectors;
-    G4double origin_to_crystal_distance;
-    G4bool dead_layer_include_flag;
-    G4double inner_dead_layer_thickness;
-    G4double outer_dead_layer_thickness;
+    G4double fRadialDistance;
+    G4int fNumberOfDetectors;
+    G4double fOriginToCrystalDistance;
+    G4bool fDeadLayerIncludeFlag;
+    G4double fInnerDeadLayerThickness;
+    G4double fOuterDeadLayerThickness;
 
     //Cold Finger
-    G4double cold_finger_outer_shell_radius;
-    G4double cold_finger_shell_thickness;
-    G4double cold_finger_shell_length;
-    G4double rear_plate_thickness;
-    G4double cold_finger_end_plate_thickness;
-    G4double cold_finger_radius;
-    G4double cold_finger_space;
-    G4double cold_finger_length;
-    G4double coolant_length;
-    G4double coolant_radius;
-    G4double coolant_thickness;
+    G4double fColdFingerOuterShellRadius;
+    G4double fColdFingerShellThickness;
+    G4double fColdFingerShellLength;
+    G4double fRearPlateThickness;
+    G4double fColdFingerEndPlateThickness;
+    G4double fColdFingerRadius;
+    G4double fColdFingerSpace;
+    G4double fColdFingerLength;
+    G4double fCoolantLength;
+    G4double fCoolantRadius;
+    G4double fCoolantThickness;
 
     //New cooling structures (Jan 2005)
-    G4double extra_block_thickness;
-    G4double extra_block_distance_from_back_plate;
-    G4double extra_block_inner_diameter;
-    G4double triangle_posts_distance_from_crystals;
-    G4double triangle_post_starting_depth;
-    G4double fet_air_hole_radius;
-    G4double cooling_side_block_thickness;
-    G4double cooling_side_block_width;
-    G4double cooling_side_block_horizontal_depth;
-    G4double structureMat_cold_finger_thickness;
-    G4double structureMat_cold_finger_radius;
-    G4double cooling_bar_thickness;
-    G4double cooling_bar_width;
+    G4double fExtraBlockThickness;
+    G4double fExtraBlockDistanceFromBackPlate;
+    G4double fExtraBlockInnerDiameter;
+    G4double fTrianglePostsDistanceFromCrystals;
+    G4double fTrianglePostStartingDepth;
+    G4double fFetAirHoleRadius;
+    G4double fCoolingSideBlockThickness;
+    G4double fCoolingSideBlockWidth;
+    G4double fCoolingSideBlockHorizontalDepth;
+    G4double fStructureMatColdFingerThickness;
+    G4double fStructureMatColdFingerRadius;
+    G4double fCoolingBarThickness;
+    G4double fCoolingBarWidth;
 
-    G4int suppressor_design;
-    G4int suppressor_position_selector;
-    G4int hevimet_selector;
+    G4int fSuppressorDesign;
+    G4int fSuppressorPositionSelector;
+    G4int fHevimetSelector;
 
-    G4double forward_inner_radius;
-    G4double back_inner_radius;
+    G4double fForwardInnerRadius;
+    G4double fBackInnerRadius;
 
-    G4double suppressor_forward_radius;
-    G4double suppressor_back_radius;
+    G4double fSuppressorForwardRadius;
+    G4double fSuppressorBackRadius;
 
 
     // For the optimization of the depth segmentation
-    G4double depth_segmentation_adjustment;
+    G4double fDepthSegmentationAdjustment;
 
     //the germanium detector's variables (for one "leaf" of the clover)
-    G4double germanium_outer_radius;
-    G4double germanium_hole_radius;
-    G4double germanium_width;
-    G4double germanium_length;
-    G4double germanium_hole_dist_from_face;
-    G4double germanium_dist_from_can_face;
-    G4double germanium_bent_length;
-    G4double germanium_shift;    		//the amount by which the two sides adjacent to the other
+    G4double fGermaniumOuterRadius;
+    G4double fGermaniumHoleRadius;
+    G4double fGermaniumWidth;
+    G4double fGermaniumLength;
+    G4double fGermaniumHoleDistFromFace;
+    G4double fGermaniumDistFromCanFace;
+    G4double fGermaniumBentLength;
+    G4double fGermaniumShift;    		//the amount by which the two sides adjacent to the other
     //germanium crystals are cut closer to the center
 
-    G4double germanium_separation;  		//the space between the quarter detectors
-    G4double inter_crystal_electrodeMat_thickness;
-    G4double electrodeMat_starting_depth;
-    G4double germanium_corner_cone_end_length; 	//the ending length of the cones
+    G4double fGermaniumSeparation;  		//the space between the quarter detectors
+    G4double fInterCrystalElectrodeMatThickness;
+    G4double fElectrodeMatStartingDepth;
+    G4double fGermaniumCornerConeEndLength; 	//the ending length of the cones
     //at the corners of each leaf
     
     //basic germanium detector's values
-    G4double detector_block_length;
-    G4double detector_block_height;
-    G4double detector_block_trapezoidal_height;
+    G4double fDetectorBlockLength;
+    G4double fDetectorBlockHeight;
+    G4double fDetectorBlockTrapezoidalHeight;
 
-    G4double detector_total_width;
-    G4double detector_total_length;
-    G4double bent_end_angle;
-    G4double bent_end_length;
-    G4double can_face_thickness;
-    G4double can_side_thickness;
+    G4double fDetectorTotalWidth;
+    G4double fDetectorTotalLength;
+    G4double fBentEndAngle;
+    G4double fBentEndLength;
+    G4double fCanFaceThickness;
+    G4double fCanSideThickness;
 
-    G4double hevimet_tip_thickness;
-    G4double hevimet_tip_angle;
+    G4double fHevimetTipThickness;
+    G4double fHevimetTipAngle;
 
     //Values for the BGO
-    G4double suppressor_cut_extension;
-    G4double suppressor_shell_thickness;
+    G4double fSuppressorCutExtension;
+    G4double fSuppressorShellThickness;
     
-    G4double back_BGO_thickness;
-    G4double BGO_chopped_tip;
-    G4double BGO_movable_space;
-    G4double side_suppressor_back_offset;
-    G4double side_BGO_thickness;
-    G4double BGO_can_seperation;
-    G4double side_BGO_length;
-    G4double side_suppressor_length;
-    G4double BGO_trap_length;
-    G4double suppressor_extension_thickness;
-    G4double suppressor_extension_length;
-    G4double suppressor_extension_angle;
+    G4double fBackBGOThickness;
+    G4double fBGOChoppedTip;
+    G4double fBGOMovableSpace;
+    G4double fSideSuppressorBackOffset;
+    G4double fSideBGOThickness;
+    G4double fBGOCanSeperation;
+    G4double fSideBGOLength;
+    G4double fSideSuppressorLength;
+    G4double fBGOTrapLength;
+    G4double fSuppressorExtensionThickness;
+    G4double fSuppressorExtensionLength;
+    G4double fSuppressorExtensionAngle;
     
-    G4double suppressor_extension_length_det ;
+    G4double fSuppressorExtensionLengthDet ;
 
     //Values for the HeavyMet
-    G4double HeavyMet_thickness;
-    G4double HeavyMet_inside_angle;
+    G4double fHeavyMetThickness;
+    G4double fHeavyMetInsideAngle;
 
-    G4double air_box_front_width;
-    G4double air_box_front_length;
-    G4double air_box_back_length;
+    G4double fAirBoxFrontWidth;
+    G4double fAirBoxFrontLength;
+    G4double fAirBoxBackLength;
     
-    G4double air_box_back_length_det ;
-    G4double air_box_front_length_det ;
-    G4double air_box_front_width_det ;
+    G4double fAirBoxBackLengthDet ;
+    G4double fAirBoxFrontLengthDet ;
+    G4double fAirBoxFrontWidthDet ;
 
-    G4double shift;
-    G4double suppShift ;
+    G4double fShift;
+    G4double fSuppShift ;
 
-    G4int copy_number;
-    G4int copy_number_two;
-    G4int germanium_copy_number;
-    G4int left_suppressor_side_copy_number;
-    G4int right_suppressor_side_copy_number;
-    G4int left_suppressor_extension_copy_number;
-    G4int right_suppressor_extension_copy_number;
-    G4int back_suppressor_copy_number;
+    G4int fCopyNumber;
+    G4int fCopyNumberTwo;
+    G4int fGermaniumCopyNumber;
+    G4int fLeftSuppressorSideCopyNumber;
+    G4int fRightSuppressorSideCopyNumber;
+    G4int fLeftSuppressorExtensionCopyNumber;
+    G4int fRightSuppressorExtensionCopyNumber;
+    G4int fBackSuppressorCopyNumber;
     
-    G4double rhombi_diameter;
-    G4double new_rhombi_radius;
+    G4double fRhombiDiameter;
+    G4double fNewRhombiRadius;
 
-    G4double new_rhombi_radius_det;
+    G4double fNewRhombiRadiusDet;
 
-    G4double detector_position_shift;
-    G4double applied_back_shift;
+    G4double fDetectorPositionShift;
+    G4double fAppliedBackShift;
 
-    G4int germanium_selector;
-    G4int can_selector;
-    G4int BGO_selector;
-    G4int cold_finger_selector;
+    G4int fGermaniumSelector;
+    G4int fCanSelector;
+    G4int fBGOSelector;
+    G4int fColdFingerSelector;
 
     //Redacted parameters/////////////
-    G4double detectorPlacementCxn;
-    G4double trianglePostDim;
-    G4double suppressorExtRightX;
-    G4double suppressorExtRightY;
-    G4double suppressorExtRightZ;
-    G4double suppressorExtLeftX;
-    G4double suppressorExtLeftY;
-    G4double suppressorExtLeftZ;
-    G4double wedgeDim;
-    G4double quarterDetectorCxn;
-    G4double quarterDetectorCxnB;
-    G4String electrodeMaterial;
-    G4String structureMaterial;
+    G4double fDetectorPlacementCxn;
+    G4double fTrianglePostDim;
+    G4double fSuppressorExtRightX;
+    G4double fSuppressorExtRightY;
+    G4double fSuppressorExtRightZ;
+    G4double fSuppressorExtLeftX;
+    G4double fSuppressorExtLeftY;
+    G4double fSuppressorExtLeftZ;
+    G4double fWedgeDim;
+    G4double fQuarterDetectorCxn;
+    G4double fQuarterDetectorCxnB;
+    G4String fElectrodeMaterial;
+    G4String fStructureMaterial;
 
     // Assembly volumes
-    G4AssemblyVolume* assembly;
-    G4AssemblyVolume* germaniumAssembly;
-    G4AssemblyVolume* leftSuppressorCasingAssembly;
-    G4AssemblyVolume* rightSuppressorCasingAssembly;
-    G4AssemblyVolume* leftSuppressorExtensionAssembly;
-    G4AssemblyVolume* rightSuppressorExtensionAssembly;
-    G4AssemblyVolume* suppressorBackAssembly;
+    G4AssemblyVolume* fAssembly;
+    G4AssemblyVolume* fGermaniumAssembly;
+    G4AssemblyVolume* fLeftSuppressorCasingAssembly;
+    G4AssemblyVolume* fRightSuppressorCasingAssembly;
+    G4AssemblyVolume* fLeftSuppressorExtensionAssembly;
+    G4AssemblyVolume* fRightSuppressorExtensionAssembly;
+    G4AssemblyVolume* fSuppressorBackAssembly;
     // For detector specific dead layers
-    G4AssemblyVolume* assemblyCry[4];
-    G4AssemblyVolume* germaniumAssemblyCry[4];
-    G4AssemblyVolume* leftSuppressorCasingAssemblyCry[4];
-    G4AssemblyVolume* rightSuppressorCasingAssemblyCry[4];
-    G4AssemblyVolume* leftSuppressorExtensionAssemblyCry[4];
-    G4AssemblyVolume* rightSuppressorExtensionAssemblyCry[4];
-    G4AssemblyVolume* suppressorBackAssemblyCry[4];
-    G4AssemblyVolume* suppressorShellAssembly;
-    G4AssemblyVolume* backAndSideSuppressorShellAssembly ;
-    G4AssemblyVolume* extensionSuppressorShellAssembly ;
-    G4AssemblyVolume* hevimetAssembly ;
+    G4AssemblyVolume* fAssemblyCry[4];
+    G4AssemblyVolume* fGermaniumAssemblyCry[4];
+    G4AssemblyVolume* fLeftSuppressorCasingAssemblyCry[4];
+    G4AssemblyVolume* fRightSuppressorCasingAssemblyCry[4];
+    G4AssemblyVolume* fLeftSuppressorExtensionAssemblyCry[4];
+    G4AssemblyVolume* fRightSuppressorExtensionAssemblyCry[4];
+    G4AssemblyVolume* fSuppressorBackAssemblyCry[4];
+    G4AssemblyVolume* fSuppressorShellAssembly;
+    G4AssemblyVolume* fBackAndSideSuppressorShellAssembly ;
+    G4AssemblyVolume* fExtensionSuppressorShellAssembly ;
+    G4AssemblyVolume* fHevimetAssembly ;
     
 
     // Logical volumes
-    G4LogicalVolume* air_box_log;
+    G4LogicalVolume* fAirBoxLog;
 
     // methods to construct all of the components of the detector
     void ConstructNewSuppressorCasingWithShells();
@@ -296,166 +295,166 @@ private:
     void ConstructNewHeavyMet();
 
     //LogicalVolumes used in ConstructBasicDetectorBlock
-    G4LogicalVolume* germanium_block_log;
+    G4LogicalVolume* fGermaniumBlockLog;
 
     //Logical Volumes used in ConstructComplexDetectorBlock:
-    G4LogicalVolume* germanium_block1_log;
-    G4LogicalVolume* germanium_hole_log;
-    G4LogicalVolume* inner_dead_layer_log;
-    G4LogicalVolume* inner_dead_layer_cap_log;
-    G4LogicalVolume* outer_dead_layer_log;
+    G4LogicalVolume* fGermaniumBlock1Log;
+    G4LogicalVolume* fGermaniumHoleLog;
+    G4LogicalVolume* fInnerDeadLayerLog;
+    G4LogicalVolume* fInnerDeadLayerCapLog;
+    G4LogicalVolume* fOuterDeadLayerLog;
     
-    G4LogicalVolume* inter_crystal_electrodeMat_back_log;
-    G4LogicalVolume* inter_crystal_electrodeMat_front_log;
+    G4LogicalVolume* fInterCrystalElectrodeMatBackLog;
+    G4LogicalVolume* fInterCrystalElectrodeMatFrontLog;
     
     //Logical Volumes used in ConstructBGOCasing:
-    G4LogicalVolume* back_BGO_log;
-    G4LogicalVolume* BGO_casing_log;
+    G4LogicalVolume* fBackBGOLog;
+    G4LogicalVolume* fBGOCasingLog;
 
     //Logical Volumes used in ConstructNewSuppressorCasing:
-    G4LogicalVolume* back_quarter_suppressor_shell_log;
-    G4LogicalVolume* right_suppressor_shell_log;
-    G4LogicalVolume* left_suppressor_shell_log;
-    G4LogicalVolume* right_suppressor_shell_extension_log;
-    G4LogicalVolume* left_suppressor_shell_extension_log;
+    G4LogicalVolume* fBackQuarterSuppressorShellLog;
+    G4LogicalVolume* fRightSuppressorShellLog;
+    G4LogicalVolume* fLeftSuppressorShellLog;
+    G4LogicalVolume* fRightSuppressorShellExtensionLog;
+    G4LogicalVolume* fLeftSuppressorShellExtensionLog;
 
-    G4LogicalVolume* cap_for_right_suppressor_log;
+    G4LogicalVolume* fCapForRightSuppressorLog;
 
-    G4LogicalVolume* back_quarter_suppressor_log;
-    G4LogicalVolume* right_suppressor_log;
-    G4LogicalVolume* left_suppressor_log;
-    G4LogicalVolume* right_suppressor_extension_log;
-    G4LogicalVolume* left_suppressor_extension_log;
+    G4LogicalVolume* fBackQuarterSuppressorLog;
+    G4LogicalVolume* fRightSuppressorLog;
+    G4LogicalVolume* fLeftSuppressorLog;
+    G4LogicalVolume* fRightSuppressorExtensionLog;
+    G4LogicalVolume* fLeftSuppressorExtensionLog;
     
     //Logical Volumes used in ConstructDetector:
-    G4LogicalVolume* front_face_log;
-    G4LogicalVolume* right_bent_piece_log;
-    G4LogicalVolume* left_bent_piece_log;
-    G4LogicalVolume* top_bent_piece_log;
-    G4LogicalVolume* bottom_bent_piece_log;
-    G4LogicalVolume* right_wedge_log;
-    G4LogicalVolume* left_wedge_log;
-    G4LogicalVolume* top_wedge_log;
-    G4LogicalVolume* bottom_wedge_log;
-    G4LogicalVolume* upper_right_cone_log;
-    G4LogicalVolume* lower_right_cone_log;
-    G4LogicalVolume* upper_left_cone_log;
-    G4LogicalVolume* lower_left_cone_log;
-    G4LogicalVolume* upper_right_tube_log;
-    G4LogicalVolume* lower_right_tube_log;
-    G4LogicalVolume* upper_left_tube_log;
-    G4LogicalVolume* lower_left_tube_log;
-    G4LogicalVolume* right_side_panel_log;
-    G4LogicalVolume* left_side_panel_log;
-    G4LogicalVolume* top_side_panel_log;
-    G4LogicalVolume* bottom_side_panel_log;
-    G4LogicalVolume* rear_plate_log;
-    G4LogicalVolume* finger_shell_log;
-    G4LogicalVolume* tank_log;
-    G4LogicalVolume* tank_lid1_log;
-    G4LogicalVolume* tank_lid2_log;
-    G4LogicalVolume* tank_liquid_log;
+    G4LogicalVolume* fFrontFaceLog;
+    G4LogicalVolume* fRightBentPieceLog;
+    G4LogicalVolume* fLeftBentPieceLog;
+    G4LogicalVolume* fTopBentPieceLog;
+    G4LogicalVolume* fBottomBentPieceLog;
+    G4LogicalVolume* fRightWedgeLog;
+    G4LogicalVolume* fLeftWedgeLog;
+    G4LogicalVolume* fTopWedgeLog;
+    G4LogicalVolume* fBottomWedgeLog;
+    G4LogicalVolume* fUpperRightConeLog;
+    G4LogicalVolume* fLowerRightConeLog;
+    G4LogicalVolume* fUpperLeftConeLog;
+    G4LogicalVolume* fLowerLeftConeLog;
+    G4LogicalVolume* fUpperRightTubeLog;
+    G4LogicalVolume* fLowerRightTubeLog;
+    G4LogicalVolume* fUpperLeftTubeLog;
+    G4LogicalVolume* fLowerLeftTubeLog;
+    G4LogicalVolume* fRightSidePanelLog;
+    G4LogicalVolume* fLeftSidePanelLog;
+    G4LogicalVolume* fTopSidePanelLog;
+    G4LogicalVolume* fBottomSidePanelLog;
+    G4LogicalVolume* fRearPlateLog;
+    G4LogicalVolume* fFingerShellLog;
+    G4LogicalVolume* fTankLog;
+    G4LogicalVolume* fTankLid1Log;
+    G4LogicalVolume* fTankLid2Log;
+    G4LogicalVolume* fTankLiquidLog;
 
     //Logical Volumes used in ConstructColdFinger:
-    G4LogicalVolume* end_plate_log;
-    G4LogicalVolume* finger_log;
-    G4LogicalVolume* extra_cold_block_log;
-    G4LogicalVolume* triangle_post_log;
-    G4LogicalVolume* fet_air_hole_log;
-    G4LogicalVolume* cooling_bar_log;
-    G4LogicalVolume* cooling_side_block_log;
-    G4LogicalVolume* structureMat_cold_finger_log;
+    G4LogicalVolume* fEndPlateLog;
+    G4LogicalVolume* fFingerLog;
+    G4LogicalVolume* fExtraColdBlockLog;
+    G4LogicalVolume* fTrianglePostLog;
+    G4LogicalVolume* fFetAirHoleLog;
+    G4LogicalVolume* fCoolingBarLog;
+    G4LogicalVolume* fCoolingSideBlockLog;
+    G4LogicalVolume* fStructureMatColdFingerLog;
     
     //Logical Volumes used in ConstructNewHeavyMet:
-    G4LogicalVolume* hevimet_log;
+    G4LogicalVolume* fHevimetLog;
 
     //internal methods for ConstructCan()
-    G4Box* squareFrontFace();
-    G4Trap* cornerWedge();
-    G4Para* bentSidePiece();
-    G4Box* otherBentSidePiece();
-    G4Cons* roundedEndEdge();
-    G4Tubs* cornerTube();
-    G4Box* sidePanel();
-    G4SubtractionSolid* rearPlate();
-    G4Tubs* coldFingerShell();
-    G4Tubs* liquidNitrogenTank();
-    G4Tubs* liquidNitrogenTankLid();
-    G4Tubs* liquidNitrogen();
+    G4Box* SquareFrontFace();
+    G4Trap* CornerWedge();
+    G4Para* BentSidePiece();
+    G4Box* OtherBentSidePiece();
+    G4Cons* RoundedEndEdge();
+    G4Tubs* CornerTube();
+    G4Box* SidePanel();
+    G4SubtractionSolid* RearPlate();
+    G4Tubs* ColdFingerShell();
+    G4Tubs* LiquidNitrogenTank();
+    G4Tubs* LiquidNitrogenTankLid();
+    G4Tubs* LiquidNitrogen();
 
 
     //internal methods for ConstructBasicDetectorBlock()
-    G4Box* rectangularSegment();
-    G4Trd* trapezoidalSegment();
+    G4Box* RectangularSegment();
+    G4Trd* TrapezoidalSegment();
 
     //internal methods for ConstructComplexDetectorBlock()
-    G4SubtractionSolid* quarterDetector();
+    G4SubtractionSolid* QuarterDetector();
     // For detector specific dead layers
-    G4SubtractionSolid* quarterSpecificDeadLayerDetector(G4int det, G4int cry);
+    G4SubtractionSolid* QuarterSpecificDeadLayerDetector(G4int det, G4int cry);
 
     //internal methods for ConstructComplexDetectorBlockWithPlastic()
-    G4UnionSolid* interCrystalelectrodeMatBack();
-    G4UnionSolid* interCrystalelectrodeMatFront();
+    G4UnionSolid* InterCrystalelectrodeMatBack();
+    G4UnionSolid* InterCrystalelectrodeMatFront();
     
     //internal methods for ConstructColdFinger()
-    G4Tubs* airHole();
-    G4Tubs* airHoleCut();
-    G4Box* endPlate();
-    G4Tubs* finger();
-    G4SubtractionSolid* extraColdBlock();
-    G4Trd* trianglePost();
-    G4Box* coolingBar();
-    G4Box* coolingSideBlock();
-    G4Tubs* structureMatColdFinger();
+    G4Tubs* AirHole();
+    G4Tubs* AirHoleCut();
+    G4Box* EndPlate();
+    G4Tubs* Finger();
+    G4SubtractionSolid* ExtraColdBlock();
+    G4Trd* TrianglePost();
+    G4Box* CoolingBar();
+    G4Box* CoolingSideBlock();
+    G4Tubs* StructureMatColdFinger();
     
     //internal methods for ConstructBGOCasing()
-    G4SubtractionSolid* backBGO();
+    G4SubtractionSolid* BackBGO();
     G4SubtractionSolid* BGOCasing();
-    G4SubtractionSolid* frontBGO();
-    G4Trd* sideBGO();
+    G4SubtractionSolid* FrontBGO();
+    G4Trd* SideBGO();
 
     //internal methods for ConstructNewSuppressorCasing()
-    G4SubtractionSolid* backSuppressorQuarter();
-    G4SubtractionSolid* frontSlantSuppressor(G4String sidePosition, G4bool choppingSuppressor) ;
-    G4SubtractionSolid* sideSuppressorExtension(G4String sidePosition, G4bool choppingSuppressor) ;
-    G4Trap*             sideSuppressorExtensionUncut() ;
+    G4SubtractionSolid* BackSuppressorQuarter();
+    G4SubtractionSolid* FrontSlantSuppressor(G4String sidePosition, G4bool choppingSuppressor) ;
+    G4SubtractionSolid* SideSuppressorExtension(G4String sidePosition, G4bool choppingSuppressor) ;
+    G4Trap*             SideSuppressorExtensionUncut() ;
 
     //internal methods for New SuppressorCasingWithShells
-    G4SubtractionSolid* shellForBackSuppressorQuarter();
-    G4SubtractionSolid* shellForFrontSlantSuppressor(G4String sidePosition) ;
-    G4SubtractionSolid* shellForSuppressorExtension(G4String sidePosition);
+    G4SubtractionSolid* ShellForBackSuppressorQuarter();
+    G4SubtractionSolid* ShellForFrontSlantSuppressor(G4String sidePosition) ;
+    G4SubtractionSolid* ShellForSuppressorExtension(G4String sidePosition);
 
     //internal methods for ConstructNewHeavyMet()
-    G4SubtractionSolid* newHeavyMet();
+    G4SubtractionSolid* NewHeavyMet();
 
-    G4String crystal_material;
-    G4String can_material;
-    G4String vacuum_material;
-    G4double crystal_length_x;
-    G4double crystal_length_y;
-    G4double crystal_length_z;
-    G4double crystal_inner_radius;
-    G4double crystal_outer_radius;
-    G4double can_thickness;
-    G4double can_inner_radius;
-    G4double can_lid_inner_radius;
-    G4double can_lid_outer_radius;
-    G4double can_front_lid_thickness;
-    G4double can_back_lid_thickness;
-    G4double can_face_dist_from_origin;
-    G4double crystal_dist_from_can_face;
-    G4double crystal_dist_from_can_back;
-    G4double can_length_z;
-    G4double crystal_dist_from_origin;
+    G4String fCrystalMaterial;
+    G4String fCanMaterial;
+    G4String fVacuumMaterial;
+    G4double fCrystalLengthX;
+    G4double fCrystalLengthY;
+    G4double fCrystalLengthZ;
+    G4double fCrystalInnerRadius;
+    G4double fCrystalOuterRadius;
+    G4double fCanThickness;
+    G4double fCanInnerRadius;
+    G4double fCanLidInnerRadius;
+    G4double fCanLidOuterRadius;
+    G4double fCanFrontLidThickness;
+    G4double fCanBackLidThickness;
+    G4double fCanFaceDistFromOrigin;
+    G4double fCrystalDistFromCanFace;
+    G4double fCrystalDistFromCanBack;
+    G4double fCanLengthZ;
+    G4double fCrystalDistFromOrigin;
 
     // For detector specific dead layers
-    G4double griffinDeadLayers[16][4];
-    G4Colour griffinCrystalColours[4];
-    G4Colour griffinDeadLayerColours[4];
+    G4double fGriffinDeadLayers[16][4];
+    G4Colour fGriffinCrystalColours[4];
+    G4Colour fGriffinDeadLayerColours[4];
 
     // internal methods
     void BuildOneDetector();
-    //    void PlaceDetector(G4int detector_number);
+    //    void PlaceDetector(G4int detectorNumber);
 
 
 };

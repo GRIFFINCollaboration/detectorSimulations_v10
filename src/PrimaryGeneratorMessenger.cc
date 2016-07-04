@@ -49,75 +49,80 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun)
-    :Action(Gun)
+    :fAction(Gun)
 {
-    numberOfDecayingLaBrDetectorsCmd = new G4UIcmdWithAnInteger("/DetSys/gun/numberOfDecayingLaBrDetectors",this);
-    numberOfDecayingLaBrDetectorsCmd->SetGuidance("Set the number of radioactive LaBr detectors");
-    numberOfDecayingLaBrDetectorsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    fNumberOfDecayingLaBrDetectorsCmd = new G4UIcmdWithAnInteger("/DetSys/gun/numberOfDecayingLaBrDetectors",this);
+    fNumberOfDecayingLaBrDetectorsCmd->SetGuidance("Set the number of radioactive LaBr detectors");
+    fNumberOfDecayingLaBrDetectorsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    efficiencyEnergyCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/efficiencyEnergy",this);
-    efficiencyEnergyCmd->SetGuidance("Set gamma efficiency energy");
-    efficiencyEnergyCmd->SetUnitCategory("Energy");
-    efficiencyEnergyCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    fEfficiencyEnergyCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/efficiencyEnergy",this);
+    fEfficiencyEnergyCmd->SetGuidance("Set gamma efficiency energy");
+    fEfficiencyEnergyCmd->SetUnitCategory("Energy");
+    fEfficiencyEnergyCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    efficiencyDirectionCmd = new G4UIcmdWith3Vector("/DetSys/gun/direction",this);
-    efficiencyDirectionCmd->SetGuidance("Set momentum direction.");
-    efficiencyDirectionCmd->SetGuidance("Direction needs not to be a unit vector.");
-    efficiencyDirectionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    fEfficiencyDirectionCmd = new G4UIcmdWith3Vector("/DetSys/gun/direction",this);
+    fEfficiencyDirectionCmd->SetGuidance("Set momentum direction.");
+    fEfficiencyDirectionCmd->SetGuidance("Direction needs not to be a unit vector.");
+    fEfficiencyDirectionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    efficiencyPositionCmd = new G4UIcmdWith3VectorAndUnit("/DetSys/gun/position",this);
-    efficiencyPositionCmd->SetGuidance("Set position.");
-    efficiencyPositionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    fEfficiencyPositionCmd = new G4UIcmdWith3VectorAndUnit("/DetSys/gun/position",this);
+    fEfficiencyPositionCmd->SetGuidance("Set position.");
+    fEfficiencyPositionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    efficiencyParticleCmd = new G4UIcmdWithAString("/DetSys/gun/particle",this);
-    efficiencyParticleCmd->SetGuidance("Set particle.");
-    efficiencyParticleCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    fEfficiencyParticleCmd = new G4UIcmdWithAString("/DetSys/gun/particle",this);
+    fEfficiencyParticleCmd->SetGuidance("Set particle.");
+    fEfficiencyParticleCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    efficiencyPolarizationCmd = new G4UIcmdWith3Vector("/DetSys/gun/polarization",this);
-    efficiencyPolarizationCmd->SetGuidance("Set gamma polarization direction.");
-    efficiencyPolarizationCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    fEfficiencyPolarizationCmd = new G4UIcmdWith3Vector("/DetSys/gun/polarization",this);
+    fEfficiencyPolarizationCmd->SetGuidance("Set gamma polarization direction.");
+    fEfficiencyPolarizationCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    efficiencyBeamRadiusCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/beamRadius",this);
-    efficiencyBeamRadiusCmd->SetGuidance("Set beam radius");
-    efficiencyBeamRadiusCmd->SetUnitCategory("Length");
-    efficiencyBeamRadiusCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    fEfficiencyBeamRadiusCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/beamRadius",this);
+    fEfficiencyBeamRadiusCmd->SetGuidance("Set beam radius");
+    fEfficiencyBeamRadiusCmd->SetUnitCategory("Length");
+    fEfficiencyBeamRadiusCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger()
-{
-    delete numberOfDecayingLaBrDetectorsCmd;
-    delete efficiencyEnergyCmd;
-    delete efficiencyDirectionCmd;
-    delete efficiencyPolarizationCmd;
-    delete efficiencyBeamRadiusCmd;
+PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger() {
+    delete fNumberOfDecayingLaBrDetectorsCmd;
+    delete fEfficiencyEnergyCmd;
+    delete fEfficiencyDirectionCmd;
+    delete fEfficiencyPolarizationCmd;
+    delete fEfficiencyBeamRadiusCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void PrimaryGeneratorMessenger::SetNewValue( G4UIcommand* command, G4String newValue )
-{
-    if( command == numberOfDecayingLaBrDetectorsCmd ) {
-        Action->SetNumberOfDecayingLaBrDetectors(numberOfDecayingLaBrDetectorsCmd->GetNewIntValue(newValue));
+void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newValue) {
+    if(command == fNumberOfDecayingLaBrDetectorsCmd) {
+        fAction->SetNumberOfDecayingLaBrDetectors(fNumberOfDecayingLaBrDetectorsCmd->GetNewIntValue(newValue));
+		  return;
     }
-    if( command == efficiencyEnergyCmd ) {
-        Action->SetEfficiencyEnergy(efficiencyEnergyCmd->GetNewDoubleValue(newValue));
+    if(command == fEfficiencyEnergyCmd ) {
+        fAction->SetEfficiencyEnergy(fEfficiencyEnergyCmd->GetNewDoubleValue(newValue));
+		  return;
     }
-    if( command == efficiencyDirectionCmd ) {
-        Action->SetEfficiencyDirection(efficiencyDirectionCmd->GetNew3VectorValue(newValue));
+    if( command == fEfficiencyDirectionCmd ) {
+        fAction->SetEfficiencyDirection(fEfficiencyDirectionCmd->GetNew3VectorValue(newValue));
+		  return;
     }
-    if( command == efficiencyPositionCmd ) {
-        Action->SetEfficiencyPosition(efficiencyPositionCmd->GetNew3VectorValue(newValue));
+    if( command == fEfficiencyPositionCmd ) {
+        fAction->SetEfficiencyPosition(fEfficiencyPositionCmd->GetNew3VectorValue(newValue));
+		  return;
     }
-    if( command == efficiencyParticleCmd ) {
-        Action->SetEfficiencyParticle(newValue);
+    if( command == fEfficiencyParticleCmd ) {
+        fAction->SetEfficiencyParticle(newValue);
+		  return;
     }
-    if( command == efficiencyPolarizationCmd ) {
-        Action->SetEfficiencyPolarization(efficiencyPolarizationCmd->GetNew3VectorValue(newValue));
+    if( command == fEfficiencyPolarizationCmd ) {
+        fAction->SetEfficiencyPolarization(fEfficiencyPolarizationCmd->GetNew3VectorValue(newValue));
+		  return;
     }
-    if( command == efficiencyBeamRadiusCmd ) {
-        Action->SetEfficiencyBeamRadius(efficiencyBeamRadiusCmd->GetNewDoubleValue(newValue));
+    if( command == fEfficiencyBeamRadiusCmd ) {
+        fAction->SetEfficiencyBeamRadius(fEfficiencyBeamRadiusCmd->GetNewDoubleValue(newValue));
+		  return;
     }
 }
 

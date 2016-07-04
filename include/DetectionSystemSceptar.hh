@@ -45,45 +45,45 @@ public:
     ~DetectionSystemSceptar();
 
     G4int Build() ; //G4SDManager* mySDman);
-    G4int PlaceDetector(G4LogicalVolume* exp_hall_log, G4int detectorNumber);
+    G4int PlaceDetector(G4LogicalVolume* expHallLog, G4int detectorNumber);
 
 private:
     // Assembly volumes
-    G4AssemblyVolume* assembly;
-    G4AssemblyVolume* assemblySquare;
-    G4AssemblyVolume* assemblyAngled;
-    G4AssemblyVolume* assemblySquareSD;
-    G4AssemblyVolume* assemblyAngledSD;
+    G4AssemblyVolume* fAssembly;
+    G4AssemblyVolume* fAssemblySquare;
+    G4AssemblyVolume* fAssemblyAngled;
+    G4AssemblyVolume* fAssemblySquareSD;
+    G4AssemblyVolume* fAssemblyAngledSD;
 
-    //    SensitiveDetector* square_scint_SD;
-    //    SensitiveDetector* angled_scint_SD;
+    //    SensitiveDetector* squareScintSD;
+    //    SensitiveDetector* angledScintSD;
 
-    G4double convert;
-    G4double square_scintillator_length;
-    G4double square_scintillator_width;
-    G4double square_scintillator_thickness;
-    G4double angled_scintillator_length;
-    G4double angled_scintillator_long_width;
-    G4double angled_scintillator_short_width;
-    G4double angled_scintillator_thickness;
-    G4double mylar_thickness;
-    G4double scint_gap;
-    G4double scint_angle1;
-    G4double scint_angle2;
-    G4double scint_angle3;
-    G4double scint_angle4;
-    G4double scint_angle_move;
-    G4double square_scint_radial_distance;
-    G4double angled_scint_radial_distance;
-    G4double angled_scint_move_back;
-    G4double Delrin_inner_radius;
-    G4double Delrin_outer_radius;
-    G4double Delrin2_inner_radius;
-    G4double Delrin2_outer_radius;
-    G4double Hevimet_inner_radius;
-    G4double Hevimet_outer_radius;
-    G4double Delrin_hole_radius;
-    G4double separate_hemispheres;
+    G4double fConvert;
+    G4double fSquareScintillatorLength;
+    G4double fSquareScintillatorWidth;
+    G4double fSquareScintillatorThickness;
+    G4double fAngledScintillatorLength;
+    G4double fAngledScintillatorLongWidth;
+    G4double fAngledScintillatorShortWidth;
+    G4double fAngledScintillatorThickness;
+    G4double fMylarThickness;
+    G4double fScintGap;
+    G4double fScintAngle1;
+    G4double fScintAngle2;
+    G4double fScintAngle3;
+    G4double fScintAngle4;
+    G4double fScintAngleMove;
+    G4double fSquareScintRadialDistance;
+    G4double fAngledScintRadialDistance;
+    G4double fAngledScintMoveBack;
+    G4double fDelrinInnerRadius;
+    G4double fDelrinOuterRadius;
+    G4double fDelrin2InnerRadius;
+    G4double fDelrin2OuterRadius;
+    G4double fHevimetInnerRadius;
+    G4double fHevimetOuterRadius;
+    G4double fDelrinHoleRadius;
+    G4double fSeparateHemispheres;
     
     //##################################################################
     //### methods to construct all of the components of the detector ###
@@ -95,25 +95,23 @@ private:
 
     //Logical Volumes
     //
-    G4LogicalVolume* square_mylar_log;
-    G4LogicalVolume* angled_mylar_log;
-    G4LogicalVolume* square_scintillator_log;
-    G4LogicalVolume* angled_scintillator_log;
-    G4LogicalVolume* Delrin_shell_log;
-    G4LogicalVolume* Delrin_shell2_log;
-    G4LogicalVolume* Hevimet_shell_log;
+    G4LogicalVolume* fSquareMylarLog;
+    G4LogicalVolume* fAngledMylarLog;
+    G4LogicalVolume* fSquareScintillatorLog;
+    G4LogicalVolume* fAngledScintillatorLog;
+    G4LogicalVolume* fDelrinShellLog;
+    G4LogicalVolume* fDelrinShell2Log;
+    G4LogicalVolume* fHevimetShellLog;
 
-    G4Trd* squareMylar();
-    G4SubtractionSolid* squareMylarWithCut();
-    G4SubtractionSolid* angledMylar();
-    G4SubtractionSolid* angledMylarWithCut();
-    G4Trd* squareScintillator();
-    G4SubtractionSolid* angledScintillator();
+    G4Trd* SquareMylar();
+    G4SubtractionSolid* SquareMylarWithCut();
+    G4SubtractionSolid* AngledMylar();
+    G4SubtractionSolid* AngledMylarWithCut();
+    G4Trd* SquareScintillator();
+    G4SubtractionSolid* AngledScintillator();
     G4SubtractionSolid* DelrinShell();
     G4SubtractionSolid* DelrinShell2();
     G4SubtractionSolid* HevimetShell();
-
-
 
 };
 

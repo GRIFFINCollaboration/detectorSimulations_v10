@@ -76,8 +76,8 @@ public:
     DetectorConstruction();
     ~DetectorConstruction();
 
-    G4int griffinDetectorsMapIndex;
-    G4int griffinDetectorsMap[16];
+    G4int fGriffinDetectorsMapIndex;
+    G4int fGriffinDetectorsMap[16];
 
     void SetWorldMaterial( G4String );
     void SetWorldDimensions( G4ThreeVector );
@@ -94,18 +94,18 @@ public:
     //    void SetFieldBoxMagneticField( G4ThreeVector );
     //    void SetFieldBox( );
 
-    //    void SetBoxMat( G4String input )                   {box_mat = input;};
-    //        void SetBoxThickness( G4double input )             {box_thickness = input;};
-    //        void SetBoxInnerDimensions( G4ThreeVector input )  {box_inner_dimensions = input;};
-    //        void SetBoxColour( G4ThreeVector input )           {box_colour = input;};
+    //    void SetBoxMat( G4String input )                   {boxMat = input;};
+    //        void SetBoxThickness( G4double input )             {boxThickness = input;};
+    //        void SetBoxInnerDimensions( G4ThreeVector input )  {boxInnerDimensions = input;};
+    //        void SetBoxColour( G4ThreeVector input )           {boxColour = input;};
     //        void AddBox();
 
     // Grid Functions
-    void SetGridMat( G4String input )                  {grid_mat = input;};
-    void SetGridSize( G4double input )                 {grid_size = input;};
-    void SetGridDimensions( G4ThreeVector input )      {grid_dimensions = input;};
-    void SetGridColour( G4ThreeVector input )          {grid_colour = input;};
-    void SetGridPosOffset( G4ThreeVector input )          {grid_offset = input;};
+    void SetGridMat( G4String input )                  {fGridMat = input;};
+    void SetGridSize( G4double input )                 {fGridSize = input;};
+    void SetGridDimensions( G4ThreeVector input )      {fGridDimensions = input;};
+    void SetGridColour( G4ThreeVector input )          {fGridColour = input;};
+    void SetGridPosOffset( G4ThreeVector input )          {fGridOffset = input;};
     void AddGrid();
 
     //    void AddApparatusSpiceTargetChamber();
@@ -113,11 +113,11 @@ public:
     void AddApparatus8piVacuumChamberAuxMatShell(G4double thickness);
     void AddApparatusGriffinStructure(G4int selector);
 
-    G4double GetWorldSizeX()           {return WorldSizeX;};
-    G4double GetWorldSizeY()           {return WorldSizeY;};
-    G4double GetWorldSizeZ()           {return WorldSizeZ;};
+    G4double GetWorldSizeX()           {return fWorldSizeX;};
+    G4double GetWorldSizeY()           {return fWorldSizeY;};
+    G4double GetWorldSizeZ()           {return fWorldSizeZ;};
 
-    const G4VPhysicalVolume* GetphysiWorld() {return physiWorld;};
+    const G4VPhysicalVolume* GetphysiWorld() {return fPhysiWorld;};
 
     G4VPhysicalVolume* Construct();
 
@@ -173,69 +173,69 @@ public:
     G4double GetLanthanumBromideCrystalRadialPosition();
 
 
-    void UseTIGRESSPositions( G4bool input )                  {useTigressPositions = input;};
+    void UseTIGRESSPositions( G4bool input )                  {fUseTigressPositions = input;};
 private:
 
     //    MagneticField* worldMagField;
 
-    G4double  WorldSizeX;
-    G4double  WorldSizeY;
-    G4double  WorldSizeZ;
-    G4bool    world_vis;
-    G4bool    builtDetectors;
-    G4double  griffinFwdBackPosition;
-    G4int     detectorShieldSelect ;
-    G4double  detectorRadialDistance ;
-    G4int     extensionSuppressorLocation ;
-    G4int     customDetectorNumber ;
-    G4int     customDetectorPosition ;
-    G4int     customDetectorVal ;
-    G4int     hevimetSelector ;
-    G4bool    useTigressPositions;
+    G4double  fWorldSizeX;
+    G4double  fWorldSizeY;
+    G4double  fWorldSizeZ;
+    G4bool    fWorldVis;
+    G4bool    fBuiltDetectors;
+    G4double  fGriffinFwdBackPosition;
+    G4int     fDetectorShieldSelect ;
+    G4double  fDetectorRadialDistance ;
+    G4int     fExtensionSuppressorLocation ;
+    G4int     fCustomDetectorNumber ;
+    G4int     fCustomDetectorPosition ;
+    G4int     fCustomDetectorVal ;
+    G4int     fHevimetSelector ;
+    G4bool    fUseTigressPositions;
 
     // Box
-    G4String           box_mat;
-    G4double           box_thickness;
-    G4ThreeVector      box_inner_dimensions;
-    G4ThreeVector      box_colour;
+    G4String           fBoxMat;
+    G4double           fBoxThickness;
+    G4ThreeVector      fBoxInnerDimensions;
+    G4ThreeVector      fBoxColour;
 
-    G4Box*             solidWorld;    //pointer to the solid World
-    G4LogicalVolume*   logicWorld;    //pointer to the logical World
-    G4VPhysicalVolume* physiWorld;    //pointer to the physical World
+    G4Box*             fSolidWorld;    //pointer to the solid World
+    G4LogicalVolume*   fLogicWorld;    //pointer to the logical World
+    G4VPhysicalVolume* fPhysiWorld;    //pointer to the physical World
 
     // Grid
-    G4String           grid_mat;
-    G4double           grid_size;
-    G4ThreeVector      grid_dimensions;
-    G4ThreeVector      grid_colour;
-    G4ThreeVector      grid_offset;
+    G4String           fGridMat;
+    G4double           fGridSize;
+    G4ThreeVector      fGridDimensions;
+    G4ThreeVector      fGridColour;
+    G4ThreeVector      fGridOffset;
 
     void DefineSuppressedParameters();
     void DefineMaterials();
 
-    G4double coords[20][5];
-    G4bool        setGenericTargetMaterial;
-    G4bool        setGenericTargetDimensions;
-    G4bool        setGenericTargetPosition;
-    G4String      genericTargetMaterial;
-    G4ThreeVector genericTargetDimensions;
-    G4ThreeVector genericTargetPosition;
+    G4double fCoords[20][5];
+    G4bool        fSetGenericTargetMaterial;
+    G4bool        fSetGenericTargetDimensions;
+    G4bool        fSetGenericTargetPosition;
+    G4String      fGenericTargetMaterial;
+    G4ThreeVector fGenericTargetDimensions;
+    G4ThreeVector fGenericTargetPosition;
 
-    G4bool        setFieldBoxMaterial;
-    G4bool        setFieldBoxDimensions;
-    G4bool        setFieldBoxPosition;
-    G4bool        setFieldBoxMagneticField;
-    G4String      fieldBoxMaterial;
-    G4ThreeVector fieldBoxDimensions;
-    G4ThreeVector fieldBoxPosition;
-    G4ThreeVector fieldBoxMagneticField;
+    G4bool        fSetFieldBoxMaterial;
+    G4bool        fSetFieldBoxDimensions;
+    G4bool        fSetFieldBoxPosition;
+    G4bool        fSetFieldBoxMagneticField;
+    G4String      fFieldBoxMaterial;
+    G4ThreeVector fFieldBoxDimensions;
+    G4ThreeVector fFieldBoxPosition;
+    G4ThreeVector fFieldBoxMagneticField;
 
-    G4String matWorldName;
+    G4String fMatWorldName;
 
-    DetectorMessenger* detectorMessenger;
+    DetectorMessenger* fDetectorMessenger;
 
-    G4ThreeVector descantRotation;
-    G4String descantColor;
+    G4ThreeVector fDescantRotation;
+    G4String fDescantColor;
 
 };
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -49,45 +49,45 @@ public:
     ~DetectionSystemAncillaryBGO();
     
     G4int Build() ; //G4SDManager* mySDman);
-    G4int PlaceDetector(G4LogicalVolume* exp_hall_log, G4int detector_number, G4double radialpos, G4int hevimetopt);
+    G4int PlaceDetector(G4LogicalVolume* expHallLog, G4int detectorNumber, G4double radialpos, G4int hevimetopt);
 
 
 private:
     // Logical volumes
-    G4LogicalVolume* detector_volume_log;
-    G4LogicalVolume* bgo_block_log;
-    G4LogicalVolume* vacuum_block_log;
-    G4LogicalVolume* can_cylinder_log;
-    G4LogicalVolume* can_cylinder_back_cover_log;
-    G4LogicalVolume* hevimet_block_log;
+    G4LogicalVolume* fDetectorVolumeLog;
+    G4LogicalVolume* fBgoBlockLog;
+    G4LogicalVolume* fVacuumBlockLog;
+    G4LogicalVolume* fCanCylinderLog;
+    G4LogicalVolume* fCanCylinderBackCoverLog;
+    G4LogicalVolume* fHevimetBlockLog;
 
     // Assembly volumes
-    G4AssemblyVolume* assembly;
-    G4AssemblyVolume* assemblyHevimet;
+    G4AssemblyVolume* fAssembly;
+    G4AssemblyVolume* fAssemblyHevimet;
 
-    G4double can_length;
-    G4double can_thickness;
-    G4double can_thickness_front;
-    G4double can_inner_radius;
-    G4String can_material;
+    G4double fCanLength;
+    G4double fCanThickness;
+    G4double fCanThicknessFront;
+    G4double fCanInnerRadius;
+    G4String fCanMaterial;
 
-    G4double bgo_length;
-    G4double bgo_thickness;
-    G4String bgo_material;
+    G4double fBgoLength;
+    G4double fBgoThickness;
+    G4String fBgoMaterial;
 
-    G4double gap_thickness;
-    G4double gap_thickness_outer;
-    G4String gap_material;
+    G4double fGapThickness;
+    G4double fGapThicknessOuter;
+    G4String fGapMaterial;
 
-    G4double can_face_to_build_origin;
+    G4double fCanFaceToBuildOrigin;
 
-    G4double chopping_outer_angle;
-    G4double chopping_inner_angle;
+    G4double fChoppingOuterAngle;
+    G4double fChoppingInnerAngle;
 
-    G4double hevimet_thickness;
-    G4String hevimet_material;
+    G4double fHevimetThickness;
+    G4String fHevimetMaterial;
 
-    G4double detectorAngles[8][5];
+    G4double fDetectorAngles[8][5];
 
     G4SubtractionSolid* BGOPiece();
     G4SubtractionSolid* VacuumPiece();
@@ -101,13 +101,7 @@ private:
     G4int BuildAluminumCanBackCoverVolume();
     G4int BuildHevimetPiece();
 
-
-
     G4ThreeVector GetDirectionXYZ(G4double theta, G4double phi);
-
-    G4double transX(G4double x, G4double y, G4double z, G4double theta, G4double phi);
-    G4double transY(G4double x, G4double y, G4double z, G4double theta, G4double phi);
-    G4double transZ(G4double x, G4double y, G4double z, G4double theta, G4double phi);
 };
 
 #endif

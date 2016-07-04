@@ -27,153 +27,148 @@
 
 DetectionSystemPaces::DetectionSystemPaces() :
     // Logical Volumes
-    aluminum_hemisphere_log(0),
-    aluminum_annulus_top_log(0),
-    aluminum_annulus_bot_log(0),
-    canister_log(0),
-    silicon_block_log(0),
-    silicon_dead_layer_log(0),
+    fAluminumHemisphereLog(0),
+    fAluminumAnnulusTopLog(0),
+    fAluminumAnnulusBotLog(0),
+    fCanisterLog(0),
+    fSiliconBlockLog(0),
+    fSiliconDeadLayerLog(0),
 
-    teflon_annulus_top_log(0),
-    teflon_annulus_bot_log(0),
-    delrin_hemisphere_log(0)
+    fTeflonAnnulusTopLog(0),
+    fTeflonAnnulusBotLog(0),
+    fDelrinHemisphereLog(0)
 {
     /*Measurement status*/
     //~   estimate
     //OK  confirmed measurement
 
     // Cut clearance
-    this->cut_clearance = 0.01*mm;
+    fCutClearance = 0.01*mm;
 
     // Aluminum hemisphere
-    this->aluminum_hemisphere_inner_radius =         (82.50 / 2)*mm; //OK
-    this->aluminum_hemisphere_outer_radius =         (88.86 / 2)*mm; //OK
-    this->aluminum_hemisphere_beam_hole_radius =     (34.50 / 2)*mm; //~
-    this->aluminum_hemisphere_beam_hole_rim_height = (3.0)*mm; //~
+    fAluminumHemisphereInnerRadius =         (82.50 / 2)*mm; //OK
+    fAluminumHemisphereOuterRadius =         (88.86 / 2)*mm; //OK
+    fAluminumHemisphereBeamHoleRadius =     (34.50 / 2)*mm; //~
+    fAluminumHemisphereBeamHoleRimHeight = (3.0)*mm; //~
 
     // Annulus that sits in front of silicon crystal
-    this->aluminum_annulus_top_inner_radius =        (15.86 / 2)*mm; //OK
-    this->aluminum_annulus_top_outer_radius =        (31.71 / 2)*mm; //OK
-    this->aluminum_annulus_top_thickness =           (2.37)*mm; //OK
+    fAluminumAnnulusTopInnerRadius =        (15.86 / 2)*mm; //OK
+    fAluminumAnnulusTopOuterRadius =        (31.71 / 2)*mm; //OK
+    fAluminumAnnulusTopThickness =           (2.37)*mm; //OK
 
     // Annulus that sits in back of silicon crystal
-    this->aluminum_annulus_bot_inner_radius =        (15.86 / 2)*mm; //~
-    this->aluminum_annulus_bot_outer_radius =        (31.71 / 2)*mm; //~
-    this->aluminum_annulus_bot_thickness =           (4.50)*mm; //~
+    fAluminumAnnulusBotInnerRadius =        (15.86 / 2)*mm; //~
+    fAluminumAnnulusBotOuterRadius =        (31.71 / 2)*mm; //~
+    fAluminumAnnulusBotThickness =           (4.50)*mm; //~
 
     // Canister holding crystal
-    this->canister_inner_radius =                    (18.50 / 2)*mm; //~
-    this->canister_outer_radius =                    (21.00 / 2)*mm; //~
-    this->canister_thickness =                       (5.00)*mm; //~
+    fCanisterInnerRadius =                    (18.50 / 2)*mm; //~
+    fCanisterOuterRadius =                    (21.00 / 2)*mm; //~
+    fCanisterThickness =                       (5.00)*mm; //~
 
     // Silicon crystal detector
-    this->silicon_block_radius =                     (15.86 / 2)*mm; //~
-    this->silicon_block_thickness =                  (4.90)*mm; //~
-    this->silicon_dead_layer_thickness =             (0.004)*mm; //~ Nominal Structure Stopping Power of Window - Ortec, 2u Si equivalent
+    fSiliconBlockRadius =                     (15.86 / 2)*mm; //~
+    fSiliconBlockThickness =                  (4.90)*mm; //~
+    fSiliconDeadLayerThickness =             (0.004)*mm; //~ Nominal Structure Stopping Power of Window - Ortec, 2u Si equivalent
 
     // Front and back Au (0.2 and 2um) contacts.
-    //this->front_contact_thickness =  		   (0.0002)*mm; //~ Common front contact thickness for Si(Li) Zhimin
-    //this->back_contact_thickness =  		   (0.002)*mm; //~ Common back contact thickness for Si(Li) Zhimin
+    //frontContactThickness =  		   (0.0002)*mm; //~ Common front contact thickness for Si(Li) Zhimin
+    //backContactThickness =  		   (0.002)*mm; //~ Common back contact thickness for Si(Li) Zhimin
 
     // Screws
-    this->screw_radius =                             (1.00 / 2)*mm; //~
-    this->screw_placement_radius =                   (22.50 / 2)*mm; //~
+    fScrewRadius =                             (1.00 / 2)*mm; //~
+    fScrewPlacementRadius =                   (22.50 / 2)*mm; //~
 
     // Teflon bases
-    this->teflon_annulus_top_inner_radius =          (21.00 / 2)*mm; //~
-    this->teflon_annulus_top_outer_radius =          (32.00 / 2)*mm; //~
-    this->teflon_annulus_top_thickness =             (2.22)*mm; //OK
-    this->teflon_annulus_bot_inner_radius =          (31.65 / 2)*mm; //~
-    this->teflon_annulus_bot_outer_radius =          (34.50 / 2)*mm; //~
-    this->teflon_annulus_bot_thickness =             (4.00)*mm; //~
+    fTeflonAnnulusTopInnerRadius =          (21.00 / 2)*mm; //~
+    fTeflonAnnulusTopOuterRadius =          (32.00 / 2)*mm; //~
+    fTeflonAnnulusTopThickness =             (2.22)*mm; //OK
+    fTeflonAnnulusBotInnerRadius =          (31.65 / 2)*mm; //~
+    fTeflonAnnulusBotOuterRadius =          (34.50 / 2)*mm; //~
+    fTeflonAnnulusBotThickness =             (4.00)*mm; //~
 
     // delrin hemisphere
-    this->delrin_hemisphere_inner_radius =           (84.4)*mm; //OK
-    this->delrin_hemisphere_outer_radius =           (89.4)*mm; //OK
-    this->delrin_hemisphere_beam_hole_radius =       (20.00 / 2)*mm; //OK
+    fDelrinHemisphereInnerRadius =           (84.4)*mm; //OK
+    fDelrinHemisphereOuterRadius =           (89.4)*mm; //OK
+    fDelrinHemisphereBeamHoleRadius =       (20.00 / 2)*mm; //OK
 
     // placement distances
-    this->aluminum_hemisphere_dist =     (0.)*mm;
-    this->delrin_hemisphere_dist =       (0.)*mm;
-    this->aluminum_annulus_top_dist =    (aluminum_annulus_top_thickness / 2);
-    this->canister_dist =                (aluminum_annulus_top_thickness) + (canister_thickness / 2) ;
-    this->silicon_block_dist =           (aluminum_annulus_top_thickness) + (silicon_block_thickness / 2); // Takes dead layer into account
-    this->silicon_dead_layer_front_dist= (aluminum_annulus_top_thickness) + (silicon_dead_layer_thickness / 2) ;
-    this->silicon_dead_layer_back_dist = (aluminum_annulus_top_thickness) + (silicon_block_thickness) - (silicon_dead_layer_thickness / 2);
-    this->teflon_annulus_top_dist =      (aluminum_annulus_top_thickness) + (silicon_block_thickness) - (teflon_annulus_top_thickness / 2);
-    this->teflon_annulus_bot_dist =      (teflon_annulus_top_dist) + (teflon_annulus_top_thickness / 2) + (teflon_annulus_bot_thickness / 2);
-    this->aluminum_annulus_bot_dist =    (teflon_annulus_top_dist) + (teflon_annulus_top_thickness / 2) + (aluminum_annulus_bot_thickness / 2);
+    fAluminumHemisphereDist =     (0.)*mm;
+    fDelrinHemisphereDist =       (0.)*mm;
+    fAluminumAnnulusTopDist =    (fAluminumAnnulusTopThickness / 2);
+    fCanisterDist =              (fAluminumAnnulusTopThickness) + (fCanisterThickness / 2) ;
+    fSiliconBlockDist =          (fAluminumAnnulusTopThickness) + (fSiliconBlockThickness / 2); // Takes dead layer into account
+    fSiliconDeadLayerFrontDist = (fAluminumAnnulusTopThickness) + (fSiliconDeadLayerThickness / 2) ;
+    fSiliconDeadLayerBackDist  = (fAluminumAnnulusTopThickness) + (fSiliconBlockThickness) - (fSiliconDeadLayerThickness / 2);
+    fTeflonAnnulusTopDist =      (fAluminumAnnulusTopThickness) + (fSiliconBlockThickness) - (fTeflonAnnulusTopThickness / 2);
+    fTeflonAnnulusBotDist =      (fTeflonAnnulusTopDist) + (fTeflonAnnulusTopThickness / 2) + (fTeflonAnnulusBotThickness / 2);
+    fAluminumAnnulusBotDist =    (fTeflonAnnulusTopDist) + (fTeflonAnnulusTopThickness / 2) + (fAluminumAnnulusBotThickness / 2);
 
     // Placement and Orientation scalars
-    /*paces_placement_distance[5] = {  30.00*mm ,  30.00*mm ,  30.00*mm ,  30.00*mm ,  30.00*mm };
-  paces_placement_phi[5] =    {   0.0*deg ,  72.0*deg , 144.0*deg , 216.0*deg , 288.0*deg };
-  paces_placement_theta[5] =      {  60.0*deg ,  60.0*deg ,  60.0*deg ,  60.0*deg ,  60.0*deg };
-  paces_orientation_phi[5] =  {   0.0*deg ,   0.0*deg ,   0.0*deg ,   0.0*deg ,   0.0*deg };
-  paces_orientation_theta[5] =    {   0.0*deg ,   0.0*deg ,   0.0*deg ,   0.0*deg ,   0.0*deg };*/
+    /*pacesPlacementDistance[5] = {  30.00*mm ,  30.00*mm ,  30.00*mm ,  30.00*mm ,  30.00*mm };
+  pacesPlacementPhi[5] =    {   0.0*deg ,  72.0*deg , 144.0*deg , 216.0*deg , 288.0*deg };
+  pacesPlacementTheta[5] =      {  60.0*deg ,  60.0*deg ,  60.0*deg ,  60.0*deg ,  60.0*deg };
+  pacesOrientationPhi[5] =  {   0.0*deg ,   0.0*deg ,   0.0*deg ,   0.0*deg ,   0.0*deg };
+  pacesOrientationTheta[5] =    {   0.0*deg ,   0.0*deg ,   0.0*deg ,   0.0*deg ,   0.0*deg };*/
 
     // distance is deduced from Alumium hemisphere assembly
-    paces_placement_distance[0] = 29.50*mm; // 29.5*mm Deduced from Alumium hemisphere
-    paces_placement_distance[1] = 29.50*mm;
-    paces_placement_distance[2] = 29.50*mm;
-    paces_placement_distance[3] = 29.50*mm;
-    paces_placement_distance[4] = 29.50*mm;
+    fPacesPlacementDistance[0] = 29.50*mm; // 29.5*mm Deduced from Alumium hemisphere
+    fPacesPlacementDistance[1] = 29.50*mm;
+    fPacesPlacementDistance[2] = 29.50*mm;
+    fPacesPlacementDistance[3] = 29.50*mm;
+    fPacesPlacementDistance[4] = 29.50*mm;
 
     // phi angle from measurement
-    paces_placement_phi[0] =   0.0000*deg; //OK
-    paces_placement_phi[1] =  -68.7575*deg; //OK
-    paces_placement_phi[2] = -138.4082*deg; //OK
-    paces_placement_phi[3] = -212.1280*deg; //OK
-    paces_placement_phi[4] = -287.4275*deg; //OK
+    fPacesPlacementPhi[0] =   0.0000*deg; //OK
+    fPacesPlacementPhi[1] =  -68.7575*deg; //OK
+    fPacesPlacementPhi[2] = -138.4082*deg; //OK
+    fPacesPlacementPhi[3] = -212.1280*deg; //OK
+    fPacesPlacementPhi[4] = -287.4275*deg; //OK
 
     // theta angle is guess estimate
-    paces_placement_theta[0] = (180 - 60.0)*deg; //~
-    paces_placement_theta[1] = (180 - 60.0)*deg; //~
-    paces_placement_theta[2] = (180 - 60.0)*deg; //~
-    paces_placement_theta[3] = (180 - 60.0)*deg; //~
-    paces_placement_theta[4] = (180 - 60.0)*deg; //~
+    fPacesPlacementTheta[0] = (180 - 60.0)*deg; //~
+    fPacesPlacementTheta[1] = (180 - 60.0)*deg; //~
+    fPacesPlacementTheta[2] = (180 - 60.0)*deg; //~
+    fPacesPlacementTheta[3] = (180 - 60.0)*deg; //~
+    fPacesPlacementTheta[4] = (180 - 60.0)*deg; //~
 
-    paces_orientation_phi[0] = 0.0*deg;
-    paces_orientation_phi[1] = 0.0*deg;
-    paces_orientation_phi[2] = 0.0*deg;
-    paces_orientation_phi[3] = 0.0*deg;
-    paces_orientation_phi[4] = 0.0*deg;
+    fPacesOrientationPhi[0] = 0.0*deg;
+    fPacesOrientationPhi[1] = 0.0*deg;
+    fPacesOrientationPhi[2] = 0.0*deg;
+    fPacesOrientationPhi[3] = 0.0*deg;
+    fPacesOrientationPhi[4] = 0.0*deg;
 
-    paces_orientation_theta[0] = 0.1780*deg; //OK
-    paces_orientation_theta[1] = 0.8275*deg; //OK
-    paces_orientation_theta[2] =-0.2579*deg; //OK
-    paces_orientation_theta[3] = 0.2992*deg; //OK
-    paces_orientation_theta[4] = 0.1934*deg; //OK
+    fPacesOrientationTheta[0] = 0.1780*deg; //OK
+    fPacesOrientationTheta[1] = 0.8275*deg; //OK
+    fPacesOrientationTheta[2] =-0.2579*deg; //OK
+    fPacesOrientationTheta[3] = 0.2992*deg; //OK
+    fPacesOrientationTheta[4] = 0.1934*deg; //OK
 
     // assembly volume sizes
-    this->detector_assembly_radius =    (34.50 / 2)*mm; //?
-    this->detector_assembly_thickness = (15.0)*mm; //?
+    fDetectorAssemblyRadius =    (34.50 / 2)*mm; //?
+    fDetectorAssemblyThickness = (15.0)*mm; //?
 }
 
-DetectionSystemPaces::~DetectionSystemPaces()
-{
+DetectionSystemPaces::~DetectionSystemPaces() {
     // logical volumes
-    delete aluminum_hemisphere_log;
-    delete aluminum_annulus_top_log;
-    delete aluminum_annulus_bot_log;
-    delete canister_log;
-    delete silicon_block_log;
-    delete silicon_dead_layer_log;
-    delete teflon_annulus_top_log;
-    delete teflon_annulus_bot_log;
-    delete delrin_hemisphere_log;
+    delete fAluminumHemisphereLog;
+    delete fAluminumAnnulusTopLog;
+    delete fAluminumAnnulusBotLog;
+    delete fCanisterLog;
+    delete fSiliconBlockLog;
+    delete fSiliconDeadLayerLog;
+    delete fTeflonAnnulusTopLog;
+    delete fTeflonAnnulusBotLog;
+    delete fDelrinHemisphereLog;
 
 }
 
-G4int DetectionSystemPaces::Build()
-{
+G4int DetectionSystemPaces::Build() {
 
     // Build assembly volumes
-    G4AssemblyVolume* myAssembly = new G4AssemblyVolume();
-    this->assembly = myAssembly;
-    G4AssemblyVolume* myAssemblyDetector = new G4AssemblyVolume();
-    this->assemblyDetector = myAssemblyDetector;
-    G4AssemblyVolume* myAssemblySilicon = new G4AssemblyVolume();
-    this->assemblySilicon = myAssemblySilicon;
+    fAssembly = new G4AssemblyVolume();
+    fAssemblyDetector = new G4AssemblyVolume();
+    fAssemblySilicon = new G4AssemblyVolume();
 
     // Add silicon assembly
     AddSiliconBlock();
@@ -198,91 +193,85 @@ G4int DetectionSystemPaces::Build()
     return 1;
 }//end ::Build
 
-G4int DetectionSystemPaces::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int ndet)
-{
+G4int DetectionSystemPaces::PlaceDetector(G4LogicalVolume* expHallLog, G4int ndet) {
     //place detectors
-    G4int d_i;
-    G4double* ptr_pd = this->paces_placement_distance;
-    G4double* ptr_pt = this->paces_placement_phi;
-    G4double* ptr_pp = this->paces_placement_theta;
-    G4double* ptr_ot = this->paces_orientation_phi;
-    G4double* ptr_op = this->paces_orientation_theta;
+    G4int dI;
+    G4double* ptrPd = fPacesPlacementDistance;
+    G4double* ptrPt = fPacesPlacementPhi;
+    G4double* ptrPp = fPacesPlacementTheta;
+    G4double* ptrOt = fPacesOrientationPhi;
+    G4double* ptrOp = fPacesOrientationTheta;
     if (ndet > 5 || ndet < 0) ndet = 5;
-    G4double d_dist, d_phi, d_theta, ori_phi, ori_theta;
+    G4double dDist, dPhi, dTheta, oriPhi, oriTheta;
     G4RotationMatrix* Ra;
     G4ThreeVector Ta, yprimeaxis;
-    for (G4int i=0; i<ndet; i++)
-    {
-        d_i = i;
-        d_dist = ptr_pd[d_i];
-        d_phi = ptr_pt[d_i];
-        d_theta = ptr_pp[d_i];
+    for (G4int i=0; i<ndet; i++) {
+        dI = i;
+        dDist = ptrPd[dI];
+        dPhi = ptrPt[dI];
+        dTheta = ptrPp[dI];
         Ra = new G4RotationMatrix;
-        Ta.setX( d_dist * cos(d_phi) * sin(d_theta) );
-        Ta.setY( d_dist * sin(d_phi) * sin(d_theta) );
-        Ta.setZ( d_dist *      1.0     * cos(d_theta) );
+        Ta.setX( dDist * cos(dPhi) * sin(dTheta) );
+        Ta.setY( dDist * sin(dPhi) * sin(dTheta) );
+        Ta.setZ( dDist *      1.0     * cos(dTheta) );
 
-        ori_phi = d_phi + ptr_ot[d_i] + M_PI/2; //plus 90 deg
-        ori_theta = d_theta + ptr_op[d_i];
-        yprimeaxis = G4ThreeVector(cos(ori_phi), sin(ori_phi), 0);
-        Ra->set(yprimeaxis, ori_theta);
+        oriPhi = dPhi + ptrOt[dI] + M_PI/2; //plus 90 deg
+        oriTheta = dTheta + ptrOp[dI];
+        yprimeaxis = G4ThreeVector(cos(oriPhi), sin(oriPhi), 0);
+        Ra->set(yprimeaxis, oriTheta);
 
-        //G4cout << "----------- d_i = " << d_i << G4endl;
-        this->assemblySilicon->MakeImprint(exp_hall_log, Ta, Ra, d_i+1);
-        this->assemblyDetector->MakeImprint(exp_hall_log, Ta, Ra, d_i*20);
+        //G4cout << "----------- dI = " << dI << G4endl;
+        fAssemblySilicon->MakeImprint(expHallLog, Ta, Ra, dI+1);
+        fAssemblyDetector->MakeImprint(expHallLog, Ta, Ra, dI*20);
     }
 
     //place hemisphere
     G4RotationMatrix* R0 = new G4RotationMatrix; G4ThreeVector T0;
-    this->assembly->MakeImprint(exp_hall_log, T0, R0, 5*40);
+    fAssembly->MakeImprint(expHallLog, T0, R0, 5*40);
 
     return 1;
 }//end ::PlaceDetector
 
-G4int DetectionSystemPaces::CombineAssemblySilicon()
-{
+G4int DetectionSystemPaces::CombineAssemblySilicon() {
     G4RotationMatrix* Ra = new G4RotationMatrix; G4ThreeVector Ta;
-    Ta.setZ( this->silicon_block_dist );
-    this->assemblySilicon->AddPlacedVolume(silicon_block_log, Ta, Ra);
+    Ta.setZ(fSiliconBlockDist);
+    fAssemblySilicon->AddPlacedVolume(fSiliconBlockLog, Ta, Ra);
 
     return 1;
 }//end ::CombineAssemblySilicon
 
 
-G4int DetectionSystemPaces::CombineAssemblyDetector()
-{
+G4int DetectionSystemPaces::CombineAssemblyDetector() {
     G4RotationMatrix* Ra = new G4RotationMatrix; G4ThreeVector Ta;
-    Ta.setZ( this->silicon_dead_layer_front_dist );
-    this->assemblyDetector->AddPlacedVolume(silicon_dead_layer_log, Ta, Ra);
-    Ta.setZ( this->silicon_dead_layer_back_dist );
-    this->assemblyDetector->AddPlacedVolume(silicon_dead_layer_log, Ta, Ra);
-    Ta.setZ( this->canister_dist );
-    this->assemblyDetector->AddPlacedVolume(canister_log, Ta, Ra);
-    Ta.setZ( this->aluminum_annulus_top_dist );
-    this->assemblyDetector->AddPlacedVolume(aluminum_annulus_top_log, Ta, Ra);
-    Ta.setZ( this->aluminum_annulus_bot_dist );
-    this->assemblyDetector->AddPlacedVolume(aluminum_annulus_bot_log, Ta, Ra);
-    Ta.setZ( this->teflon_annulus_top_dist );
-    this->assemblyDetector->AddPlacedVolume(teflon_annulus_top_log, Ta, Ra);
-    Ta.setZ( this->teflon_annulus_bot_dist );
-    this->assemblyDetector->AddPlacedVolume(teflon_annulus_bot_log, Ta, Ra);
+    Ta.setZ(fSiliconDeadLayerFrontDist);
+    fAssemblyDetector->AddPlacedVolume(fSiliconDeadLayerLog, Ta, Ra);
+    Ta.setZ(fSiliconDeadLayerBackDist);
+    fAssemblyDetector->AddPlacedVolume(fSiliconDeadLayerLog, Ta, Ra);
+    Ta.setZ(fCanisterDist);
+    fAssemblyDetector->AddPlacedVolume(fCanisterLog, Ta, Ra);
+    Ta.setZ(fAluminumAnnulusTopDist);
+    fAssemblyDetector->AddPlacedVolume(fAluminumAnnulusTopLog, Ta, Ra);
+    Ta.setZ(fAluminumAnnulusBotDist);
+    fAssemblyDetector->AddPlacedVolume(fAluminumAnnulusBotLog, Ta, Ra);
+    Ta.setZ(fTeflonAnnulusTopDist);
+    fAssemblyDetector->AddPlacedVolume(fTeflonAnnulusTopLog, Ta, Ra);
+    Ta.setZ(fTeflonAnnulusBotDist);
+    fAssemblyDetector->AddPlacedVolume(fTeflonAnnulusBotLog, Ta, Ra);
 
     return 1;
 }//end ::CombineAssemblyDetector
 
-G4int DetectionSystemPaces::CombineAssembly()
-{
+G4int DetectionSystemPaces::CombineAssembly() {
     //place aluminum hemisphere
     G4RotationMatrix* Ra = new G4RotationMatrix; G4ThreeVector Ta;
-    Ta.setZ( this->aluminum_hemisphere_dist );
-    this->assembly->AddPlacedVolume(aluminum_hemisphere_log, Ta, Ra);
+    Ta.setZ(fAluminumHemisphereDist);
+    fAssembly->AddPlacedVolume(fAluminumHemisphereLog, Ta, Ra);
 
     return 1;
 }//end ::CombineAssembly
 
 //Add silicon detector
-G4int DetectionSystemPaces::AddSiliconBlock()
-{
+G4int DetectionSystemPaces::AddSiliconBlock() {
     //material
     G4Material* material = G4Material::GetMaterial("Silicon");
     if( !material ) {
@@ -291,30 +280,29 @@ G4int DetectionSystemPaces::AddSiliconBlock()
     }
 
     //vis attributes
-    G4VisAttributes* silicon_block_vis_att = new G4VisAttributes(G4Colour(1.0,0.0,0.0));
-    silicon_block_vis_att->SetVisibility(true);
+    G4VisAttributes* siliconBlockVisAtt = new G4VisAttributes(G4Colour(1.0,0.0,0.0));
+    siliconBlockVisAtt->SetVisibility(true);
 
     //silicon block (without dead layer, smaller than actual)
-    G4double dead_layer_cut = this->silicon_dead_layer_thickness + this->cut_clearance;
-    G4double inner_radius = 0.*mm;
-    G4double outer_radius = this->silicon_block_radius;
-    G4double half_length_z = this->silicon_block_thickness/2.0 - dead_layer_cut;
+    G4double deadLayerCut = fSiliconDeadLayerThickness + fCutClearance;
+    G4double innerRadius = 0.*mm;
+    G4double outerRadius = fSiliconBlockRadius;
+    G4double halfLengthZ = fSiliconBlockThickness/2.0 - deadLayerCut;
 
     //primitive volume
-    G4Tubs* silicon_block = new G4Tubs("silicon_block", inner_radius, outer_radius, half_length_z, 0*M_PI, 2*M_PI);
+    G4Tubs* siliconBlock = new G4Tubs("siliconBlock", innerRadius, outerRadius, halfLengthZ, 0*M_PI, 2*M_PI);
 
     //logical volume
-    if( silicon_block_log == NULL ) {
-        silicon_block_log = new G4LogicalVolume(silicon_block, material, "paces_silicon_block_log", 0, 0, 0); // Renamed from "silicon_block_log" to "paces_silicon_block_log"
-        silicon_block_log->SetVisAttributes(silicon_block_vis_att);
+    if( fSiliconBlockLog == NULL ) {
+        fSiliconBlockLog = new G4LogicalVolume(siliconBlock, material, "pacesSiliconBlockLog", 0, 0, 0); // Renamed from "siliconBlockLog" to "pacesSiliconBlockLog"
+        fSiliconBlockLog->SetVisAttributes(siliconBlockVisAtt);
     }
 
     return 1;
 }//end ::end AddSiliconBlock
 
 //Add detector dead layer
-G4int DetectionSystemPaces::AddSiliconDeadLayer()
-{
+G4int DetectionSystemPaces::AddSiliconDeadLayer() {
     //material
     G4Material* material = G4Material::GetMaterial("Silicon"); // "Nominal Structure Stopping Power of Window-Ortec, 2u Si"
     if( !material ) {
@@ -323,29 +311,28 @@ G4int DetectionSystemPaces::AddSiliconDeadLayer()
     }
 
     //vis attributes
-    G4VisAttributes* silicon_dead_layer_vis_att = new G4VisAttributes(G4Colour(0.0,1.0,0.0));
-    silicon_dead_layer_vis_att->SetVisibility(true);
+    G4VisAttributes* siliconDeadLayerVisAtt = new G4VisAttributes(G4Colour(0.0,1.0,0.0));
+    siliconDeadLayerVisAtt->SetVisibility(true);
 
     //dead layer
-    G4double inner_radius = 0.*mm;
-    G4double outer_radius = this->silicon_block_radius;
-    G4double half_length_z = this->silicon_dead_layer_thickness / 2.0;
+    G4double innerRadius = 0.*mm;
+    G4double outerRadius = fSiliconBlockRadius;
+    G4double halfLengthZ = fSiliconDeadLayerThickness / 2.0;
 
     //primitive volume
-    G4Tubs* silicon_dead_layer = new G4Tubs("silicon_dead_layer", inner_radius, outer_radius, half_length_z, 0*M_PI, 2*M_PI);
+    G4Tubs* siliconDeadLayer = new G4Tubs("siliconDeadLayer", innerRadius, outerRadius, halfLengthZ, 0*M_PI, 2*M_PI);
 
     //logical volume
-    if( silicon_dead_layer_log == NULL ) {
-        silicon_dead_layer_log = new G4LogicalVolume(silicon_dead_layer, material, "silicon_dead_layer_log", 0, 0, 0);
-        silicon_dead_layer_log->SetVisAttributes(silicon_dead_layer_vis_att);
+    if( fSiliconDeadLayerLog == NULL ) {
+        fSiliconDeadLayerLog = new G4LogicalVolume(siliconDeadLayer, material, "siliconDeadLayerLog", 0, 0, 0);
+        fSiliconDeadLayerLog->SetVisAttributes(siliconDeadLayerVisAtt);
     }
 
     return 1;
 }//end ::end AddSiliconDeadLayer
 
 //Add detector canister
-G4int DetectionSystemPaces::AddCanister()
-{
+G4int DetectionSystemPaces::AddCanister() {
     //material
     G4Material* material = G4Material::GetMaterial("Silicon");  // would be Silicon, Zhimin
     if( !material ) {
@@ -354,29 +341,28 @@ G4int DetectionSystemPaces::AddCanister()
     }
 
     //vis attributes
-    G4VisAttributes* canister_vis_att = new G4VisAttributes(G4Colour(0.0,1.0,1.0));
-    canister_vis_att->SetVisibility(true);
+    G4VisAttributes* canisterVisAtt = new G4VisAttributes(G4Colour(0.0,1.0,1.0));
+    canisterVisAtt->SetVisibility(true);
 
     //main annulus
-    G4double inner_radius = this->canister_inner_radius + this->cut_clearance;
-    G4double outer_radius = this->canister_outer_radius;
-    G4double half_length_z = this->canister_thickness/2.0;
+    G4double innerRadius = fCanisterInnerRadius + fCutClearance;
+    G4double outerRadius = fCanisterOuterRadius;
+    G4double halfLengthZ = fCanisterThickness/2.0;
 
     //primitive volume
-    G4Tubs* canister = new G4Tubs("canister", inner_radius, outer_radius, half_length_z, 0*M_PI, 2*M_PI);
+    G4Tubs* canister = new G4Tubs("canister", innerRadius, outerRadius, halfLengthZ, 0*M_PI, 2*M_PI);
 
     //logical volume
-    if( canister_log == NULL ) {
-        canister_log = new G4LogicalVolume(canister, material, "canister_log", 0, 0, 0);
-        canister_log->SetVisAttributes(canister_vis_att);
+    if( fCanisterLog == NULL ) {
+        fCanisterLog = new G4LogicalVolume(canister, material, "canisterLog", 0, 0, 0);
+        fCanisterLog->SetVisAttributes(canisterVisAtt);
     }
 
     return 1;
 }//end ::end AddCanister
 
 //Add annulus that is on top of silicon detector
-G4int DetectionSystemPaces::AddAluminumAnnulusTop()
-{
+G4int DetectionSystemPaces::AddAluminumAnnulusTop() {
     //material
     G4Material* material = G4Material::GetMaterial("Aluminum");
     if( !material ) {
@@ -385,57 +371,56 @@ G4int DetectionSystemPaces::AddAluminumAnnulusTop()
     }
 
     //vis attributes
-    G4VisAttributes* aluminum_annulus_top_vis_att = new G4VisAttributes(G4Colour(0.5,0.5,0.0));
-    aluminum_annulus_top_vis_att->SetVisibility(true);
+    G4VisAttributes* aluminumAnnulusTopVisAtt = new G4VisAttributes(G4Colour(0.5,0.5,0.0));
+    aluminumAnnulusTopVisAtt->SetVisibility(true);
 
     //main annulus
-    G4double inner_radius = this->aluminum_annulus_top_inner_radius;
-    G4double outer_radius = this->aluminum_annulus_top_outer_radius;
-    G4double half_length_z = this->aluminum_annulus_top_thickness/2.0;
+    G4double innerRadius = fAluminumAnnulusTopInnerRadius;
+    G4double outerRadius = fAluminumAnnulusTopOuterRadius;
+    G4double halfLengthZ = fAluminumAnnulusTopThickness/2.0;
     //screw cuts
-    G4double cut_inner_radius = 0.*mm;
-    G4double cut_outer_radius = this->screw_radius;
-    G4double cut_half_length_z = 20.*mm;
+    G4double cutInnerRadius = 0.*mm;
+    G4double cutOuterRadius = fScrewRadius;
+    G4double cutHalfLengthZ = 20.*mm;
 
     //primitive volume
-    G4Tubs* al_an_to_without_cuts = new G4Tubs("al_an_to_without_cuts", inner_radius, outer_radius, half_length_z, 0*M_PI, 2*M_PI);
-    G4Tubs* cut_screw_hole = new G4Tubs("cut_screw_hole", cut_inner_radius, cut_outer_radius, cut_half_length_z, 0*M_PI, 2*M_PI);
+    G4Tubs* alAnToWithoutCuts = new G4Tubs("alAnToWithoutCuts", innerRadius, outerRadius, halfLengthZ, 0*M_PI, 2*M_PI);
+    G4Tubs* cutScrewHole = new G4Tubs("cutScrewHole", cutInnerRadius, cutOuterRadius, cutHalfLengthZ, 0*M_PI, 2*M_PI);
 
     //cut out screw holes
-    G4double c_i;
-    G4double c_r = this->screw_placement_radius;
-    G4double c_dt = 45.*deg;
-    G4ThreeVector move_cut;
-    c_i = 0; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* al_an_to_0 = new G4SubtractionSolid("al_an_to_0", al_an_to_without_cuts, cut_screw_hole, 0, move_cut);
-    c_i = 1; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* al_an_to_1 = new G4SubtractionSolid("al_an_to_1", al_an_to_0, cut_screw_hole, 0, move_cut);
-    c_i = 2; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* al_an_to_2 = new G4SubtractionSolid("al_an_to_2", al_an_to_1, cut_screw_hole, 0, move_cut);
-    c_i = 3; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* al_an_to_3 = new G4SubtractionSolid("al_an_to_3", al_an_to_2, cut_screw_hole, 0, move_cut);
-    c_i = 4; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* al_an_to_4 = new G4SubtractionSolid("al_an_to_4", al_an_to_3, cut_screw_hole, 0, move_cut);
-    c_i = 5; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* al_an_to_5 = new G4SubtractionSolid("al_an_to_5", al_an_to_4, cut_screw_hole, 0, move_cut);
-    c_i = 6; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* al_an_to_6 = new G4SubtractionSolid("al_an_to_6", al_an_to_5, cut_screw_hole, 0, move_cut);
+    G4double cI;
+    G4double cR = fScrewPlacementRadius;
+    G4double cDt = 45.*deg;
+    G4ThreeVector moveCut;
+    cI = 0; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* alAnTo0 = new G4SubtractionSolid("alAnTo0", alAnToWithoutCuts, cutScrewHole, 0, moveCut);
+    cI = 1; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* alAnTo1 = new G4SubtractionSolid("alAnTo1", alAnTo0, cutScrewHole, 0, moveCut);
+    cI = 2; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* alAnTo2 = new G4SubtractionSolid("alAnTo2", alAnTo1, cutScrewHole, 0, moveCut);
+    cI = 3; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* alAnTo3 = new G4SubtractionSolid("alAnTo3", alAnTo2, cutScrewHole, 0, moveCut);
+    cI = 4; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* alAnTo4 = new G4SubtractionSolid("alAnTo4", alAnTo3, cutScrewHole, 0, moveCut);
+    cI = 5; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* alAnTo5 = new G4SubtractionSolid("alAnTo5", alAnTo4, cutScrewHole, 0, moveCut);
+    cI = 6; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* alAnTo6 = new G4SubtractionSolid("alAnTo6", alAnTo5, cutScrewHole, 0, moveCut);
     //final cut
-    c_i = 7; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* aluminum_annulus_top = new G4SubtractionSolid("aluminum_annulus_top", al_an_to_6, cut_screw_hole, 0, move_cut);
+    cI = 7; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* aluminumAnnulusTop = new G4SubtractionSolid("aluminumAnnulusTop", alAnTo6, cutScrewHole, 0, moveCut);
 
     //logical volume
-    if( aluminum_annulus_top_log == NULL ) {
-        aluminum_annulus_top_log = new G4LogicalVolume(aluminum_annulus_top, material, "aluminum_annulus_top_log", 0, 0, 0);
-        aluminum_annulus_top_log->SetVisAttributes(aluminum_annulus_top_vis_att);
+    if( fAluminumAnnulusTopLog == NULL ) {
+        fAluminumAnnulusTopLog = new G4LogicalVolume(aluminumAnnulusTop, material, "aluminumAnnulusTopLog", 0, 0, 0);
+        fAluminumAnnulusTopLog->SetVisAttributes(aluminumAnnulusTopVisAtt);
     }
 
     return 1;
 }//end ::end AddAluminumAnnulusTop
 
 //Add annulus that is on bottom of silicon detector
-G4int DetectionSystemPaces::AddAluminumAnnulusBot()
-{
+G4int DetectionSystemPaces::AddAluminumAnnulusBot() {
     //material
     G4Material* material = G4Material::GetMaterial("Aluminum");
     if( !material ) {
@@ -444,57 +429,56 @@ G4int DetectionSystemPaces::AddAluminumAnnulusBot()
     }
 
     //vis attributes
-    G4VisAttributes* aluminum_annulus_bot_vis_att = new G4VisAttributes(G4Colour(0.5,0.5,0.0));
-    aluminum_annulus_bot_vis_att->SetVisibility(true);
+    G4VisAttributes* aluminumAnnulusBotVisAtt = new G4VisAttributes(G4Colour(0.5,0.5,0.0));
+    aluminumAnnulusBotVisAtt->SetVisibility(true);
 
     //main annulus
-    G4double inner_radius = this->aluminum_annulus_bot_inner_radius;
-    G4double outer_radius = this->aluminum_annulus_bot_outer_radius;
-    G4double half_length_z = this->aluminum_annulus_bot_thickness/2.0;
+    G4double innerRadius = fAluminumAnnulusBotInnerRadius;
+    G4double outerRadius = fAluminumAnnulusBotOuterRadius;
+    G4double halfLengthZ = fAluminumAnnulusBotThickness/2.0;
     //screw cuts
-    G4double cut_inner_radius = 0.*mm;
-    G4double cut_outer_radius = this->screw_radius;
-    G4double cut_half_length_z = 20.*mm;
+    G4double cutInnerRadius = 0.*mm;
+    G4double cutOuterRadius = fScrewRadius;
+    G4double cutHalfLengthZ = 20.*mm;
 
     //primitive volume
-    G4Tubs* al_an_bo_without_cuts = new G4Tubs("al_an_bo_without_cuts", inner_radius, outer_radius, half_length_z, 0*M_PI, 2*M_PI);
-    G4Tubs* cut_screw_hole = new G4Tubs("cut_screw_hole", cut_inner_radius, cut_outer_radius, cut_half_length_z, 0*M_PI, 2*M_PI);
+    G4Tubs* alAnBoWithoutCuts = new G4Tubs("alAnBoWithoutCuts", innerRadius, outerRadius, halfLengthZ, 0*M_PI, 2*M_PI);
+    G4Tubs* cutScrewHole = new G4Tubs("cutScrewHole", cutInnerRadius, cutOuterRadius, cutHalfLengthZ, 0*M_PI, 2*M_PI);
 
     //cut out screw holes
-    G4double c_i;
-    G4double c_r = this->screw_placement_radius;
-    G4double c_dt = 45.*deg;
-    G4ThreeVector move_cut;
-    c_i = 0; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* al_an_bo_0 = new G4SubtractionSolid("al_an_bo_0", al_an_bo_without_cuts, cut_screw_hole, 0, move_cut);
-    c_i = 1; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* al_an_bo_1 = new G4SubtractionSolid("al_an_bo_1", al_an_bo_0, cut_screw_hole, 0, move_cut);
-    c_i = 2; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* al_an_bo_2 = new G4SubtractionSolid("al_an_bo_2", al_an_bo_1, cut_screw_hole, 0, move_cut);
-    c_i = 3; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* al_an_bo_3 = new G4SubtractionSolid("al_an_bo_3", al_an_bo_2, cut_screw_hole, 0, move_cut);
-    c_i = 4; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* al_an_bo_4 = new G4SubtractionSolid("al_an_bo_4", al_an_bo_3, cut_screw_hole, 0, move_cut);
-    c_i = 5; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* al_an_bo_5 = new G4SubtractionSolid("al_an_bo_5", al_an_bo_4, cut_screw_hole, 0, move_cut);
-    c_i = 6; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* al_an_bo_6 = new G4SubtractionSolid("al_an_bo_6", al_an_bo_5, cut_screw_hole, 0, move_cut);
+    G4double cI;
+    G4double cR = fScrewPlacementRadius;
+    G4double cDt = 45.*deg;
+    G4ThreeVector moveCut;
+    cI = 0; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* alAnBo0 = new G4SubtractionSolid("alAnBo0", alAnBoWithoutCuts, cutScrewHole, 0, moveCut);
+    cI = 1; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* alAnBo1 = new G4SubtractionSolid("alAnBo1", alAnBo0, cutScrewHole, 0, moveCut);
+    cI = 2; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* alAnBo2 = new G4SubtractionSolid("alAnBo2", alAnBo1, cutScrewHole, 0, moveCut);
+    cI = 3; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* alAnBo3 = new G4SubtractionSolid("alAnBo3", alAnBo2, cutScrewHole, 0, moveCut);
+    cI = 4; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* alAnBo4 = new G4SubtractionSolid("alAnBo4", alAnBo3, cutScrewHole, 0, moveCut);
+    cI = 5; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* alAnBo5 = new G4SubtractionSolid("alAnBo5", alAnBo4, cutScrewHole, 0, moveCut);
+    cI = 6; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* alAnBo6 = new G4SubtractionSolid("alAnBo6", alAnBo5, cutScrewHole, 0, moveCut);
     //final cut
-    c_i = 7; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* aluminum_annulus_bot = new G4SubtractionSolid("aluminum_annulus_bot", al_an_bo_6, cut_screw_hole, 0, move_cut);
+    cI = 7; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* aluminumAnnulusBot = new G4SubtractionSolid("aluminumAnnulusBot", alAnBo6, cutScrewHole, 0, moveCut);
 
     //logical volume
-    if( aluminum_annulus_bot_log == NULL ) {
-        aluminum_annulus_bot_log = new G4LogicalVolume(aluminum_annulus_bot, material, "aluminum_annulus_bot_log", 0, 0, 0);
-        aluminum_annulus_bot_log->SetVisAttributes(aluminum_annulus_bot_vis_att);
+    if( fAluminumAnnulusBotLog == NULL ) {
+        fAluminumAnnulusBotLog = new G4LogicalVolume(aluminumAnnulusBot, material, "aluminumAnnulusBotLog", 0, 0, 0);
+        fAluminumAnnulusBotLog->SetVisAttributes(aluminumAnnulusBotVisAtt);
     }
 
     return 1;
 }//end ::end AddAluminumAnnulusBot
 
 //Add annulus that is on side of silicon detector
-G4int DetectionSystemPaces::AddTeflonAnnulusTop()
-{
+G4int DetectionSystemPaces::AddTeflonAnnulusTop() {
     //material
     G4Material* material = G4Material::GetMaterial("Teflon");
     if( !material ) {
@@ -503,57 +487,56 @@ G4int DetectionSystemPaces::AddTeflonAnnulusTop()
     }
 
     //vis attributes
-    G4VisAttributes* teflon_annulus_top_vis_att = new G4VisAttributes(G4Colour(0.0,0.0,1.0));
-    teflon_annulus_top_vis_att->SetVisibility(true);
+    G4VisAttributes* teflonAnnulusTopVisAtt = new G4VisAttributes(G4Colour(0.0,0.0,1.0));
+    teflonAnnulusTopVisAtt->SetVisibility(true);
 
     //main annulus
-    G4double inner_radius = this->teflon_annulus_top_inner_radius;
-    G4double outer_radius = this->teflon_annulus_top_outer_radius;
-    G4double half_length_z = this->teflon_annulus_top_thickness/2.0;
+    G4double innerRadius = fTeflonAnnulusTopInnerRadius;
+    G4double outerRadius = fTeflonAnnulusTopOuterRadius;
+    G4double halfLengthZ = fTeflonAnnulusTopThickness/2.0;
     //screw cuts
-    G4double cut_inner_radius = 0.*mm;
-    G4double cut_outer_radius = this->screw_radius;
-    G4double cut_half_length_z = 20.*mm;
+    G4double cutInnerRadius = 0.*mm;
+    G4double cutOuterRadius = fScrewRadius;
+    G4double cutHalfLengthZ = 20.*mm;
 
     //primitive volume
-    G4Tubs* te_an_to_without_cuts = new G4Tubs("te_an_to_without_cuts", inner_radius, outer_radius, half_length_z, 0*M_PI, 2*M_PI);
-    G4Tubs* cut_screw_hole = new G4Tubs("cut_screw_hole", cut_inner_radius, cut_outer_radius, cut_half_length_z, 0*M_PI, 2*M_PI);
+    G4Tubs* teAnToWithoutCuts = new G4Tubs("teAnToWithoutCuts", innerRadius, outerRadius, halfLengthZ, 0*M_PI, 2*M_PI);
+    G4Tubs* cutScrewHole = new G4Tubs("cutScrewHole", cutInnerRadius, cutOuterRadius, cutHalfLengthZ, 0*M_PI, 2*M_PI);
 
     //cut out screw holes
-    G4double c_i;
-    G4double c_r = this->screw_placement_radius;
-    G4double c_dt = 45.*deg;
-    G4ThreeVector move_cut;
-    c_i = 0; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* te_an_to_0 = new G4SubtractionSolid("te_an_to_0", te_an_to_without_cuts, cut_screw_hole, 0, move_cut);
-    c_i = 1; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* te_an_to_1 = new G4SubtractionSolid("te_an_to_1", te_an_to_0, cut_screw_hole, 0, move_cut);
-    c_i = 2; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* te_an_to_2 = new G4SubtractionSolid("te_an_to_2", te_an_to_1, cut_screw_hole, 0, move_cut);
-    c_i = 3; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* te_an_to_3 = new G4SubtractionSolid("te_an_to_3", te_an_to_2, cut_screw_hole, 0, move_cut);
-    c_i = 4; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* te_an_to_4 = new G4SubtractionSolid("te_an_to_4", te_an_to_3, cut_screw_hole, 0, move_cut);
-    c_i = 5; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* te_an_to_5 = new G4SubtractionSolid("te_an_to_5", te_an_to_4, cut_screw_hole, 0, move_cut);
-    c_i = 6; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* te_an_to_6 = new G4SubtractionSolid("te_an_to_6", te_an_to_5, cut_screw_hole, 0, move_cut);
+    G4double cI;
+    G4double cR = fScrewPlacementRadius;
+    G4double cDt = 45.*deg;
+    G4ThreeVector moveCut;
+    cI = 0; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* teAnTo0 = new G4SubtractionSolid("teAnTo0", teAnToWithoutCuts, cutScrewHole, 0, moveCut);
+    cI = 1; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* teAnTo1 = new G4SubtractionSolid("teAnTo1", teAnTo0, cutScrewHole, 0, moveCut);
+    cI = 2; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* teAnTo2 = new G4SubtractionSolid("teAnTo2", teAnTo1, cutScrewHole, 0, moveCut);
+    cI = 3; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* teAnTo3 = new G4SubtractionSolid("teAnTo3", teAnTo2, cutScrewHole, 0, moveCut);
+    cI = 4; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* teAnTo4 = new G4SubtractionSolid("teAnTo4", teAnTo3, cutScrewHole, 0, moveCut);
+    cI = 5; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* teAnTo5 = new G4SubtractionSolid("teAnTo5", teAnTo4, cutScrewHole, 0, moveCut);
+    cI = 6; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* teAnTo6 = new G4SubtractionSolid("teAnTo6", teAnTo5, cutScrewHole, 0, moveCut);
     //final cut
-    c_i = 7; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* teflon_annulus_top = new G4SubtractionSolid("teflon_annulus_top", te_an_to_6, cut_screw_hole, 0, move_cut);
+    cI = 7; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* teflonAnnulusTop = new G4SubtractionSolid("teflonAnnulusTop", teAnTo6, cutScrewHole, 0, moveCut);
 
     //logical volume
-    if( teflon_annulus_top_log == NULL ) {
-        teflon_annulus_top_log = new G4LogicalVolume(teflon_annulus_top, material, "teflon_annulus_top_log", 0, 0, 0);
-        teflon_annulus_top_log->SetVisAttributes(teflon_annulus_top_vis_att);
+    if( fTeflonAnnulusTopLog == NULL ) {
+        fTeflonAnnulusTopLog = new G4LogicalVolume(teflonAnnulusTop, material, "teflonAnnulusTopLog", 0, 0, 0);
+        fTeflonAnnulusTopLog->SetVisAttributes(teflonAnnulusTopVisAtt);
     }
 
     return 1;
 }//end ::end AddTeflonAnnulusTop
 
 //Add annulus that is on bottom of silicon detector
-G4int DetectionSystemPaces::AddTeflonAnnulusBot()
-{
+G4int DetectionSystemPaces::AddTeflonAnnulusBot() {
     //material
     G4Material* material = G4Material::GetMaterial("Teflon");
     if( !material ) {
@@ -562,57 +545,56 @@ G4int DetectionSystemPaces::AddTeflonAnnulusBot()
     }
 
     //vis attributes
-    G4VisAttributes* teflon_annulus_bot_vis_att = new G4VisAttributes(G4Colour(0.0,0.0,1.0));
-    teflon_annulus_bot_vis_att->SetVisibility(true);
+    G4VisAttributes* teflonAnnulusBotVisAtt = new G4VisAttributes(G4Colour(0.0,0.0,1.0));
+    teflonAnnulusBotVisAtt->SetVisibility(true);
 
     //main annulus
-    G4double inner_radius = this->teflon_annulus_bot_inner_radius;
-    G4double outer_radius = this->teflon_annulus_bot_outer_radius;
-    G4double half_length_z = this->teflon_annulus_bot_thickness/2.0;
+    G4double innerRadius = fTeflonAnnulusBotInnerRadius;
+    G4double outerRadius = fTeflonAnnulusBotOuterRadius;
+    G4double halfLengthZ = fTeflonAnnulusBotThickness/2.0;
     //screw cuts
-    G4double cut_inner_radius = 0.*mm;
-    G4double cut_outer_radius = this->screw_radius;
-    G4double cut_half_length_z = 20.*mm;
+    G4double cutInnerRadius = 0.*mm;
+    G4double cutOuterRadius = fScrewRadius;
+    G4double cutHalfLengthZ = 20.*mm;
 
     //primitive volume
-    G4Tubs* te_an_bo_without_cuts = new G4Tubs("te_an_bo_without_cuts", inner_radius, outer_radius, half_length_z, 0*M_PI, 2*M_PI);
-    G4Tubs* cut_screw_hole = new G4Tubs("cut_screw_hole", cut_inner_radius, cut_outer_radius, cut_half_length_z, 0*M_PI, 2*M_PI);
+    G4Tubs* teAnBoWithoutCuts = new G4Tubs("teAnBoWithoutCuts", innerRadius, outerRadius, halfLengthZ, 0*M_PI, 2*M_PI);
+    G4Tubs* cutScrewHole = new G4Tubs("cutScrewHole", cutInnerRadius, cutOuterRadius, cutHalfLengthZ, 0*M_PI, 2*M_PI);
 
     //cut out screw holes
-    G4double c_i;
-    G4double c_r = this->screw_placement_radius;
-    G4double c_dt = 45.*deg;
-    G4ThreeVector move_cut;
-    c_i = 0; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* te_an_bo_0 = new G4SubtractionSolid("te_an_bo_0", te_an_bo_without_cuts, cut_screw_hole, 0, move_cut);
-    c_i = 1; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* te_an_bo_1 = new G4SubtractionSolid("te_an_bo_1", te_an_bo_0, cut_screw_hole, 0, move_cut);
-    c_i = 2; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* te_an_bo_2 = new G4SubtractionSolid("te_an_bo_2", te_an_bo_1, cut_screw_hole, 0, move_cut);
-    c_i = 3; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* te_an_bo_3 = new G4SubtractionSolid("te_an_bo_3", te_an_bo_2, cut_screw_hole, 0, move_cut);
-    c_i = 4; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* te_an_bo_4 = new G4SubtractionSolid("te_an_bo_4", te_an_bo_3, cut_screw_hole, 0, move_cut);
-    c_i = 5; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* te_an_bo_5 = new G4SubtractionSolid("te_an_bo_5", te_an_bo_4, cut_screw_hole, 0, move_cut);
-    c_i = 6; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* te_an_bo_6 = new G4SubtractionSolid("te_an_bo_6", te_an_bo_5, cut_screw_hole, 0, move_cut);
+    G4double cI;
+    G4double cR = fScrewPlacementRadius;
+    G4double cDt = 45.*deg;
+    G4ThreeVector moveCut;
+    cI = 0; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* teAnBo0 = new G4SubtractionSolid("teAnBo0", teAnBoWithoutCuts, cutScrewHole, 0, moveCut);
+    cI = 1; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* teAnBo1 = new G4SubtractionSolid("teAnBo1", teAnBo0, cutScrewHole, 0, moveCut);
+    cI = 2; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* teAnBo2 = new G4SubtractionSolid("teAnBo2", teAnBo1, cutScrewHole, 0, moveCut);
+    cI = 3; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* teAnBo3 = new G4SubtractionSolid("teAnBo3", teAnBo2, cutScrewHole, 0, moveCut);
+    cI = 4; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* teAnBo4 = new G4SubtractionSolid("teAnBo4", teAnBo3, cutScrewHole, 0, moveCut);
+    cI = 5; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* teAnBo5 = new G4SubtractionSolid("teAnBo5", teAnBo4, cutScrewHole, 0, moveCut);
+    cI = 6; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* teAnBo6 = new G4SubtractionSolid("teAnBo6", teAnBo5, cutScrewHole, 0, moveCut);
     //final cut
-    c_i = 7; move_cut.setX( c_r*cos(c_i*c_dt) ); move_cut.setY( c_r*sin(c_i*c_dt) );
-    G4SubtractionSolid* teflon_annulus_bot = new G4SubtractionSolid("teflon_annulus_bot", te_an_bo_6, cut_screw_hole, 0, move_cut);
+    cI = 7; moveCut.setX( cR*cos(cI*cDt) ); moveCut.setY( cR*sin(cI*cDt) );
+    G4SubtractionSolid* teflonAnnulusBot = new G4SubtractionSolid("teflonAnnulusBot", teAnBo6, cutScrewHole, 0, moveCut);
 
     //logical volume
-    if( teflon_annulus_bot_log == NULL ) {
-        teflon_annulus_bot_log = new G4LogicalVolume(teflon_annulus_bot, material, "teflon_annulus_bot_log", 0, 0, 0);
-        teflon_annulus_bot_log->SetVisAttributes(teflon_annulus_bot_vis_att);
+    if( fTeflonAnnulusBotLog == NULL ) {
+        fTeflonAnnulusBotLog = new G4LogicalVolume(teflonAnnulusBot, material, "teflonAnnulusBotLog", 0, 0, 0);
+        fTeflonAnnulusBotLog->SetVisAttributes(teflonAnnulusBotVisAtt);
     }
 
     return 1;
 }//end ::end AddTeflonAnnulusBot
 
 //Add the aluminum hemisphere, housing for PACES
-G4int DetectionSystemPaces::AddAluminumHemisphere()
-{
+G4int DetectionSystemPaces::AddAluminumHemisphere() {
     //material
     G4Material* material = G4Material::GetMaterial("Aluminum");
     if( !material ) {
@@ -621,148 +603,148 @@ G4int DetectionSystemPaces::AddAluminumHemisphere()
     }
 
     //vis attributes
-    G4VisAttributes* aluminum_hemisphere_vis_att = new G4VisAttributes(G4Colour(0.5,0.5,0.5));
-    aluminum_hemisphere_vis_att->SetVisibility(true);
+    G4VisAttributes* aluminumHemisphereVisAtt = new G4VisAttributes(G4Colour(0.5,0.5,0.5));
+    aluminumHemisphereVisAtt->SetVisibility(true);
 
     //main hemisphere shell
-    G4double inner_radius = this->aluminum_hemisphere_inner_radius;
-    G4double outer_radius = this->aluminum_hemisphere_outer_radius;
-    G4double thickness = abs(outer_radius - inner_radius);
-    G4double start_phi = M_PI/2;
-    G4double end_phi = M_PI - start_phi;
+    G4double innerRadius = fAluminumHemisphereInnerRadius;
+    G4double outerRadius = fAluminumHemisphereOuterRadius;
+    G4double thickness = std::abs(outerRadius - innerRadius);
+    G4double startPhi = M_PI/2;
+    G4double endPhi = M_PI - startPhi;
     //beam hole rim
-    G4double rim_inner_radius = abs(inner_radius - this->aluminum_hemisphere_beam_hole_rim_height);
-    G4double rim_outer_radius = inner_radius;
-    G4double rim_end_phi = asin( (this->aluminum_hemisphere_beam_hole_radius + thickness) / inner_radius );
-    G4double rim_start_phi = M_PI - rim_end_phi;
+    G4double rimInnerRadius = std::abs(innerRadius - fAluminumHemisphereBeamHoleRimHeight);
+    G4double rimOuterRadius = innerRadius;
+    G4double rimEndPhi = asin( (fAluminumHemisphereBeamHoleRadius + thickness) / innerRadius );
+    G4double rimStartPhi = M_PI - rimEndPhi;
     //beam hole cut
-    G4double beam_hole_inner_radius = 0.*mm;
-    G4double beam_hole_outer_radius = this->aluminum_hemisphere_beam_hole_radius;
-    G4double beam_hole_half_length_z = outer_radius;
+    G4double beamHoleInnerRadius = 0.*mm;
+    G4double beamHoleOuterRadius = fAluminumHemisphereBeamHoleRadius;
+    G4double beamHoleHalfLengthZ = outerRadius;
     //cuts where detectors go
-    G4double detector_inner_radius = 0.*mm;
-    G4double detector_outer_radius = this->detector_assembly_radius + this->cut_clearance;
-    G4double detector_half_length_z = this->detector_assembly_thickness/2.0;
+    G4double detectorInnerRadius = 0.*mm;
+    G4double detectorOuterRadius = fDetectorAssemblyRadius + fCutClearance;
+    G4double detectorHalfLengthZ = fDetectorAssemblyThickness/2.0;
 
     //primitive volumes
-    G4Sphere* al_he_shell = new G4Sphere("al_he_shell", inner_radius, outer_radius, 0*M_PI, 2*M_PI, start_phi, end_phi);
-    G4Sphere* al_he_rim = new G4Sphere("al_he_rim", rim_inner_radius, rim_outer_radius, 0*M_PI, 2*M_PI, rim_start_phi, rim_end_phi);
-    G4Tubs* cut_beam_hole = new G4Tubs("cut_beam_hole", beam_hole_inner_radius, beam_hole_outer_radius, beam_hole_half_length_z, 0*M_PI, 2*M_PI);
-    G4Tubs* cut_detector = new G4Tubs("cut_detector", detector_inner_radius, detector_outer_radius, detector_half_length_z, 0*M_PI, 2*M_PI);
+    G4Sphere* alHeShell = new G4Sphere("alHeShell", innerRadius, outerRadius, 0*M_PI, 2*M_PI, startPhi, endPhi);
+    G4Sphere* alHeRim = new G4Sphere("alHeRim", rimInnerRadius, rimOuterRadius, 0*M_PI, 2*M_PI, rimStartPhi, rimEndPhi);
+    G4Tubs* cutBeamHole = new G4Tubs("cutBeamHole", beamHoleInnerRadius, beamHoleOuterRadius, beamHoleHalfLengthZ, 0*M_PI, 2*M_PI);
+    G4Tubs* cutDetector = new G4Tubs("cutDetector", detectorInnerRadius, detectorOuterRadius, detectorHalfLengthZ, 0*M_PI, 2*M_PI);
 
     //add rim and beam hole
     G4RotationMatrix* R0 = new G4RotationMatrix; G4ThreeVector T0;
-    G4UnionSolid* al_he_shell_rim = new G4UnionSolid("al_he_shell_rim", al_he_shell, al_he_rim, R0, T0);
-    G4SubtractionSolid* al_he_shell_rim_hole = new G4SubtractionSolid("al_he_shell_rim_hole", al_he_shell_rim, cut_beam_hole, R0, T0);
+    G4UnionSolid* alHeShellRim = new G4UnionSolid("alHeShellRim", alHeShell, alHeRim, R0, T0);
+    G4SubtractionSolid* alHeShellRimHole = new G4SubtractionSolid("alHeShellRimHole", alHeShellRim, cutBeamHole, R0, T0);
     //cut out detectors
 
-    G4double* ptr_pd = this->paces_placement_distance;
-    G4double* ptr_pt = this->paces_placement_phi;
-    G4double* ptr_pp = this->paces_placement_theta;
-    G4double* ptr_ot = this->paces_orientation_phi;
-    G4double* ptr_op = this->paces_orientation_theta;
+    G4double* ptrPd = fPacesPlacementDistance;
+    G4double* ptrPt = fPacesPlacementPhi;
+    G4double* ptrPp = fPacesPlacementTheta;
+    G4double* ptrOt = fPacesOrientationPhi;
+    G4double* ptrOp = fPacesOrientationTheta;
 
-    //  G4RotationMatrix* rotate_cut[5];
-    //  G4ThreeVector move_cut[5], yprimeaxis;
-    //  G4double d_dist, d_phi, d_theta, ori_phi, ori_theta;
+    //  G4RotationMatrix* rotateCut[5];
+    //  G4ThreeVector moveCut[5], yprimeaxis;
+    //  G4double dDist, dPhi, dTheta, oriPhi, oriTheta;
     //
     //  for (int i=0; i<5; i++)
     //  {
-    //    d_dist = ptr_pd[i] + detector_half_length_z;
-    //    d_phi = ptr_pt[i];
-    //    d_theta = ptr_pp[i];
-    //    rotate_cut[i] = new G4RotationMatrix;
-    //    move_cut[i].setX( d_dist * cos(d_phi) * sin(d_theta) );
-    //    move_cut[i].setY( d_dist * sin(d_phi) * sin(d_theta) );
-    //    move_cut[i].setZ( d_dist *    1.0     * cos(d_theta) );
-    //    ori_phi = d_phi + ptr_ot[i] - M_PI/2; //minus 90 deg
-    //    ori_theta = d_theta + ptr_op[i];
-    ////    yprimeaxis = G4ThreeVector(cos(ori_phi), sin(ori_phi), 0);
-    //	  yprimeaxis.set(cos(ori_phi), sin(ori_phi), 0);
-    //    rotate_cut[i]->set(yprimeaxis, ori_theta);
+    //    dDist = ptrPd[i] + detectorHalfLengthZ;
+    //    dPhi = ptrPt[i];
+    //    dTheta = ptrPp[i];
+    //    rotateCut[i] = new G4RotationMatrix;
+    //    moveCut[i].setX( dDist * cos(dPhi) * sin(dTheta) );
+    //    moveCut[i].setY( dDist * sin(dPhi) * sin(dTheta) );
+    //    moveCut[i].setZ( dDist *    1.0     * cos(dTheta) );
+    //    oriPhi = dPhi + ptrOt[i] - M_PI/2; //minus 90 deg
+    //    oriTheta = dTheta + ptrOp[i];
+    ////    yprimeaxis = G4ThreeVector(cos(oriPhi), sin(oriPhi), 0);
+    //	  yprimeaxis.set(cos(oriPhi), sin(oriPhi), 0);
+    //    rotateCut[i]->set(yprimeaxis, oriTheta);
     //  }
-    //  G4SubtractionSolid* al_he_0 = new G4SubtractionSolid("al_he_0", al_he_shell_rim_hole, cut_detector, rotate_cut[0], move_cut[0]);
-    //  G4SubtractionSolid* al_he_1 = new G4SubtractionSolid("al_he_1", al_he_0, cut_detector, rotate_cut[1], move_cut[1]);
-    //  G4SubtractionSolid* al_he_2 = new G4SubtractionSolid("al_he_2", al_he_1, cut_detector, rotate_cut[2], move_cut[2]);
-    //  G4SubtractionSolid* al_he_3 = new G4SubtractionSolid("al_he_3", al_he_2, cut_detector, rotate_cut[3], move_cut[3]);
-    //  G4SubtractionSolid* aluminum_hemisphere = new G4SubtractionSolid("aluminum_hemisphere", al_he_3, cut_detector, rotate_cut[4], move_cut[4]);
-    //  for (int i=0; i<5; i++) delete rotate_cut[i]; //safety
+    //  G4SubtractionSolid* alHe0 = new G4SubtractionSolid("alHe0", alHeShellRimHole, cutDetector, rotateCut[0], moveCut[0]);
+    //  G4SubtractionSolid* alHe1 = new G4SubtractionSolid("alHe1", alHe0, cutDetector, rotateCut[1], moveCut[1]);
+    //  G4SubtractionSolid* alHe2 = new G4SubtractionSolid("alHe2", alHe1, cutDetector, rotateCut[2], moveCut[2]);
+    //  G4SubtractionSolid* alHe3 = new G4SubtractionSolid("alHe3", alHe2, cutDetector, rotateCut[3], moveCut[3]);
+    //  G4SubtractionSolid* aluminumHemisphere = new G4SubtractionSolid("aluminumHemisphere", alHe3, cutDetector, rotateCut[4], moveCut[4]);
+    //  for (int i=0; i<5; i++) delete rotateCut[i]; //safety
 
-    G4ThreeVector move_cut, yprimeaxis;
-    G4RotationMatrix* rotate_cut = new G4RotationMatrix;
-    G4double d_dist, d_phi, d_theta, ori_phi, ori_theta;
-    G4int d_i;
+    G4ThreeVector moveCut, yprimeaxis;
+    G4RotationMatrix* rotateCut = new G4RotationMatrix;
+    G4double dDist, dPhi, dTheta, oriPhi, oriTheta;
+    G4int dI;
     //one
-    d_i = 0;
-    d_dist = ptr_pd[d_i] + detector_half_length_z;
-    d_phi = ptr_pt[d_i];
-    d_theta = ptr_pp[d_i];
-    move_cut.setX( d_dist * cos(d_phi) * sin(d_theta) );
-    move_cut.setY( d_dist * sin(d_phi) * sin(d_theta) );
-    move_cut.setZ( d_dist *      1.0     * cos(d_theta) );
-    ori_phi = d_phi + ptr_ot[d_i] - M_PI/2;
-    ori_theta = d_theta + ptr_op[d_i];
-    yprimeaxis.set(cos(ori_phi), sin(ori_phi), 0);
-    rotate_cut->set(yprimeaxis, ori_theta);
-    G4SubtractionSolid* al_he_0 = new G4SubtractionSolid("al_he_0", al_he_shell_rim_hole, cut_detector, rotate_cut, move_cut);
+    dI = 0;
+    dDist = ptrPd[dI] + detectorHalfLengthZ;
+    dPhi = ptrPt[dI];
+    dTheta = ptrPp[dI];
+    moveCut.setX( dDist * cos(dPhi) * sin(dTheta) );
+    moveCut.setY( dDist * sin(dPhi) * sin(dTheta) );
+    moveCut.setZ( dDist *      1.0     * cos(dTheta) );
+    oriPhi = dPhi + ptrOt[dI] - M_PI/2;
+    oriTheta = dTheta + ptrOp[dI];
+    yprimeaxis.set(cos(oriPhi), sin(oriPhi), 0);
+    rotateCut->set(yprimeaxis, oriTheta);
+    G4SubtractionSolid* alHe0 = new G4SubtractionSolid("alHe0", alHeShellRimHole, cutDetector, rotateCut, moveCut);
     //two
-    d_i = 1;
-    d_dist = ptr_pd[d_i] + detector_half_length_z;
-    d_phi = ptr_pt[d_i];
-    d_theta = ptr_pp[d_i];
-    move_cut.setX( d_dist * cos(d_phi) * sin(d_theta) );
-    move_cut.setY( d_dist * sin(d_phi) * sin(d_theta) );
-    move_cut.setZ( d_dist *      1.0     * cos(d_theta) );
-    ori_phi = d_phi + ptr_ot[d_i] - M_PI/2;
-    ori_theta = d_theta + ptr_op[d_i];
-    yprimeaxis.set(cos(ori_phi), sin(ori_phi), 0);
-    rotate_cut->set(yprimeaxis, ori_theta);
-    G4SubtractionSolid* al_he_1 = new G4SubtractionSolid("al_he_1", al_he_0, cut_detector, rotate_cut, move_cut);
+    dI = 1;
+    dDist = ptrPd[dI] + detectorHalfLengthZ;
+    dPhi = ptrPt[dI];
+    dTheta = ptrPp[dI];
+    moveCut.setX( dDist * cos(dPhi) * sin(dTheta) );
+    moveCut.setY( dDist * sin(dPhi) * sin(dTheta) );
+    moveCut.setZ( dDist *      1.0     * cos(dTheta) );
+    oriPhi = dPhi + ptrOt[dI] - M_PI/2;
+    oriTheta = dTheta + ptrOp[dI];
+    yprimeaxis.set(cos(oriPhi), sin(oriPhi), 0);
+    rotateCut->set(yprimeaxis, oriTheta);
+    G4SubtractionSolid* alHe1 = new G4SubtractionSolid("alHe1", alHe0, cutDetector, rotateCut, moveCut);
     //three
-    d_i = 2;
-    d_dist = ptr_pd[d_i] + detector_half_length_z;
-    d_phi = ptr_pt[d_i];
-    d_theta = ptr_pp[d_i];
-    move_cut.setX( d_dist * cos(d_phi) * sin(d_theta) );
-    move_cut.setY( d_dist * sin(d_phi) * sin(d_theta) );
-    move_cut.setZ( d_dist *      1.0     * cos(d_theta) );
-    ori_phi = d_phi + ptr_ot[d_i] - M_PI/2;
-    ori_theta = d_theta + ptr_op[d_i];
-    yprimeaxis.set(cos(ori_phi), sin(ori_phi), 0);
-    rotate_cut->set(yprimeaxis, ori_theta);
-    G4SubtractionSolid* al_he_2 = new G4SubtractionSolid("al_he_2", al_he_1, cut_detector, rotate_cut, move_cut);
+    dI = 2;
+    dDist = ptrPd[dI] + detectorHalfLengthZ;
+    dPhi = ptrPt[dI];
+    dTheta = ptrPp[dI];
+    moveCut.setX( dDist * cos(dPhi) * sin(dTheta) );
+    moveCut.setY( dDist * sin(dPhi) * sin(dTheta) );
+    moveCut.setZ( dDist *      1.0     * cos(dTheta) );
+    oriPhi = dPhi + ptrOt[dI] - M_PI/2;
+    oriTheta = dTheta + ptrOp[dI];
+    yprimeaxis.set(cos(oriPhi), sin(oriPhi), 0);
+    rotateCut->set(yprimeaxis, oriTheta);
+    G4SubtractionSolid* alHe2 = new G4SubtractionSolid("alHe2", alHe1, cutDetector, rotateCut, moveCut);
     //four
-    d_i = 3;
-    d_dist = ptr_pd[d_i] + detector_half_length_z;
-    d_phi = ptr_pt[d_i];
-    d_theta = ptr_pp[d_i];
-    move_cut.setX( d_dist * cos(d_phi) * sin(d_theta) );
-    move_cut.setY( d_dist * sin(d_phi) * sin(d_theta) );
-    move_cut.setZ( d_dist *      1.0     * cos(d_theta) );
-    ori_phi = d_phi + ptr_ot[d_i] - M_PI/2;
-    ori_theta = d_theta + ptr_op[d_i];
-    yprimeaxis.set(cos(ori_phi), sin(ori_phi), 0);
-    rotate_cut->set(yprimeaxis, ori_theta);
-    G4SubtractionSolid* al_he_3 = new G4SubtractionSolid("al_he_3", al_he_2, cut_detector, rotate_cut, move_cut);
+    dI = 3;
+    dDist = ptrPd[dI] + detectorHalfLengthZ;
+    dPhi = ptrPt[dI];
+    dTheta = ptrPp[dI];
+    moveCut.setX( dDist * cos(dPhi) * sin(dTheta) );
+    moveCut.setY( dDist * sin(dPhi) * sin(dTheta) );
+    moveCut.setZ( dDist *      1.0     * cos(dTheta) );
+    oriPhi = dPhi + ptrOt[dI] - M_PI/2;
+    oriTheta = dTheta + ptrOp[dI];
+    yprimeaxis.set(cos(oriPhi), sin(oriPhi), 0);
+    rotateCut->set(yprimeaxis, oriTheta);
+    G4SubtractionSolid* alHe3 = new G4SubtractionSolid("alHe3", alHe2, cutDetector, rotateCut, moveCut);
     //five
-    d_i = 4;
-    d_dist = ptr_pd[d_i] + detector_half_length_z;
-    d_phi = ptr_pt[d_i];
-    d_theta = ptr_pp[d_i];
-    move_cut.setX( d_dist * cos(d_phi) * sin(d_theta) );
-    move_cut.setY( d_dist * sin(d_phi) * sin(d_theta) );
-    move_cut.setZ( d_dist *      1.0     * cos(d_theta) );
-    ori_phi = d_phi + ptr_ot[d_i] - M_PI/2;
-    ori_theta = d_theta + ptr_op[d_i];
-    yprimeaxis.set(cos(ori_phi), sin(ori_phi), 0);
-    rotate_cut->set(yprimeaxis, ori_theta);
-    G4SubtractionSolid* aluminum_hemisphere = new G4SubtractionSolid("aluminum_hemisphere", al_he_3, cut_detector, rotate_cut, move_cut);
+    dI = 4;
+    dDist = ptrPd[dI] + detectorHalfLengthZ;
+    dPhi = ptrPt[dI];
+    dTheta = ptrPp[dI];
+    moveCut.setX( dDist * cos(dPhi) * sin(dTheta) );
+    moveCut.setY( dDist * sin(dPhi) * sin(dTheta) );
+    moveCut.setZ( dDist *      1.0     * cos(dTheta) );
+    oriPhi = dPhi + ptrOt[dI] - M_PI/2;
+    oriTheta = dTheta + ptrOp[dI];
+    yprimeaxis.set(cos(oriPhi), sin(oriPhi), 0);
+    rotateCut->set(yprimeaxis, oriTheta);
+    G4SubtractionSolid* aluminumHemisphere = new G4SubtractionSolid("aluminumHemisphere", alHe3, cutDetector, rotateCut, moveCut);
     //  //end
 
     //logical volume
-    if( aluminum_hemisphere_log == NULL ) {
-        aluminum_hemisphere_log = new G4LogicalVolume(aluminum_hemisphere, material, "aluminum_hemisphere_log", 0, 0, 0);
-        aluminum_hemisphere_log->SetVisAttributes(aluminum_hemisphere_vis_att);
+    if( fAluminumHemisphereLog == NULL ) {
+        fAluminumHemisphereLog = new G4LogicalVolume(aluminumHemisphere, material, "aluminumHemisphereLog", 0, 0, 0);
+        fAluminumHemisphereLog->SetVisAttributes(aluminumHemisphereVisAtt);
     }
 
     return 1;
@@ -770,7 +752,6 @@ G4int DetectionSystemPaces::AddAluminumHemisphere()
 
 
 //Add screws
-G4int DetectionSystemPaces::AddScrews()
-{
+G4int DetectionSystemPaces::AddScrews() {
     return 1;
 }//end ::end AddScrews

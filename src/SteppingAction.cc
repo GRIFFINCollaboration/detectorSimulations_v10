@@ -50,28 +50,26 @@ SteppingAction::SteppingAction(DetectorConstruction* detcon,
     : G4UserSteppingAction(),
       fDetector(detcon), fEventAction(evt)
 {
-    griffinDetectorMapSet = false;
-    numberOfAssemblyVols = 13;
-    stepNumber = 0;
+    fGriffinDetectorMapSet = false;
+    fNumberOfAssemblyVols = 13;
+    fStepNumber = 0;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-SteppingAction::~SteppingAction()
-{ }
+SteppingAction::~SteppingAction() { }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void SteppingAction::UserSteppingAction(const G4Step* aStep)
-{
+void SteppingAction::UserSteppingAction(const G4Step* aStep) {
     G4bool trackSteps   = false;
     G4int particleType  = 0;
     G4int processType   = 0;
     G4int systemID      = 9999;
     G4int evntNb;
 
-    det = 0;
-    cry = 0;
+    fDet = 0;
+    fCry = 0;
 
     G4String particleName;
     G4String mnemonic = "XXX00XX00X";
@@ -90,7 +88,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     if (theTrack->GetDefinition()->GetPDGCharge() != 0.)
         stepl = aStep->GetStepLength();
 
-    stepNumber = theTrack->GetCurrentStepNumber();
+    fStepNumber = theTrack->GetCurrentStepNumber();
 
     // Track particle type in EVERY step
     //G4cout << "Particle name = " << aStep->GetTrack()->GetParticleDefinition()->GetParticleName() << G4endl;
@@ -107,9 +105,9 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 	 const G4VProcess* process = aStep->GetPostStepPoint()->GetProcessDefinedStep();
 	 G4int targetZ = -1;
 	 if(process != NULL && process->GetProcessType() == fHadronic) {
-		G4HadronicProcess* hadr_process = (G4HadronicProcess*) process;
+		G4HadronicProcess* hadrProcess = (G4HadronicProcess*) process;
 		const G4Isotope* target = NULL;
-		target = hadr_process->GetTargetIsotope();
+		target = hadrProcess->GetTargetIsotope();
 		if(target != NULL) {
 		  //	G4cout<<particleName<<", "<<process->GetProcessName()<<" on "<<target->GetName()<<G4endl;
 		  targetZ = target->GetZ();
@@ -135,7 +133,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 
     //G4cout << "Found Edep = " << edep/keV << " keV in " << volname << G4endl;
     // example volname
-    //volname = av_1_impr_6_sodium_iodide_crystal_block_log_pv_0
+    //volname = av1_impr6_sodiumIodideCrystalBlockLogPv0
 
     // Get initial momentum direction & energy of particle
     G4int trackID = theTrack->GetTrackID();
@@ -153,384 +151,315 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     size_t found;
 
     // Griffin energy deposits ////////////////////////////////////////////////////////////////////////////////
-    found = volname.find("germanium_block1");
+    found = volname.find("germaniumBlock1");
     if (edep != 0 && found!=G4String::npos) {
         SetDetAndCryNumberForGriffinComponent(volname);
-        fEventAction->AddGriffinCrystDet(edep,stepl,det-1,cry-1);
+        fEventAction->AddGriffinCrystDet(edep,stepl,fDet-1,fCry-1);
         mnemonic.replace(0,3,"GRG");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
         mnemonic.replace(6,1,"G");
         systemID = 1000;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
-    found = volname.find("back_quarter_suppressor");
+    found = volname.find("backQuarterSuppressor");
     if (edep != 0 && found!=G4String::npos) {
         SetDetAndCryNumberForGriffinComponent(volname);
-        fEventAction->AddGriffinSuppressorBackDet(edep,stepl,det-1,cry-1);
+        fEventAction->AddGriffinSuppressorBackDet(edep,stepl,fDet-1,fCry-1);
         mnemonic.replace(0,3,"GRS");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
         mnemonic.replace(6,1,"E");
         systemID = 1050;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
-    found = volname.find("left_suppressor_extension");
+    found = volname.find("leftSuppressorExtension");
     if (edep != 0 && found!=G4String::npos) {
         SetDetAndCryNumberForGriffinComponent(volname);
-        fEventAction->AddGriffinSuppressorLeftExtensionDet(edep,stepl,det-1,cry-1);
+        fEventAction->AddGriffinSuppressorLeftExtensionDet(edep,stepl,fDet-1,fCry-1);
         mnemonic.replace(0,3,"GRS");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
         mnemonic.replace(6,1,"A");
         systemID = 1010;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
-    found = volname.find("right_suppressor_extension");
+    found = volname.find("rightSuppressorExtension");
     if (edep != 0 && found!=G4String::npos) {
         SetDetAndCryNumberForGriffinComponent(volname);
-        fEventAction->AddGriffinSuppressorRightExtensionDet(edep,stepl,det-1,cry-1);
+        fEventAction->AddGriffinSuppressorRightExtensionDet(edep,stepl,fDet-1,fCry-1);
         mnemonic.replace(0,3,"GRS");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
         mnemonic.replace(6,1,"B");
         systemID = 1020;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
-    found = volname.find("left_suppressor_casing");
+    found = volname.find("leftSuppressorCasing");
     if (edep != 0 && found!=G4String::npos) {
         SetDetAndCryNumberForGriffinComponent(volname);
-        fEventAction->AddGriffinSuppressorLeftSideDet(edep,stepl,det-1,cry-1);
+        fEventAction->AddGriffinSuppressorLeftSideDet(edep,stepl,fDet-1,fCry-1);
         mnemonic.replace(0,3,"GRS");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
         mnemonic.replace(6,1,"C");
         systemID = 1030;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
-    found = volname.find("right_suppressor_casing");
+    found = volname.find("rightSuppressorCasing");
     if (edep != 0 && found!=G4String::npos) {
         SetDetAndCryNumberForGriffinComponent(volname);
-        fEventAction->AddGriffinSuppressorRightSideDet(edep,stepl,det-1,cry-1);
+        fEventAction->AddGriffinSuppressorRightSideDet(edep,stepl,fDet-1,fCry-1);
         mnemonic.replace(0,3,"GRS");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
         mnemonic.replace(6,1,"D");
         systemID = 1040;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     // Dead layer specific code
-    found = volname.find("germanium_dls_block1");
+    found = volname.find("germaniumDlsBlock1");
     if (edep != 0 && found!=G4String::npos) {
         SetDetAndCryNumberForDeadLayerSpecificGriffinCrystal(volname);
-        fEventAction->AddGriffinCrystDet(edep,stepl,det-1,cry-1);
+        fEventAction->AddGriffinCrystDet(edep,stepl,fDet-1,fCry-1);
         mnemonic.replace(0,3,"GRG");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
         mnemonic.replace(6,1,"G");
         systemID = 1000;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     // LaBr detector energy deposits ////////////////////////////////////////////////////////////////////////////////
-    found = volname.find("lanthanum_bromide_crystal_block");
+    found = volname.find("lanthanumBromideCrystalBlock");
     if (edep != 0 && found!=G4String::npos) {
         SetDetNumberForGenericDetector(volname);
-        fEventAction->AddLaBrCrystDet(edep,stepl,det-1);
+        fEventAction->AddLaBrCrystDet(edep,stepl,fDet-1);
         mnemonic.replace(0,3,"LAB");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
         systemID = 2000;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     // Ancillary BGO detector energy deposits ////////////////////////////////////////////////////////////////////////////////
-    found = volname.find("ancillary_bgo_block");
+    found = volname.find("ancillaryBgoBlock");
     if (edep != 0 && found!=G4String::npos) {
         SetDetNumberForAncillaryBGODetector(volname);
-        fEventAction->AncillaryBgoDet(edep,stepl,det-1);
+        fEventAction->AncillaryBgoDet(edep,stepl,fDet-1);
         mnemonic.replace(0,3,"ABG");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
         systemID = 3000;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     // NaI energy deposits ////////////////////////////////////////////////////////////////////////////////
-    found = volname.find("sodium_iodide_crystal_block");
+    found = volname.find("sodiumIodideCrystalBlock");
     if (edep != 0 && found!=G4String::npos) {
         SetDetNumberForGenericDetector(volname);
         mnemonic.replace(0,3,"NAI");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
         systemID = 4000;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     // Sceptar energy deposits ////////////////////////////////////////////////////////////////////////////////
-    found = volname.find("sceptar_square_scintillator_log");
+    found = volname.find("sceptarSquareScintillatorLog");
     if (edep != 0 && found!=G4String::npos) {
         SetDetNumberForGenericDetector(volname);
-        //if(det >= 6) det = det + 5; // to number SCPETAR paddles correctly
+        //if(fDet >= 6) fDet = fDet + 5; // to number SCPETAR paddles correctly
 
-        if(det == 1) det = 6;
-        else if(det == 2) det = 10;
-        else if(det == 3) det = 9;
-        else if(det == 4) det = 8;
-        else if(det == 5) det = 7;
-        else if(det == 6) det = 14;
-        else if(det == 7) det = 13;
-        else if(det == 8) det = 12;
-        else if(det == 9) det = 11;
-        else if(det == 10) det = 15;
-        fEventAction->SceptarDet(edep,stepl,det-1);
+        if(fDet == 1) fDet = 6;
+        else if(fDet == 2) fDet = 10;
+        else if(fDet == 3) fDet = 9;
+        else if(fDet == 4) fDet = 8;
+        else if(fDet == 5) fDet = 7;
+        else if(fDet == 6) fDet = 14;
+        else if(fDet == 7) fDet = 13;
+        else if(fDet == 8) fDet = 12;
+        else if(fDet == 9) fDet = 11;
+        else if(fDet == 10) fDet = 15;
+        fEventAction->SceptarDet(edep,stepl,fDet-1);
         mnemonic.replace(0,3,"SCP");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
         systemID = 5000;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
-    found = volname.find("sceptar_angled_scintillator_log");
+    found = volname.find("sceptarAngledScintillatorLog");
     if (edep != 0 && found!=G4String::npos) {
         SetDetNumberForGenericDetector(volname);
-        if(det == 1) det = 1; // to number SCPETAR paddles correctly
-        else if(det == 2) det = 5;
-        else if(det == 3) det = 4;
-        else if(det == 4) det = 3;
-        else if(det == 5) det = 2;
-        else if(det == 6) det = 19;
-        else if(det == 7) det = 18;
-        else if(det == 8) det = 17;
-        else if(det == 9) det = 16;
-        else if(det == 10) det = 20;
-        fEventAction->SceptarDet(edep,stepl,det-1);
+        if(fDet == 1) fDet = 1; // to number SCPETAR paddles correctly
+        else if(fDet == 2) fDet = 5;
+        else if(fDet == 3) fDet = 4;
+        else if(fDet == 4) fDet = 3;
+        else if(fDet == 5) fDet = 2;
+        else if(fDet == 6) fDet = 19;
+        else if(fDet == 7) fDet = 18;
+        else if(fDet == 8) fDet = 17;
+        else if(fDet == 9) fDet = 16;
+        else if(fDet == 10) fDet = 20;
+        fEventAction->SceptarDet(edep,stepl,fDet-1);
         mnemonic.replace(0,3,"SCP");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
         systemID = 5000;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
     // 8PI energy deposits ////////////////////////////////////////////////////////////////////////////////
-    found = volname.find("8pi_germanium_block_log");
+    found = volname.find("8piGermaniumBlockLog");
     if (edep != 0 && found!=G4String::npos) {
         SetDetNumberForGenericDetector(volname);
-        fEventAction->Add8piCrystDet(edep,stepl,det-1);
+        fEventAction->Add8piCrystDet(edep,stepl,fDet-1);
         mnemonic.replace(0,3,"8PI");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
         systemID = 6000;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
-    found = volname.find("8pi_inner_BGO_annulus");
+    found = volname.find("8piInnerBGOAnnulus");
     if (edep != 0 && found!=G4String::npos) {
         SetDetNumberForGenericDetector(volname);
         mnemonic.replace(0,3,"8PI");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
         mnemonic.replace(6,1,"A");
         systemID = 6010;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
-    found = volname.find("8pi_outer_lower_BGO_annulus");
+    found = volname.find("8piOuterLowerBGOAnnulus");
     if (edep != 0 && found!=G4String::npos) {
         SetDetNumberForGenericDetector(volname);
         mnemonic.replace(0,3,"8PI");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
         mnemonic.replace(6,1,"B");
         systemID = 6020;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
-    found = volname.find("8pi_outer_upper_BGO_annulus");
+    found = volname.find("8piOuterUpperBGOAnnulus");
     if (edep != 0 && found!=G4String::npos) {
         SetDetNumberForGenericDetector(volname);
         mnemonic.replace(0,3,"8PI");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
         mnemonic.replace(6,1,"C");
         systemID = 6030;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
-    found = volname.find("gridcell_log");
+    found = volname.find("gridcellLog");
     if (ekin != 0 && found!=G4String::npos) {
         SetDetNumberForGenericDetector(volname);
-        if(particleType == 1)fEventAction->AddGridCellGamma(ekin,stepl,det-1);
-        if(particleType == 2)fEventAction->AddGridCellElectron(ekin,stepl,det-1);
-        if(particleType == 5)fEventAction->AddGridCellNeutron(ekin,stepl,det-1);
+        if(particleType == 1)fEventAction->AddGridCellGamma(ekin,stepl,fDet-1);
+        if(particleType == 2)fEventAction->AddGridCellElectron(ekin,stepl,fDet-1);
+        if(particleType == 5)fEventAction->AddGridCellNeutron(ekin,stepl,fDet-1);
         mnemonic.replace(0,3,"GRD");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
         systemID = 7000;
         // edep is ekin in this case. It would be useful if we also had the momentum positiin of the particles...
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, ekin, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, ekin, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
         // Now kill the track!
         theTrack->SetTrackStatus(fStopAndKill);
     }
 
     // DESCANT Detectors ////////////////////////////////////////////////////////////////////////////////
-    found = volname.find("blue_scintillator_volume_log");
+    found = volname.find("blueScintillatorVolumeLog");
     if (edep != 0 && found!=G4String::npos) {
         SetDetNumberForGenericDetector(volname);
         mnemonic.replace(0,3,"DSC");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
 		  if(targetZ < 10) mnemonic.replace(6,1,G4intToG4String(targetZ));
         systemID = 8010;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
-    found = volname.find("green_scintillator_volume_log");
+    found = volname.find("greenScintillatorVolumeLog");
     if (edep != 0 && found!=G4String::npos) {
         SetDetNumberForGenericDetector(volname);
         mnemonic.replace(0,3,"DSC");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
 		  if(targetZ < 10) mnemonic.replace(6,1,G4intToG4String(targetZ));
         systemID = 8020;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
-    found = volname.find("red_scintillator_volume_log");
+    found = volname.find("redScintillatorVolumeLog");
     if (edep != 0 && found!=G4String::npos) {
         SetDetNumberForGenericDetector(volname);
         mnemonic.replace(0,3,"DSC");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
 		  if(targetZ < 10) mnemonic.replace(6,1,G4intToG4String(targetZ));
         systemID = 8030;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
-    found = volname.find("white_scintillator_volume_log");
+    found = volname.find("whiteScintillatorVolumeLog");
     if (edep != 0 && found!=G4String::npos) {
         SetDetNumberForGenericDetector(volname);
         mnemonic.replace(0,3,"DSC");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
 		  if(targetZ < 10) mnemonic.replace(6,1,G4intToG4String(targetZ));
         systemID = 8040;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
-    found = volname.find("yellow_scintillator_volume_log");
+    found = volname.find("yellowScintillatorVolumeLog");
     if (edep != 0 && found!=G4String::npos) {
         SetDetNumberForGenericDetector(volname);
         mnemonic.replace(0,3,"DSC");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
 		  if(targetZ < 10) mnemonic.replace(6,1,G4intToG4String(targetZ));
         systemID = 8050;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
-    found = volname.find("paces_silicon_block_log");
+    found = volname.find("pacesSiliconBlockLog");
     if (edep != 0 && found!=G4String::npos) {
         SetDetNumberForGenericDetector(volname);
-        fEventAction->Add8piCrystDet(edep,stepl,det-1);
+        fEventAction->Add8piCrystDet(edep,stepl,fDet-1);
         mnemonic.replace(0,3,"PCS");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
         systemID = 9000;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
-    found = volname.find("testcan_scintillator_log");
+    found = volname.find("testcanScintillatorLog");
     if (edep != 0 && found!=G4String::npos) {
         SetDetNumberForGenericDetector(volname);
         mnemonic.replace(0,3,"XXX");
-        mnemonic.replace(3,2,G4intToG4String(det));
-        mnemonic.replace(5,1,GetCrystalColour(cry));
+        mnemonic.replace(3,2,G4intToG4String(fDet));
+        mnemonic.replace(5,1,GetCrystalColour(fCry));
         systemID = 8500;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
 
-    //  // gamma angular correlations in world
-    //  found = volname.find("World");
-    //  if (ekin != 0 && found!=G4String::npos && particleType == 1) {
-    //      if(ekin <= (100.+2.)*keV && ekin >= (100.-2.)*keV) {
-    //          det = 1;
-    //      }
-    //      else if(ekin <= (200.+2.)*keV && ekin >= (200.-2.)*keV) {
-    //          det = 2;
-    //      }
-    //      else if(ekin <= (300.+2.)*keV && ekin >= (300.-2.)*keV) {
-    //          det = 3;
-    //      }
-    //      else if(ekin <= (400.+2.)*keV && ekin >= (400.-2.)*keV) {
-    //          det = 4;
-    //      }
-    //      else if(ekin <= (500.+2.)*keV && ekin >= (500.-2.)*keV) {
-    //          det = 5;
-    //      }
-    //      else if(ekin <= (600.+2.)*keV && ekin >= (600.-2.)*keV) {
-    //          det = 6;
-    //      }
-    //      else if(ekin <= (700.+2.)*keV && ekin >= (700.-2.)*keV) {
-    //          det = 7;
-    //      }
-    //      else if(ekin <= (800.+2.)*keV && ekin >= (800.-2.)*keV) {
-    //          det = 8;
-    //      }
-    //      else if(ekin <= (900.+2.)*keV && ekin >= (900.-2.)*keV) {
-    //          det = 9;
-    //      }
-    //      else if(ekin <= (1173.2+2.)*keV && ekin >= (1173.2-2.)*keV) { //60Co decay
-    //          det = 10;
-    //      }
-    //      else if(ekin <= (1332.5+2.)*keV && ekin >= (1332.5-2.)*keV) {
-    //          det = 11;
-    //      }
-    //      else if(ekin <= (1808.660+2.)*keV && ekin >= (1808.660-2.)*keV) { //26Na decay
-    //          det = 12;
-    //      }
-    //      else if(ekin <= (1896.720+2.)*keV && ekin >= (1896.720-2.)*keV) {
-    //          det = 13;
-    //      }
-    //      else if(ekin <= (2541.220+2.)*keV && ekin >= (2541.220-2.)*keV) {
-    //          det = 14;
-    //      }
-    //      else if(ekin <= (1129.580+2.)*keV && ekin >= (1129.580-2.)*keV) {
-    //          det = 15;
-    //      }
-    //      else if(ekin <= (953.8+2.)*keV && ekin >= (953.8-2.)*keV) { //62Ga decay
-    //          det = 16;
-    //      }
-    //      else if(ekin <= (850.8+2.)*keV && ekin >= (850.8-2.)*keV) {
-    //          det = 17;
-    //      }
-    //      else if(ekin <= (1388.300+2.)*keV && ekin >= (1388.300-2.)*keV) {
-    //          det = 18;
-    //      }
-    //      else {
-    //          det = 0;
-    //      }
-    //      cry = 1;
-    //      systemID = 9999;
-    //      mnemonic.replace(0,3,"GAC");
-    //      mnemonic.replace(3,2,G4intToG4String(det));
-    //      mnemonic.replace(5,1,GetCrystalColour(cry));
-    //      fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, ekin, pos2.x(), pos2.y(), pos2.z(), time2);
-    //  }
-
     if(trackSteps) {
-        fEventAction->AddStepTracker(mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, systemID, cry-1, det-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+        fEventAction->AddStepTracker(evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
 	 }
 }
 
-void SteppingAction::SetDetAndCryNumberForGriffinComponent(G4String volname)
-{
+void SteppingAction::SetDetAndCryNumberForGriffinComponent(G4String volname) {
     const char *cstr = volname.c_str();
     G4int av;
     G4int impr;
@@ -549,16 +478,15 @@ void SteppingAction::SetDetAndCryNumberForGriffinComponent(G4String volname)
         impr = cstr[12]-'0';
     }
 
-    det = (G4int)(ceil(((G4double)(av)-5.0)/(G4double)(numberOfAssemblyVols))); // This was fixed
-    cry = impr;
+    fDet = (G4int)(ceil(((G4double)(av)-5.0)/(G4double)(fNumberOfAssemblyVols))); // This was fixed
+    fCry = impr;
 
-    det = FindTrueGriffinDetector(det);
+    fDet = FindTrueGriffinDetector(fDet);
 
-    //G4cout << "Found Edep in " << volname <<  " cry = " << cry << " det = " << det << " av = " << av << G4endl;
+    //G4cout << "Found Edep in " << volname <<  " fCry = " << fCry << " fDet = " << fDet << " av = " << av << G4endl;
 }
 
-void SteppingAction::SetDetAndCryNumberForDeadLayerSpecificGriffinCrystal(G4String volname)
-{
+void SteppingAction::SetDetAndCryNumberForDeadLayerSpecificGriffinCrystal(G4String volname) {
     const char *cstr = volname.c_str();
     G4int av;
     G4int impr;
@@ -577,16 +505,15 @@ void SteppingAction::SetDetAndCryNumberForDeadLayerSpecificGriffinCrystal(G4Stri
         impr = cstr[12]-'0';
     }
 
-    det = (G4int)(ceil((G4double)(av)/(G4double)(numberOfAssemblyVols)));
-    cry = av - numberOfAssemblyVols*(det-1);
+    fDet = (G4int)(ceil((G4double)(av)/(G4double)(fNumberOfAssemblyVols)));
+    fCry = av - fNumberOfAssemblyVols*(fDet-1);
 
-    det = FindTrueGriffinDetector(det);
+    fDet = FindTrueGriffinDetector(fDet);
 
-    //G4cout << "Found Edep in " << volname <<  " cry = " << cry << " det = " << det << " av = " << av << G4endl;
+    //G4cout << "Found Edep in " << volname <<  " fCry = " << fCry << " fDet = " << fDet << " av = " << av << G4endl;
 }
 
-void SteppingAction::SetDetNumberForGenericDetector(G4String volname)
-{
+void SteppingAction::SetDetNumberForGenericDetector(G4String volname) {
     const char *cstr = volname.c_str();
     G4int volNameOver9;
     G4int avOver9 = cstr[4]-'0';
@@ -594,36 +521,35 @@ void SteppingAction::SetDetNumberForGenericDetector(G4String volname)
     if(avOver9 == 47) { // under 10
         volNameOver9 = cstr[11]-'0';
         if(volNameOver9 == 47) {
-            det = cstr[10]-'0';
+            fDet = cstr[10]-'0';
         }
         else {
-            det = ((cstr[10]-'0')*10)+volNameOver9 ;
+            fDet = ((cstr[10]-'0')*10)+volNameOver9 ;
         }
     }
     else if(avOver99 == 47) { // under 100
         volNameOver9 = cstr[12]-'0';
         if(volNameOver9 == 47) {
-            det = cstr[11]-'0';
+            fDet = cstr[11]-'0';
         }
         else {
-            det = ((cstr[11]-'0')*10)+volNameOver9 ;
+            fDet = ((cstr[11]-'0')*10)+volNameOver9 ;
         }
     }
     else { // OVER 100
         volNameOver9 = cstr[13]-'0';
         if(volNameOver9 == 47) {
-            det = cstr[12]-'0';
+            fDet = cstr[12]-'0';
         }
         else {
-            det = ((cstr[12]-'0')*10)+volNameOver9 ;
+            fDet = ((cstr[12]-'0')*10)+volNameOver9 ;
         }
     }
-    //G4cout << "Stepping Action :: Found electron ekin in " << volname << " det = " << det << G4endl;
+    //G4cout << "Stepping Action :: Found electron ekin in " << volname << " fDet = " << fDet << G4endl;
 }
 
 
-void SteppingAction::SetDetNumberForAncillaryBGODetector(G4String volname)
-{
+void SteppingAction::SetDetNumberForAncillaryBGODetector(G4String volname) {
     const char *cstr = volname.c_str();
     G4int av;
     G4int impr;
@@ -656,23 +582,21 @@ void SteppingAction::SetDetNumberForAncillaryBGODetector(G4String volname)
             impr = cstr[12]-'0';
         }
     }
-    det = (G4int)((ceil)(G4double(impr)/3.0));
-    cry = impr-((det-1)*3);
+    fDet = (G4int)((ceil)(G4double(impr)/3.0));
+    fCry = impr-((fDet-1)*3);
 
-    //    G4cout << "Found Edep in " << volname <<  " cry = " << cry << " det = " << det << " av = " << av << G4endl;
+    //    G4cout << "Found Edep in " << volname <<  " fCry = " << fCry << " fDet = " << fDet << " av = " << av << G4endl;
 }
 
-G4int SteppingAction::FindTrueGriffinDetector(G4int detval)
-{
+G4int SteppingAction::FindTrueGriffinDetector(G4int detval) {
     G4int trueDet;
-    trueDet = fDetector->griffinDetectorsMap[detval-1];
+    trueDet = fDetector->fGriffinDetectorsMap[detval-1];
 
     return trueDet;
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-G4String SteppingAction::G4intToG4String(G4int value)
-{
+G4String SteppingAction::G4intToG4String(G4int value) {
     G4String theString;
     G4String output = "00";
     std::stringstream out;
@@ -689,8 +613,7 @@ G4String SteppingAction::G4intToG4String(G4int value)
     return output;
 }
 
-G4String SteppingAction::GetCrystalColour(G4int value)
-{
+G4String SteppingAction::GetCrystalColour(G4int value) {
     G4String output = "X";
     if(value == 1) {
         output = "B";

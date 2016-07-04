@@ -86,7 +86,7 @@
 /tracking/verbose 0
 
 ###################### RUN VRML VIS #####################################################
-/control/execute vis.mac
+#/control/execute vis.mac
 
 ###################### USER DEFINED RAD DECAY FILES #####################################
 /grdm/setRadioactiveDecayFile 27 60 UserData/UserRadData_z27.a60

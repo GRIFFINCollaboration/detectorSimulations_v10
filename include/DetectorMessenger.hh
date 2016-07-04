@@ -59,85 +59,85 @@ public:
     void SetNewValue(G4UIcommand*, G4String);
 
 private:
-    DetectorConstruction* Detector;
+    DetectorConstruction* fDetector;
 
-    G4UIdirectory*             detDir;
-    G4UIdirectory*             appDir;
-    G4UIdirectory*             worldDir;
-    G4UIdirectory*             DetSysDir;
-    G4UIcmdWithAString*        WorldMaterialCmd;
-    G4UIcmdWith3VectorAndUnit* WorldDimensionsCmd;
-    G4UIcmdWithABool*          WorldVisCmd;
-    G4UIcmdWith3VectorAndUnit* WorldMagneticFieldCmd;
-    G4UIcmdWithoutParameter*   UpdateCmd;
+    G4UIdirectory*             fDetDir;
+    G4UIdirectory*             fAppDir;
+    G4UIdirectory*             fWorldDir;
+    G4UIdirectory*             fDetSysDir;
+    G4UIcmdWithAString*        fWorldMaterialCmd;
+    G4UIcmdWith3VectorAndUnit* fWorldDimensionsCmd;
+    G4UIcmdWithABool*          fWorldVisCmd;
+    G4UIcmdWith3VectorAndUnit* fWorldMagneticFieldCmd;
+    G4UIcmdWithoutParameter*   fUpdateCmd;
 
     // Generic Target Apparatus
-    G4UIcmdWithAString*        GenericTargetCmd;
-    G4UIcmdWith3VectorAndUnit* GenericTargetDimensionsCmd;
-    G4UIcmdWith3VectorAndUnit* GenericTargetPositionCmd;
+    G4UIcmdWithAString*        fGenericTargetCmd;
+    G4UIcmdWith3VectorAndUnit* fGenericTargetDimensionsCmd;
+    G4UIcmdWith3VectorAndUnit* fGenericTargetPositionCmd;
 
-    G4UIcmdWithAString*        FieldBoxMaterialCmd;
-    G4UIcmdWith3VectorAndUnit* FieldBoxDimensionsCmd;
-    G4UIcmdWith3VectorAndUnit* FieldBoxPositionCmd;
-    G4UIcmdWith3VectorAndUnit* FieldBoxMagneticFieldCmd;
+    G4UIcmdWithAString*        fFieldBoxMaterialCmd;
+    G4UIcmdWith3VectorAndUnit* fFieldBoxDimensionsCmd;
+    G4UIcmdWith3VectorAndUnit* fFieldBoxPositionCmd;
+    G4UIcmdWith3VectorAndUnit* fFieldBoxMagneticFieldCmd;
 
-    G4UIcmdWithoutParameter*   AddApparatusSpiceTargetChamberCmd;
-    G4UIcmdWithoutParameter*   AddApparatus8piVacuumChamberCmd;
-    G4UIcmdWithADoubleAndUnit*      AddApparatus8piVacuumChamberAuxMatShellCmd;
-    G4UIcmdWithAnInteger*   AddApparatusGriffinStructureCmd;
+    G4UIcmdWithoutParameter*   fAddApparatusSpiceTargetChamberCmd;
+    G4UIcmdWithoutParameter*   fAddApparatus8piVacuumChamberCmd;
+    G4UIcmdWithADoubleAndUnit* fAddApparatus8piVacuumChamberAuxMatShellCmd;
+    G4UIcmdWithAnInteger*      fAddApparatusGriffinStructureCmd;
 
-    G4UIcmdWithAString*         addBoxMatCmd;
-    G4UIcmdWithADoubleAndUnit*  addBoxThicknessCmd;
-    G4UIcmdWith3VectorAndUnit*  addBoxInnerDimensionsCmd;
-    G4UIcmdWith3Vector*         addBoxColourCmd;
-    G4UIcmdWithoutParameter*    addBoxCmd;
+    G4UIcmdWithAString*         fAddBoxMatCmd;
+    G4UIcmdWithADoubleAndUnit*  fAddBoxThicknessCmd;
+    G4UIcmdWith3VectorAndUnit*  fAddBoxInnerDimensionsCmd;
+    G4UIcmdWith3Vector*         fAddBoxColourCmd;
+    G4UIcmdWithoutParameter*    fAddBoxCmd;
 
-    G4UIcmdWithAString*         addGridMatCmd;
-    G4UIcmdWithADoubleAndUnit*  addGridSizeCmd;
-    G4UIcmdWith3VectorAndUnit*  addGridDimensionsCmd;
-    G4UIcmdWith3Vector*         addGridColourCmd;
-    G4UIcmdWith3VectorAndUnit*  addGridPosOffsetCmd;
-    G4UIcmdWithoutParameter*    addGridCmd;
+    G4UIcmdWithAString*         fAddGridMatCmd;
+    G4UIcmdWithADoubleAndUnit*  fAddGridSizeCmd;
+    G4UIcmdWith3VectorAndUnit*  fAddGridDimensionsCmd;
+    G4UIcmdWith3Vector*         fAddGridColourCmd;
+    G4UIcmdWith3VectorAndUnit*  fAddGridPosOffsetCmd;
+    G4UIcmdWithoutParameter*    fAddGridCmd;
 
 
     // Detection Systems
-    G4UIcmdWithAnInteger*       AddDetectionSystemGammaTrackingCmd;
-    G4UIcmdWithAnInteger*       AddDetectionSystemSodiumIodideCmd;
-    G4UIcmdWith3Vector*         AddDetectionSystemLanthanumBromideCmd;
-    G4UIcmdWith3Vector*         AddDetectionSystemAncillaryBGOCmd;
+    G4UIcmdWithAnInteger*       fAddDetectionSystemGammaTrackingCmd;
+    G4UIcmdWithAnInteger*       fAddDetectionSystemSodiumIodideCmd;
+    G4UIcmdWith3Vector*         fAddDetectionSystemLanthanumBromideCmd;
+    G4UIcmdWith3Vector*         fAddDetectionSystemAncillaryBGOCmd;
 
-    G4UIcmdWithAnInteger*       AddDetectionSystem8piCmd;
-    G4UIcmdWithAnInteger*       AddDetectionSystem8piDetectorCmd;
+    G4UIcmdWithAnInteger*       fAddDetectionSystem8piCmd;
+    G4UIcmdWithAnInteger*       fAddDetectionSystem8piDetectorCmd;
 
-    G4UIcmdWithAnInteger*       AddDetectionSystemDescantCmd;
-    G4UIcmdWith3Vector*         AddDetectionSystemDescantAuxPortsCmd;
+    G4UIcmdWithAnInteger*       fAddDetectionSystemDescantCmd;
+    G4UIcmdWith3Vector*         fAddDetectionSystemDescantAuxPortsCmd;
     
-    G4UIcmdWithoutParameter*	  AddApparatusDescantStructureCmd;
-    G4UIcmdWithAString*         SetDetectionSystemDescantColorCmd;
-    G4UIcmdWith3Vector*         SetDetectionSystemDescantRotationCmd;
-    G4UIcmdWith3VectorAndUnit*  AddDetectionSystemDescantCartCmd;
-    G4UIcmdWith3VectorAndUnit*  AddDetectionSystemDescantSpherCmd;
+    G4UIcmdWithoutParameter*	  fAddApparatusDescantStructureCmd;
+    G4UIcmdWithAString*         fSetDetectionSystemDescantColorCmd;
+    G4UIcmdWith3Vector*         fSetDetectionSystemDescantRotationCmd;
+    G4UIcmdWith3VectorAndUnit*  fAddDetectionSystemDescantCartCmd;
+    G4UIcmdWith3VectorAndUnit*  fAddDetectionSystemDescantSpherCmd;
 
-    G4UIcmdWith3Vector*         AddDetectionSystemTestcanCmd;
+    G4UIcmdWith3Vector*         fAddDetectionSystemTestcanCmd;
 
-    G4UIcmdWithAnInteger*       AddDetectionSystemSceptarCmd;
-    G4UIcmdWithAnInteger*       AddDetectionSystemGriffinForwardCmd;
-    G4UIcmdWithAnInteger*       AddDetectionSystemGriffinForwardDetectorCmd;
-    G4UIcmdWithAnInteger*       AddDetectionSystemGriffinBackCmd;
-    G4UIcmdWithAnInteger*       AddDetectionSystemGriffinBackDetectorCmd;
-    //G4UIcmdWith3Vector*       AddDetectionSystemGriffinPositionConfigCmd;
-    G4UIcmdWithAnInteger*       AddDetectionSystemSpiceCmd;
-    G4UIcmdWithAnInteger*       AddDetectionSystemSpiceV02Cmd;
-    G4UIcmdWithAnInteger*       AddDetectionSystemPacesCmd;
-    G4UIcmdWithAnInteger*       AddDetectionSystemGriffinHevimetCmd ;
+    G4UIcmdWithAnInteger*       fAddDetectionSystemSceptarCmd;
+    G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinForwardCmd;
+    G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinForwardDetectorCmd;
+    G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinBackCmd;
+    G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinBackDetectorCmd;
+    //G4UIcmdWith3Vector*       fAddDetectionSystemGriffinPositionConfigCmd;
+    G4UIcmdWithAnInteger*       fAddDetectionSystemSpiceCmd;
+    G4UIcmdWithAnInteger*       fAddDetectionSystemSpiceV02Cmd;
+    G4UIcmdWithAnInteger*       fAddDetectionSystemPacesCmd;
+    G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinHevimetCmd ;
 
-    G4UIcmdWithAnInteger*       AddDetectionSystemGriffinCustomDetectorCmd ;
-    G4UIcmdWithAnInteger*	     AddDetectionSystemGriffinCustomCmd ;
-    G4UIcmdWithAnInteger*       AddDetectionSystemGriffinShieldSelectCmd ;
-    G4UIcmdWithADoubleAndUnit*  AddDetectionSystemGriffinSetRadialDistanceCmd ;
-    G4UIcmdWithAnInteger*       AddDetectionSystemGriffinSetExtensionSuppLocationCmd ;
-    G4UIcmdWith3Vector*         AddDetectionSystemGriffinSetDeadLayerCmd ;
-    G4UIcmdWithABool*           UseTIGRESSPositionsCmd;
+    G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinCustomDetectorCmd ;
+    G4UIcmdWithAnInteger*	     fAddDetectionSystemGriffinCustomCmd ;
+    G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinShieldSelectCmd ;
+    G4UIcmdWithADoubleAndUnit*  fAddDetectionSystemGriffinSetRadialDistanceCmd ;
+    G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinSetExtensionSuppLocationCmd ;
+    G4UIcmdWith3Vector*         fAddDetectionSystemGriffinSetDeadLayerCmd ;
+    G4UIcmdWithABool*           fUseTIGRESSPositionsCmd;
 
 };
 

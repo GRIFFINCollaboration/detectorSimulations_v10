@@ -52,51 +52,51 @@ public:
     ~ApparatusGriffinStructure();
 
     G4int Build();
-    G4int Place(G4LogicalVolume* exp_hall_log, G4int selector);
+    G4int Place(G4LogicalVolume* expHallLog, G4int selector);
 
 private:
-    G4LogicalVolume* square_piece_log;
-    G4LogicalVolume* triangle_piece_log;
-    G4LogicalVolume* ring_piece_log;
-    G4LogicalVolume* rod_piece_log;
+    G4LogicalVolume* fSquarePieceLog;
+    G4LogicalVolume* fTrianglePieceLog;
+    G4LogicalVolume* fRingPieceLog;
+    G4LogicalVolume* fRodPieceLog;
 
 
-    G4AssemblyVolume* assemblySquare;
-    G4AssemblyVolume* assemblyTriangle;
-    G4AssemblyVolume* assemblyRing;
-    G4AssemblyVolume* assemblyRod;
+    G4AssemblyVolume* fAssemblySquare;
+    G4AssemblyVolume* fAssemblyTriangle;
+    G4AssemblyVolume* fAssemblyRing;
+    G4AssemblyVolume* fAssemblyRod;
 
 private:
     // Materials
-    G4String structure_material;
-    G4String rod_material;
+    G4String fStructureMaterial;
+    G4String fRodMaterial;
 
     // Dimensions
-    G4double inner_distance_to_square_face; // inner radius to the centre of square plate
-    G4double square_and_triangle_face_thickness; // thickness of the square and triangle plates
-    G4double square_hole_length; // total legth of square hole, from inside structure.
-    G4double square_hole_rounded_edge_radius; // the roundness of the square holes.
-    G4double square_rod_hole_radius; // the radius of the holes for the steel rods
-    G4double square_rod_hole_inner_radius; // the radius from the origin to the steel rod
-    G4double square_rod_position_from_center_of_square_face; // the position the holes are from the origin. This is NOT a radius, this is along x or y
-    G4double square_rod_total_length; // the total length of the rods
-    G4double square_bgo_cut_length; // the length of the bgo slot
-    G4double square_bgo_cut_width; // the width of the bgo slot
-    G4double square_square_angle; // the angle between square faces in a rhombicuboctahedron
-    G4double square_triangle_angle; // the angle between a square face and a triangle face in a rhombicuboctahedron
-    G4double triangle_outer_hole_radius; // a hole radius in the triangle face. Radius to the rounded edge, this is the larger radius.
-    G4double triangle_inner_hole_radius; // a hole radius in the triangle face. Radius to the square edge, this is the smaller radius.
-    G4double large_ring_frame_inner_radius; // the inner radius of one of the the large rings that holds up the structure.
-    G4double large_ring_frame_outer_radius; // the outer radius of one of the the large rings that holds up the structure.
-    G4double large_ring_frame_thickness; // the thickness of one of the the large rings that holds up the structure.
-    G4double large_ring_frame_z_position; // the positive z distance the ring is from the origin.
+    G4double fInnerDistanceToSquareFace; // inner radius to the centre of square plate
+    G4double fSquareAndTriangleFaceThickness; // thickness of the square and triangle plates
+    G4double fSquareHoleLength; // total legth of square hole, from inside structure.
+    G4double fSquareHoleRoundedEdgeRadius; // the roundness of the square holes.
+    G4double fSquareRodHoleRadius; // the radius of the holes for the steel rods
+    G4double fSquareRodHoleInnerRadius; // the radius from the origin to the steel rod
+    G4double fSquareRodPositionFromCenterOfSquareFace; // the position the holes are from the origin. This is NOT a radius, this is along x or y
+    G4double fSquareRodTotalLength; // the total length of the rods
+    G4double fSquareBgoCutLength; // the length of the bgo slot
+    G4double fSquareBgoCutWidth; // the width of the bgo slot
+    G4double fSquareSquareAngle; // the angle between square faces in a rhombicuboctahedron
+    G4double fSquareTriangleAngle; // the angle between a square face and a triangle face in a rhombicuboctahedron
+    G4double fTriangleOuterHoleRadius; // a hole radius in the triangle face. Radius to the rounded edge, this is the larger radius.
+    G4double fTriangleInnerHoleRadius; // a hole radius in the triangle face. Radius to the square edge, this is the smaller radius.
+    G4double fLargeRingFrameInnerRadius; // the inner radius of one of the the large rings that holds up the structure.
+    G4double fLargeRingFrameOuterRadius; // the outer radius of one of the the large rings that holds up the structure.
+    G4double fLargeRingFrameThickness; // the thickness of one of the the large rings that holds up the structure.
+    G4double fLargeRingFrameZPosition; // the positive z distance the ring is from the origin.
 
-    G4double triangleThetaAngle;
+    G4double fTriangleThetaAngle;
 
-    G4double griffinCoords[16][5];
-    G4double ancillaryCoords[8][5];
+    G4double fGriffinCoords[16][5];
+    G4double fAncillaryCoords[8][5];
 
-    G4bool surfCheck;
+    G4bool fSurfCheck;
 
     // Methods
     G4int BuildSquarePiece();
@@ -115,11 +115,6 @@ private:
     // Hole Shapes
     G4SubtractionSolid* SquareWithRoundedCorners();
     G4SubtractionSolid* TruncatedThreeSidedCylinder();
-
-    // General Spherical Translations
-    G4double transX(G4double x, G4double y, G4double z, G4double theta, G4double phi);
-    G4double transY(G4double x, G4double y, G4double z, G4double theta, G4double phi);
-    G4double transZ(G4double x, G4double y, G4double z, G4double theta, G4double phi);
 };
 
 #endif

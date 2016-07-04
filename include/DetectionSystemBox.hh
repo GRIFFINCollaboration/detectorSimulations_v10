@@ -43,36 +43,36 @@ class G4AssemblyVolume;
 class DetectionSystemBox
 {
 public:
-    DetectionSystemBox(G4double x_length_in, G4double y_length_in, G4double z_length_in, G4double thickness_in, G4String box_mat, G4ThreeVector box_colour);
+    DetectionSystemBox(G4double xLengthIn, G4double yLengthIn, G4double zLengthIn, G4double thicknessIn, G4String boxMat, G4ThreeVector boxColour);
     ~DetectionSystemBox();
 
     //    G4int Build(G4SDManager* mySDman);
     G4int Build();
-    G4int PlaceDetector(G4LogicalVolume* exp_hall_log);
+    G4int PlaceDetector(G4LogicalVolume* expHallLog);
 
 private:
     // Logical volumes
-    G4LogicalVolume* cell_log;
-    G4LogicalVolume* side_norm_x_log;
-    G4LogicalVolume* side_norm_y_log;
-    G4LogicalVolume* side_norm_z_log;
+    G4LogicalVolume* fCellLog;
+    G4LogicalVolume* fSideNormXLog;
+    G4LogicalVolume* fSideNormYLog;
+    G4LogicalVolume* fSideNormZLog;
 
 
     // Assembly volumes
-    G4AssemblyVolume* assembly;
+    G4AssemblyVolume* fAssembly;
 
-    //    SensitiveDetector* crystal_block_SD;
+    //    SensitiveDetector* crystalBlockSD;
 
-    G4int copy_number;
+    G4int fCopyNumber;
 
-    G4double x_length;
-    G4double y_length;
-    G4double z_length;
-    G4double thickness;
+    G4double fXLength;
+    G4double fYLength;
+    G4double fZLength;
+    G4double fThickness;
 
-    G4String cell_material;
+    G4String fCellMaterial;
 
-    G4ThreeVector cell_colour;
+    G4ThreeVector fCellColour;
 
     G4Box* BuildXNormalSide();
     G4Box* BuildYNormalSide();

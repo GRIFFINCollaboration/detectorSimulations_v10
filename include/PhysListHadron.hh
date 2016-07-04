@@ -63,7 +63,7 @@ public:
 private:
 
     G4HadronElasticProcess fTheElasticProcess;
-    G4HadronElasticProcess ionElasticProcess;
+    G4HadronElasticProcess fIonElasticProcess;
     G4ProtonInelasticProcess fTheProtonInelastic;
     G4NeutronInelasticProcess  fTheNeutronInelastic;
     G4HadronElasticProcess* fTheNeutronElasticProcess;

@@ -51,76 +51,76 @@ public:
     ~DetectionSystemLanthanumBromide();
     
     G4int Build() ; //G4SDManager* mySDman);
-    G4int PlaceDetector(G4LogicalVolume* exp_hall_log, G4int detector_number, G4double radialpos);
-    G4double GetDetectorLengthOfUnitsCM() {return this->detector_length_z;};
-    G4double GetCrystalRadius() {return this->crystal_outer_radius;};
-    G4double GetCrystalLength() {return this->crystal_length_z;};
+    G4int PlaceDetector(G4LogicalVolume* expHallLog, G4int detectorNumber, G4double radialpos);
+    G4double GetDetectorLengthOfUnitsCM() {return fDetectorLengthZ;};
+    G4double GetCrystalRadius() {return fCrystalOuterRadius;};
+    G4double GetCrystalLength() {return fCrystalLengthZ;};
     G4double GetR();
     G4double GetTheta(G4int i);
     G4double GetPhi(G4int i);
     G4double GetYaw(G4int i);
     G4double GetPitch(G4int i);
     G4double GetRoll(G4int i);
-    G4double GetCrystalRadialPosition() {return this->packing_front_lid_thickness+this->disc_front_lid_thickness+this->seal_front_lid_thickness+this->can_front_lid_thickness+12.5*cm ;};
+    G4double GetCrystalRadialPosition() {return fPackingFrontLidThickness+fDiscFrontLidThickness+fSealFrontLidThickness+fCanFrontLidThickness+12.5*cm ;};
 
 private:
     // Logical volumes
-    G4LogicalVolume* detector_volume_log;
-    G4LogicalVolume* crystal_block_log;
+    G4LogicalVolume* fDetectorVolumeLog;
+    G4LogicalVolume* fCrystalBlockLog;
 
-    G4LogicalVolume* can_cylinder_log;
-    G4LogicalVolume* can_front_lid_log;
-    G4LogicalVolume* can_back_lid_log;
+    G4LogicalVolume* fCanCylinderLog;
+    G4LogicalVolume* fCanFrontLidLog;
+    G4LogicalVolume* fCanBackLidLog;
 
-    G4LogicalVolume* seal_front_lid_log;
-    G4LogicalVolume* disc_front_lid_log;
+    G4LogicalVolume* fSealFrontLidLog;
+    G4LogicalVolume* fDiscFrontLidLog;
 
-    G4LogicalVolume* packing_cylinder_log;
-    G4LogicalVolume* packing_front_lid_log;
+    G4LogicalVolume* fPackingCylinderLog;
+    G4LogicalVolume* fPackingFrontLidLog;
 
     // Assembly volumes
-    G4AssemblyVolume* assembly;
+    G4AssemblyVolume* fAssembly;
 
-    //    SensitiveDetector* crystal_block_SD;
+    //    SensitiveDetector* crystalBlockSD;
 
-    G4int copy_number;
-    G4int number_of_detectors;
-    G4int number_of_segments;
+    G4int fCopyNumber;
+    G4int fNumberOfDetectors;
+    G4int fNumberOfSegments;
 
-    G4String crystal_material;
-    G4String can_material;
-    G4String seal_material;
-    G4String disc_material;
-    G4String packing_material;
+    G4String fCrystalMaterial;
+    G4String fCanMaterial;
+    G4String fSealMaterial;
+    G4String fDiscMaterial;
+    G4String fPackingMaterial;
 
-    G4double detail_view_end_angle;
-    G4double crystal_length_z;
-    G4double crystal_inner_radius;
-    G4double crystal_outer_radius;
-    G4double packing_length_z;
-    G4double packing_inner_radius;
-    G4double packing_outer_radius;
-    G4double packing_lid_inner_radius;
-    G4double packing_lid_outer_radius;
-    G4double packing_front_lid_thickness;
-    G4double disc_lid_inner_radius;
-    G4double disc_lid_outer_radius;
-    G4double disc_front_lid_thickness;
-    G4double seal_lid_inner_radius;
-    G4double seal_lid_outer_radius ;
-    G4double seal_front_lid_thickness;
-    G4double can_length_z;
-    G4double can_inner_radius;
-    G4double can_outer_radius;
-    G4double can_lid_inner_radius;
-    G4double can_lid_outer_radius;
-    G4double can_front_lid_thickness;
-    G4double can_back_lid_thickness;
+    G4double fDetailViewEndAngle;
+    G4double fCrystalLengthZ;
+    G4double fCrystalInnerRadius;
+    G4double fCrystalOuterRadius;
+    G4double fPackingLengthZ;
+    G4double fPackingInnerRadius;
+    G4double fPackingOuterRadius;
+    G4double fPackingLidInnerRadius;
+    G4double fPackingLidOuterRadius;
+    G4double fPackingFrontLidThickness;
+    G4double fDiscLidInnerRadius;
+    G4double fDiscLidOuterRadius;
+    G4double fDiscFrontLidThickness;
+    G4double fSealLidInnerRadius;
+    G4double fSealLidOuterRadius ;
+    G4double fSealFrontLidThickness;
+    G4double fCanLengthZ;
+    G4double fCanInnerRadius;
+    G4double fCanOuterRadius;
+    G4double fCanLidInnerRadius;
+    G4double fCanLidOuterRadius;
+    G4double fCanFrontLidThickness;
+    G4double fCanBackLidThickness;
 
-    G4double detector_length_z;
-    G4double detectorAngles[8][5];
+    G4double fDetectorLengthZ;
+    G4double fDetectorAngles[8][5];
 
-    G4double set_radial_pos;
+    G4double fSetRadialPos;
 
     G4Tubs* BuildCrystal();
     G4Tubs* BuildAluminumCan();
@@ -139,10 +139,6 @@ private:
     G4int BuildOneDetector();
 
     G4ThreeVector GetDirectionXYZ(G4double theta, G4double phi);
-
-    G4double transX(G4double x, G4double y, G4double z, G4double theta, G4double phi);
-    G4double transY(G4double x, G4double y, G4double z, G4double theta, G4double phi);
-    G4double transZ(G4double x, G4double y, G4double z, G4double theta, G4double phi);
 };
 
 #endif

@@ -1,6 +1,8 @@
 #include "DetectorConstruction.hh"
 #include "DetectorMessenger.hh"
 
+#include "Global.hh"
+
 #include "G4Material.hh"
 
 #include "G4Tubs.hh"
@@ -27,107 +29,102 @@
 
 DetectionSystemAncillaryBGO::DetectionSystemAncillaryBGO() :
     // LogicalVolumes
-    detector_volume_log(0),
-    bgo_block_log(0),
-    vacuum_block_log(0),
-    can_cylinder_log(0),
-    can_cylinder_back_cover_log(0),
-    hevimet_block_log(0)
+    fDetectorVolumeLog(0),
+    fBgoBlockLog(0),
+    fVacuumBlockLog(0),
+    fCanCylinderLog(0),
+    fCanCylinderBackCoverLog(0),
+    fHevimetBlockLog(0)
 {
     // can //
-    can_length              = 190.0*mm;
-    can_thickness           = 0.5*mm;
-    can_thickness_front     = 3.0*mm;
-    can_inner_radius        = 32.5*mm;
-    can_material            = "G4_Al";
+    fCanLength              = 190.0*mm;
+    fCanThickness           = 0.5*mm;
+    fCanThicknessFront     = 3.0*mm;
+    fCanInnerRadius        = 32.5*mm;
+    fCanMaterial            = "G4_Al";
     // BGO //
-    bgo_length              = 106.5*mm;
-    bgo_thickness           = 20.0*mm;
-    bgo_material            = "G4_BGO";
+    fBgoLength              = 106.5*mm;
+    fBgoThickness           = 20.0*mm;
+    fBgoMaterial            = "G4_BGO";
     // Gap (Vacuum) //
-    gap_thickness           = 0.5*mm;
-    gap_thickness_outer     = 3.5*mm;
-    gap_material            = "Vacuum";
+    fGapThickness           = 0.5*mm;
+    fGapThicknessOuter     = 3.5*mm;
+    fGapMaterial            = "Vacuum";
 
     // distance used in chopping process //
-    can_face_to_build_origin= 165.0*mm;
+    fCanFaceToBuildOrigin= 165.0*mm;
     // Chopping angles //
-    chopping_outer_angle    = 12.76*deg;
-    chopping_inner_angle    = 8.0*deg;
+    fChoppingOuterAngle    = 12.76*deg;
+    fChoppingInnerAngle    = 8.0*deg;
     // Hevimet //
-    hevimet_thickness       = 10.0*mm;
-    hevimet_material        = "Hevimetal";
+    fHevimetThickness       = 10.0*mm;
+    fHevimetMaterial        = "Hevimetal";
 
     //G4double triangleThetaAngle = (180/M_PI)*(atan((1/sqrt(3))/sqrt((11/12) + (1/sqrt(2))) )+atan((sqrt(2))/(1+sqrt(2))))*deg;
     G4double triangleThetaAngle = 54.735610317245360*deg;
 
     // theta
-    this->detectorAngles[0][0] 	= triangleThetaAngle;
-    this->detectorAngles[1][0] 	= triangleThetaAngle;
-    this->detectorAngles[2][0] 	= triangleThetaAngle;
-    this->detectorAngles[3][0] 	= triangleThetaAngle;
-    this->detectorAngles[4][0] 	= 180.0*deg - triangleThetaAngle;
-    this->detectorAngles[5][0] 	= 180.0*deg - triangleThetaAngle;
-    this->detectorAngles[6][0] 	= 180.0*deg - triangleThetaAngle;
-    this->detectorAngles[7][0] 	= 180.0*deg - triangleThetaAngle;
+    fDetectorAngles[0][0] 	= triangleThetaAngle;
+    fDetectorAngles[1][0] 	= triangleThetaAngle;
+    fDetectorAngles[2][0] 	= triangleThetaAngle;
+    fDetectorAngles[3][0] 	= triangleThetaAngle;
+    fDetectorAngles[4][0] 	= 180.0*deg - triangleThetaAngle;
+    fDetectorAngles[5][0] 	= 180.0*deg - triangleThetaAngle;
+    fDetectorAngles[6][0] 	= 180.0*deg - triangleThetaAngle;
+    fDetectorAngles[7][0] 	= 180.0*deg - triangleThetaAngle;
     // phi
-    this->detectorAngles[0][1] 	= 22.5*deg;
-    this->detectorAngles[1][1] 	= 112.5*deg;
-    this->detectorAngles[2][1] 	= 202.5*deg;
-    this->detectorAngles[3][1] 	= 292.5*deg;
-    this->detectorAngles[4][1] 	= 22.5*deg;
-    this->detectorAngles[5][1] 	= 112.5*deg;
-    this->detectorAngles[6][1] 	= 202.5*deg;
-    this->detectorAngles[7][1] 	= 292.5*deg;
+    fDetectorAngles[0][1] 	= 22.5*deg;
+    fDetectorAngles[1][1] 	= 112.5*deg;
+    fDetectorAngles[2][1] 	= 202.5*deg;
+    fDetectorAngles[3][1] 	= 292.5*deg;
+    fDetectorAngles[4][1] 	= 22.5*deg;
+    fDetectorAngles[5][1] 	= 112.5*deg;
+    fDetectorAngles[6][1] 	= 202.5*deg;
+    fDetectorAngles[7][1] 	= 292.5*deg;
     // yaw (alpha)
-    this->detectorAngles[0][2] 	= 0.0*deg;
-    this->detectorAngles[1][2] 	= 0.0*deg;
-    this->detectorAngles[2][2] 	= 0.0*deg;
-    this->detectorAngles[3][2] 	= 0.0*deg;
-    this->detectorAngles[4][2] 	= 0.0*deg;
-    this->detectorAngles[5][2] 	= 0.0*deg;
-    this->detectorAngles[6][2] 	= 0.0*deg;
-    this->detectorAngles[7][2] 	= 0.0*deg;
+    fDetectorAngles[0][2] 	= 0.0*deg;
+    fDetectorAngles[1][2] 	= 0.0*deg;
+    fDetectorAngles[2][2] 	= 0.0*deg;
+    fDetectorAngles[3][2] 	= 0.0*deg;
+    fDetectorAngles[4][2] 	= 0.0*deg;
+    fDetectorAngles[5][2] 	= 0.0*deg;
+    fDetectorAngles[6][2] 	= 0.0*deg;
+    fDetectorAngles[7][2] 	= 0.0*deg;
     // pitch (beta)
-    this->detectorAngles[0][3] 	= triangleThetaAngle;
-    this->detectorAngles[1][3] 	= triangleThetaAngle;
-    this->detectorAngles[2][3] 	= triangleThetaAngle;
-    this->detectorAngles[3][3] 	= triangleThetaAngle;
-    this->detectorAngles[4][3] 	= 180.0*deg - triangleThetaAngle;
-    this->detectorAngles[5][3] 	= 180.0*deg - triangleThetaAngle;
-    this->detectorAngles[6][3] 	= 180.0*deg - triangleThetaAngle;
-    this->detectorAngles[7][3] 	= 180.0*deg - triangleThetaAngle;
+    fDetectorAngles[0][3] 	= triangleThetaAngle;
+    fDetectorAngles[1][3] 	= triangleThetaAngle;
+    fDetectorAngles[2][3] 	= triangleThetaAngle;
+    fDetectorAngles[3][3] 	= triangleThetaAngle;
+    fDetectorAngles[4][3] 	= 180.0*deg - triangleThetaAngle;
+    fDetectorAngles[5][3] 	= 180.0*deg - triangleThetaAngle;
+    fDetectorAngles[6][3] 	= 180.0*deg - triangleThetaAngle;
+    fDetectorAngles[7][3] 	= 180.0*deg - triangleThetaAngle;
     // roll (gamma)
-    this->detectorAngles[0][4] 	= 22.5*deg;
-    this->detectorAngles[1][4] 	= 112.5*deg;
-    this->detectorAngles[2][4] 	= 202.5*deg;
-    this->detectorAngles[3][4] 	= 292.5*deg;
-    this->detectorAngles[4][4] 	= 22.5*deg;
-    this->detectorAngles[5][4] 	= 112.5*deg;
-    this->detectorAngles[6][4] 	= 202.5*deg;
-    this->detectorAngles[7][4] 	= 292.5*deg;
+    fDetectorAngles[0][4] 	= 22.5*deg;
+    fDetectorAngles[1][4] 	= 112.5*deg;
+    fDetectorAngles[2][4] 	= 202.5*deg;
+    fDetectorAngles[3][4] 	= 292.5*deg;
+    fDetectorAngles[4][4] 	= 22.5*deg;
+    fDetectorAngles[5][4] 	= 112.5*deg;
+    fDetectorAngles[6][4] 	= 202.5*deg;
+    fDetectorAngles[7][4] 	= 292.5*deg;
 }
 
-DetectionSystemAncillaryBGO::~DetectionSystemAncillaryBGO()
-{
+DetectionSystemAncillaryBGO::~DetectionSystemAncillaryBGO() {
     // LogicalVolumes
-    delete detector_volume_log;
-    delete bgo_block_log;
-    delete vacuum_block_log;
-    delete can_cylinder_log;
-    delete can_cylinder_back_cover_log;
-    delete hevimet_block_log;
+    delete fDetectorVolumeLog;
+    delete fBgoBlockLog;
+    delete fVacuumBlockLog;
+    delete fCanCylinderLog;
+    delete fCanCylinderBackCoverLog;
+    delete fHevimetBlockLog;
 }
 
 
-G4int DetectionSystemAncillaryBGO::Build()//G4SDManager* mySDman)
-{
+G4int DetectionSystemAncillaryBGO::Build() {
     // Build assembly volume
-    G4AssemblyVolume* myAssembly = new G4AssemblyVolume();
-    this->assembly = myAssembly;
-
-    G4AssemblyVolume* myAssemblyHevimet = new G4AssemblyVolume();
-    this->assemblyHevimet = myAssemblyHevimet;
+    fAssembly = new G4AssemblyVolume();
+    fAssemblyHevimet = new G4AssemblyVolume();
 
     G4cout << "BuildBGOVolume" << G4endl;
     BuildBGOVolume();
@@ -152,21 +149,20 @@ G4int DetectionSystemAncillaryBGO::Build()//G4SDManager* mySDman)
     return 1;
 }
 
-G4int DetectionSystemAncillaryBGO::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int detector_number, G4double radialpos, G4int hevimetopt)
-{
-    G4int detector_copy_ID = 0;
+G4int DetectionSystemAncillaryBGO::PlaceDetector(G4LogicalVolume* expHallLog, G4int detectorNumber, G4double radialpos, G4int hevimetopt) {
+    G4int detectorCopyID = 0;
 
-    G4cout << "AncillaryBGO Detector Number = " << detector_number << G4endl;
+    G4cout << "AncillaryBGO Detector Number = " << detectorNumber << G4endl;
 
-    G4int copy_number = detector_copy_ID + detector_number;
+    G4int copyNumber = detectorCopyID + detectorNumber;
 
-    G4double position = radialpos + ( this->can_length / 2.0 ) ;
+    G4double position = radialpos + ( fCanLength / 2.0 ) ;
 
-    G4double theta  = this->detectorAngles[detector_number][0];
-    G4double phi    = this->detectorAngles[detector_number][1];
-    //G4double alpha  = this->detectorAngles[detector_number][2]; // yaw
-    G4double beta   = this->detectorAngles[detector_number][3]; // pitch
-    G4double gamma  = this->detectorAngles[detector_number][4]; // roll
+    G4double theta  = fDetectorAngles[detectorNumber][0];
+    G4double phi    = fDetectorAngles[detectorNumber][1];
+    //G4double alpha  = fDetectorAngles[detectorNumber][2]; // yaw
+    G4double beta   = fDetectorAngles[detectorNumber][3]; // pitch
+    G4double gamma  = fDetectorAngles[detectorNumber][4]; // roll
 
     G4double x = 0;
     G4double y = 0;
@@ -177,196 +173,186 @@ G4int DetectionSystemAncillaryBGO::PlaceDetector(G4LogicalVolume* exp_hall_log, 
     for (G4int i=0; i<3; i++) {
         rotate->set(0,0,0);
         rotate->rotateZ((120*deg)*i);
-        if(detector_number > 3) {
+        if(detectorNumber > 3) {
             rotate->rotateZ(180*deg);
         }
         rotate->rotateY(M_PI);
         rotate->rotateY(M_PI+beta);
         rotate->rotateZ(gamma);
-        move = G4ThreeVector(transX(x,y,z,theta,phi), transY(x,y,z,theta,phi), transZ(x,y,z,theta,phi));
-        assembly->MakeImprint(exp_hall_log, move, rotate, copy_number);
+        move = G4ThreeVector(TransX(x,y,z,theta,phi), TransY(x,y,z,theta,phi), TransZ(x,y,z,theta));
+        fAssembly->MakeImprint(expHallLog, move, rotate, copyNumber);
     }
 
     if(hevimetopt == 1) {
         for (G4int i=0; i<3; i++) {
             rotate->set(0,0,0);
             rotate->rotateZ((120*deg)*i);
-            if(detector_number > 3) {
+            if(detectorNumber > 3) {
                 rotate->rotateZ(180*deg);
             }
             rotate->rotateY(M_PI);
             rotate->rotateY(M_PI+beta);
             rotate->rotateZ(gamma);
-            move = G4ThreeVector(transX(x,y,z,theta,phi), transY(x,y,z,theta,phi), transZ(x,y,z,theta,phi));
-            assemblyHevimet->MakeImprint(exp_hall_log, move, rotate, copy_number);
+            move = G4ThreeVector(TransX(x,y,z,theta,phi), TransY(x,y,z,theta,phi), TransZ(x,y,z,theta));
+            fAssemblyHevimet->MakeImprint(expHallLog, move, rotate, copyNumber);
         }
     }
 
     return 1;
 }
 
-G4int DetectionSystemAncillaryBGO::BuildBGOVolume()
-{
-    G4Material* material = G4Material::GetMaterial(this->bgo_material);
+G4int DetectionSystemAncillaryBGO::BuildBGOVolume() {
+    G4Material* material = G4Material::GetMaterial(fBgoMaterial);
     if( !material ) {
-        G4cout << " ----> Material " << this->bgo_material << " not found, cannot build the detector shell! " << G4endl;
+        G4cout << " ----> Material " << fBgoMaterial << " not found, cannot build the detector shell! " << G4endl;
         return 0;
     }
 
     // Set visualization attributes
-    G4VisAttributes* vis_att = new G4VisAttributes(G4Colour(0.2,1.0,0.3));
-    vis_att->SetVisibility(true);
+    G4VisAttributes* visAtt = new G4VisAttributes(G4Colour(0.2,1.0,0.3));
+    visAtt->SetVisibility(true);
 
-    G4SubtractionSolid* bgo_block = BGOPiece();
+    G4SubtractionSolid* bgoBlock = BGOPiece();
 
     // Define rotation and movement objects
     G4ThreeVector direction 	= G4ThreeVector(0,0,1);
-    G4double z_position		= can_thickness_front + gap_thickness + (bgo_length - can_length)/2.0;
-    G4ThreeVector move 		= z_position * direction;
+    G4double zPosition		= fCanThicknessFront + fGapThickness + (fBgoLength - fCanLength)/2.0;
+    G4ThreeVector move 		= zPosition * direction;
 
     G4RotationMatrix* rotate = new G4RotationMatrix;
 
     //logical volume
-    if( bgo_block_log == NULL )
-    {
-        bgo_block_log = new G4LogicalVolume(bgo_block, material, "ancillary_bgo_block_log", 0, 0, 0);
-        bgo_block_log->SetVisAttributes(vis_att);
+    if( fBgoBlockLog == NULL ) {
+        fBgoBlockLog = new G4LogicalVolume(bgoBlock, material, "ancillaryBgoBlockLog", 0, 0, 0);
+        fBgoBlockLog->SetVisAttributes(visAtt);
     }
 
-    this->assembly->AddPlacedVolume(bgo_block_log, move, rotate);
+    fAssembly->AddPlacedVolume(fBgoBlockLog, move, rotate);
 
     return 1;
 }
 
 
-G4int DetectionSystemAncillaryBGO::BuildVacuumVolume()
-{
-    G4Material* material = G4Material::GetMaterial(this->gap_material);
+G4int DetectionSystemAncillaryBGO::BuildVacuumVolume() {
+    G4Material* material = G4Material::GetMaterial(fGapMaterial);
     if( !material ) {
-        G4cout << " ----> Material " << this->gap_material << " not found, cannot build the detector shell! " << G4endl;
+        G4cout << " ----> Material " << fGapMaterial << " not found, cannot build the detector shell! " << G4endl;
         return 0;
     }
 
     // Set visualization attributes
-    G4VisAttributes* vis_att = new G4VisAttributes(G4Colour(0.0,0.0,1.0));
-    vis_att->SetVisibility(true);
+    G4VisAttributes* visAtt = new G4VisAttributes(G4Colour(0.0,0.0,1.0));
+    visAtt->SetVisibility(true);
 
-    G4SubtractionSolid* vacuum_block = VacuumPiece();
+    G4SubtractionSolid* vacuumBlock = VacuumPiece();
 
     // Define rotation and movement objects
     G4ThreeVector direction 	= G4ThreeVector(0,0,1);
-    G4double z_position		= can_thickness_front + (bgo_length + gap_thickness - can_length)/2.0;
-    G4ThreeVector move 		= z_position * direction;
+    G4double zPosition		= fCanThicknessFront + (fBgoLength + fGapThickness - fCanLength)/2.0;
+    G4ThreeVector move 		= zPosition * direction;
 
     G4RotationMatrix* rotate = new G4RotationMatrix;
 
     //logical volume
-    if( vacuum_block_log == NULL )
-    {
-        vacuum_block_log = new G4LogicalVolume(vacuum_block, material, "ancillary_vacuum_block_log", 0, 0, 0);
-        vacuum_block_log->SetVisAttributes(vis_att);
+    if( fVacuumBlockLog == NULL ) {
+        fVacuumBlockLog = new G4LogicalVolume(vacuumBlock, material, "ancillaryVacuumBlockLog", 0, 0, 0);
+        fVacuumBlockLog->SetVisAttributes(visAtt);
     }
 
-    this->assembly->AddPlacedVolume(vacuum_block_log, move, rotate);
+    fAssembly->AddPlacedVolume(fVacuumBlockLog, move, rotate);
 
     return 1;
 }
 
-G4int DetectionSystemAncillaryBGO::BuildAluminumCanVolume()
-{
-    G4Material* material = G4Material::GetMaterial(this->can_material);
+G4int DetectionSystemAncillaryBGO::BuildAluminumCanVolume() {
+    G4Material* material = G4Material::GetMaterial(fCanMaterial);
     if( !material ) {
-        G4cout << " ----> Material " << this->can_material << " not found, cannot build the detector shell! " << G4endl;
+        G4cout << " ----> Material " << fCanMaterial << " not found, cannot build the detector shell! " << G4endl;
         return 0;
     }
 
     // Set visualization attributes
-    G4VisAttributes* vis_att = new G4VisAttributes(G4Colour(1.0,1.0,1.0));
-    vis_att->SetVisibility(true);
+    G4VisAttributes* visAtt = new G4VisAttributes(G4Colour(1.0,1.0,1.0));
+    visAtt->SetVisibility(true);
 
-    G4SubtractionSolid* can_cylinder = AluminumCanPiece();
+    G4SubtractionSolid* canCylinder = AluminumCanPiece();
 
     // Define rotation and movement objects
     G4ThreeVector direction 	= G4ThreeVector(0,0,1);
-    G4double z_position		= 0.0*mm;
-    G4ThreeVector move 		= z_position * direction;
+    G4double zPosition		= 0.0*mm;
+    G4ThreeVector move 		= zPosition * direction;
 
     G4RotationMatrix* rotate = new G4RotationMatrix;
 
     //logical volume
-    if( can_cylinder_log == NULL )
-    {
-        can_cylinder_log = new G4LogicalVolume(can_cylinder, material, "ancillary_can_cylinder_log", 0, 0, 0);
-        can_cylinder_log->SetVisAttributes(vis_att);
+    if( fCanCylinderLog == NULL ) {
+        fCanCylinderLog = new G4LogicalVolume(canCylinder, material, "ancillaryCanCylinderLog", 0, 0, 0);
+        fCanCylinderLog->SetVisAttributes(visAtt);
     }
 
-    this->assembly->AddPlacedVolume(can_cylinder_log, move, rotate);
+    fAssembly->AddPlacedVolume(fCanCylinderLog, move, rotate);
 
     return 1;
 }
 
-G4int DetectionSystemAncillaryBGO::BuildAluminumCanBackCoverVolume()
-{
-    G4Material* material = G4Material::GetMaterial(this->can_material);
+G4int DetectionSystemAncillaryBGO::BuildAluminumCanBackCoverVolume() {
+    G4Material* material = G4Material::GetMaterial(fCanMaterial);
     if( !material ) {
-        G4cout << " ----> Material " << this->can_material << " not found, cannot build the detector shell! " << G4endl;
+        G4cout << " ----> Material " << fCanMaterial << " not found, cannot build the detector shell! " << G4endl;
         return 0;
     }
 
     // Set visualization attributes
-    G4VisAttributes* vis_att = new G4VisAttributes(G4Colour(1.0,1.0,1.0));
-    vis_att->SetVisibility(true);
+    G4VisAttributes* visAtt = new G4VisAttributes(G4Colour(1.0,1.0,1.0));
+    visAtt->SetVisibility(true);
 
-    G4Tubs* can_cylinder = AluminumCanBackCover();
+    G4Tubs* canCylinder = AluminumCanBackCover();
 
     // Define rotation and movement objects
     G4ThreeVector direction 	= G4ThreeVector(0,0,1);
-    G4double z_position		= (can_length - can_thickness)/2.0;
-    G4ThreeVector move 		= z_position * direction;
+    G4double zPosition		= (fCanLength - fCanThickness)/2.0;
+    G4ThreeVector move 		= zPosition * direction;
 
     G4RotationMatrix* rotate = new G4RotationMatrix;
 
     //logical volume
-    if( can_cylinder_back_cover_log == NULL )
-    {
-        can_cylinder_back_cover_log = new G4LogicalVolume(can_cylinder, material, "ancillary_can_cylinder_back_cover_log", 0, 0, 0);
-        can_cylinder_back_cover_log->SetVisAttributes(vis_att);
+    if( fCanCylinderBackCoverLog == NULL ) {
+        fCanCylinderBackCoverLog = new G4LogicalVolume(canCylinder, material, "ancillaryCanCylinderBackCoverLog", 0, 0, 0);
+        fCanCylinderBackCoverLog->SetVisAttributes(visAtt);
     }
 
-    this->assembly->AddPlacedVolume(can_cylinder_back_cover_log, move, rotate);
+    fAssembly->AddPlacedVolume(fCanCylinderBackCoverLog, move, rotate);
 
     return 1;
 }
 
-G4int DetectionSystemAncillaryBGO::BuildHevimetPiece()
-{
-    G4Material* material = G4Material::GetMaterial(this->hevimet_material);
+G4int DetectionSystemAncillaryBGO::BuildHevimetPiece() {
+    G4Material* material = G4Material::GetMaterial(fHevimetMaterial);
     if( !material ) {
-        G4cout << " ----> Material " << this->can_material << " not found, cannot build the detector shell! " << G4endl;
+        G4cout << " ----> Material " << fHevimetMaterial << " not found, cannot build the detector shell! " << G4endl;
         return 0;
     }
 
     // Set visualization attributes
-    G4VisAttributes* vis_att = new G4VisAttributes(G4Colour(0.5,0.5,0.5));
-    vis_att->SetVisibility(true);
+    G4VisAttributes* visAtt = new G4VisAttributes(G4Colour(0.5,0.5,0.5));
+    visAtt->SetVisibility(true);
 
-    G4SubtractionSolid* can_cylinder = HevimetPiece();
+    G4SubtractionSolid* canCylinder = HevimetPiece();
 
     // Define rotation and movement objects
     G4ThreeVector direction 	= G4ThreeVector(0,0,1);
-    G4double z_position		= -1.0*(hevimet_thickness + can_length)/2.0;
-    G4ThreeVector move 		= z_position * direction;
+    G4double zPosition		= -1.0*(fHevimetThickness + fCanLength)/2.0;
+    G4ThreeVector move 		= zPosition * direction;
 
     G4RotationMatrix* rotate = new G4RotationMatrix;
 
     //logical volume
-    if( hevimet_block_log == NULL )
-    {
-        hevimet_block_log = new G4LogicalVolume(can_cylinder, material, "ancillary_hevimet_block_log", 0, 0, 0);
-        hevimet_block_log->SetVisAttributes(vis_att);
+    if( fHevimetBlockLog == NULL ) {
+        fHevimetBlockLog = new G4LogicalVolume(canCylinder, material, "ancillaryHevimetBlockLog", 0, 0, 0);
+        fHevimetBlockLog->SetVisAttributes(visAtt);
     }
 
-    this->assemblyHevimet->AddPlacedVolume(hevimet_block_log, move, rotate);
+    fAssemblyHevimet->AddPlacedVolume(fHevimetBlockLog, move, rotate);
 
     return 1;
 }
@@ -374,281 +360,275 @@ G4int DetectionSystemAncillaryBGO::BuildHevimetPiece()
 ///////////////////////////////////////////////////////////////////////
 // Methods used to build shapes
 ///////////////////////////////////////////////////////////////////////
-G4SubtractionSolid* DetectionSystemAncillaryBGO::BGOPiece()
-{
-    G4double start_phi = 0.0*deg;
-    G4double end_phi = 120.0*deg;
+G4SubtractionSolid* DetectionSystemAncillaryBGO::BGOPiece() {
+    G4double startPhi = 0.0*deg;
+    G4double endPhi = 120.0*deg;
 
-    G4double inner_radius = can_inner_radius+can_thickness+gap_thickness;
-    G4double outer_radius = inner_radius+bgo_thickness;
-    G4double half_length_z = bgo_length/2.0;
+    G4double innerRadius = fCanInnerRadius+fCanThickness+fGapThickness;
+    G4double outerRadius = innerRadius+fBgoThickness;
+    G4double halfLengthZ = fBgoLength/2.0;
 
-    G4Tubs* bgo_block = new G4Tubs("bgo_block", inner_radius, outer_radius, half_length_z, start_phi, end_phi);
+    G4Tubs* bgoBlock = new G4Tubs("bgoBlock", innerRadius, outerRadius, halfLengthZ, startPhi, endPhi);
 
     // turn the block to be symmetric about 0 degress so we can cut it.
-    bgo_block->SetStartPhiAngle(-60.0*deg,true);
-    bgo_block->SetDeltaPhiAngle(120.0*deg);
+    bgoBlock->SetStartPhiAngle(-60.0*deg,true);
+    bgoBlock->SetDeltaPhiAngle(120.0*deg);
 
     // grab the scissors, time to cut.
     // make the cut surface unnecessarily large.
-    G4double cut_half_length_z = 2.0*can_face_to_build_origin;
-    G4double cut_half_length_x = 2.0*can_face_to_build_origin;
-    G4double cut_half_length_y = 2.0*can_face_to_build_origin;
+    G4double cutHalfLengthZ = 2.0*fCanFaceToBuildOrigin;
+    G4double cutHalfLengthX = 2.0*fCanFaceToBuildOrigin;
+    G4double cutHalfLengthY = 2.0*fCanFaceToBuildOrigin;
 
-    G4Box* cut_plate = new G4Box("cut_plate", cut_half_length_x, cut_half_length_y, cut_half_length_z);
+    G4Box* cutPlate = new G4Box("cutPlate", cutHalfLengthX, cutHalfLengthY, cutHalfLengthZ);
 
     // move cutting box to the "build origin" (see technical drawings)
-    G4double move_cut_z = -1.0*(can_face_to_build_origin + gap_thickness + can_thickness_front + bgo_length/2.0);
-    G4ThreeVector move_cut((cut_half_length_x-gap_thickness-can_thickness)/(cos(chopping_outer_angle)),0,move_cut_z);
+    G4double moveCutZ = -1.0*(fCanFaceToBuildOrigin + fGapThickness + fCanThicknessFront + fBgoLength/2.0);
+    G4ThreeVector moveCut((cutHalfLengthX-fGapThickness-fCanThickness)/(cos(fChoppingOuterAngle)),0,moveCutZ);
 
     // rotate our cutting block to the "chopping" angle
-    G4RotationMatrix* rotate_cut = new G4RotationMatrix;
-    rotate_cut->rotateY(-1.0*chopping_outer_angle);
+    G4RotationMatrix* rotateCut = new G4RotationMatrix;
+    rotateCut->rotateY(-1.0*fChoppingOuterAngle);
 
     // snip snip
-    G4SubtractionSolid* bgo_block_cut = new G4SubtractionSolid("bgo_block_cut", bgo_block, cut_plate, rotate_cut, move_cut);
+    G4SubtractionSolid* bgoBlockCut = new G4SubtractionSolid("bgoBlockCut", bgoBlock, cutPlate, rotateCut, moveCut);
 
-    return bgo_block_cut;
+    return bgoBlockCut;
 }
 
-G4SubtractionSolid* DetectionSystemAncillaryBGO::VacuumPiece()
-{
-    G4double start_phi = 0.0*deg;
-    G4double end_phi = 120.0*deg;
+G4SubtractionSolid* DetectionSystemAncillaryBGO::VacuumPiece() {
+    G4double startPhi = 0.0*deg;
+    G4double endPhi = 120.0*deg;
 
-    G4double inner_radius = can_inner_radius+can_thickness;
-    G4double outer_radius = inner_radius+gap_thickness+bgo_thickness+gap_thickness_outer;
-    G4double half_length_z = (bgo_length + gap_thickness)/2.0;
+    G4double innerRadius = fCanInnerRadius+fCanThickness;
+    G4double outerRadius = innerRadius+fGapThickness+fBgoThickness+fGapThicknessOuter;
+    G4double halfLengthZ = (fBgoLength + fGapThickness)/2.0;
 
-    G4Tubs* vacuum_block = new G4Tubs("vacuum_block", inner_radius, outer_radius, half_length_z, start_phi, end_phi);
+    G4Tubs* vacuumBlock = new G4Tubs("vacuumBlock", innerRadius, outerRadius, halfLengthZ, startPhi, endPhi);
 
     // turn the block to be symmetric about 0 degress so we can cut it.
-    vacuum_block->SetStartPhiAngle(-60.0*deg,true);
-    vacuum_block->SetDeltaPhiAngle(120.0*deg);
+    vacuumBlock->SetStartPhiAngle(-60.0*deg,true);
+    vacuumBlock->SetDeltaPhiAngle(120.0*deg);
 
     // grab the scissors, time to cut.
     // make the cut surface unnecessarily large.
-    G4double cut_half_length_z = 2.0*can_face_to_build_origin;
-    G4double cut_half_length_x = 2.0*can_face_to_build_origin;
-    G4double cut_half_length_y = 2.0*can_face_to_build_origin;
+    G4double cutHalfLengthZ = 2.0*fCanFaceToBuildOrigin;
+    G4double cutHalfLengthX = 2.0*fCanFaceToBuildOrigin;
+    G4double cutHalfLengthY = 2.0*fCanFaceToBuildOrigin;
 
-    G4Box* cut_plate = new G4Box("cut_plate", cut_half_length_x, cut_half_length_y, cut_half_length_z);
+    G4Box* cutPlate = new G4Box("cutPlate", cutHalfLengthX, cutHalfLengthY, cutHalfLengthZ);
 
     // move cutting box to the "build origin" (see technical drawings)
-    G4double move_cut_z = -1.0*(can_face_to_build_origin + gap_thickness + can_thickness_front + bgo_length/2.0);
-    G4ThreeVector move_cut((cut_half_length_x-can_thickness)/(cos(chopping_outer_angle)),0,move_cut_z);
+    G4double moveCutZ = -1.0*(fCanFaceToBuildOrigin + fGapThickness + fCanThicknessFront + fBgoLength/2.0);
+    G4ThreeVector moveCut((cutHalfLengthX-fCanThickness)/(cos(fChoppingOuterAngle)),0,moveCutZ);
 
     // rotate our cutting block to the "chopping" angle
-    G4RotationMatrix* rotate_cut = new G4RotationMatrix;
-    rotate_cut->rotateY(-1.0*chopping_outer_angle);
+    G4RotationMatrix* rotateCut = new G4RotationMatrix;
+    rotateCut->rotateY(-1.0*fChoppingOuterAngle);
 
     // snip snip
-    G4SubtractionSolid* vacuum_block_cut = new G4SubtractionSolid("vacuum_block_cut", vacuum_block, cut_plate, rotate_cut, move_cut);
+    G4SubtractionSolid* vacuumBlockCut = new G4SubtractionSolid("vacuumBlockCut", vacuumBlock, cutPlate, rotateCut, moveCut);
 
     // Now we have to do another cut on the vacuum.
     // We need to remove the area where the BGO sits
     // let's take this piece larger in phi to make sure we cut everything
-    start_phi = 0.0*deg;
-    end_phi = 140.0*deg;
+    startPhi = 0.0*deg;
+    endPhi = 140.0*deg;
 
-    inner_radius = can_inner_radius+can_thickness+gap_thickness;
-    outer_radius = inner_radius+bgo_thickness;
-    half_length_z = (bgo_length + gap_thickness)/2.0;
+    innerRadius = fCanInnerRadius+fCanThickness+fGapThickness;
+    outerRadius = innerRadius+fBgoThickness;
+    halfLengthZ = (fBgoLength + fGapThickness)/2.0;
 
-    G4Tubs* vacuum_block_cut_bgo = new G4Tubs("vacuum_block_cut_bgo", inner_radius, outer_radius, half_length_z, start_phi, end_phi);
+    G4Tubs* vacuumBlockCutBgo = new G4Tubs("vacuumBlockCutBgo", innerRadius, outerRadius, halfLengthZ, startPhi, endPhi);
 
     // turn the block to be symmetric about 0 degress so we can cut it.
-    vacuum_block_cut_bgo->SetStartPhiAngle(-70.0*deg,true);
-    vacuum_block_cut_bgo->SetDeltaPhiAngle(140.0*deg);
+    vacuumBlockCutBgo->SetStartPhiAngle(-70.0*deg,true);
+    vacuumBlockCutBgo->SetDeltaPhiAngle(140.0*deg);
 
     // grab the scissors, time to cut.
     // make the cut surface unnecessarily large.
-    cut_half_length_z = 2.0*can_face_to_build_origin;
-    cut_half_length_x = 2.0*can_face_to_build_origin;
-    cut_half_length_y = 2.0*can_face_to_build_origin;
+    cutHalfLengthZ = 2.0*fCanFaceToBuildOrigin;
+    cutHalfLengthX = 2.0*fCanFaceToBuildOrigin;
+    cutHalfLengthY = 2.0*fCanFaceToBuildOrigin;
 
-    G4Box* cut_plate_for_bgo = new G4Box("cut_plate_for_bgo", cut_half_length_x, cut_half_length_y, cut_half_length_z);
+    G4Box* cutPlateForBgo = new G4Box("cutPlateForBgo", cutHalfLengthX, cutHalfLengthY, cutHalfLengthZ);
 
     // move cutting box to the "build origin" (see technical drawings)
-    move_cut_z = -1.0*(can_face_to_build_origin + gap_thickness + can_thickness_front + (bgo_length + gap_thickness)/2.0);
-    G4ThreeVector move_cut_for_bgo((cut_half_length_x-can_thickness-gap_thickness)/(cos(chopping_outer_angle)),0,move_cut_z);
+    moveCutZ = -1.0*(fCanFaceToBuildOrigin + fGapThickness + fCanThicknessFront + (fBgoLength + fGapThickness)/2.0);
+    G4ThreeVector moveCutForBgo((cutHalfLengthX-fCanThickness-fGapThickness)/(cos(fChoppingOuterAngle)),0,moveCutZ);
 
     // rotate our cutting block to the "chopping" angle
-    G4RotationMatrix* rotate_cut_for_bgo = new G4RotationMatrix;
-    rotate_cut_for_bgo->rotateY(-1.0*chopping_outer_angle);
+    G4RotationMatrix* rotateCutForBgo = new G4RotationMatrix;
+    rotateCutForBgo->rotateY(-1.0*fChoppingOuterAngle);
 
     // snip snip
-    G4SubtractionSolid* bgo_block_to_be_cut_out = new G4SubtractionSolid("bgo_block_to_be_cut_out", vacuum_block_cut_bgo, cut_plate_for_bgo, rotate_cut_for_bgo, move_cut_for_bgo);
+    G4SubtractionSolid* bgoBlockToBeCutOut = new G4SubtractionSolid("bgoBlockToBeCutOut", vacuumBlockCutBgo, cutPlateForBgo, rotateCutForBgo, moveCutForBgo);
 
     // now we can remove the BGO area from inside the vacuum
-    // move cut just along z-axis by the amount of the gap_thickness (both vacuum and bgo blacks are same size)
-    G4ThreeVector move_cut_me(0,0,gap_thickness);
+    // move cut just along z-axis by the amount of the gapThickness (both vacuum and bgo blacks are same size)
+    G4ThreeVector moveCutMe(0, 0, fGapThickness);
     // no rotation
-    G4RotationMatrix* rotate_cut_me = new G4RotationMatrix;
+    G4RotationMatrix* rotateCutMe = new G4RotationMatrix;
     // final snip snip
-    G4SubtractionSolid* vacuum_block_with_bgo_cut_out = new G4SubtractionSolid("vacuum_block_with_bgo_cut_out", vacuum_block_cut, bgo_block_to_be_cut_out, rotate_cut_me, move_cut_me);
+    G4SubtractionSolid* vacuumBlockWithBgoCutOut = new G4SubtractionSolid("vacuumBlockWithBgoCutOut", vacuumBlockCut, bgoBlockToBeCutOut, rotateCutMe, moveCutMe);
 
-    return vacuum_block_with_bgo_cut_out;
+    return vacuumBlockWithBgoCutOut;
 }
 
-G4SubtractionSolid* DetectionSystemAncillaryBGO::AluminumCanPiece()
-{
-    G4double start_phi = 0.0*deg;
-    G4double end_phi = 120.0*deg;
+G4SubtractionSolid* DetectionSystemAncillaryBGO::AluminumCanPiece() {
+    G4double startPhi = 0.0*deg;
+    G4double endPhi = 120.0*deg;
 
-    G4double inner_radius = can_inner_radius;
-    G4double outer_radius = inner_radius+can_thickness+gap_thickness+bgo_thickness+gap_thickness_outer+can_thickness;
-    G4double half_length_z = (can_length)/2.0;
+    G4double innerRadius = fCanInnerRadius;
+    G4double outerRadius = innerRadius+fCanThickness+fGapThickness+fBgoThickness+fGapThicknessOuter+fCanThickness; //2*fCanThickness ???
+    G4double halfLengthZ = (fCanLength)/2.0;
 
-    G4Tubs* can_block = new G4Tubs("can_block", inner_radius, outer_radius, half_length_z, start_phi, end_phi);
+    G4Tubs* canBlock = new G4Tubs("canBlock", innerRadius, outerRadius, halfLengthZ, startPhi, endPhi);
 
     // turn the block to be symmetric about 0 degress so we can cut it.
-    can_block->SetStartPhiAngle(-60.0*deg,true);
-    can_block->SetDeltaPhiAngle(120.0*deg);
+    canBlock->SetStartPhiAngle(-60.0*deg,true);
+    canBlock->SetDeltaPhiAngle(120.0*deg);
 
     // grab the scissors, time to cut.
     // make the cut surface unnecessarily large.
-    G4double cut_half_length_z = 2.0*can_face_to_build_origin;
-    G4double cut_half_length_x = 2.0*can_face_to_build_origin;
-    G4double cut_half_length_y = 2.0*can_face_to_build_origin;
+    G4double cutHalfLengthZ = 2.0*fCanFaceToBuildOrigin;
+    G4double cutHalfLengthX = 2.0*fCanFaceToBuildOrigin;
+    G4double cutHalfLengthY = 2.0*fCanFaceToBuildOrigin;
 
-    G4Box* cut_plate = new G4Box("cut_plate", cut_half_length_x, cut_half_length_y, cut_half_length_z);
+    G4Box* cutPlate = new G4Box("cutPlate", cutHalfLengthX, cutHalfLengthY, cutHalfLengthZ);
 
     // move cutting box to the "build origin" (see technical drawings)
-    G4double move_cut_z = -1.0*(can_face_to_build_origin + can_length/2.0);
-    G4ThreeVector move_cut((cut_half_length_x)/(cos(chopping_outer_angle)),0,move_cut_z);
+    G4double moveCutZ = -1.0*(fCanFaceToBuildOrigin + fCanLength/2.0);
+    G4ThreeVector moveCut((cutHalfLengthX)/(cos(fChoppingOuterAngle)),0,moveCutZ);
 
     // rotate our cutting block to the "chopping" angle
-    G4RotationMatrix* rotate_cut = new G4RotationMatrix;
-    rotate_cut->rotateY(-1.0*chopping_outer_angle);
+    G4RotationMatrix* rotateCut = new G4RotationMatrix;
+    rotateCut->rotateY(-1.0*fChoppingOuterAngle);
 
     // snip snip
-    G4SubtractionSolid* can_block_cut = new G4SubtractionSolid("can_block_cut", can_block, cut_plate, rotate_cut, move_cut);
+    G4SubtractionSolid* canBlockCut = new G4SubtractionSolid("canBlockCut", canBlock, cutPlate, rotateCut, moveCut);
 
     // Now we have to do another cut on the can.
     // We need to remove the area where the vacuum and BGO sits
     // let's take this piece larger in phi to make sure we cut everything
-    start_phi = 0.0*deg;
-    end_phi = 140.0*deg;
+    startPhi = 0.0*deg;
+    endPhi = 140.0*deg;
 
-    inner_radius = can_inner_radius+can_thickness;
-    outer_radius = inner_radius+gap_thickness+bgo_thickness+gap_thickness_outer;
-    half_length_z = (can_length)/2.0;
+    innerRadius = fCanInnerRadius+fCanThickness;
+    outerRadius = innerRadius+fGapThickness+fBgoThickness+fGapThicknessOuter;
+    halfLengthZ = (fCanLength)/2.0;
 
-    G4Tubs* can_block_cut_vacuum = new G4Tubs("can_block_cut_vacuum", inner_radius, outer_radius, half_length_z, start_phi, end_phi);
+    G4Tubs* canBlockCutVacuum = new G4Tubs("canBlockCutVacuum", innerRadius, outerRadius, halfLengthZ, startPhi, endPhi);
 
     // turn the block to be symmetric about 0 degress so we can cut it.
-    can_block_cut_vacuum->SetStartPhiAngle(-70.0*deg,true);
-    can_block_cut_vacuum->SetDeltaPhiAngle(140.0*deg);
+    canBlockCutVacuum->SetStartPhiAngle(-70.0*deg,true);
+    canBlockCutVacuum->SetDeltaPhiAngle(140.0*deg);
 
     // grab the scissors, time to cut.
     // make the cut surface unnecessarily large.
-    cut_half_length_z = 2.0*can_face_to_build_origin;
-    cut_half_length_x = 2.0*can_face_to_build_origin;
-    cut_half_length_y = 2.0*can_face_to_build_origin;
+    cutHalfLengthZ = 2.0*fCanFaceToBuildOrigin;
+    cutHalfLengthX = 2.0*fCanFaceToBuildOrigin;
+    cutHalfLengthY = 2.0*fCanFaceToBuildOrigin;
 
-    G4Box* cut_plate3 = new G4Box("cut_plate3", cut_half_length_x, cut_half_length_y, cut_half_length_z);
+    G4Box* cutPlate3 = new G4Box("cutPlate3", cutHalfLengthX, cutHalfLengthY, cutHalfLengthZ);
 
     // move cutting box to the "build origin" (see technical drawings)
-    move_cut_z = -1.0*(can_face_to_build_origin + can_thickness_front + can_length/2.0);
-    G4ThreeVector move_cut3((cut_half_length_x-can_thickness)/(cos(chopping_outer_angle)),0,move_cut_z);
+    moveCutZ = -1.0*(fCanFaceToBuildOrigin + fCanThicknessFront + fCanLength/2.0);
+    G4ThreeVector moveCut3((cutHalfLengthX-fCanThickness)/(cos(fChoppingOuterAngle)),0,moveCutZ);
 
     // rotate our cutting block to the "chopping" angle
-    G4RotationMatrix* rotate_cut3 = new G4RotationMatrix;
-    rotate_cut3->rotateY(-1.0*chopping_outer_angle);
+    G4RotationMatrix* rotateCut3 = new G4RotationMatrix;
+    rotateCut3->rotateY(-1.0*fChoppingOuterAngle);
 
     // snip snip
-    G4SubtractionSolid* vacuum_block_to_be_cut_out = new G4SubtractionSolid("vacuum_block_to_be_cut_out", can_block_cut_vacuum, cut_plate3, rotate_cut3, move_cut3);
+    G4SubtractionSolid* vacuumBlockToBeCutOut = new G4SubtractionSolid("vacuumBlockToBeCutOut", canBlockCutVacuum, cutPlate3, rotateCut3, moveCut3);
 
     // now we can remove the vacuum/BGO area from inside the can
-    // move cut just along z-axis by the amount of the can_thickness_front (both vacuum and can blacks are same size)
-    G4ThreeVector move_cut_me(0,0,can_thickness_front);
+    // move cut just along z-axis by the amount of the canThicknessFront (both vacuum and can blacks are same size)
+    G4ThreeVector moveCutMe(0,0,fCanThicknessFront);
     // no rotation
-    G4RotationMatrix* rotate_cut_me = new G4RotationMatrix;
+    G4RotationMatrix* rotateCutMe = new G4RotationMatrix;
     // final snip snip
-    G4SubtractionSolid* can_block_with_vacuum_cut_out = new G4SubtractionSolid("can_block_cut", can_block_cut, vacuum_block_to_be_cut_out, rotate_cut_me, move_cut_me);
+    G4SubtractionSolid* canBlockWithVacuumCutOut = new G4SubtractionSolid("canBlockCut", canBlockCut, vacuumBlockToBeCutOut, rotateCutMe, moveCutMe);
 
-    return can_block_with_vacuum_cut_out;
+    return canBlockWithVacuumCutOut;
 }
 
 
-G4Tubs* DetectionSystemAncillaryBGO::AluminumCanBackCover()
-{
-    G4double start_phi = 0.0*deg;
-    G4double end_phi = 120.0*deg;
+G4Tubs* DetectionSystemAncillaryBGO::AluminumCanBackCover() {
+    G4double startPhi = 0.0*deg;
+    G4double endPhi = 120.0*deg;
 
-    G4double inner_radius = can_inner_radius+can_thickness;
-    G4double outer_radius = inner_radius+can_thickness+gap_thickness+bgo_thickness+gap_thickness_outer;
-    G4double half_length_z = (can_thickness)/2.0;
+    G4double innerRadius = fCanInnerRadius+fCanThickness;
+    G4double outerRadius = innerRadius+fCanThickness+fGapThickness+fBgoThickness+fGapThicknessOuter;
+    G4double halfLengthZ = (fCanThickness)/2.0;
 
-    G4Tubs* can_block = new G4Tubs("can_block", inner_radius, outer_radius, half_length_z, start_phi, end_phi);
+    G4Tubs* canBlock = new G4Tubs("canBlock", innerRadius, outerRadius, halfLengthZ, startPhi, endPhi);
 
     // turn the block to be symmetric about 0 degress
-    can_block->SetStartPhiAngle(-60.0*deg,true);
-    can_block->SetDeltaPhiAngle(120.0*deg);
+    canBlock->SetStartPhiAngle(-60.0*deg,true);
+    canBlock->SetDeltaPhiAngle(120.0*deg);
 
-    return can_block;
+    return canBlock;
 }
 
-G4SubtractionSolid* DetectionSystemAncillaryBGO::HevimetPiece() // this has been fix
-{
-    G4double start_phi = 0.0*deg;
-    G4double end_phi = 120.0*deg;
+G4SubtractionSolid* DetectionSystemAncillaryBGO::HevimetPiece() {// this has been fix 
+    G4double startPhi = 0.0*deg;
+    G4double endPhi = 120.0*deg;
 
-    G4double inner_radius = 0.0*mm;
-    G4double outer_radius = can_inner_radius+can_thickness+gap_thickness+bgo_thickness+gap_thickness_outer+can_thickness;
-    G4double half_length_z = (hevimet_thickness)/2.0;
+    G4double innerRadius = 0.0*mm;
+    G4double outerRadius = fCanInnerRadius+fCanThickness+fGapThickness+fBgoThickness+fGapThicknessOuter+fCanThickness; //2*fCanThickness ???
+    G4double halfLengthZ = (fHevimetThickness)/2.0;
 
-    G4Tubs* hevimet_block = new G4Tubs("hevimet_block", inner_radius, outer_radius, half_length_z, start_phi, end_phi);
+    G4Tubs* hevimetBlock = new G4Tubs("hevimetBlock", innerRadius, outerRadius, halfLengthZ, startPhi, endPhi);
 
     // turn the block to be symmetric about 0 degress so we can cut it.
-    hevimet_block->SetStartPhiAngle(-60.0*deg,true);
-    hevimet_block->SetDeltaPhiAngle(120.0*deg);
+    hevimetBlock->SetStartPhiAngle(-60.0*deg,true);
+    hevimetBlock->SetDeltaPhiAngle(120.0*deg);
 
     // grab the scissors, time to cut.
     // make the cut surface unnecessarily large.
-    G4double cut_half_length_z = 2.0*can_face_to_build_origin;
-    G4double cut_half_length_x = 2.0*can_face_to_build_origin;
-    G4double cut_half_length_y = 2.0*can_face_to_build_origin;
+    G4double cutHalfLengthZ = 2.0*fCanFaceToBuildOrigin;
+    G4double cutHalfLengthX = 2.0*fCanFaceToBuildOrigin;
+    G4double cutHalfLengthY = 2.0*fCanFaceToBuildOrigin;
 
-    G4Box* cut_plate = new G4Box("cut_plate", cut_half_length_x, cut_half_length_y, cut_half_length_z);
+    G4Box* cutPlate = new G4Box("cutPlate", cutHalfLengthX, cutHalfLengthY, cutHalfLengthZ);
 
     // move cutting box to the "build origin" (see technical drawings)
-    G4double move_cut_z = -1.0*(can_face_to_build_origin)+hevimet_thickness/2.0;
-    G4ThreeVector move_cut((cut_half_length_x)/(cos(chopping_outer_angle)),0,move_cut_z);
+    G4double moveCutZ = -1.0*(fCanFaceToBuildOrigin)+fHevimetThickness/2.0;
+    G4ThreeVector moveCut((cutHalfLengthX)/(cos(fChoppingOuterAngle)),0,moveCutZ);
 
     // rotate our cutting block to the "chopping" angle
-    G4RotationMatrix* rotate_cut = new G4RotationMatrix;
-    rotate_cut->rotateY(-1.0*chopping_outer_angle);
+    G4RotationMatrix* rotateCut = new G4RotationMatrix;
+    rotateCut->rotateY(-1.0*fChoppingOuterAngle);
 
     // snip snip
-    G4SubtractionSolid* hevimet_block_cut = new G4SubtractionSolid("hevimet_block_cut", hevimet_block, cut_plate, rotate_cut, move_cut);
+    G4SubtractionSolid* hevimetBlockCut = new G4SubtractionSolid("hevimetBlockCut", hevimetBlock, cutPlate, rotateCut, moveCut);
 
 
     // Now we need to cone in the middle.
-    G4double cone_inner_radius = 0.0*mm;
-    G4double cone_lower_outer_radius = 0.0*mm;
-    G4double cone_upper_outer_radius = tan(chopping_inner_angle)*(can_face_to_build_origin+hevimet_thickness);
-    G4double cone_half_length_z = (can_face_to_build_origin+hevimet_thickness)/2.0;
+    G4double coneInnerRadius = 0.0*mm;
+    G4double coneLowerOuterRadius = 0.0*mm;
+    G4double coneUpperOuterRadius = tan(fChoppingInnerAngle)*(fCanFaceToBuildOrigin+fHevimetThickness);
+    G4double coneHalfLengthZ = (fCanFaceToBuildOrigin+fHevimetThickness)/2.0;
 
-    G4Cons* hevimet_cut_cone = new G4Cons("hevimet_cut_cone", cone_inner_radius, cone_lower_outer_radius, cone_inner_radius, cone_upper_outer_radius, cone_half_length_z, 0.0*deg, 360.0*deg);
+    G4Cons* hevimetCutCone = new G4Cons("hevimetCutCone", coneInnerRadius, coneLowerOuterRadius, coneInnerRadius, coneUpperOuterRadius, coneHalfLengthZ, 0.0*deg, 360.0*deg);
 
     // now we can remove the inner radius from the Hevimet
-    // move cut just along z-axis by the amount of the can_thickness_front (both vacuum and can blacks are same size)
-    G4ThreeVector move_cut_me(0,0,-1.0*(can_face_to_build_origin)/2.0+hevimet_thickness/2.0);
+    // move cut just along z-axis by the amount of the canThicknessFront (both vacuum and can blacks are same size)
+    G4ThreeVector moveCutMe(0,0,-1.0*(fCanFaceToBuildOrigin)/2.0+fHevimetThickness/2.0);
     // no rotation
-    G4RotationMatrix* rotate_cut_me = new G4RotationMatrix;
+    G4RotationMatrix* rotateCutMe = new G4RotationMatrix;
     // final snip snip
-    G4SubtractionSolid* hevimet_block_cut_with_cone_cut = new G4SubtractionSolid("hevimet_block_cut_with_cone_cut", hevimet_block_cut, hevimet_cut_cone, rotate_cut_me, move_cut_me);
+    G4SubtractionSolid* hevimetBlockCutWithConeCut = new G4SubtractionSolid("hevimetBlockCutWithConeCut", hevimetBlockCut, hevimetCutCone, rotateCutMe, moveCutMe);
 
 
-    return hevimet_block_cut_with_cone_cut;
+    return hevimetBlockCutWithConeCut;
 }
 
 
 //Calculate a direction vector from spherical theta & phi components
-G4ThreeVector DetectionSystemAncillaryBGO::GetDirectionXYZ(G4double theta, G4double phi)
-{
+G4ThreeVector DetectionSystemAncillaryBGO::GetDirectionXYZ(G4double theta, G4double phi) {
     G4double x,y,z;
     x = sin(theta) * cos(phi);
     y = sin(theta) * sin(phi);
@@ -658,15 +638,3 @@ G4ThreeVector DetectionSystemAncillaryBGO::GetDirectionXYZ(G4double theta, G4dou
 
     return direction;
 }//end ::GetDirection
-
-G4double DetectionSystemAncillaryBGO::transX(G4double x, G4double y, G4double z, G4double theta, G4double phi){
-    return ( pow(x*x+y*y+z*z,0.5)*sin(theta)*cos(phi) );
-}
-
-G4double DetectionSystemAncillaryBGO::transY(G4double x, G4double y, G4double z, G4double theta, G4double phi){
-    return ( pow(x*x+y*y+z*z,0.5)*sin(theta)*sin(phi) );
-}
-
-G4double DetectionSystemAncillaryBGO::transZ(G4double x, G4double y, G4double z, G4double theta, G4double phi){
-    return ( pow(x*x+y*y+z*z,0.5)*cos(theta) );
-}

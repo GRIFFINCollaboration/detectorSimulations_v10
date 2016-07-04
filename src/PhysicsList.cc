@@ -87,7 +87,7 @@ PhysicsList::PhysicsList() :
     fHadPhysicsList(0),
     fNhadcomp(0),
     fPMessenger(0),fDetectorCuts(0), fTargetCuts(0),
-    scintProcess(0)
+    fScintProcess(0)
 {
     G4LossTableManager::Instance();
     defaultCutValue =0.1*mm;
@@ -106,9 +106,9 @@ PhysicsList::PhysicsList() :
     fEmPhysicsList = new G4EmStandardPhysics();
 
     // Scintillation phyics
-    scintProcess = new G4Scintillation();
-    scintProcess->SetScintillationYieldFactor(1.);
-    scintProcess->SetTrackSecondariesFirst(true);
+    fScintProcess = new G4Scintillation();
+    fScintProcess->SetScintillationYieldFactor(1.);
+    fScintProcess->SetTrackSecondariesFirst(true);
 
 }
 
@@ -223,7 +223,7 @@ void PhysicsList::ConstructOp(G4bool constructOp)
         {
             G4EmSaturation* emSaturation =
             G4LossTableManager::Instance()->EmSaturation();
-            scintProcess->AddSaturation(emSaturation);
+            fScintProcess->AddSaturation(emSaturation);
         }
 
         theParticleIterator->reset();

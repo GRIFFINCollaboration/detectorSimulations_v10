@@ -36,12 +36,12 @@
 #define DetectionSystemDescant_h 1
 
 #include "G4SystemOfUnits.hh" // new version geant4.10 requires units
-//#include "G4IntersectionSolid.hh"
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 #include "G4SubtractionSolid.hh"
 
 class G4AssemblyVolume;
+
 class DetectionSystemDescant
 {
 public:
@@ -49,134 +49,130 @@ public:
     ~DetectionSystemDescant();
 
     G4int Build();
-    G4int PlaceDetector(G4LogicalVolume* exp_hall_log, G4int detector_number);
-    G4int PlaceDetectorAuxPorts(G4LogicalVolume* exp_hall_log, G4int detector_number, G4double radialpos);
+    G4int PlaceDetector(G4LogicalVolume* expHallLog, G4int detectorNumber);
+    G4int PlaceDetectorAuxPorts(G4LogicalVolume* expHallLog, G4int detectorNumber, G4double radialpos);
 
-    G4int PlaceDetector(G4LogicalVolume* exp_hall_log, G4String color, G4ThreeVector pos, G4ThreeVector rot);
+    G4int PlaceDetector(G4LogicalVolume* expHallLog, G4String color, G4ThreeVector pos, G4ThreeVector rot);
   
 private:
     // Logical volumes
-    G4LogicalVolume* blue_volume_log;
-    G4LogicalVolume* green_volume_log;
-    G4LogicalVolume* red_volume_log;
-    G4LogicalVolume* white_volume_log;
-    G4LogicalVolume* yellow_volume_log;
+    G4LogicalVolume* fBlueVolumeLog;
+    G4LogicalVolume* fGreenVolumeLog;
+    G4LogicalVolume* fRedVolumeLog;
+    G4LogicalVolume* fWhiteVolumeLog;
+    G4LogicalVolume* fYellowVolumeLog;
 
-    G4LogicalVolume* blue_scintillator_volume_log;
-    G4LogicalVolume* green_scintillator_volume_log;
-    G4LogicalVolume* red_scintillator_volume_log;
-    G4LogicalVolume* white_scintillator_volume_log;
-    G4LogicalVolume* yellow_scintillator_volume_log;
+    G4LogicalVolume* fBlueScintillatorVolumeLog;
+    G4LogicalVolume* fGreenScintillatorVolumeLog;
+    G4LogicalVolume* fRedScintillatorVolumeLog;
+    G4LogicalVolume* fWhiteScintillatorVolumeLog;
+    G4LogicalVolume* fYellowScintillatorVolumeLog;
 
-    G4LogicalVolume* blue_lead_volume_log;
-    G4LogicalVolume* green_lead_volume_log;
-    G4LogicalVolume* red_lead_volume_log;
-    G4LogicalVolume* white_lead_volume_log;
-    G4LogicalVolume* yellow_lead_volume_log;
+    G4LogicalVolume* fBlueLeadVolumeLog;
+    G4LogicalVolume* fGreenLeadVolumeLog;
+    G4LogicalVolume* fRedLeadVolumeLog;
+    G4LogicalVolume* fWhiteLeadVolumeLog;
+    G4LogicalVolume* fYellowLeadVolumeLog;
     
-    G4LogicalVolume* quartz_window_5inch_log;
-    G4LogicalVolume* quartz_window_3inch_log;   
+    G4LogicalVolume* fQuartzWindow5inchLog;
+    G4LogicalVolume* fQuartzWindow3inchLog;   
 
     // Assembly volumes
-    G4AssemblyVolume* assemblyBlue;                 // Contains all non-sensitive materials
-    G4AssemblyVolume* assemblyBlueScintillator;     // Contains all only sensitive materials, eg. the scintillation material
-    G4AssemblyVolume* assemblyGreen;
-    G4AssemblyVolume* assemblyGreenScintillator;
-    G4AssemblyVolume* assemblyRed;
-    G4AssemblyVolume* assemblyRedScintillator;
-    G4AssemblyVolume* assemblyWhite;
-    G4AssemblyVolume* assemblyWhiteScintillator;
-    G4AssemblyVolume* assemblyYellow;
-    G4AssemblyVolume* assemblyYellowScintillator;
+    G4AssemblyVolume* fAssemblyBlue;                 // Contains all non-sensitive materials
+    G4AssemblyVolume* fAssemblyBlueScintillator;     // Contains all only sensitive materials, eg. the scintillation material
+    G4AssemblyVolume* fAssemblyGreen;
+    G4AssemblyVolume* fAssemblyGreenScintillator;
+    G4AssemblyVolume* fAssemblyRed;
+    G4AssemblyVolume* fAssemblyRedScintillator;
+    G4AssemblyVolume* fAssemblyWhite;
+    G4AssemblyVolume* fAssemblyWhiteScintillator;
+    G4AssemblyVolume* fAssemblyYellow;
+    G4AssemblyVolume* fAssemblyYellowScintillator;
 
-    G4double can_length;
-    G4double can_thickness;
-    G4double can_thickness_front;
-    G4double can_inner_radius;
-    G4double lead_shield_thickness;
-    G4double radial_distance;
-    G4String can_material;
-    G4String liquid_material;
-    G4String lead_material;
-    G4bool   includeLead;
+    G4double fCanLength;
+    G4double fCanThickness;
+    G4double fCanThicknessFront;
+    G4double fCanInnerRadius;
+    G4double fLeadShieldThickness;
+    G4double fRadialDistance;
+    G4String fCanMaterial;
+    G4String fLiquidMaterial;
+    G4String fLeadMaterial;
+    G4bool   fIncludeLead;
 
 
 
-    G4double can_back_thickness;
+    G4double fCanBackThickness;
 
 
 
     // for making PMT cuts
-    G4double start_phi;
-    G4double end_phi;
-    G4double inner_radius_window;
-    G4double outer_radius_window_5inch;
-    G4double outer_radius_window_3inch;
-    G4double half_length_z_window_cut;
-    G4double white_PMT_offset_Y;
-    G4double blue_PMT_offset_X;
-    G4double red_PMT_offset_X;
-    G4double yellow_green_PMT_offset_X;
-    G4double yellow_green_PMT_offset_Y;
-    G4String quartz_material;
-    G4double optical_window_half_thickness;
+    G4double fStartPhi;
+    G4double fEndPhi;
+    G4double fInnerRadiusWindow;
+    G4double fOuterRadiusWindow5inch;
+    G4double fOuterRadiusWindow3inch;
+    G4double fHalfLengthZWindowCut;
+    G4double fWhitePMTOffsetY;
+    G4double fBluePMTOffsetX;
+    G4double fRedPMTOffsetX;
+    G4double fYellowGreenPMTOffsetX;
+    G4double fYellowGreenPMTOffsetY;
+    G4String fQuartzMaterial;
+    G4double fOpticalWindowHalfThickness;
 
     // Saint Gobain data files, 6 points around the front face of the can, and 6 on the back
     // from Dan Brennan
-    G4double blue_detector[12][3];
-    G4double green_detector[12][3];
-    G4double red_detector[12][3];
-    G4double white_detector[12][3];
-    G4double yellow_detector[12][3];
+    G4double fBlueDetector[12][3];
+    G4double fGreenDetector[12][3];
+    G4double fRedDetector[12][3];
+    G4double fWhiteDetector[12][3];
+    G4double fYellowDetector[12][3];
 
-    G4double trim_green_y;
-    G4double trim_yellow_y;
-    G4double trim_blue_x;
+    G4double fTrimGreenY;
+    G4double fTrimYellowY;
+    G4double fTrimBlueX;
 
     // These are the angles of the cuts for each of the 6 sides of the detectors
-    G4double blue_phi[6];
-    G4double green_phi[6];
-    G4double red_phi[6];
-    G4double white_phi[6];
-    G4double yellow_phi[6];
+    G4double fBluePhi[6];
+    G4double fGreenPhi[6];
+    G4double fRedPhi[6];
+    G4double fWhitePhi[6];
+    G4double fYellowPhi[6];
 
     // The Euler angles from James' MSc thesis which gives us the detector positions
     // Some of the angles for the green and yellow detectors are wrong in James' thesis,
     // note the +180 on a few angles.
-    G4double blue_alpha_beta_gamma[15][3];
-    G4double green_alpha_beta_gamma[10][3];
-    G4double red_alpha_beta_gamma[15][3];
-    G4double white_alpha_beta_gamma[20][3];
-    G4double yellow_alpha_beta_gamma[10][3];
+    G4double fBlueAlphaBetaGamma[15][3];
+    G4double fGreenAlphaBetaGamma[10][3];
+    G4double fRedAlphaBetaGamma[15][3];
+    G4double fWhiteAlphaBetaGamma[20][3];
+    G4double fYellowAlphaBetaGamma[10][3];
 
     // for LaBr3 detector locations
-    G4double detectorAngles[8][5];
-    G4double set_radial_pos;
+    G4double fDetectorAngles[8][5];
+    G4double fSetRadialPos;
 
     // The colours of the detectors
-    G4Colour blue_colour;
-    G4Colour green_colour;
-    G4Colour red_colour;
-    G4Colour white_colour;
-    G4Colour yellow_colour;
-    G4Colour liquid_colour; // Scintillator colour
-    G4Colour grey_colour;   // stainless steel pmt tube colour
-    G4Colour magenta_colour;  // optical window colour
-    G4Colour black_colour;
+    G4Colour fBlueColour;
+    G4Colour fGreenColour;
+    G4Colour fRedColour;
+    G4Colour fWhiteColour;
+    G4Colour fYellowColour;
+    G4Colour fLiquidColour; // Scintillator colour
+    G4Colour fGreyColour;   // stainless steel pmt tube colour
+    G4Colour fMagentaColour;  // optical window colour
+    G4Colour fBlackColour;
 
-    G4bool surfCheck;
+    G4bool fSurfCheck;
 
     G4int BuildCanVolume();
     G4int BuildDetectorVolume();
 
-    G4SubtractionSolid* CanVolume(G4bool insideVol, G4double volume_length, G4double detector[12][3], G4double detector_phi[6]);
-    G4SubtractionSolid* CutVolumeOnFourPoints(G4int idx, G4bool insideVol, G4double volume_length, G4double detector_phi[6], G4SubtractionSolid* volume, G4ThreeVector front_p1, G4ThreeVector front_p2, G4ThreeVector back_p1, G4ThreeVector back_p2);
+    G4SubtractionSolid* CanVolume(G4bool insideVol, G4double volumeLength, G4double detector[12][3], G4double detectorPhi[6]);
+    G4SubtractionSolid* CutVolumeOnFourPoints(G4int idx, G4bool insideVol, G4double volumeLength, G4double detectorPhi[6], G4SubtractionSolid* volume, G4ThreeVector frontP1, G4ThreeVector frontP2);
 
     G4ThreeVector GetDirectionXYZ(G4double theta, G4double phi);
-
-    G4double transX(G4double x, G4double y, G4double z, G4double theta, G4double phi);
-    G4double transY(G4double x, G4double y, G4double z, G4double theta, G4double phi);
-    G4double transZ(G4double x, G4double y, G4double z, G4double theta, G4double phi);
 
     G4ThreeVector SolveLineEquationX(G4ThreeVector p1, G4ThreeVector p2, G4double x);
     G4ThreeVector SolveLineEquationY(G4ThreeVector p1, G4ThreeVector p2, G4double y);

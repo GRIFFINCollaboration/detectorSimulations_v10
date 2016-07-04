@@ -45,85 +45,85 @@ public:
     ~DetectionSystemPaces();
 
     // Assembly volumes
-    G4AssemblyVolume* assembly;
-    G4AssemblyVolume* assemblyDetector;
-    G4AssemblyVolume* assemblySilicon;
+    G4AssemblyVolume* fAssembly;
+    G4AssemblyVolume* fAssemblyDetector;
+    G4AssemblyVolume* fAssemblySilicon;
 
 private:
     // Logical volumes
-    G4LogicalVolume* aluminum_hemisphere_log;
-    G4LogicalVolume* aluminum_annulus_top_log;
-    G4LogicalVolume* aluminum_annulus_bot_log;
-    G4LogicalVolume* canister_log;
-    G4LogicalVolume* silicon_block_log;
-    G4LogicalVolume* silicon_dead_layer_log;
-    //G4LogicalVolume* screw_log;
-    G4LogicalVolume* teflon_annulus_top_log;
-    G4LogicalVolume* teflon_annulus_bot_log;
-    G4LogicalVolume* delrin_hemisphere_log;
+    G4LogicalVolume* fAluminumHemisphereLog;
+    G4LogicalVolume* fAluminumAnnulusTopLog;
+    G4LogicalVolume* fAluminumAnnulusBotLog;
+    G4LogicalVolume* fCanisterLog;
+    G4LogicalVolume* fSiliconBlockLog;
+    G4LogicalVolume* fSiliconDeadLayerLog;
+    //G4LogicalVolume* screwLog;
+    G4LogicalVolume* fTeflonAnnulusTopLog;
+    G4LogicalVolume* fTeflonAnnulusBotLog;
+    G4LogicalVolume* fDelrinHemisphereLog;
 
-    //SensitiveDetector* silicon_block_SD;
+    //SensitiveDetector* siliconBlockSD;
 
 public:
-    G4double cut_clearance;
+    G4double fCutClearance;
 
     // Solid parameters
-    G4double aluminum_hemisphere_inner_radius;
-    G4double aluminum_hemisphere_outer_radius;
-    G4double aluminum_hemisphere_beam_hole_radius;
-    G4double aluminum_hemisphere_beam_hole_rim_height;
-    G4double aluminum_annulus_top_inner_radius;
-    G4double aluminum_annulus_top_outer_radius;
-    G4double aluminum_annulus_top_thickness;
-    G4double aluminum_annulus_bot_inner_radius;
-    G4double aluminum_annulus_bot_outer_radius;
-    G4double aluminum_annulus_bot_thickness;
-    G4double canister_inner_radius;
-    G4double canister_outer_radius;
-    G4double canister_thickness;
-    G4double silicon_block_radius;
-    G4double silicon_block_thickness;
-    G4double silicon_dead_layer_thickness;
-    G4double screw_radius;
-    G4double screw_placement_radius;
-    //G4double screw_length;
-    G4double teflon_annulus_top_inner_radius;
-    G4double teflon_annulus_top_outer_radius;
-    G4double teflon_annulus_top_thickness;
-    G4double teflon_annulus_bot_inner_radius;
-    G4double teflon_annulus_bot_outer_radius;
-    G4double teflon_annulus_bot_thickness;
-    G4double delrin_hemisphere_inner_radius;
-    G4double delrin_hemisphere_outer_radius;
-    G4double delrin_hemisphere_beam_hole_radius;
+    G4double fAluminumHemisphereInnerRadius;
+    G4double fAluminumHemisphereOuterRadius;
+    G4double fAluminumHemisphereBeamHoleRadius;
+    G4double fAluminumHemisphereBeamHoleRimHeight;
+    G4double fAluminumAnnulusTopInnerRadius;
+    G4double fAluminumAnnulusTopOuterRadius;
+    G4double fAluminumAnnulusTopThickness;
+    G4double fAluminumAnnulusBotInnerRadius;
+    G4double fAluminumAnnulusBotOuterRadius;
+    G4double fAluminumAnnulusBotThickness;
+    G4double fCanisterInnerRadius;
+    G4double fCanisterOuterRadius;
+    G4double fCanisterThickness;
+    G4double fSiliconBlockRadius;
+    G4double fSiliconBlockThickness;
+    G4double fSiliconDeadLayerThickness;
+    G4double fScrewRadius;
+    G4double fScrewPlacementRadius;
+    //G4double screwLength;
+    G4double fTeflonAnnulusTopInnerRadius;
+    G4double fTeflonAnnulusTopOuterRadius;
+    G4double fTeflonAnnulusTopThickness;
+    G4double fTeflonAnnulusBotInnerRadius;
+    G4double fTeflonAnnulusBotOuterRadius;
+    G4double fTeflonAnnulusBotThickness;
+    G4double fDelrinHemisphereInnerRadius;
+    G4double fDelrinHemisphereOuterRadius;
+    G4double fDelrinHemisphereBeamHoleRadius;
 
-    G4double aluminum_hemisphere_dist;
-    G4double delrin_hemisphere_dist;
+    G4double fAluminumHemisphereDist;
+    G4double fDelrinHemisphereDist;
 
     // distances from FRONT of detector facing the source, for assembly
-    G4double aluminum_annulus_top_dist; // will be half the annulus thickness
-    G4double aluminum_annulus_bot_dist;
-    G4double canister_dist;
-    G4double silicon_block_dist;
-    G4double silicon_dead_layer_front_dist;
-    G4double silicon_dead_layer_back_dist;
-    G4double teflon_annulus_top_dist;
-    G4double teflon_annulus_bot_dist;
+    G4double fAluminumAnnulusTopDist; // will be half the annulus thickness
+    G4double fAluminumAnnulusBotDist;
+    G4double fCanisterDist;
+    G4double fSiliconBlockDist;
+    G4double fSiliconDeadLayerFrontDist;
+    G4double fSiliconDeadLayerBackDist;
+    G4double fTeflonAnnulusTopDist;
+    G4double fTeflonAnnulusBotDist;
 
     // detector placement and orientation scalars
-    G4double paces_placement_distance[5];
-    G4double paces_placement_theta[5];
-    G4double paces_placement_phi[5];
-    G4double paces_orientation_theta[5];
-    G4double paces_orientation_phi[5];
+    G4double fPacesPlacementDistance[5];
+    G4double fPacesPlacementTheta[5];
+    G4double fPacesPlacementPhi[5];
+    G4double fPacesOrientationTheta[5];
+    G4double fPacesOrientationPhi[5];
 
     // assembly volume sizes
-    G4double detector_assembly_radius;
-    G4double detector_assembly_thickness;
+    G4double fDetectorAssemblyRadius;
+    G4double fDetectorAssemblyThickness;
 
 public:
     G4int Build();//G4SDManager* mySDman);
-    G4int PlaceDetector(G4LogicalVolume* exp_hall_log, G4int ndet);
+    G4int PlaceDetector(G4LogicalVolume* expHallLog, G4int ndet);
 
 private:
     // Construction methods

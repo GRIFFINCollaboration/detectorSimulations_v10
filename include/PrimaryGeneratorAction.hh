@@ -58,36 +58,32 @@ public:
 
     virtual void GeneratePrimaries(G4Event*);
 
-    void SetNumberOfDecayingLaBrDetectors( G4int num ) {numberOfDecayingLaBrDetectors = num;} ;
-    void SetEfficiencyEnergy( G4double num ) {effEnergy = num;} ;
-    void SetEfficiencyDirection( G4ThreeVector num ) {effDirection = num; effDirectionBool = true;} ;
-    void SetEfficiencyPosition( G4ThreeVector num ) {effPosition = num; effPositionBool = true;} ;
-    void SetEfficiencyParticle( G4String val ) {effParticle = val; effParticleBool = true;} ;
-    void SetEfficiencyPolarization( G4ThreeVector num ) {effPolarizationVector = num; effPolarization = true;} ;
-    void SetEfficiencyBeamRadius( G4double num ) {effBeamRadius = num; effBeam = true;} ;
+    void SetNumberOfDecayingLaBrDetectors( G4int num ) {fNumberOfDecayingLaBrDetectors = num;} ;
+    void SetEfficiencyEnergy( G4double num ) {fEffEnergy = num;} ;
+    void SetEfficiencyDirection( G4ThreeVector num ) {fEffDirection = num; fEffDirectionBool = true;} ;
+    void SetEfficiencyPosition( G4ThreeVector num ) {fEffPosition = num; fEffPositionBool = true;} ;
+    void SetEfficiencyParticle( G4String val ) {fEffParticle = val; fEffParticleBool = true;} ;
+    void SetEfficiencyPolarization( G4ThreeVector num ) {fEffPolarizationVector = num; fEffPolarization = true;} ;
+    void SetEfficiencyBeamRadius( G4double num ) {fEffBeamRadius = num; fEffBeam = true;} ;
 
 private:
     G4ParticleGun*                fParticleGun;  //pointer a to G4 class
     DetectorConstruction*         fDetector;     //pointer to the geometry
     PrimaryGeneratorMessenger*    fGunMessenger; //messenger of this class
 
-    G4int numberOfDecayingLaBrDetectors;
-    G4double effEnergy;
-    G4ThreeVector effDirection;
-    G4ThreeVector effPosition;
-    G4bool effDirectionBool;
-    G4bool effPositionBool;
-    G4String effParticle;
-    G4bool effParticleBool;
-    G4double detectorAnglesLaBr3[8][5];
-    G4bool effPolarization;
-    G4ThreeVector effPolarizationVector;
-    G4bool effBeam;
-    G4double effBeamRadius;
-
-    G4double transX(G4double x, G4double y, G4double z, G4double theta, G4double phi);
-    G4double transY(G4double x, G4double y, G4double z, G4double theta, G4double phi);
-    G4double transZ(G4double x, G4double y, G4double z, G4double theta, G4double phi);
+    G4int fNumberOfDecayingLaBrDetectors;
+    G4double fEffEnergy;
+    G4ThreeVector fEffDirection;
+    G4ThreeVector fEffPosition;
+    G4bool fEffDirectionBool;
+    G4bool fEffPositionBool;
+    G4String fEffParticle;
+    G4bool fEffParticleBool;
+    G4double fDetectorAnglesLaBr3[8][5];
+    G4bool fEffPolarization;
+    G4ThreeVector fEffPolarizationVector;
+    G4bool fEffBeam;
+    G4double fEffBeamRadius;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
