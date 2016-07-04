@@ -38,7 +38,7 @@
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 
-#define AL_COL 0.5,0.5,0.5
+#define ALCOL 0.5,0.5,0.5
 
 class DetectionSystemSpice
 {
@@ -50,23 +50,23 @@ public:
     // logical and physical volumes
     //------------------------------------------------//
 private:
-    G4AssemblyVolume* assembly;
-    G4AssemblyVolume* assemblySiRing[10];
+    G4AssemblyVolume* fAssembly;
+    G4AssemblyVolume* fAssemblySiRing[10];
 
 
 public:
     G4int Build();
-    G4int PlaceDetector(G4LogicalVolume* exp_hall_log, G4ThreeVector move,
+    G4int PlaceDetector(G4LogicalVolume* expHallLog, G4ThreeVector move,
                         G4int ringNumber, G4int nRadSeg, G4int detectorNumber);
-    G4int PlaceGuardRing(G4LogicalVolume* exp_hall_log, G4ThreeVector move);
+    G4int PlaceGuardRing(G4LogicalVolume* expHallLog, G4ThreeVector move);
 
 
 private:
     G4ThreeVector GetDirectionXYZ(G4double theta, G4double phi);
 
-    G4LogicalVolume* siInnerGuardRing_log;
-    G4LogicalVolume* siOuterGuardRing_log;
-    G4LogicalVolume* siDetSpiceRing_log[10];
+    G4LogicalVolume* fSiInnerGuardRingLog;
+    G4LogicalVolume* fSiOuterGuardRingLog;
+    G4LogicalVolume* fSiDetSpiceRingLog[10];
 
 
     //--------------------------------------------------------//
@@ -74,25 +74,25 @@ private:
     // OBS: crystal properties are public, others are private
     //--------------------------------------------------------//
 private:
-    G4String 	wafer_material;
+    G4String 	fWaferMaterial;
 
     //-----------------------------//
     // parameters for the annular  //
     // planar detector crystal     //
     //-----------------------------//
 public:
-    G4double 	siDetCrystalThickness;
-    G4double 	siDetCrystalOuterDiameter;
-    G4double 	siDetCrystalInnerDiameter;
-    G4double 	siDetRadialSegments;
-    G4double 	siDetPhiSegments;
+    G4double 	fSiDetCrystalThickness;
+    G4double 	fSiDetCrystalOuterDiameter;
+    G4double 	fSiDetCrystalInnerDiameter;
+    G4double 	fSiDetRadialSegments;
+    G4double 	fSiDetPhiSegments;
 
     //-------------------------------//
     // parameters for the guard ring //
     //-------------------------------//
 private:
-    G4double 	siDetGuardRingInnerDiameter;
-    G4double 	siDetGuardRingOuterDiameter;
+    G4double 	fSiDetGuardRingInnerDiameter;
+    G4double 	fSiDetGuardRingOuterDiameter;
 
     //------------------------------------------------//
     // internal methods in Build()
@@ -106,7 +106,7 @@ private:
 
     // Applying Resolution to SPICE detector
 public:
-    static double SpiceResolution[2];
+    static double fSpiceResolution[2];
     G4int AssignSpiceResolution(G4double intercept, G4double gradient);
     G4double ApplySpiceResolution(G4double energy);
 

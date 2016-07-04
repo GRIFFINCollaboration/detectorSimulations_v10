@@ -44,47 +44,47 @@ class FieldSetup;
 class DetectionSystemGrid
 {
 public:
-    DetectionSystemGrid(G4double x_length_in, G4double y_length_in, G4double z_length_in, G4double grid_size_in, G4String grid_mat, G4ThreeVector grid_colour, G4ThreeVector pos_offset);
+    DetectionSystemGrid(G4double xLengthIn, G4double yLengthIn, G4double zLengthIn, G4double gridSizeIn, G4String gridMat, G4ThreeVector gridColour, G4ThreeVector posOffset);
     ~DetectionSystemGrid();
 
     //    G4int Build(G4SDManager* mySDman);
     G4int Build();
-    G4int PlaceDetector(G4LogicalVolume* exp_hall_log);
+    G4int PlaceDetector(G4LogicalVolume* expHallLog);
 
 private:
     // Logical volumes
-    G4LogicalVolume* gridcell_log;
+    G4LogicalVolume* fGridcellLog;
 
     // Assembly volumes
-    G4AssemblyVolume* assembly;
+    G4AssemblyVolume* fAssembly;
 
-    //    SensitiveDetector* crystal_block_SD;
+    //    SensitiveDetector* crystalBlockSD;
 
     FieldSetup* fEmFieldSetup;
 
-    G4double x_length;
-    G4double y_length;
-    G4double z_length;
+    G4double fXLength;
+    G4double fYLength;
+    G4double fZLength;
 
-    G4double x_pos_offset;
-    G4double y_pos_offset;
-    G4double z_pos_offset;
+    G4double fXPosOffset;
+    G4double fYPosOffset;
+    G4double fZPosOffset;
 
-    G4double cube_size;
+    G4double fCubeSize;
 
-    G4int cells_x_row;
-    G4int cells_y_row;
-    G4int cells_z_row;
+    G4int fCellsXRow;
+    G4int fCellsYRow;
+    G4int fCellsZRow;
 
 
-    G4int copy_number;
-    G4int number_of_cells;
-    G4int cells_per_row;
-    G4double cell_width;
+    G4int fCopyNumber;
+    G4int fNumberOfCells;
+    G4int fCellsPerRow;
+    G4double fCellWidth;
 
-    G4String cell_material;
+    G4String fCellMaterial;
 
-    G4ThreeVector cell_colour;
+    G4ThreeVector fCellColour;
 
     G4Box* BuildCell();
 

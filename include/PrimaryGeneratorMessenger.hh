@@ -61,15 +61,15 @@ public:
     void SetNewValue(G4UIcommand*, G4String);
 
 private:
-    PrimaryGeneratorAction*        Action;
+    PrimaryGeneratorAction*        fAction;
 
-    G4UIcmdWithAnInteger*          numberOfDecayingLaBrDetectorsCmd;
-    G4UIcmdWithADoubleAndUnit*     efficiencyEnergyCmd;
-    G4UIcmdWith3Vector*            efficiencyDirectionCmd;
-    G4UIcmdWith3VectorAndUnit*     efficiencyPositionCmd;
-    G4UIcmdWithAString*            efficiencyParticleCmd;
-    G4UIcmdWith3Vector*            efficiencyPolarizationCmd;
-    G4UIcmdWithADoubleAndUnit*     efficiencyBeamRadiusCmd;
+    G4UIcmdWithAnInteger*          fNumberOfDecayingLaBrDetectorsCmd;
+    G4UIcmdWithADoubleAndUnit*     fEfficiencyEnergyCmd;
+    G4UIcmdWith3Vector*            fEfficiencyDirectionCmd;
+    G4UIcmdWith3VectorAndUnit*     fEfficiencyPositionCmd;
+    G4UIcmdWithAString*            fEfficiencyParticleCmd;
+    G4UIcmdWith3Vector*            fEfficiencyPolarizationCmd;
+    G4UIcmdWithADoubleAndUnit*     fEfficiencyBeamRadiusCmd;
 
 };
 

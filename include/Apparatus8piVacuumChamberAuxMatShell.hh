@@ -52,27 +52,25 @@ public:
     void Build(G4LogicalVolume*, G4double);
 
 private:
-    G4LogicalVolume* expHallLog;
-
+    G4LogicalVolume* fExpHallLog;
 
     // LogicalVolumes used in Apparatus8piVacuumChamberAuxMatShell()
 
-    G4LogicalVolume* vacuum_chamber_aux_sphere_log;
+    G4LogicalVolume* fVacuumChamberAuxSphereLog;
 
     // Physical Volumes used in Apparatus8piVacuumChamberAuxMatShell()
 
-    G4VPhysicalVolume* vacuum_chamber_sphere_phys;
+    G4VPhysicalVolume* fVacuumChamberSpherePhys;
 
     ///////////////////////////////////////////////////////////////////
     // Apparatus8piVacuumChamberAuxMatShellCylinder Properties
     ///////////////////////////////////////////////////////////////////
 
     // Materials
-    G4String vacuum_chamber_sphere_material;
+    G4String fVacuumChamberSphereMaterial;
 
     // Dimensions
-    G4double vacuum_chamber_inner_radius;
-    G4double vacuum_chamber_outer_radius;
+    G4double fVacuumChamberOuterRadius;
 
     // internal methods for ConstructApparatus8piVacuumChamberAuxMatShell() for Building
     void BuildApparatus8piVacuumChamberAuxMatShellSphere(G4double thickness);

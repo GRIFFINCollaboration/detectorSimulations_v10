@@ -38,7 +38,7 @@
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 
-#define AL_COL 0.5,0.5,0.5
+#define ALCOL 0.5,0.5,0.5
 
 class DetectionSystemSpiceV02
 {
@@ -47,32 +47,32 @@ public:
     ~DetectionSystemSpiceV02();
     
     G4int Build() ; //G4SDManager* mySDman);
-    G4int PlaceDetector(G4LogicalVolume* exp_hall_log, G4ThreeVector move, G4RotationMatrix* rotate, G4int detector_number);
-    //G4double const GetDetectorLengthOfUnitsCM() {return this->can_length_z;};
+    G4int PlaceDetector(G4LogicalVolume* expHallLog, G4ThreeVector move, G4RotationMatrix* rotate, G4int detectorNumber);
+    //G4double const GetDetectorLengthOfUnitsCM() {return this->canLengthZ;};
 
     //-----------------------------//
     // parameters for the square   //
     // planar detector crystal     //
     //-----------------------------//
-    G4double squareDetCrystalLength;
-    G4double squareDet90DegCrystalRadius;
-    G4double squareDet45DegCrystalRadius;
-    G4double squareDetCrystalThickness;
-    G4double detector_face_target_distance;
+    G4double fSquareDetCrystalLength;
+    G4double fSquareDet90DegCrystalRadius;
+    G4double fSquareDet45DegCrystalRadius;
+    G4double fSquareDetCrystalThickness;
+    G4double fDetectorFaceTargetDistance;
 
     //------------------------------------------------//
     // logical and physical volumes
     //------------------------------------------------//
 private:
-    G4AssemblyVolume* assembly;
-    G4AssemblyVolume* assemblySi;
-    //    SensitiveDetector* crystal_block_SD;
+    G4AssemblyVolume* fAssembly;
+    G4AssemblyVolume* fAssemblySi;
+    //    SensitiveDetector* crystalBlockSD;
 
     G4ThreeVector GetDirectionXYZ(G4double theta, G4double phi);
 
-    G4LogicalVolume* detector_casing_side_log;
-    G4LogicalVolume* detector_casing_back_log;
-    G4LogicalVolume* crystal_block_log;
+    G4LogicalVolume* fDetectorCasingSideLog;
+    G4LogicalVolume* fDetectorCasingBackLog;
+    G4LogicalVolume* fCrystalBlockLog;
 
 
     //--------------------------------------------------------//
@@ -80,20 +80,20 @@ private:
     // OBS: crystal properties are public, others are private
     //--------------------------------------------------------//
 
-    G4String casing_material;
-    G4String wafer_material;
+    G4String fCasingMaterial;
+    G4String fWaferMaterial;
 
     //-----------------------------//
     // parameters for the square   //
     // planar detector casing      //
     //-----------------------------//
 
-    G4double squareDetCasingLength;
-    G4double squareDetCasingThickness;
+    G4double fSquareDetCasingLength;
+    G4double fSquareDetCasingThickness;
 
-    G4int siDetCopyNumber;
-    G4int siDetCasingSideCopyNumber;
-    G4int siDetCasingBackCopyNumber;
+    G4int fSiDetCopyNumber;
+    G4int fSiDetCasingSideCopyNumber;
+    G4int fSiDetCasingBackCopyNumber;
 
     //------------------------------------------------//
     // internal methods in Build()
@@ -122,128 +122,3 @@ private:
 
 #endif
 
-
-
-
-
-
-
-
-
-
-//#ifndef SPICEDetectionSystem_h
-//#define SPICEDetectionSystem_h 1
-
-//class DetectableSD;
-//class SPICETargetChamber;
-
-//#include "G4SDManager.hh"
-//#include "DetectableSD.hh"
-
-//#include "DetectorConstruction.hh"
-
-//#include "G4LogicalVolume.hh"
-//#include "G4VPhysicalVolume.hh"
-//#include "SPICETargetChamber.hh"
-//#include "G4AssemblyVolume.hh"
-
-//#include "SPICE_globals.hh"
-
-//#define AL_COL 0.5,0.5,0.5
-
-/////////////////////////////////////////////////////////////////////////
-//// SPICEDetectionSystem
-/////////////////////////////////////////////////////////////////////////
-//class SPICEDetectionSystem
-//{
-
-//public:
-//  DetectableSD* myCrystal_block_SD;
-
-//public:
-//  SPICEDetectionSystem(G4SDManager*, EventDataOutput*);
-//  ~SPICEDetectionSystem();
-
-//public:
-//  void Build(G4LogicalVolume* exp_hall_log);
-
-//  G4double GetDetector2Origin(SPICEDetectionSystem*);
-
-//private:
-//  Materials* set_of_materials;
-//  G4SDManager* mySDman;
-//  G4LogicalVolume* expHallLog;
-
-//private:
-//  DetectableSD* crystal_block_SD;
-//  EventDataOutput* my_data_output;
-
-//  //------------------------------------------------//
-//  // logical and physical volumes
-//  //------------------------------------------------//
-//private:
-//  G4LogicalVolume* detector_casing_side_log;
-//  G4LogicalVolume* detector_casing_back_log;
-//  G4LogicalVolume* crystal_block_log;
-//  G4VPhysicalVolume* crystal_45Deg_phys;
-//  G4VPhysicalVolume* crystal_90Deg_phys;
-//  G4VPhysicalVolume* casing_side_45Deg_phys;
-//  G4VPhysicalVolume* casing_side_90Deg_phys;
-//  G4VPhysicalVolume* casing_back_45Deg_phys;
-//  G4VPhysicalVolume* casing_back_90Deg_phys;
-
-//  //--------------------------------------------------------//
-//  // SPICE physical properties
-//  // OBS: crystal properties are public, others are private
-//  //--------------------------------------------------------//
-//private:
-//  G4String casing_material;
-//  G4String wafer_material;
-
-//  //-----------------------------//
-//  // parameters for the square   //
-//  // planar detector crystal     //
-//  //-----------------------------//
-//public:
-//  G4double squareDetCrystalLength;
-//  G4double squareDet90DegCrystalRadius;
-//  G4double squareDet45DegCrystalRadius;
-//  G4double squareDetCrystalThickness;
-//  G4double detector_face_target_distance;
-
-//  //-----------------------------//
-//  // parameters for the square   //
-//  // planar detector casing      //
-//  //-----------------------------//
-//private:
-//  G4double squareDetCasingLength;
-//  G4double squareDetCasingThickness;
-
-//  G4int siDetCopyNumber;
-//  G4int siDetCasingSideCopyNumber;
-//  G4int siDetCasingBackCopyNumber;
-
-//  //------------------------------------------------//
-//  // internal methods in Build()
-//  //------------------------------------------------//
-//private:
-//  void BuildSiliconWafer();
-//  void BuildAluminiumCasingSide();
-//  void BuildAluminiumCasingBack();
-//  void PlaceSiliconWafer();
-//  void PlaceAluminiumCasingSide();
-//  void PlaceAluminiumCasingBack();
-//  void BuildSPICETargetChamber();
-
-//  G4ThreeVector Translate45DegDetector(G4int);
-//  G4ThreeVector Translate90DegDetector(G4int);
-//  G4RotationMatrix* RotateDetector(G4int);
-//  //------------------------------------------------//
-//  // public methods
-//  //------------------------------------------------//
-//public:
-//  DetectableSD* getDetectableSD();
-
-//};
-
-//#endif

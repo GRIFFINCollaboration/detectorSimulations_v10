@@ -52,28 +52,26 @@ public:
     void Build(G4LogicalVolume*);
 
 private:
-    G4LogicalVolume* expHallLog;
+    G4LogicalVolume* fExpHallLog;
 
     // LogicalVolumes used in Apparatus8piVacuumChamber()
-    G4LogicalVolume* vacuum_chamber_sphere_log;
-    //    G4LogicalVolume* vacuum_chamber_sphere_vacuum_log;
+    G4LogicalVolume* fVacuumChamberSphereLog;
     
     // Physical Volumes used in Apparatus8piVacuumChamber()
 
-    G4VPhysicalVolume* vacuum_chamber_sphere_phys;
-    //    G4VPhysicalVolume* vacuum_chamber_sphere_vacuum_phys;
+    G4VPhysicalVolume* fVacuumChamberSpherePhys;
 
     ///////////////////////////////////////////////////////////////////
     // Apparatus8piVacuumChamberCylinder Properties
     ///////////////////////////////////////////////////////////////////
 
     // Materials
-    G4String vacuum_material;
-    G4String vacuum_chamber_sphere_material;
+    G4String fVacuumMaterial;
+    G4String fVacuumChamberSphereMaterial;
 
     // Dimensions
-    G4double vacuum_chamber_inner_radius;
-    G4double vacuum_chamber_outer_radius;
+    G4double fVacuumChamberInnerRadius;
+    G4double fVacuumChamberOuterRadius;
 
     // internal methods for ConstructApparatus8piVacuumChamber() for Building
     void BuildApparatus8piVacuumChamberSphere();

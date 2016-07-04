@@ -65,13 +65,13 @@ private:
 
     G4int FindTrueGriffinDetector(G4int);
 
-    G4int stepNumber;
-    G4int det;
-    G4int cry;
-    G4int trueGriffinDetectorMap[16];
-    G4bool griffinDetectorMapSet;
+    G4int fStepNumber;
+    G4int fDet;
+    G4int fCry;
+    G4int fTrueGriffinDetectorMap[16];
+    G4bool fGriffinDetectorMapSet;
 
-    G4int numberOfAssemblyVols;
+    G4int fNumberOfAssemblyVols;
 
     G4String G4intToG4String(G4int value);
     G4String GetCrystalColour(G4int value);

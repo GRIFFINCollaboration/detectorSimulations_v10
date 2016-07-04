@@ -29,16 +29,16 @@
 Apparatus8piVacuumChamberAuxMatShell::~Apparatus8piVacuumChamberAuxMatShell()
 {
     // LogicalVolumes in ConstructApparatus8piVacuumChamberAuxMatShell
-    delete vacuum_chamber_aux_sphere_log;
+    delete fVacuumChamberAuxSphereLog;
 
 }// end ::~Apparatus8piVacuumChamberAuxMatShell
 
 ///////////////////////////////////////////////////////////////////////
 //ConstructApparatus8piVacuumChamberAuxMatShell builds the vacuum Chamber at the origin
 ///////////////////////////////////////////////////////////////////////
-void Apparatus8piVacuumChamberAuxMatShell::Build(G4LogicalVolume* exp_hall_log, G4double thickness)
+void Apparatus8piVacuumChamberAuxMatShell::Build(G4LogicalVolume* expHallLog, G4double thickness)
 { 
-    this->expHallLog = exp_hall_log;
+    fExpHallLog = expHallLog;
 
     BuildApparatus8piVacuumChamberAuxMatShellSphere(thickness);
 
@@ -49,8 +49,8 @@ void Apparatus8piVacuumChamberAuxMatShell::Build(G4LogicalVolume* exp_hall_log, 
 void Apparatus8piVacuumChamberAuxMatShell::BuildApparatus8piVacuumChamberAuxMatShellSphere(G4double thickness)
 {
     // Set visualization attributes
-    G4VisAttributes* vis_att = new G4VisAttributes(G4Colour(0.4,0.4,1.0));
-    vis_att->SetVisibility(true);
+    G4VisAttributes* visAtt = new G4VisAttributes(G4Colour(0.4,0.4,1.0));
+    visAtt->SetVisibility(true);
 
     G4double startPhi = 0;
     G4double endPhi = 2*M_PI;
@@ -58,14 +58,14 @@ void Apparatus8piVacuumChamberAuxMatShell::BuildApparatus8piVacuumChamberAuxMatS
     G4double startTheta = 0;
     G4double endTheta = M_PI;
 
-    G4double inner_radius = this->vacuum_chamber_outer_radius;
-    G4double outer_radius = this->vacuum_chamber_outer_radius + thickness;
+    G4double innerRadius = fVacuumChamberOuterRadius;
+    G4double outerRadius = fVacuumChamberOuterRadius + thickness;
 
-    G4Sphere* vacuum_chamber_sphere = new G4Sphere("vacuum_chamber_sphere",  inner_radius, outer_radius, startPhi, endPhi, startTheta, endTheta);
-    G4Material* vacuum_chamber_sphere_mat = G4Material::GetMaterial(vacuum_chamber_sphere_material);
+    G4Sphere* vacuumChamberSphere = new G4Sphere("VacuumChamberSphere", innerRadius, outerRadius, startPhi, endPhi, startTheta, endTheta);
+    G4Material* vacuumChamberSphereMat = G4Material::GetMaterial(fVacuumChamberSphereMaterial);
 
-    vacuum_chamber_aux_sphere_log = new G4LogicalVolume(vacuum_chamber_sphere, vacuum_chamber_sphere_mat, "vacuum_chamber_aux_sphere_log", 0, 0, 0);
-    vacuum_chamber_aux_sphere_log->SetVisAttributes(vis_att);
+    fVacuumChamberAuxSphereLog = new G4LogicalVolume(vacuumChamberSphere, vacuumChamberSphereMat, "VacuumChamberAuxSphereLog", 0, 0, 0);
+    fVacuumChamberAuxSphereLog->SetVisAttributes(visAtt);
 
 }//end ::Apparatus8piVacuumChamberAuxMatShellCylinder
 
@@ -76,9 +76,9 @@ void Apparatus8piVacuumChamberAuxMatShell::BuildApparatus8piVacuumChamberAuxMatS
 
 void Apparatus8piVacuumChamberAuxMatShell::PlaceApparatus8piVacuumChamberAuxMatShellSphere()
 {
-    G4double z_position;
-    z_position = 0.0;
-    G4ThreeVector move(0, 0, z_position);
+    G4double zPosition;
+    zPosition = 0.0;
+    G4ThreeVector move(0, 0, zPosition);
     // Establish physical volumes
-    vacuum_chamber_sphere_phys = new G4PVPlacement(0, move, vacuum_chamber_aux_sphere_log, "vacuum_chamber_sphere_phys", expHallLog, false, 0);
+    fVacuumChamberSpherePhys = new G4PVPlacement(0, move, fVacuumChamberAuxSphereLog, "VacuumChamberSpherePhys", fExpHallLog, false, 0);
 }//end ::PlaceApparatus8piVacuumChamberAuxMatShellCylinder()

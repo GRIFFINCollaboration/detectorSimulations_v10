@@ -270,10 +270,10 @@ void PhysListHadron::ConstructProcess()
     //G4GGNuclNuclCrossSection* ionElasticXS = new G4GGNuclNuclCrossSection;
     //--------------------------
 
-    ionElasticProcess.RegisterMe(ionElasticModel);
-    ionElasticProcess.AddDataSet(ionElasticXS);
+    fIonElasticProcess.RegisterMe(ionElasticModel);
+    fIonElasticProcess.AddDataSet(ionElasticXS);
     pManager = G4GenericIon::GenericIon()->GetProcessManager();
-    pManager->AddDiscreteProcess(&ionElasticProcess);
+    pManager->AddDiscreteProcess(&fIonElasticProcess);
 
     // Generic ion inelastic
     fTheIonInelasticProcess = new G4IonInelasticProcess();

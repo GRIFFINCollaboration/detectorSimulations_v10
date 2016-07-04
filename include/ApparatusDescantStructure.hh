@@ -55,70 +55,67 @@ public:
 
 private:
     // Logical volumes
-    G4LogicalVolume* descant_structure_log;
+    G4LogicalVolume* fDescantStructureLog;
 
     // Assembly volumes
-    G4AssemblyVolume* assemblyDescantStructure;
+    G4AssemblyVolume* fAssemblyDescantStructure;
 
-    G4String structure_material;
-    G4double structure_inner_radius;
-    G4double structure_outer_radius;
-    G4double start_Phi;
-    G4double delta_Phi;
-    G4double start_Theta;
-    G4double delta_Theta;
-    G4double structure_radial_distance;
+    G4String fStructureMaterial;
+    G4double fStructureInnerRadius;
+    G4double fStructureOuterRadius;
+    G4double fStartPhi;
+    G4double fDeltaPhi;
+    G4double fStartTheta;
+    G4double fDeltaTheta;
+    G4double fStructureRadialDistance;
 
     //for subtraction polyhedra
-    G4int numSides;
-    G4int numZplanes;
-    G4double cutExtra;
-    G4double zPlanes[2];
+    G4int fNumSides;
+    G4int fNumZplanes;
+    G4double fZPlanes[2];
 
-    G4double polyRadiusRed;
-    G4double rInnerRed[2];
-    G4double rOuterRed[2];
+    G4double fPolyRadiusRed;
+    G4double fInnerRadiusRed[2];
+    G4double fOuterRadiusRed[2];
 
-    G4double polyRadiusGreenYellow;
-    G4double rInnerGreenYellow[2];
-    G4double rOuterGreenYellow[2];
+    G4double fPolyRadiusGreenYellow;
+    G4double fInnerRadiusGreenYellow[2];
+    G4double fOuterRadiusGreenYellow[2];
 
-    G4double polyRadiusWhite;
-    G4double rInnerWhite[2];
-    G4double rOuterWhite[2];
+    G4double fPolyRadiusWhite;
+    G4double fInnerRadiusWhite[2];
+    G4double fOuterRadiusWhite[2];
 
     //for the subtraction box
-    G4double subBoxX, subBoxY, subBoxZ;
-    G4double moveCut;
+    G4double fSubBoxX, fSubBoxY, fSubBoxZ;
+    G4double fMoveCut;
 
     //for back polyhedra
-    G4double backRadius;
-    G4double rInnerBack[2];
-    G4double rOuterBack[2];
-    G4double zPlanesBack[2];
+    G4double fBackRadius;
+    G4double fInnerRadiusBack[2];
+    G4double fOuterRadiusBack[2];
+    G4double fZPlanesBack[2];
 
     // for subtraction cylinder
-    G4double rMin;
-    G4double rMax;
-    G4double halfLength;
-    G4double sPhi;
-    G4double dPhi;
+    G4double fMinRadius;
+    G4double fMaxRadius;
+    G4double fHalfLength;
+    G4double fSubtractionStartPhi;
+    G4double fSubtractionDeltaPhi;
 
     // The Euler angles from James' MSc thesis which gives us the detector positions
     // Some of the angles for the green and yellow detectors are wrong in James' thesis,
     // note the +180 on a few angles.
-    G4double blue_alpha_beta_gamma[15][3];
-    G4double green_alpha_beta_gamma[10][3];
-    G4double red_alpha_beta_gamma[15][3];
-    G4double white_alpha_beta_gamma[20][3];
-    G4double yellow_alpha_beta_gamma[10][3];
+    G4double fBlueAlphaBetaGamma[15][3];
+    G4double fGreenAlphaBetaGamma[10][3];
+    G4double fRedAlphaBetaGamma[15][3];
+    G4double fWhiteAlphaBetaGamma[20][3];
+    G4double fYellowAlphaBetaGamma[10][3];
 
     // Descant Structure Colour
-    G4Colour grey_colour;
+    G4Colour fGreyColour;
 
     G4int BuildDescantShell();
-
-
 };
 
 #endif

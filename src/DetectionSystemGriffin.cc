@@ -44,438 +44,111 @@
 // when they go out of scope
 ///////////////////////////////////////////////////////////////////////
 
-DetectionSystemGriffin::~DetectionSystemGriffin()
-{
-
+DetectionSystemGriffin::~DetectionSystemGriffin() {
     // LogicalVolumes in ConstructNewHeavyMet
-    delete hevimet_log;
+    delete fHevimetLog;
 
     // LogicalVolumes in ConstructNewSuppressorCasing
-    delete left_suppressor_extension_log;
-    delete right_suppressor_extension_log;
-    delete left_suppressor_log;
-    delete right_suppressor_log;
-    delete back_quarter_suppressor_log;
+    delete fLeftSuppressorExtensionLog;
+    delete fRightSuppressorExtensionLog;
+    delete fLeftSuppressorLog;
+    delete fRightSuppressorLog;
+    delete fBackQuarterSuppressorLog;
 
-    delete back_quarter_suppressor_shell_log;
-    delete right_suppressor_shell_log;
-    delete left_suppressor_shell_log;
-    delete right_suppressor_shell_extension_log;
-    delete left_suppressor_shell_extension_log;
+    delete fBackQuarterSuppressorShellLog;
+    delete fRightSuppressorShellLog;
+    delete fLeftSuppressorShellLog;
+    delete fRightSuppressorShellExtensionLog;
+    delete fLeftSuppressorShellExtensionLog;
     // LogicalVolumes in ConstructBGOCasing
 
-    delete BGO_casing_log;
-    delete back_BGO_log;
+    delete fBGOCasingLog;
+    delete fBackBGOLog;
 
     // LogicalVolumes in ConstructColdFinger
-    delete cooling_side_block_log;
-    delete structureMat_cold_finger_log;
-    delete cooling_bar_log;
-    delete fet_air_hole_log;
-    delete triangle_post_log;
-    delete extra_cold_block_log;
-    delete finger_log;
-    delete end_plate_log;
+    delete fCoolingSideBlockLog;
+    delete fStructureMatColdFingerLog;
+    delete fCoolingBarLog;
+    delete fFetAirHoleLog;
+    delete fTrianglePostLog;
+    delete fExtraColdBlockLog;
+    delete fFingerLog;
+    delete fEndPlateLog;
 
     // LogicalVolumes in ConstructComplexDetectorBlock
-    delete germanium_hole_log;
-    delete germanium_block1_log;
-    delete inner_dead_layer_log;
-    delete inter_crystal_electrodeMat_back_log;
-    delete inter_crystal_electrodeMat_front_log;
+    delete fGermaniumHoleLog;
+    delete fGermaniumBlock1Log;
+    delete fInnerDeadLayerLog;
+    delete fInterCrystalElectrodeMatBackLog;
+    delete fInterCrystalElectrodeMatFrontLog;
 
     // LogicalVolumes in ConstructBasicDetectorBlock
-    delete germanium_block_log;
+    delete fGermaniumBlockLog;
 
     // LogicalVolumes in ConstructDetector
-    delete tank_log;
-    delete tank_lid1_log;
-    delete tank_lid2_log;
-    delete finger_shell_log;
-    delete rear_plate_log;
-    delete bottom_side_panel_log;
-    delete top_side_panel_log;
-    delete left_side_panel_log;
-    delete right_side_panel_log;
-    delete lower_left_tube_log;
-    delete upper_left_tube_log;
-    delete lower_right_tube_log;
-    delete upper_right_tube_log;
-    delete lower_left_cone_log;
-    delete upper_left_cone_log;
-    delete lower_right_cone_log;
-    delete upper_right_cone_log;
-    delete bottom_wedge_log;
-    delete top_wedge_log;
-    delete left_wedge_log;
-    delete right_wedge_log;
-    delete bottom_bent_piece_log;
-    delete top_bent_piece_log;
-    delete left_bent_piece_log;
-    delete right_bent_piece_log;
-    delete front_face_log;
+    delete fTankLog;
+    delete fTankLid1Log;
+    delete fTankLid2Log;
+    delete fFingerShellLog;
+    delete fRearPlateLog;
+    delete fBottomSidePanelLog;
+    delete fTopSidePanelLog;
+    delete fLeftSidePanelLog;
+    delete fRightSidePanelLog;
+    delete fLowerLeftTubeLog;
+    delete fUpperLeftTubeLog;
+    delete fLowerRightTubeLog;
+    delete fUpperRightTubeLog;
+    delete fLowerLeftConeLog;
+    delete fUpperLeftConeLog;
+    delete fLowerRightConeLog;
+    delete fUpperRightConeLog;
+    delete fBottomWedgeLog;
+    delete fTopWedgeLog;
+    delete fLeftWedgeLog;
+    delete fRightWedgeLog;
+    delete fBottomBentPieceLog;
+    delete fTopBentPieceLog;
+    delete fLeftBentPieceLog;
+    delete fRightBentPieceLog;
+    delete fFrontFaceLog;
 }// end ::~DetectionSystemGriffin
 
 ///////////////////////////////////////////////////////////////////////
 // ConstructDetectionSystemGriffin builds the DetectionSystemGriffin 
 // at the origin
 ///////////////////////////////////////////////////////////////////////
-void DetectionSystemGriffin::Build()
-{ 
+void DetectionSystemGriffin::Build() { 
 
-    surfCheck = true;
+    fSurfCheck = true;
 
     BuildOneDetector();
 
 }//end ::Build
 
-G4double DetectionSystemGriffin::transX(G4double x, G4double y, G4double z, G4double theta, G4double phi){
+G4double DetectionSystemGriffin::transX(G4double x, G4double y, G4double z, G4double theta, G4double phi) {
     return (x*cos(theta)+z*sin(theta))*cos(phi)-y*sin(phi);
 }
 
-G4double DetectionSystemGriffin::transY(G4double x, G4double y, G4double z, G4double theta, G4double phi){
+G4double DetectionSystemGriffin::transY(G4double x, G4double y, G4double z, G4double theta, G4double phi) {
     return (x*cos(theta)+z*sin(theta))*sin(phi)+y*cos(phi);
 }
 
-G4double DetectionSystemGriffin::transZ(G4double x, G4double y, G4double z, G4double theta, G4double phi){
+G4double DetectionSystemGriffin::transZ(G4double x, G4double z, G4double theta) {
     return -x*sin(theta)+z*cos(theta);
 }
 
-// PlaceEverythingButCrystals and PlaceDeadLayerSpecificCrystal repalces the need for this method
-G4int DetectionSystemGriffin::PlaceDetector(G4LogicalVolume* exp_hall_log, G4ThreeVector moveBAH, G4RotationMatrix* rotateBAH, G4int detector_number)
-{
-//    G4double theta  = this->coords[detector_number][0]*deg;
-//    G4double phi    = this->coords[detector_number][1]*deg;
-//    G4double alpha  = this->coords[detector_number][2]*deg; // yaw
-//    G4double beta   = this->coords[detector_number][3]*deg; // pitch
-//    G4double gamma  = this->coords[detector_number][4]*deg; // roll
-
-//    G4double x;
-//    G4double y;
-//    G4double z;
-
-//    G4double x0, y0, z0;
-
-//    G4int i;
-
-//    G4RotationMatrix* rotate = new G4RotationMatrix;    // rotation matrix corresponding to direction vector
-//    rotate->rotateX(M_PI/2.0);
-//    rotate->rotateX(alpha);
-//    rotate->rotateY(beta);
-//    rotate->rotateZ(gamma);
-
-//    // positioning
-//    G4double dist_from_origin = this->air_box_back_length/2.0 +this->air_box_front_length + this->new_rhombi_radius ;
-//    G4double dist_from_origin_det = this->air_box_back_length_det/2.0 +this->air_box_front_length_det + this->new_rhombi_radius_det ;
-
-//    x = 0;
-//    y = 0;
-//    z = dist_from_origin_det;
-
-//    G4ThreeVector move(DetectionSystemGriffin::transX(x,y,z,theta,phi), DetectionSystemGriffin::transY(x,y,z,theta,phi), DetectionSystemGriffin::transZ(x,y,z,theta,phi));
-
-//    this->assembly->MakeImprint(exp_hall_log, move, rotate, 0, surfCheck);
-//    this->backAndSideSuppressorShellAssembly->MakeImprint(exp_hall_log, move, rotate, 0, surfCheck);
-
-//    z = dist_from_origin ; // This isolates the motion of the extension suppressors from the rest of the suppressors.
-
-//    move = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi), DetectionSystemGriffin::transY(x,y,z,theta,phi), DetectionSystemGriffin::transZ(x,y,z,theta,phi));
-
-//    this->extensionSuppressorShellAssembly->MakeImprint(exp_hall_log, move, rotate, 0, surfCheck);
-
-
-//    x0 = (this->germanium_width + this->germanium_separation)/2.0;
-//    y0 = (this->germanium_width + this->germanium_separation)/2.0;
-//    z0 = this->germanium_length / 2.0 + this->can_face_thickness / 2.0 + this->germanium_dist_from_can_face + this->shift + this->applied_back_shift + dist_from_origin_det;
-
-//    /////////////////////////////////////////////////////////////////////
-//    // now we place all 4 of the 1/4 detectors using the LogicalVolume
-//    // of the 1st, ensuring that they too will have the hole
-//    /////////////////////////////////////////////////////////////////////
-//    copy_number = germanium_copy_number + detector_number*4;
-
-//    G4RotationMatrix* rotate_germanium[4];
-//    G4ThreeVector move_germanium[4];
-
-//    for(i=0; i<4; i++){
-//        rotate_germanium[i] = new G4RotationMatrix;
-
-//        rotate_germanium[i]->rotateY( -M_PI/2.0 ) ;
-//        rotate_germanium[i]->rotateX( -M_PI/2.0 * i ) ;
-//        rotate_germanium[i]->rotateX( alpha ) ;
-//        rotate_germanium[i]->rotateY( beta ) ;
-//        rotate_germanium[i]->rotateZ( gamma ) ;
-
-//        x = x0*pow(-1, floor(i/2) );
-//        y = y0*pow(-1, floor((i+1)/2) );
-
-//        z = z0;
-
-//        move_germanium[i] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi), DetectionSystemGriffin::transY(x,y,z,theta,phi), DetectionSystemGriffin::transZ(x,y,z,theta,phi));
-//        this->germaniumAssembly->MakeImprint(exp_hall_log, move_germanium[i], rotate_germanium[i], copy_number++, surfCheck);
-
-//    }
-    
-//    /////////////////////////////////////////////////////////////////////
-//    // end germanium_block1_log
-//    /////////////////////////////////////////////////////////////////////
-//    copy_number = back_suppressor_copy_number + detector_number*4;
-
-//    // Back Suppressors
-//    if(include_back_suppressors) {
-//        x0 = (this->detector_total_width/4.0);
-//        y0 = (this->detector_total_width/4.0);
-//        z0 = (this->back_BGO_thickness - this->can_face_thickness)/2.0 + this->suppressor_shell_thickness
-//                + this->detector_total_length +this->BGO_can_seperation + this->shift + this->applied_back_shift + dist_from_origin_det;
-
-//        G4RotationMatrix* rotate_back_quarter_suppressor[4];
-//        G4ThreeVector move_back_quarter_suppressor[4];
-
-//        for(i=0; i<4; i++){
-//            rotate_back_quarter_suppressor[i] = new G4RotationMatrix;
-//            rotate_back_quarter_suppressor[i]->rotateX(-M_PI/2.0*i);
-//            rotate_back_quarter_suppressor[i]->rotateX(alpha);
-//            rotate_back_quarter_suppressor[i]->rotateY(beta);
-//            rotate_back_quarter_suppressor[i]->rotateZ(gamma);
-
-//            x = x0*pow(-1, floor(i/2) );
-//            y = y0*pow(-1, floor((i+1)/2) );
-//            z = z0;
-
-//            move_back_quarter_suppressor[i] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,y,z,theta,phi));
-
-//            this->suppressorBackAssembly->MakeImprint(exp_hall_log, move_back_quarter_suppressor[i], rotate_back_quarter_suppressor[i], copy_number++, surfCheck);
-//        }
-//    }
-
-//    // Now Side Suppressors
-//    /////////////////////////////////////////////////////////////////////
-//    // Note : Left and Right are read from the BACK of the detector
-//    // Suppressors 1 and 2 cover germanium 1
-//    // Suppressors 3 and 4 cover germanium 2
-//    // Suppressors 5 and 6 cover germanium 3
-//    // Suppressors 7 and 8 cover germanium 4
-//    /////////////////////////////////////////////////////////////////////
-//    copy_number = right_suppressor_side_copy_number + detector_number*4;
-//    copy_number_two = left_suppressor_side_copy_number + detector_number*4;
-
-//    // Replacement for this->side_suppressor_length
-//    G4double shell_side_suppressor_length = this->side_suppressor_length
-//            + (this->suppressor_shell_thickness*2.0);
-
-//    // Replacement for this->suppressor_extension_length
-//    G4double shell_suppressor_extension_length = this->suppressor_extension_length
-//            + (this->suppressor_shell_thickness*2.0)*(1.0/tan(this->bent_end_angle)
-//                                                      - tan(this->bent_end_angle));
-
-//    // Replacement for this->suppressor_extension_angle: must totally recalculate
-//    G4double shell_suppressor_extension_angle = atan((( this->suppressor_back_radius
-//                                                        + this->bent_end_length +(this->BGO_can_seperation
-//                                                                                  + this->side_BGO_thickness + this->suppressor_shell_thickness*2.0)
-//                                                        / tan(this->bent_end_angle)
-//                                                        - ( this->suppressor_extension_thickness + this->suppressor_shell_thickness * 2.0 )
-//                                                        * sin(this->bent_end_angle))
-//                                                      * tan(this->bent_end_angle) -( this->suppressor_forward_radius + this->hevimet_tip_thickness )
-//                                                      * sin(this->bent_end_angle))/(shell_suppressor_extension_length));
-
-//    // these two parameters are for shifting the extensions back and out when in their BACK position
-//    G4double extension_back_shift = this->air_box_front_length
-//            - (this->hevimet_tip_thickness + shell_suppressor_extension_length
-//               + (this->suppressor_extension_thickness + this->suppressor_shell_thickness*2.0)
-//               * tan(this->bent_end_angle))
-//            * cos(this->bent_end_angle);
-
-//    G4double extension_radial_shift = extension_back_shift*tan(this->bent_end_angle);
-
-//    if(include_side_suppressors) {
-
-//        G4RotationMatrix* rotateSideSuppressor[8];
-//        G4ThreeVector moveInnerSuppressor[8];
-
-//        x0 = this->side_BGO_thickness/2.0 + this->suppressor_shell_thickness + this->detector_total_width/2.0 +this->BGO_can_seperation;
-//        y0 = (this->detector_total_width/2.0 +this->BGO_can_seperation + this->side_BGO_thickness/2.0)/2.0;
-//        z0 = (shell_side_suppressor_length/2.0 -this->can_face_thickness/2.0 + this->bent_end_length
-//              +(this->BGO_can_seperation + this->BGO_chopped_tip)/tan(this->bent_end_angle) +this->shift
-//              + this->applied_back_shift - this->suppressor_shell_thickness/2.0 + dist_from_origin_det);
-
-//        for(i=0; i<4; i++){
-
-//            rotateSideSuppressor[2*i] = new G4RotationMatrix;
-//            rotateSideSuppressor[2*i]->rotateZ(M_PI/2.0);
-//            rotateSideSuppressor[2*i]->rotateY(M_PI/2.0);
-//            rotateSideSuppressor[2*i]->rotateX(-M_PI/2.0*i);
-//            rotateSideSuppressor[2*i]->rotateX(alpha);
-//            rotateSideSuppressor[2*i]->rotateY(beta);
-//            rotateSideSuppressor[2*i]->rotateZ(gamma);
-
-//            x = x0*cos(i*M_PI/2.0) + y0*sin(i*M_PI/2);
-//            y = -x0*sin(i*M_PI/2.0) + y0*cos(i*M_PI/2);
-//            z = z0;
-
-//            moveInnerSuppressor[i*2] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,y,z,theta,phi));
-
-//            this->rightSuppressorCasingAssembly->MakeImprint(exp_hall_log, moveInnerSuppressor[2*i], rotateSideSuppressor[2*i], copy_number++, surfCheck);
-
-
-//            rotateSideSuppressor[2*i+1] = new G4RotationMatrix;
-//            rotateSideSuppressor[2*i+1]->rotateY(-M_PI/2.0);
-//            rotateSideSuppressor[2*i+1]->rotateX(-M_PI/2.0*(i+2));
-//            rotateSideSuppressor[2*i+1]->rotateX(alpha);
-//            rotateSideSuppressor[2*i+1]->rotateY(beta);
-//            rotateSideSuppressor[2*i+1]->rotateZ(gamma);
-
-//            x = x0*sin(i*M_PI/2.0) + y0*cos(i*M_PI/2);
-//            y = x0*cos(i*M_PI/2.0) - y0*sin(i*M_PI/2);
-//            z = z0;
-
-//            moveInnerSuppressor[i*2+1] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,y,z,theta,phi));
-
-//            this->leftSuppressorCasingAssembly->MakeImprint(exp_hall_log, moveInnerSuppressor[2*i+1], rotateSideSuppressor[2*i+1], copy_number_two++, surfCheck);
-//        }
-
-//    }
-
-//    // now we add the side pieces of suppressor that extend out in front of the can when it's in the back position
-//    copy_number = right_suppressor_extension_copy_number + detector_number*4;
-//    copy_number_two = left_suppressor_extension_copy_number + detector_number*4;
-
-//    G4RotationMatrix* rotateExtension[8];
-//    G4ThreeVector moveInnerExtension[8];
-
-//    // this->back_inner_radius changed to this->suppressor_back_radius
-//    // this->forward_inner_radius changed to this->suppressor_forward_radius
-//    x0 =  - ((this->suppressor_extension_thickness/2.0 + this->suppressor_shell_thickness)
-//             / cos(this->bent_end_angle)
-//             + (shell_suppressor_extension_length/2.0 - (this->suppressor_extension_thickness
-//                                                         + this->suppressor_shell_thickness*2.0)
-//                * tan(this->bent_end_angle)/2.0) * sin(this->bent_end_angle) - (this->suppressor_back_radius
-//                                                                                + this->bent_end_length + (this->BGO_can_seperation + this->side_BGO_thickness
-//                                                                                                           + this->suppressor_shell_thickness*2.0)
-//                                                                                / tan(this->bent_end_angle) - (this->suppressor_extension_thickness
-//                                                                                                               + this->suppressor_shell_thickness*2.0)
-//                                                                                * sin(this->bent_end_angle))
-//             * tan(this->bent_end_angle));
-
-
-//    // This is the exact same as the y0 when the suppressors are forward.
-//    y0 =  (shell_suppressor_extension_length*tan(shell_suppressor_extension_angle)/2.0
-//           + (this->suppressor_forward_radius
-//              + this->hevimet_tip_thickness)*sin(this->bent_end_angle) - this->BGO_can_seperation*2.0 - this->detectorPlacementCxn)/2.0;
-
-//    // only difference between this z0 and the detectors forward z0 is that this one does
-//    // not have extension_back_shift added.
-//    z0 =  - this->can_face_thickness/2.0 -(shell_suppressor_extension_length/2.0
-//                                           - (this->suppressor_extension_thickness
-//                                              + this->suppressor_shell_thickness*2.0)
-//                                           * tan(this->bent_end_angle)/2.0)
-//            * cos(this->bent_end_angle) +this->bent_end_length +(this->BGO_can_seperation
-//                                                                 + this->side_BGO_thickness
-//                                                                 + this->suppressor_shell_thickness*2.0)/tan(this->bent_end_angle)
-//            - (this->suppressor_extension_thickness + this->suppressor_shell_thickness*2.0)
-//            * sin(this->bent_end_angle) +this->suppShift + this->suppressor_back_radius
-//            - this->suppressor_forward_radius
-//            - this->suppressor_shell_thickness/2.0 + dist_from_origin;
-
-
-
-//    if( !(this->suppressor_position_selector) && include_extension_suppressors )
-//    {
-
-//        x0 += extension_radial_shift ;
-
-//        z0 += extension_back_shift ;
-
-//        for( i = 0 ; i < 4 ; i++ )
-//        {
-//            rotateExtension[2*i] = new G4RotationMatrix;
-//            rotateExtension[2*i]->rotateZ(M_PI/2.0);
-//            rotateExtension[2*i]->rotateY(this->bent_end_angle);
-//            rotateExtension[2*i]->rotateX(-M_PI/2.0*i);
-//            rotateExtension[2*i]->rotateX(alpha);
-//            rotateExtension[2*i]->rotateY(beta);
-//            rotateExtension[2*i]->rotateZ(gamma);
-
-//            x = x0*cos(i*M_PI/2.0) + y0*sin(i*M_PI/2);
-//            y = -x0*sin(i*M_PI/2.0) + y0*cos(i*M_PI/2);
-//            z = z0;
-
-//            moveInnerExtension[2*i] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,y,z,theta,phi));
-//            this->rightSuppressorExtensionAssembly->MakeImprint(exp_hall_log, moveInnerExtension[2*i], rotateExtension[2*i], copy_number++, surfCheck);
-
-//            rotateExtension[2*i+1] = new G4RotationMatrix;
-//            rotateExtension[2*i+1]->rotateY(M_PI/2.0);
-//            rotateExtension[2*i+1]->rotateZ(M_PI/2.0 + this->bent_end_angle);
-//            rotateExtension[2*i+1]->rotateX(-M_PI/2.0*i);
-//            rotateExtension[2*i+1]->rotateX(alpha);
-//            rotateExtension[2*i+1]->rotateY(beta);
-//            rotateExtension[2*i+1]->rotateZ(gamma);
-
-//            x = x0*sin(i*M_PI/2.0) + y0*cos(i*M_PI/2);
-//            y = x0*cos(i*M_PI/2.0) - y0*sin(i*M_PI/2);
-//            z = z0;
-
-//            moveInnerExtension[2*i+1] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,y,z,theta,phi));
-//            this->leftSuppressorExtensionAssembly->MakeImprint(exp_hall_log, moveInnerExtension[2*i+1], rotateExtension[2*i+1], copy_number_two++, surfCheck);
-//        }
-
-//    }//end if(detectors forward) statement
-
-//    // Otherwise, put them forward
-
-//    else if( this->suppressor_position_selector && include_extension_suppressors)
-//    {
-
-//        for( i = 0 ; i < 4 ; i++ )
-//        {
-//            rotateExtension[2*i] = new G4RotationMatrix;
-//            rotateExtension[2*i]->rotateZ(M_PI/2.0);
-//            rotateExtension[2*i]->rotateY(this->bent_end_angle);
-//            rotateExtension[2*i]->rotateX(-M_PI/2.0*i);
-//            rotateExtension[2*i]->rotateX(alpha);
-//            rotateExtension[2*i]->rotateY(beta);
-//            rotateExtension[2*i]->rotateZ(gamma);
-
-//            x = x0*cos(i*M_PI/2.0) + y0*sin(i*M_PI/2);
-//            y = -x0*sin(i*M_PI/2.0) + y0*cos(i*M_PI/2);
-//            z = z0;
-
-//            moveInnerExtension[2*i] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,y,z,theta,phi));
-//            this->rightSuppressorExtensionAssembly->MakeImprint(exp_hall_log, moveInnerExtension[2*i], rotateExtension[2*i], copy_number++, surfCheck);
-
-//            rotateExtension[2*i+1] = new G4RotationMatrix;
-//            rotateExtension[2*i+1]->rotateY(M_PI/2.0);
-//            rotateExtension[2*i+1]->rotateZ(M_PI/2.0 + this->bent_end_angle);
-//            rotateExtension[2*i+1]->rotateX(-M_PI/2.0*i);
-//            rotateExtension[2*i+1]->rotateX(alpha);
-//            rotateExtension[2*i+1]->rotateY(beta);
-//            rotateExtension[2*i+1]->rotateZ(gamma);
-
-//            x = x0*sin(i*M_PI/2.0) + y0*cos(i*M_PI/2);
-//            y = x0*cos(i*M_PI/2.0) - y0*sin(i*M_PI/2);
-//            z = z0;
-
-
-//            moveInnerExtension[2*i+1] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,y,z,theta,phi));
-//            this->leftSuppressorExtensionAssembly->MakeImprint(exp_hall_log, moveInnerExtension[2*i+1], rotateExtension[2*i+1], copy_number_two++, surfCheck);
-//        }
-
-//    }//end if(detectors back) statement
-    return 1;
-}
-// end PlaceDetector    
-
-G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* exp_hall_log, G4int detector_number, G4int position_number, G4bool posTigress)
-{
-    G4double theta  = this->coords[position_number][0]*deg;
-    G4double phi    = this->coords[position_number][1]*deg;
-    G4double alpha  = this->coords[position_number][2]*deg; // yaw
-    G4double beta   = this->coords[position_number][3]*deg; // pitch
-    G4double gamma  = this->coords[position_number][4]*deg; // roll
+G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* expHallLog, G4int detectorNumber, G4int positionNumber, G4bool posTigress) {
+    G4double theta  = fCoords[positionNumber][0]*deg;
+    G4double phi    = fCoords[positionNumber][1]*deg;
+    G4double alpha  = fCoords[positionNumber][2]*deg; // yaw
+    G4double beta   = fCoords[positionNumber][3]*deg; // pitch
+    G4double gamma  = fCoords[positionNumber][4]*deg; // roll
 
     //In GRIFFIN upstream is now downstream relative to TIGRESS. However, we want to maintain the same numbering scheme as TIGRESS. Net result is that the lampshade angles change by 45 degrees.
-    if(posTigress && (position_number < 4 || position_number > 11) ) {
-        phi       = this->coords[position_number][1]*deg - 45.0*deg;
-        gamma     = this->coords[position_number][4]*deg - 45.0*deg;
+    if(posTigress && (positionNumber < 4 || positionNumber > 11)) {
+        phi       = fCoords[positionNumber][1]*deg - 45.0*deg;
+        gamma     = fCoords[positionNumber][4]*deg - 45.0*deg;
     }
 
     G4double x;
@@ -493,53 +166,51 @@ G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* exp_ha
     rotate->rotateZ(gamma);
 
     // positioning
-    G4double dist_from_origin = this->air_box_back_length/2.0 +this->air_box_front_length + this->new_rhombi_radius ;
-    G4double dist_from_origin_det = this->air_box_back_length_det/2.0 +this->air_box_front_length_det + this->new_rhombi_radius_det ;
+    G4double distFromOrigin = fAirBoxBackLength/2.0 +fAirBoxFrontLength + fNewRhombiRadius ;
+    G4double distFromOriginDet = fAirBoxBackLengthDet/2.0 +fAirBoxFrontLengthDet + fNewRhombiRadiusDet ;
 
     x = 0;
     y = 0;
-    z = dist_from_origin_det;
+    z = distFromOriginDet;
 
-    G4ThreeVector move(DetectionSystemGriffin::transX(x,y,z,theta,phi), DetectionSystemGriffin::transY(x,y,z,theta,phi), DetectionSystemGriffin::transZ(x,y,z,theta,phi));
+    G4ThreeVector move(DetectionSystemGriffin::transX(x,y,z,theta,phi), DetectionSystemGriffin::transY(x,y,z,theta,phi), DetectionSystemGriffin::transZ(x,z,theta));
 
-    this->assembly->MakeImprint(exp_hall_log, move, rotate, 0, surfCheck);
-    this->backAndSideSuppressorShellAssembly->MakeImprint(exp_hall_log, move, rotate, 0, surfCheck);
+    fAssembly->MakeImprint(expHallLog, move, rotate, 0, fSurfCheck);
+    fBackAndSideSuppressorShellAssembly->MakeImprint(expHallLog, move, rotate, 0, fSurfCheck);
 
-    z = dist_from_origin ; // This isolates the motion of the extension suppressors from the rest of the suppressors.
+    z = distFromOrigin ; // This isolates the motion of the extension suppressors from the rest of the suppressors.
 
-    move = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi), DetectionSystemGriffin::transY(x,y,z,theta,phi), DetectionSystemGriffin::transZ(x,y,z,theta,phi));
+    move = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi), DetectionSystemGriffin::transY(x,y,z,theta,phi), DetectionSystemGriffin::transZ(x,z,theta));
 
-    this->extensionSuppressorShellAssembly->MakeImprint(exp_hall_log, move, rotate, 0, surfCheck);
-    this->hevimetAssembly->MakeImprint(exp_hall_log, move, rotate, 0, surfCheck) ;
+    fExtensionSuppressorShellAssembly->MakeImprint(expHallLog, move, rotate, 0, fSurfCheck);
+    fHevimetAssembly->MakeImprint(expHallLog, move, rotate, 0, fSurfCheck) ;
 
-    copy_number = back_suppressor_copy_number + detector_number*4;
+    fCopyNumber = fBackSuppressorCopyNumber + detectorNumber*4;
 
     // Back Suppressors
-    if(include_back_suppressors)
-    {
-        x0 = (this->detector_total_width/4.0);
-        y0 = (this->detector_total_width/4.0);
-        z0 = (this->back_BGO_thickness - this->can_face_thickness)/2.0 + this->suppressor_shell_thickness
-                + this->detector_total_length +this->BGO_can_seperation + this->shift + this->applied_back_shift + dist_from_origin_det;
+    if(fIncludeBackSuppressors) {
+        x0 = (fDetectorTotalWidth/4.0);
+        y0 = (fDetectorTotalWidth/4.0);
+        z0 = (fBackBGOThickness - fCanFaceThickness)/2.0 + fSuppressorShellThickness
+                + fDetectorTotalLength + fBGOCanSeperation + fShift + fAppliedBackShift + distFromOriginDet;
 
-        G4RotationMatrix* rotate_back_quarter_suppressor[4];
-        G4ThreeVector move_back_quarter_suppressor[4];
+        G4RotationMatrix* rotateBackQuarterSuppressor[4];
+        G4ThreeVector moveBackQuarterSuppressor[4];
 
-        for(i=0; i<4; i++){
+        for(i=0; i<4; i++) {
+            rotateBackQuarterSuppressor[i] = new G4RotationMatrix;
+            rotateBackQuarterSuppressor[i]->rotateX(M_PI/2.0-M_PI/2.0*i);
+            rotateBackQuarterSuppressor[i]->rotateX(alpha);
+            rotateBackQuarterSuppressor[i]->rotateY(beta);
+            rotateBackQuarterSuppressor[i]->rotateZ(gamma);
 
-            rotate_back_quarter_suppressor[i] = new G4RotationMatrix;
-            rotate_back_quarter_suppressor[i]->rotateX(M_PI/2.0-M_PI/2.0*i);
-            rotate_back_quarter_suppressor[i]->rotateX(alpha);
-            rotate_back_quarter_suppressor[i]->rotateY(beta);
-            rotate_back_quarter_suppressor[i]->rotateZ(gamma);
-
-            x = -x0*pow(-1, floor((i+1)/2) );
-            y = -y0*pow(-1, floor((i+2)/2) );
+            x = -x0*pow(-1, floor((i+1)/2));
+            y = -y0*pow(-1, floor((i+2)/2));
             z = z0;
 
-            move_back_quarter_suppressor[i] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,y,z,theta,phi));
+            moveBackQuarterSuppressor[i] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,z,theta));
 
-            this->suppressorBackAssembly->MakeImprint(exp_hall_log, move_back_quarter_suppressor[i], rotate_back_quarter_suppressor[i], copy_number++, surfCheck);
+            fSuppressorBackAssembly->MakeImprint(expHallLog, moveBackQuarterSuppressor[i], rotateBackQuarterSuppressor[i], fCopyNumber++, fSurfCheck);
         }
     }
 
@@ -551,51 +222,48 @@ G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* exp_ha
     // Suppressors 5 and 6 cover germanium 3
     // Suppressors 7 and 8 cover germanium 4
     /////////////////////////////////////////////////////////////////////
-    copy_number = right_suppressor_side_copy_number + detector_number*4;
-    copy_number_two = left_suppressor_side_copy_number + detector_number*4;
+    fCopyNumber = fRightSuppressorSideCopyNumber + detectorNumber*4;
+    fCopyNumberTwo = fLeftSuppressorSideCopyNumber + detectorNumber*4;
 
-    // Replacement for this->side_suppressor_length
-    G4double shell_side_suppressor_length = this->side_suppressor_length
-            + (this->suppressor_shell_thickness*2.0);
+    // Replacement for sideSuppressorLength
+    G4double shellSideSuppressorLength = fSideSuppressorLength + (fSuppressorShellThickness*2.0);
 
-    // Replacement for this->suppressor_extension_length
-    G4double shell_suppressor_extension_length = this->suppressor_extension_length
-            + (this->suppressor_shell_thickness*2.0)*(1.0/tan(this->bent_end_angle)
-                                                      - tan(this->bent_end_angle));
+    // Replacement for suppressorExtensionLength
+    G4double shellSuppressorExtensionLength = fSuppressorExtensionLength + (fSuppressorShellThickness*2.0)*(1.0/tan(fBentEndAngle)
+                                                      - tan(fBentEndAngle));
 
-    // Replacement for this->suppressor_extension_angle: must totally recalculate
-    G4double shell_suppressor_extension_angle = atan((( this->suppressor_back_radius
-                                                        + this->bent_end_length +(this->BGO_can_seperation
-                                                                                  + this->side_BGO_thickness + this->suppressor_shell_thickness*2.0)
-                                                        / tan(this->bent_end_angle)
-                                                        - ( this->suppressor_extension_thickness + this->suppressor_shell_thickness * 2.0 )
-                                                        * sin(this->bent_end_angle))
-                                                      * tan(this->bent_end_angle) -( this->suppressor_forward_radius + this->hevimet_tip_thickness )
-                                                      * sin(this->bent_end_angle))/(shell_suppressor_extension_length));
+    // Replacement for suppressorExtensionAngle: must totally recalculate
+    G4double shellSuppressorExtensionAngle = atan(((fSuppressorBackRadius
+                                                        + fBentEndLength +(fBGOCanSeperation
+                                                                                  + fSideBGOThickness + fSuppressorShellThickness*2.0)
+                                                        / tan(fBentEndAngle)
+                                                        - (fSuppressorExtensionThickness + fSuppressorShellThickness * 2.0)
+                                                        * sin(fBentEndAngle))
+                                                      * tan(fBentEndAngle) -(fSuppressorForwardRadius + fHevimetTipThickness)
+                                                      * sin(fBentEndAngle))/(shellSuppressorExtensionLength));
 
     // these two parameters are for shifting the extensions back and out when in their BACK position
-    G4double extension_back_shift = this->air_box_front_length
-            - (this->hevimet_tip_thickness + shell_suppressor_extension_length
-               + (this->suppressor_extension_thickness + this->suppressor_shell_thickness*2.0)
-               * tan(this->bent_end_angle))
-            * cos(this->bent_end_angle);
+    G4double extensionBackShift = fAirBoxFrontLength
+            - (fHevimetTipThickness + shellSuppressorExtensionLength
+               + (fSuppressorExtensionThickness + fSuppressorShellThickness*2.0)
+               * tan(fBentEndAngle))
+            * cos(fBentEndAngle);
 
-    G4double extension_radial_shift = extension_back_shift*tan(this->bent_end_angle);
+    G4double extensionRadialShift = extensionBackShift*tan(fBentEndAngle);
 
-    if(include_side_suppressors)
+    if(fIncludeSideSuppressors)
     {
 
         G4RotationMatrix* rotateSideSuppressor[8];
         G4ThreeVector moveInnerSuppressor[8];
 
-        x0 = this->side_BGO_thickness/2.0 + this->suppressor_shell_thickness + this->detector_total_width/2.0 +this->BGO_can_seperation;
-        y0 = (this->detector_total_width/2.0 +this->BGO_can_seperation + this->side_BGO_thickness/2.0)/2.0;
-        z0 = (shell_side_suppressor_length/2.0 -this->can_face_thickness/2.0 + this->bent_end_length
-              +(this->BGO_can_seperation + this->BGO_chopped_tip)/tan(this->bent_end_angle) +this->shift
-              + this->applied_back_shift - this->suppressor_shell_thickness/2.0 + dist_from_origin_det);
+        x0 = fSideBGOThickness/2.0 + fSuppressorShellThickness + fDetectorTotalWidth/2.0 +fBGOCanSeperation;
+        y0 = (fDetectorTotalWidth/2.0 +fBGOCanSeperation + fSideBGOThickness/2.0)/2.0;
+        z0 = (shellSideSuppressorLength/2.0 -fCanFaceThickness/2.0 + fBentEndLength
+              +(fBGOCanSeperation + fBGOChoppedTip)/tan(fBentEndAngle) + fShift
+              + fAppliedBackShift - fSuppressorShellThickness/2.0 + distFromOriginDet);
 
-        for(i=0; i<4; i++)
-        {
+        for(i=0; i<4; i++) {
 
             rotateSideSuppressor[2*i] = new G4RotationMatrix;
             rotateSideSuppressor[2*i]->rotateZ(M_PI/2.0);
@@ -609,9 +277,9 @@ G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* exp_ha
             y = -x0*sin((i-1)*M_PI/2.0) + y0*cos((i-1)*M_PI/2);
             z = z0;
 
-            moveInnerSuppressor[i*2] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,y,z,theta,phi));
+            moveInnerSuppressor[i*2] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,z,theta));
 
-            this->rightSuppressorCasingAssembly->MakeImprint(exp_hall_log, moveInnerSuppressor[2*i], rotateSideSuppressor[2*i], copy_number++, surfCheck);
+            fRightSuppressorCasingAssembly->MakeImprint(expHallLog, moveInnerSuppressor[2*i], rotateSideSuppressor[2*i], fCopyNumber++, fSurfCheck);
 
             rotateSideSuppressor[2*i+1] = new G4RotationMatrix;
             rotateSideSuppressor[2*i+1]->rotateY(-M_PI/2.0);
@@ -624,64 +292,64 @@ G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* exp_ha
             y = x0*cos(i*M_PI/2.0) - y0*sin(i*M_PI/2);
             z = z0;
 
-            moveInnerSuppressor[i*2+1] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,y,z,theta,phi));
+            moveInnerSuppressor[i*2+1] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,z,theta));
 
-            this->leftSuppressorCasingAssembly->MakeImprint(exp_hall_log, moveInnerSuppressor[2*i+1], rotateSideSuppressor[2*i+1], copy_number_two++, surfCheck);
+            fLeftSuppressorCasingAssembly->MakeImprint(expHallLog, moveInnerSuppressor[2*i+1], rotateSideSuppressor[2*i+1], fCopyNumberTwo++, fSurfCheck);
         }
 
     }
 
     // now we add the side pieces of suppressor that extend out in front of the can when it's in the back position
-    copy_number = right_suppressor_extension_copy_number + detector_number*4;
-    copy_number_two = left_suppressor_extension_copy_number + detector_number*4;
+    fCopyNumber = fRightSuppressorExtensionCopyNumber + detectorNumber*4;
+    fCopyNumberTwo = fLeftSuppressorExtensionCopyNumber + detectorNumber*4;
 
     G4RotationMatrix* rotateExtension[8];
     G4ThreeVector moveInnerExtension[8];
 
-    x0 =  - ((this->suppressor_extension_thickness/2.0 + this->suppressor_shell_thickness)
-             / cos(this->bent_end_angle)
-             + (shell_suppressor_extension_length/2.0 - (this->suppressor_extension_thickness
-                                                         + this->suppressor_shell_thickness*2.0)
-                * tan(this->bent_end_angle)/2.0) * sin(this->bent_end_angle) - (this->suppressor_back_radius
-                                                                                + this->bent_end_length + (this->BGO_can_seperation + this->side_BGO_thickness
-                                                                                                           + this->suppressor_shell_thickness*2.0)
-                                                                                / tan(this->bent_end_angle) - (this->suppressor_extension_thickness
-                                                                                                               + this->suppressor_shell_thickness*2.0)
-                                                                                * sin(this->bent_end_angle))
-             * tan(this->bent_end_angle));
+    x0 =  - ((fSuppressorExtensionThickness/2.0 + fSuppressorShellThickness)
+             / cos(fBentEndAngle)
+             + (shellSuppressorExtensionLength/2.0 - (fSuppressorExtensionThickness
+                                                         + fSuppressorShellThickness*2.0)
+                * tan(fBentEndAngle)/2.0) * sin(fBentEndAngle) - (fSuppressorBackRadius
+                                                                                + fBentEndLength + (fBGOCanSeperation + fSideBGOThickness
+                                                                                                           + fSuppressorShellThickness*2.0)
+                                                                                / tan(fBentEndAngle) - (fSuppressorExtensionThickness
+                                                                                                               + fSuppressorShellThickness*2.0)
+                                                                                * sin(fBentEndAngle))
+             * tan(fBentEndAngle));
 
-    y0 =  (shell_suppressor_extension_length*tan(shell_suppressor_extension_angle)/2.0
-           + (this->suppressor_forward_radius
-              + this->hevimet_tip_thickness)*sin(this->bent_end_angle) - this->BGO_can_seperation*2.0 - this->detectorPlacementCxn)/2.0;
+    y0 =  (shellSuppressorExtensionLength*tan(shellSuppressorExtensionAngle)/2.0
+           + (fSuppressorForwardRadius
+              + fHevimetTipThickness)*sin(fBentEndAngle) - fBGOCanSeperation*2.0 - fDetectorPlacementCxn)/2.0;
 
-    z0 =  - this->can_face_thickness/2.0 -(shell_suppressor_extension_length/2.0
-                                           - (this->suppressor_extension_thickness
-                                              + this->suppressor_shell_thickness*2.0)
-                                           * tan(this->bent_end_angle)/2.0)
-            * cos(this->bent_end_angle) +this->bent_end_length +(this->BGO_can_seperation
-                                                                 + this->side_BGO_thickness
-                                                                 + this->suppressor_shell_thickness*2.0)/tan(this->bent_end_angle)
-            - (this->suppressor_extension_thickness + this->suppressor_shell_thickness*2.0)
-            * sin(this->bent_end_angle) +this->suppShift + this->suppressor_back_radius
-            - this->suppressor_forward_radius
-            - this->suppressor_shell_thickness/2.0 + dist_from_origin;
+    z0 =  - fCanFaceThickness/2.0 -(shellSuppressorExtensionLength/2.0
+                                           - (fSuppressorExtensionThickness
+                                              + fSuppressorShellThickness*2.0)
+                                           * tan(fBentEndAngle)/2.0)
+            * cos(fBentEndAngle) +fBentEndLength +(fBGOCanSeperation
+                                                                 + fSideBGOThickness
+                                                                 + fSuppressorShellThickness*2.0)/tan(fBentEndAngle)
+            - (fSuppressorExtensionThickness + fSuppressorShellThickness*2.0)
+            * sin(fBentEndAngle) +fSuppShift + fSuppressorBackRadius
+            - fSuppressorForwardRadius
+            - fSuppressorShellThickness/2.0 + distFromOrigin;
 
 
-    if( !(this->suppressor_position_selector) && include_extension_suppressors )
+    if(!(fSuppressorPositionSelector) && fIncludeExtensionSuppressors)
     {
         // If the detectors are forward, put the extensions in the back position
-        // the placement of the extensions matches the placement of the side_suppressor pieces
+        // the placement of the extensions matches the placement of the sideSuppressor pieces
 
-        x0 += extension_radial_shift ;
+        x0 += extensionRadialShift ;
 
-        z0 += extension_back_shift ;
+        z0 += extensionBackShift ;
 
 
         for(i=0; i<4; i++)
         {
             rotateExtension[2*i] = new G4RotationMatrix;
             rotateExtension[2*i]->rotateZ(M_PI/2.0);
-            rotateExtension[2*i]->rotateY(this->bent_end_angle);
+            rotateExtension[2*i]->rotateY(fBentEndAngle);
             rotateExtension[2*i]->rotateX(M_PI/2.0 - M_PI/2.0*i);
             rotateExtension[2*i]->rotateX(alpha);
             rotateExtension[2*i]->rotateY(beta);
@@ -691,12 +359,12 @@ G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* exp_ha
             y = -x0*sin((i-1)*M_PI/2.0) + y0*cos((i-1)*M_PI/2);
             z = z0;
 
-            moveInnerExtension[2*i] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,y,z,theta,phi));
-            this->rightSuppressorExtensionAssembly->MakeImprint(exp_hall_log, moveInnerExtension[2*i], rotateExtension[2*i], copy_number++, surfCheck);
+            moveInnerExtension[2*i] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,z,theta));
+            fRightSuppressorExtensionAssembly->MakeImprint(expHallLog, moveInnerExtension[2*i], rotateExtension[2*i], fCopyNumber++, fSurfCheck);
 
             rotateExtension[2*i+1] = new G4RotationMatrix;
             rotateExtension[2*i+1]->rotateY(M_PI/2.0);
-            rotateExtension[2*i+1]->rotateZ(M_PI/2.0 + this->bent_end_angle);
+            rotateExtension[2*i+1]->rotateZ(M_PI/2.0 + fBentEndAngle);
             rotateExtension[2*i+1]->rotateX(-M_PI/2.0*i);
             rotateExtension[2*i+1]->rotateX(alpha);
             rotateExtension[2*i+1]->rotateY(beta);
@@ -706,14 +374,14 @@ G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* exp_ha
             y = x0*cos(i*M_PI/2.0) - y0*sin(i*M_PI/2);
             z = z0;
 
-            moveInnerExtension[2*i+1] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,y,z,theta,phi));
-            this->leftSuppressorExtensionAssembly->MakeImprint(exp_hall_log, moveInnerExtension[2*i+1], rotateExtension[2*i+1], copy_number_two++, surfCheck);
+            moveInnerExtension[2*i+1] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,z,theta));
+            fLeftSuppressorExtensionAssembly->MakeImprint(expHallLog, moveInnerExtension[2*i+1], rotateExtension[2*i+1], fCopyNumberTwo++, fSurfCheck);
         }
 
     }//end if(detectors forward) statement
 
     // Otherwise, put them forward
-    else if( ( this->suppressor_position_selector == 1 ) && include_extension_suppressors)
+    else if((fSuppressorPositionSelector == 1) && fIncludeExtensionSuppressors)
     {
 
         for(i=0; i<4; i++)
@@ -721,7 +389,7 @@ G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* exp_ha
 
             rotateExtension[2*i] = new G4RotationMatrix;
             rotateExtension[2*i]->rotateZ(M_PI/2.0);
-            rotateExtension[2*i]->rotateY(this->bent_end_angle);
+            rotateExtension[2*i]->rotateY(fBentEndAngle);
             rotateExtension[2*i]->rotateX(M_PI/2.0-M_PI/2.0*i);
             rotateExtension[2*i]->rotateX(alpha);
             rotateExtension[2*i]->rotateY(beta);
@@ -731,12 +399,12 @@ G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* exp_ha
             y = -x0*sin((i-1)*M_PI/2.0) + y0*cos((i-1)*M_PI/2);
             z = z0;
 
-            moveInnerExtension[2*i] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,y,z,theta,phi));
-            this->rightSuppressorExtensionAssembly->MakeImprint(exp_hall_log, moveInnerExtension[2*i], rotateExtension[2*i], copy_number++, surfCheck);
+            moveInnerExtension[2*i] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,z,theta));
+            fRightSuppressorExtensionAssembly->MakeImprint(expHallLog, moveInnerExtension[2*i], rotateExtension[2*i], fCopyNumber++, fSurfCheck);
 
             rotateExtension[2*i+1] = new G4RotationMatrix;
             rotateExtension[2*i+1]->rotateY(M_PI/2.0);
-            rotateExtension[2*i+1]->rotateZ(M_PI/2.0 + this->bent_end_angle);
+            rotateExtension[2*i+1]->rotateZ(M_PI/2.0 + fBentEndAngle);
             rotateExtension[2*i+1]->rotateX(-M_PI/2.0*i);
             rotateExtension[2*i+1]->rotateX(alpha);
             rotateExtension[2*i+1]->rotateY(beta);
@@ -746,27 +414,26 @@ G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* exp_ha
             y = x0*cos(i*M_PI/2.0) - y0*sin(i*M_PI/2);
             z = z0;
 
-            moveInnerExtension[2*i+1] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,y,z,theta,phi));
-            this->leftSuppressorExtensionAssembly->MakeImprint(exp_hall_log, moveInnerExtension[2*i+1], rotateExtension[2*i+1], copy_number_two++, surfCheck);
+            moveInnerExtension[2*i+1] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,z,theta));
+            fLeftSuppressorExtensionAssembly->MakeImprint(expHallLog, moveInnerExtension[2*i+1], rotateExtension[2*i+1], fCopyNumberTwo++, fSurfCheck);
         }
 
     }//end if(detectors back) statement
     return 1;
 } // End PlaceEverythingButCrystals
 
-G4int DetectionSystemGriffin::PlaceDeadLayerSpecificCrystal(G4LogicalVolume* exp_hall_log, G4int detector_number, G4int position_number, G4bool posTigress)
-{
+G4int DetectionSystemGriffin::PlaceDeadLayerSpecificCrystal(G4LogicalVolume* expHallLog, G4int detectorNumber, G4int positionNumber, G4bool posTigress) {
 
-    G4double theta  = this->coords[position_number][0]*deg;
-    G4double phi    = this->coords[position_number][1]*deg;
-    G4double alpha  = this->coords[position_number][2]*deg; // yaw
-    G4double beta   = this->coords[position_number][3]*deg; // pitch
-    G4double gamma  = this->coords[position_number][4]*deg; // roll
+    G4double theta  = fCoords[positionNumber][0]*deg;
+    G4double phi    = fCoords[positionNumber][1]*deg;
+    G4double alpha  = fCoords[positionNumber][2]*deg; // yaw
+    G4double beta   = fCoords[positionNumber][3]*deg; // pitch
+    G4double gamma  = fCoords[positionNumber][4]*deg; // roll
 
     //In GRIFFIN upstream is now downstream relative to TIGRESS. However, we want to maintain the same numbering scheme as TIGRESS. Net result is that the lampshade angles change by 45 degrees.
-    if(posTigress && (position_number < 4 || position_number > 11) ) {
-        phi       = this->coords[position_number][1]*deg - 45.0*deg;
-        gamma     = this->coords[position_number][4]*deg - 45.0*deg;
+    if(posTigress && (positionNumber < 4 || positionNumber > 11)) {
+        phi       = fCoords[positionNumber][1]*deg - 45.0*deg;
+        gamma     = fCoords[positionNumber][4]*deg - 45.0*deg;
     }
 
     G4double x;
@@ -778,40 +445,40 @@ G4int DetectionSystemGriffin::PlaceDeadLayerSpecificCrystal(G4LogicalVolume* exp
     G4int i;
 
     // positioning
-    G4double dist_from_origin_det = this->air_box_back_length_det/2.0 +this->air_box_front_length_det + this->new_rhombi_radius_det;
+    G4double distFromOriginDet = fAirBoxBackLengthDet/2.0 +fAirBoxFrontLengthDet + fNewRhombiRadiusDet;
 
-    x0 = (this->germanium_width + this->germanium_separation)/2.0;
-    y0 = (this->germanium_width + this->germanium_separation)/2.0;
-    z0 = this->germanium_length/2.0 + this->can_face_thickness/2.0 + this->germanium_dist_from_can_face + this->shift + this->applied_back_shift + dist_from_origin_det;
+    x0 = (fGermaniumWidth + fGermaniumSeparation)/2.0;
+    y0 = (fGermaniumWidth + fGermaniumSeparation)/2.0;
+    z0 = fGermaniumLength/2.0 + fCanFaceThickness/2.0 + fGermaniumDistFromCanFace + fShift + fAppliedBackShift + distFromOriginDet;
 
     /////////////////////////////////////////////////////////////////////
     // now we place all 4 of the 1/4 detectors using the LogicalVolume
     // of the 1st, ensuring that they too will have the hole
     /////////////////////////////////////////////////////////////////////
-    copy_number = germanium_copy_number + detector_number*4;
+    fCopyNumber = fGermaniumCopyNumber + detectorNumber*4;
 
-    G4RotationMatrix* rotate_germanium[4];
-    G4ThreeVector move_germanium[4];
+    G4RotationMatrix* rotateGermanium[4];
+    G4ThreeVector moveGermanium[4];
 
     for(i=0; i<4; i++){
-        rotate_germanium[i] = new G4RotationMatrix;
-        rotate_germanium[i]->rotateY(-M_PI/2.0);
-        rotate_germanium[i]->rotateX(M_PI/2.0-M_PI/2.0*i);
-        rotate_germanium[i]->rotateX(alpha);
-        rotate_germanium[i]->rotateY(beta);
-        rotate_germanium[i]->rotateZ(gamma);
+        rotateGermanium[i] = new G4RotationMatrix;
+        rotateGermanium[i]->rotateY(-M_PI/2.0);
+        rotateGermanium[i]->rotateX(M_PI/2.0-M_PI/2.0*i);
+        rotateGermanium[i]->rotateX(alpha);
+        rotateGermanium[i]->rotateY(beta);
+        rotateGermanium[i]->rotateZ(gamma);
 
-        x = -x0*pow(-1, floor((i+1)/2) );
-        y = -y0*pow(-1, floor((i+2)/2) );
+        x = -x0*pow(-1, floor((i+1)/2));
+        y = -y0*pow(-1, floor((i+2)/2));
         z = z0;
 
-        move_germanium[i] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi), DetectionSystemGriffin::transY(x,y,z,theta,phi), DetectionSystemGriffin::transZ(x,y,z,theta,phi));
+        moveGermanium[i] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi), DetectionSystemGriffin::transY(x,y,z,theta,phi), DetectionSystemGriffin::transZ(x,z,theta));
 
-        this->germaniumAssemblyCry[i]->MakeImprint(exp_hall_log, move_germanium[i], rotate_germanium[i], copy_number++, surfCheck);
+        fGermaniumAssemblyCry[i]->MakeImprint(expHallLog, moveGermanium[i], rotateGermanium[i], fCopyNumber++, fSurfCheck);
     }
 
     /////////////////////////////////////////////////////////////////////
-    // end germanium_block1_log
+    // end germaniumBlock1Log
     /////////////////////////////////////////////////////////////////////
 
     return 1;
@@ -821,38 +488,37 @@ G4int DetectionSystemGriffin::PlaceDeadLayerSpecificCrystal(G4LogicalVolume* exp
 ///////////////////////////////////////////////////////////////////////
 // BuildOneDetector()
 ///////////////////////////////////////////////////////////////////////
-void DetectionSystemGriffin::BuildOneDetector()
-{
+void DetectionSystemGriffin::BuildOneDetector() {
     // Build assembly volumes
     // Holds all pieces that are not a detector (ie. the can, nitrogen tank, cold finger, electrodes, etc.)
-    this->assembly                           = new G4AssemblyVolume();
+    fAssembly                           = new G4AssemblyVolume();
 
     // Holds germanium cores
-    this->germaniumAssembly                  = new G4AssemblyVolume();
+    fGermaniumAssembly                  = new G4AssemblyVolume();
 
     // Holds left suppressors
-    this->leftSuppressorCasingAssembly       = new G4AssemblyVolume();
+    fLeftSuppressorCasingAssembly       = new G4AssemblyVolume();
 
     // Holds right suppressors
-    this->rightSuppressorCasingAssembly      = new G4AssemblyVolume();
+    fRightSuppressorCasingAssembly      = new G4AssemblyVolume();
 
     // holds left suppressor extensions
-    this->leftSuppressorExtensionAssembly    = new G4AssemblyVolume();
+    fLeftSuppressorExtensionAssembly    = new G4AssemblyVolume();
 
     // holds right suppressor extensions
-    this->rightSuppressorExtensionAssembly   = new G4AssemblyVolume();
+    fRightSuppressorExtensionAssembly   = new G4AssemblyVolume();
 
     // Holds back suppressors
-    this->suppressorBackAssembly             = new G4AssemblyVolume();
+    fSuppressorBackAssembly             = new G4AssemblyVolume();
 
     // Holds the extension suppressor shells
-    this->extensionSuppressorShellAssembly   = new G4AssemblyVolume() ;
+    fExtensionSuppressorShellAssembly   = new G4AssemblyVolume() ;
 
     // Holds the back and side suppressor shells
-    this->backAndSideSuppressorShellAssembly = new G4AssemblyVolume() ;
+    fBackAndSideSuppressorShellAssembly = new G4AssemblyVolume() ;
 
     // Holds the Hevimets
-    this->hevimetAssembly                    = new G4AssemblyVolume() ;
+    fHevimetAssembly                    = new G4AssemblyVolume() ;
 
     ConstructComplexDetectorBlockWithDeadLayer();
     BuildelectrodeMatElectrodes();
@@ -860,55 +526,49 @@ void DetectionSystemGriffin::BuildOneDetector()
     ConstructDetector();
 
     // Include BGOs?
-    if (this->BGO_selector == 1)
-    {
+    if(fBGOSelector == 1) {
         ConstructNewSuppressorCasingWithShells() ;
-    }
-    else if (this->BGO_selector == 0)
-    {
+    } else if (fBGOSelector == 0) {
         G4cout << "Not building BGO " << G4endl ;
-    }
-    else
-    {
+    } else {
         G4cout << "Error 234235" << G4endl ;
         exit(1);
     }
 
     ConstructColdFinger();
 
-    if( this->suppressor_position_selector && this->hevimet_selector )
+    if(fSuppressorPositionSelector && fHevimetSelector)
         ConstructNewHeavyMet();
 
 } // end BuildOneDetector()
 
-void DetectionSystemGriffin::BuildEverythingButCrystals()
-{
+void DetectionSystemGriffin::BuildEverythingButCrystals() {
     // Build assembly volumes
-    this->assembly                           = new G4AssemblyVolume();
-    this->leftSuppressorCasingAssembly       = new G4AssemblyVolume();
-    this->rightSuppressorCasingAssembly      = new G4AssemblyVolume();
-    this->leftSuppressorExtensionAssembly    = new G4AssemblyVolume();
-    this->rightSuppressorExtensionAssembly   = new G4AssemblyVolume();
-    this->suppressorBackAssembly             = new G4AssemblyVolume();
+    fAssembly                           = new G4AssemblyVolume();
+    fLeftSuppressorCasingAssembly       = new G4AssemblyVolume();
+    fRightSuppressorCasingAssembly      = new G4AssemblyVolume();
+    fLeftSuppressorExtensionAssembly    = new G4AssemblyVolume();
+    fRightSuppressorExtensionAssembly   = new G4AssemblyVolume();
+    fSuppressorBackAssembly             = new G4AssemblyVolume();
 
     // Holds the extension suppressor shells
-    this->extensionSuppressorShellAssembly   = new G4AssemblyVolume() ;
+    fExtensionSuppressorShellAssembly   = new G4AssemblyVolume() ;
 
     // Holds the back and side suppressor shells
-    this->backAndSideSuppressorShellAssembly = new G4AssemblyVolume() ;
+    fBackAndSideSuppressorShellAssembly = new G4AssemblyVolume() ;
 
     // Holds the hevimets
-    this->hevimetAssembly                    = new G4AssemblyVolume() ;
+    fHevimetAssembly                    = new G4AssemblyVolume() ;
 
     BuildelectrodeMatElectrodes();
 
     ConstructDetector();
 
     // Include BGOs?
-    if (this->BGO_selector == 1) {
+    if (fBGOSelector == 1) {
         ConstructNewSuppressorCasingWithShells();
     }
-    else if (this->BGO_selector == 0) {
+    else if (fBGOSelector == 0) {
         G4cout << "Not building BGO " << G4endl;
     }
     else {
@@ -918,77 +578,75 @@ void DetectionSystemGriffin::BuildEverythingButCrystals()
 
     ConstructColdFinger();
 
-    if( this->suppressor_position_selector &&  this->hevimet_selector )
+    if(fSuppressorPositionSelector &&  fHevimetSelector)
         ConstructNewHeavyMet();
 
 
 } // end BuildEverythingButCrystals()
 
 
-void DetectionSystemGriffin::BuildDeadLayerSpecificCrystal(G4int det)
-{
-    this->germaniumAssemblyCry[0] = new G4AssemblyVolume();
-    this->germaniumAssemblyCry[1] = new G4AssemblyVolume();
-    this->germaniumAssemblyCry[2] = new G4AssemblyVolume();
-    this->germaniumAssemblyCry[3] = new G4AssemblyVolume();
+void DetectionSystemGriffin::BuildDeadLayerSpecificCrystal(G4int det) {
+    fGermaniumAssemblyCry[0] = new G4AssemblyVolume();
+    fGermaniumAssemblyCry[1] = new G4AssemblyVolume();
+    fGermaniumAssemblyCry[2] = new G4AssemblyVolume();
+    fGermaniumAssemblyCry[3] = new G4AssemblyVolume();
 
-    for(G4int i=0; i<4; i++)
-        ConstructComplexDetectorBlockWithDetectorSpecificDeadLayer(det,i);
-
+    for(G4int i=0; i<4; i++) {
+		ConstructComplexDetectorBlockWithDetectorSpecificDeadLayer(det,i);
+	 }
 }
 
 
 ///////////////////////////////////////////////////////////////////////
 // ConstructComplexDetectorBlock builds four quarters of germanium
 ///////////////////////////////////////////////////////////////////////
-void DetectionSystemGriffin::ConstructComplexDetectorBlock()
-{
-    G4Material* materialGe = G4Material::GetMaterial("G4_Ge");
-    if( !materialGe ) {
-        G4cout << " ----> Material G4_Ge not found, cannot build the detector shell! " << G4endl;
+void DetectionSystemGriffin::ConstructComplexDetectorBlock() {
+    G4Material* materialGe = G4Material::GetMaterial("G4Ge");
+    if(!materialGe) {
+        G4cout << " ----> Material G4Ge not found, cannot build the detector shell! " << G4endl;
         exit(1);
     }
     G4Material* materialVacuum = G4Material::GetMaterial("Vacuum");
-    if( !materialVacuum ) {
+    if(!materialVacuum) {
         G4cout << " ----> Material Vacuum not found, cannot build the detector shell! " << G4endl;
         exit(1);
     }
 
-    G4VisAttributes* germanium_block1_vis_att = new G4VisAttributes(G4Colour(1.0,0.0,0.0));
-    germanium_block1_vis_att->SetVisibility(true);
+    G4VisAttributes* germaniumBlock1VisAtt = new G4VisAttributes(G4Colour(1.0,0.0,0.0));
+    germaniumBlock1VisAtt->SetVisibility(true);
 
-    G4VisAttributes* dead_layer_vis_att = new G4VisAttributes(G4Colour(0.80, 0.0, 0.0));
-    dead_layer_vis_att->SetVisibility(true);
+    G4VisAttributes* deadLayerVisAtt = new G4VisAttributes(G4Colour(0.80, 0.0, 0.0));
+    deadLayerVisAtt->SetVisibility(true);
 
-    G4VisAttributes* air_vis_att = new G4VisAttributes(G4Colour(0.8,0.8,0.8));
-    air_vis_att->SetVisibility(true);
+    G4VisAttributes* airVisAtt = new G4VisAttributes(G4Colour(0.8,0.8,0.8));
+    airVisAtt->SetVisibility(true);
 
-    G4VisAttributes* electrodeMat_vis_att = new G4VisAttributes(G4Colour(1.0,1.0,0.0));
-    electrodeMat_vis_att->SetVisibility(true);
+    G4VisAttributes* electrodeMatVisAtt = new G4VisAttributes(G4Colour(1.0,1.0,0.0));
+    electrodeMatVisAtt->SetVisibility(true);
 
-    G4SubtractionSolid* detector1 = this->quarterDetector();
+    G4SubtractionSolid* detector1 = QuarterDetector();
 
-    germanium_block1_log = new G4LogicalVolume(detector1, materialGe, "germanium_block1_log", 0, 0, 0);
-    germanium_block1_log->SetVisAttributes(germanium_block1_vis_att);
+    fGermaniumBlock1Log = new G4LogicalVolume(detector1, materialGe, "germaniumBlock1Log", 0, 0, 0);
+    fGermaniumBlock1Log->SetVisAttributes(germaniumBlock1VisAtt);
 
-    this->germaniumAssembly->AddPlacedVolume(germanium_block1_log, this->move_null, this->rotate_null);
+    fGermaniumAssembly->AddPlacedVolume(fGermaniumBlock1Log, fMoveNull, fRotateNull);
 
     // now we make the hole that will go in the back of each quarter detector,
-    G4double start_angle = 0.0*M_PI;
-    G4double final_angle = 2.0*M_PI;
-    G4double hole_radius = this->germanium_hole_radius;
-    G4double hole_half_length_z = (this->germanium_length -this->germanium_hole_dist_from_face)/2.0;
+    G4double startAngle = 0.0*M_PI;
+    G4double finalAngle = 2.0*M_PI;
+    G4double holeRadius = fGermaniumHoleRadius;
+    G4double holeHalfLengthZ = (fGermaniumLength -fGermaniumHoleDistFromFace)/2.0;
 
 
-    G4Tubs* hole_tubs = new G4Tubs("hole_tubs", 0.0, hole_radius, hole_half_length_z, start_angle, final_angle);
+    G4Tubs* holeTubs = new G4Tubs("holeTubs", 0.0, holeRadius, holeHalfLengthZ, startAngle, finalAngle);
 
-    G4ThreeVector move_hole(this->germanium_shift, -(this->germanium_shift),
-                            -((this->germanium_hole_dist_from_face)));
+    G4ThreeVector moveHole(fGermaniumShift, -(fGermaniumShift),
+                            -((fGermaniumHoleDistFromFace)));
 
-    germanium_hole_log = new G4LogicalVolume(hole_tubs, materialVacuum, "germanium_hole_log", 0, 0, 0);
-    germanium_hole_log->SetVisAttributes(air_vis_att);
+    fGermaniumHoleLog = new G4LogicalVolume(holeTubs, materialVacuum, "germaniumHoleLog", 0, 0, 0);
+    fGermaniumHoleLog->SetVisAttributes(airVisAtt);
 
-    this->germaniumAssembly->AddPlacedVolume(germanium_hole_log, move_hole, this->rotate_null);
+    fGermaniumAssembly->AddPlacedVolume(fGermaniumHoleLog, moveHole, fRotateNull);
 
 }//end ::ConstructComplexDetectorBlock
 
@@ -996,194 +654,192 @@ void DetectionSystemGriffin::ConstructComplexDetectorBlock()
 // ConstructComplexDetectorBlockWithDeadLayer builds four quarters of 
 // germanium, with dead layers
 ///////////////////////////////////////////////////////////////////////
-void DetectionSystemGriffin::ConstructComplexDetectorBlockWithDeadLayer()
-{
-    G4Material* materialGe = G4Material::GetMaterial("G4_Ge");
-    if( !materialGe ) {
-        G4cout << " ----> Material G4_Ge not found, cannot build the detector shell! " << G4endl;
+void DetectionSystemGriffin::ConstructComplexDetectorBlockWithDeadLayer() {
+    G4Material* materialGe = G4Material::GetMaterial("G4Ge");
+    if(!materialGe) {
+        G4cout << " ----> Material G4Ge not found, cannot build the detector shell! " << G4endl;
         exit(1);
     }
     G4Material* materialVacuum = G4Material::GetMaterial("Vacuum");
-    if( !materialVacuum ) {
+    if(!materialVacuum) {
         G4cout << " ----> Material Vacuum not found, cannot build the detector shell! " << G4endl;
         exit(1);
     }
 
-    G4VisAttributes* germanium_block1_vis_att = new G4VisAttributes(G4Colour(1.0,0.0,0.0));
-    germanium_block1_vis_att->SetVisibility(true);
+    G4VisAttributes* germaniumBlock1VisAtt = new G4VisAttributes(G4Colour(1.0,0.0,0.0));
+    germaniumBlock1VisAtt->SetVisibility(true);
 
-    G4VisAttributes* dead_layer_vis_att = new G4VisAttributes(G4Colour(0.80, 0.0, 0.0));
-    dead_layer_vis_att->SetVisibility(true);
+    G4VisAttributes* deadLayerVisAtt = new G4VisAttributes(G4Colour(0.80, 0.0, 0.0));
+    deadLayerVisAtt->SetVisibility(true);
 
-    G4VisAttributes* air_vis_att = new G4VisAttributes(G4Colour(0.8,0.8,0.8));
-    air_vis_att->SetVisibility(true);
+    G4VisAttributes* airVisAtt = new G4VisAttributes(G4Colour(0.8,0.8,0.8));
+    airVisAtt->SetVisibility(true);
 
-    G4VisAttributes* electrodeMat_vis_att = new G4VisAttributes(G4Colour(1.0,1.0,0.0));
-    electrodeMat_vis_att->SetVisibility(true);
+    G4VisAttributes* electrodeMatVisAtt = new G4VisAttributes(G4Colour(1.0,1.0,0.0));
+    electrodeMatVisAtt->SetVisibility(true);
 
-    G4SubtractionSolid* detector1 = this->quarterDetector();
+    G4SubtractionSolid* detector1 = QuarterDetector();
 
-    germanium_block1_log = new G4LogicalVolume(detector1, materialGe, "germanium_block1_log", 0, 0, 0);
-    germanium_block1_log->SetVisAttributes(germanium_block1_vis_att);
+    fGermaniumBlock1Log = new G4LogicalVolume(detector1, materialGe, "germaniumBlock1Log", 0, 0, 0);
+    fGermaniumBlock1Log->SetVisAttributes(germaniumBlock1VisAtt);
 
-    this->germaniumAssembly->AddPlacedVolume(germanium_block1_log, this->move_null, this->rotate_null);
+    fGermaniumAssembly->AddPlacedVolume(fGermaniumBlock1Log, fMoveNull, fRotateNull);
 
     /////////////////////////////////////////////////////////////////////
     // Since if we are using this method, the inner dead layer must be
     // simulated, make a cylinder of germanium, place the air cylinder
     // inside it, and then place the whole thing in the crystal
     /////////////////////////////////////////////////////////////////////
-    G4double start_angle = 0.0*M_PI;
-    G4double final_angle = 2.0*M_PI;
-    G4double dead_layer_radius = this->germanium_hole_radius + this->inner_dead_layer_thickness;
-    G4double dead_layer_half_length_z = (this->germanium_length
-                                         - this->germanium_hole_dist_from_face
-                                         + this->inner_dead_layer_thickness)/2.0;
+    G4double startAngle = 0.0*M_PI;
+    G4double finalAngle = 2.0*M_PI;
+    G4double deadLayerRadius = fGermaniumHoleRadius + fInnerDeadLayerThickness;
+    G4double deadLayerHalfLengthZ = (fGermaniumLength
+                                         - fGermaniumHoleDistFromFace
+                                         + fInnerDeadLayerThickness)/2.0;
 
-    G4Tubs* dead_layer_tubs = new G4Tubs("dead_layer_tubs", this->germanium_hole_radius,
-                                         dead_layer_radius, dead_layer_half_length_z, start_angle,final_angle);
+    G4Tubs* deadLayerTubs = new G4Tubs("deadLayerTubs", fGermaniumHoleRadius,
+                                         deadLayerRadius, deadLayerHalfLengthZ, startAngle,finalAngle);
 
-    G4ThreeVector move_dead_layer(this->germanium_shift, -(this->germanium_shift),
-                                  -((this->germanium_hole_dist_from_face
-                                     - this->inner_dead_layer_thickness)/2.0));
+    G4ThreeVector moveDeadLayer(fGermaniumShift, -(fGermaniumShift),
+                                  -((fGermaniumHoleDistFromFace
+                                     - fInnerDeadLayerThickness)/2.0));
 
-    inner_dead_layer_log = new G4LogicalVolume(dead_layer_tubs, materialGe, "inner_dead_layer_log", 0, 0, 0);
-    inner_dead_layer_log->SetVisAttributes(dead_layer_vis_att);
+    fInnerDeadLayerLog = new G4LogicalVolume(deadLayerTubs, materialGe, "innerDeadLayerLog", 0, 0, 0);
+    fInnerDeadLayerLog->SetVisAttributes(deadLayerVisAtt);
 
-    this->germaniumAssembly->AddPlacedVolume(inner_dead_layer_log, move_dead_layer, this->rotate_null);
+    fGermaniumAssembly->AddPlacedVolume(fInnerDeadLayerLog, moveDeadLayer, fRotateNull);
 
     // dead layer cap
-    dead_layer_radius = this->germanium_hole_radius;
-    G4double dead_layer_cap_half_length_z = (this->inner_dead_layer_thickness)/2.0;
+    deadLayerRadius = fGermaniumHoleRadius;
+    G4double deadLayerCapHalfLengthZ = (fInnerDeadLayerThickness)/2.0;
 
-    G4Tubs* dead_layer_cap = new G4Tubs("dead_layer_cap", 0.0,
-                                        dead_layer_radius, dead_layer_cap_half_length_z, start_angle,final_angle);
+    G4Tubs* deadLayerCap = new G4Tubs("deadLayerCap", 0.0,
+                                        deadLayerRadius, deadLayerCapHalfLengthZ, startAngle,finalAngle);
 
-    G4ThreeVector move_dead_layer_cap(this->germanium_shift, -(this->germanium_shift),
-                                      -((this->germanium_hole_dist_from_face - this->inner_dead_layer_thickness)/2.0 - dead_layer_half_length_z + this->inner_dead_layer_thickness/2.0));
+    G4ThreeVector moveDeadLayerCap(fGermaniumShift, -(fGermaniumShift),
+                                      -((fGermaniumHoleDistFromFace - fInnerDeadLayerThickness)/2.0 - deadLayerHalfLengthZ + fInnerDeadLayerThickness/2.0));
 
-    inner_dead_layer_cap_log = new G4LogicalVolume(dead_layer_cap, materialGe, "inner_dead_layer_cap_log", 0, 0, 0);
-    inner_dead_layer_cap_log->SetVisAttributes(dead_layer_vis_att);
+    fInnerDeadLayerCapLog = new G4LogicalVolume(deadLayerCap, materialGe, "innerDeadLayerCapLog", 0, 0, 0);
+    fInnerDeadLayerCapLog->SetVisAttributes(deadLayerVisAtt);
 
-    this->germaniumAssembly->AddPlacedVolume(inner_dead_layer_cap_log, move_dead_layer_cap, this->rotate_null);
+    fGermaniumAssembly->AddPlacedVolume(fInnerDeadLayerCapLog, moveDeadLayerCap, fRotateNull);
 
 
     // now we make the hole that will go in the back of each quarter detector,
     // and place it inside the dead layer cylinder
-    start_angle = 0.0*M_PI;
-    final_angle = 2.0*M_PI;
-    G4double hole_radius = this->germanium_hole_radius;
-    G4double hole_half_length_z = (this->germanium_length -this->germanium_hole_dist_from_face)/2.0;
+    startAngle = 0.0*M_PI;
+    finalAngle = 2.0*M_PI;
+    G4double holeRadius = fGermaniumHoleRadius;
+    G4double holeHalfLengthZ = (fGermaniumLength -fGermaniumHoleDistFromFace)/2.0;
 
-    G4Tubs* hole_tubs = new G4Tubs("hole_tubs", 0.0, hole_radius, hole_half_length_z, start_angle, final_angle);
+    G4Tubs* holeTubs = new G4Tubs("holeTubs", 0.0, holeRadius, holeHalfLengthZ, startAngle, finalAngle);
 
-    G4ThreeVector move_hole(this->germanium_shift, -(this->germanium_shift),
-                            -((this->germanium_hole_dist_from_face
-                               - this->inner_dead_layer_thickness)/2.0)
-                            -(this->inner_dead_layer_thickness/2.0));
+    G4ThreeVector moveHole(fGermaniumShift, -(fGermaniumShift),
+                            -((fGermaniumHoleDistFromFace
+                               - fInnerDeadLayerThickness)/2.0)
+                            -(fInnerDeadLayerThickness/2.0));
 
-    germanium_hole_log = new G4LogicalVolume(hole_tubs, materialVacuum, "germanium_hole_log", 0, 0, 0);
-    germanium_hole_log->SetVisAttributes(air_vis_att);
+    fGermaniumHoleLog = new G4LogicalVolume(holeTubs, materialVacuum, "germaniumHoleLog", 0, 0, 0);
+    fGermaniumHoleLog->SetVisAttributes(airVisAtt);
 
-    this->germaniumAssembly->AddPlacedVolume(germanium_hole_log, move_hole, this->rotate_null);
+    fGermaniumAssembly->AddPlacedVolume(fGermaniumHoleLog, moveHole, fRotateNull);
 
 }//end ::ConstructComplexDetectorBlockWithDeadLayer
 
-void DetectionSystemGriffin::ConstructComplexDetectorBlockWithDetectorSpecificDeadLayer(G4int det, G4int cry)
-{
+void DetectionSystemGriffin::ConstructComplexDetectorBlockWithDetectorSpecificDeadLayer(G4int det, G4int cry) {
     G4String strdet = G4UIcommand::ConvertToString(det);
     G4String strcry = G4UIcommand::ConvertToString(cry);
 
-    G4Material* materialGe = G4Material::GetMaterial("G4_Ge");
-    if( !materialGe ) {
-        G4cout << " ----> Material G4_Ge not found, cannot build the detector shell! " << G4endl;
+    G4Material* materialGe = G4Material::GetMaterial("G4Ge");
+    if(!materialGe) {
+        G4cout << " ----> Material G4Ge not found, cannot build the detector shell! " << G4endl;
         exit(1);
     }
     G4Material* materialVacuum = G4Material::GetMaterial("Vacuum");
-    if( !materialVacuum ) {
+    if(!materialVacuum) {
         G4cout << " ----> Material Vacuum not found, cannot build the detector shell! " << G4endl;
         exit(1);
     }
 
-    G4VisAttributes* germanium_block1_vis_att = new G4VisAttributes(this->griffinCrystalColours[cry]);
-    germanium_block1_vis_att->SetVisibility(true);
+    G4VisAttributes* germaniumBlock1VisAtt = new G4VisAttributes(fGriffinCrystalColours[cry]);
+    germaniumBlock1VisAtt->SetVisibility(true);
 
-    G4VisAttributes* dead_layer_vis_att = new G4VisAttributes(this->griffinDeadLayerColours[cry]);
-    dead_layer_vis_att->SetVisibility(true);
+    G4VisAttributes* deadLayerVisAtt = new G4VisAttributes(fGriffinDeadLayerColours[cry]);
+    deadLayerVisAtt->SetVisibility(true);
 
-    G4VisAttributes* air_vis_att = new G4VisAttributes(G4Colour(0.8,0.8,0.8));
-    air_vis_att->SetVisibility(true);
+    G4VisAttributes* airVisAtt = new G4VisAttributes(G4Colour(0.8,0.8,0.8));
+    airVisAtt->SetVisibility(true);
 
-    G4VisAttributes* electrodeMat_vis_att = new G4VisAttributes(G4Colour(1.0,1.0,0.0));
-    electrodeMat_vis_att->SetVisibility(true);
+    G4VisAttributes* electrodeMatVisAtt = new G4VisAttributes(G4Colour(1.0,1.0,0.0));
+    electrodeMatVisAtt->SetVisibility(true);
 
-    G4SubtractionSolid* detector1 = this->quarterSpecificDeadLayerDetector(det, cry);
+    G4SubtractionSolid* detector1 = QuarterSpecificDeadLayerDetector(det, cry);
 
-    G4String germanium_block1_name = "germanium_dls_block1_" + strdet + "_" + strcry + "_log" ;
+    G4String germaniumBlock1Name = "germaniumDlsBlock1_" + strdet + "_" + strcry + "_log" ;
 
-    germanium_block1_log = new G4LogicalVolume(detector1, materialGe, germanium_block1_name, 0, 0, 0);
-    germanium_block1_log->SetVisAttributes(germanium_block1_vis_att);
+    fGermaniumBlock1Log = new G4LogicalVolume(detector1, materialGe, germaniumBlock1Name, 0, 0, 0);
+    fGermaniumBlock1Log->SetVisAttributes(germaniumBlock1VisAtt);
 
-    this->germaniumAssemblyCry[cry]->AddPlacedVolume(germanium_block1_log, this->move_null, this->rotate_null);
+    fGermaniumAssemblyCry[cry]->AddPlacedVolume(fGermaniumBlock1Log, fMoveNull, fRotateNull);
 
     /////////////////////////////////////////////////////////////////////
     // Since if we are using this method, the inner dead layer must be
     // simulated, make a cylinder of germanium, place the air cylinder
     // inside it, and then place the whole thing in the crystal
     /////////////////////////////////////////////////////////////////////
-    G4double start_angle = 0.0*M_PI;
-    G4double final_angle = 2.0*M_PI;
-    G4double dead_layer_radius = this->germanium_hole_radius + this->griffinDeadLayers[det][cry];
-    G4double dead_layer_half_length_z = (this->germanium_length
-                                         - this->germanium_hole_dist_from_face
-                                         + this->griffinDeadLayers[det][cry])/2.0;
+    G4double startAngle = 0.0*M_PI;
+    G4double finalAngle = 2.0*M_PI;
+    G4double deadLayerRadius = fGermaniumHoleRadius + fGriffinDeadLayers[det][cry];
+    G4double deadLayerHalfLengthZ = (fGermaniumLength
+                                         - fGermaniumHoleDistFromFace
+                                         + fGriffinDeadLayers[det][cry])/2.0;
 
-    G4Tubs* dead_layer_tubs = new G4Tubs("dead_layer_tubs", this->germanium_hole_radius,
-                                         dead_layer_radius, dead_layer_half_length_z, start_angle,final_angle);
+    G4Tubs* deadLayerTubs = new G4Tubs("deadLayerTubs", fGermaniumHoleRadius,
+                                         deadLayerRadius, deadLayerHalfLengthZ, startAngle,finalAngle);
 
-    G4ThreeVector move_dead_layer(this->germanium_shift, -(this->germanium_shift),
-                                  -((this->germanium_hole_dist_from_face
-                                     - this->griffinDeadLayers[det][cry])/2.0));
+    G4ThreeVector moveDeadLayer(fGermaniumShift, -(fGermaniumShift),
+                                  -((fGermaniumHoleDistFromFace
+                                     - fGriffinDeadLayers[det][cry])/2.0));
 
-    inner_dead_layer_log = new G4LogicalVolume(dead_layer_tubs, materialGe, "inner_dead_layer_log", 0, 0, 0);
-    inner_dead_layer_log->SetVisAttributes(dead_layer_vis_att);
+    fInnerDeadLayerLog = new G4LogicalVolume(deadLayerTubs, materialGe, "innerDeadLayerLog", 0, 0, 0);
+    fInnerDeadLayerLog->SetVisAttributes(deadLayerVisAtt);
 
-    this->germaniumAssemblyCry[cry]->AddPlacedVolume(inner_dead_layer_log, move_dead_layer, this->rotate_null);
+    fGermaniumAssemblyCry[cry]->AddPlacedVolume(fInnerDeadLayerLog, moveDeadLayer, fRotateNull);
 
     // dead layer cap
-    dead_layer_radius = this->germanium_hole_radius;
-    G4double dead_layer_cap_half_length_z = (this->griffinDeadLayers[det][cry])/2.0;
+    deadLayerRadius = fGermaniumHoleRadius;
+    G4double deadLayerCapHalfLengthZ = (fGriffinDeadLayers[det][cry])/2.0;
 
-    G4Tubs* dead_layer_cap = new G4Tubs("dead_layer_cap", 0.0,
-                                        dead_layer_radius, dead_layer_cap_half_length_z, start_angle,final_angle);
+    G4Tubs* deadLayerCap = new G4Tubs("deadLayerCap", 0.0,
+                                        deadLayerRadius, deadLayerCapHalfLengthZ, startAngle,finalAngle);
 
-    G4ThreeVector move_dead_layer_cap(this->germanium_shift, -(this->germanium_shift),
-                                      -((this->germanium_hole_dist_from_face - this->griffinDeadLayers[det][cry])/2.0 - dead_layer_half_length_z + this->griffinDeadLayers[det][cry]/2.0));
+    G4ThreeVector moveDeadLayerCap(fGermaniumShift, -(fGermaniumShift),
+                                      -((fGermaniumHoleDistFromFace - fGriffinDeadLayers[det][cry])/2.0 - deadLayerHalfLengthZ + fGriffinDeadLayers[det][cry]/2.0));
 
-    inner_dead_layer_cap_log = new G4LogicalVolume(dead_layer_cap, materialGe, "inner_dead_layer_cap_log", 0, 0, 0);
-    inner_dead_layer_cap_log->SetVisAttributes(dead_layer_vis_att);
+    fInnerDeadLayerCapLog = new G4LogicalVolume(deadLayerCap, materialGe, "innerDeadLayerCapLog", 0, 0, 0);
+    fInnerDeadLayerCapLog->SetVisAttributes(deadLayerVisAtt);
 
-    this->germaniumAssemblyCry[cry]->AddPlacedVolume(inner_dead_layer_cap_log, move_dead_layer_cap, this->rotate_null);
+    fGermaniumAssemblyCry[cry]->AddPlacedVolume(fInnerDeadLayerCapLog, moveDeadLayerCap, fRotateNull);
 
 
     // now we make the hole that will go in the back of each quarter detector,
     // and place it inside the dead layer cylinder
-    start_angle = 0.0*M_PI;
-    final_angle = 2.0*M_PI;
-    G4double hole_radius = this->germanium_hole_radius;
-    G4double hole_half_length_z = (this->germanium_length -this->germanium_hole_dist_from_face)/2.0;
+    startAngle = 0.0*M_PI;
+    finalAngle = 2.0*M_PI;
+    G4double holeRadius = fGermaniumHoleRadius;
+    G4double holeHalfLengthZ = (fGermaniumLength -fGermaniumHoleDistFromFace)/2.0;
 
-    G4Tubs* hole_tubs = new G4Tubs("hole_tubs", 0.0, hole_radius, hole_half_length_z, start_angle, final_angle);
+    G4Tubs* holeTubs = new G4Tubs("holeTubs", 0.0, holeRadius, holeHalfLengthZ, startAngle, finalAngle);
 
-    G4ThreeVector move_hole(this->germanium_shift, -(this->germanium_shift),
-                            -((this->germanium_hole_dist_from_face
-                               - this->griffinDeadLayers[det][cry])/2.0)
-                            -(this->griffinDeadLayers[det][cry]/2.0));
+    G4ThreeVector moveHole(fGermaniumShift, -(fGermaniumShift),
+                            -((fGermaniumHoleDistFromFace
+                               - fGriffinDeadLayers[det][cry])/2.0)
+                            -(fGriffinDeadLayers[det][cry]/2.0));
 
-    germanium_hole_log = new G4LogicalVolume(hole_tubs, materialVacuum, "germanium_hole_log", 0, 0, 0);
-    germanium_hole_log->SetVisAttributes(air_vis_att);
+    fGermaniumHoleLog = new G4LogicalVolume(holeTubs, materialVacuum, "germaniumHoleLog", 0, 0, 0);
+    fGermaniumHoleLog->SetVisAttributes(airVisAtt);
 
-    this->germaniumAssemblyCry[cry]->AddPlacedVolume(germanium_hole_log, move_hole, this->rotate_null);
+    fGermaniumAssemblyCry[cry]->AddPlacedVolume(fGermaniumHoleLog, moveHole, fRotateNull);
 
 }//end ::ConstructComplexDetectorBlockWithDetectorSpecificDeadLayer
 
@@ -1191,51 +847,50 @@ void DetectionSystemGriffin::ConstructComplexDetectorBlockWithDetectorSpecificDe
 // Builds a layer of electrodeMat between germanium crystals to
 // approximate electrodes, etc. that Eurisys won't tell us 
 ///////////////////////////////////////////////////////////////////////
-void DetectionSystemGriffin::BuildelectrodeMatElectrodes()
-{
+void DetectionSystemGriffin::BuildelectrodeMatElectrodes() {
 
-    G4Material* electrodeMat = G4Material::GetMaterial(electrodeMaterial);
-    if( !electrodeMat ) {
-        G4cout << " ----> Material " << electrodeMaterial << " not found, cannot build the detector shell! " << G4endl;
+    G4Material* electrodeMat = G4Material::GetMaterial(fElectrodeMaterial);
+    if(!electrodeMat) {
+        G4cout << " ----> Material " << fElectrodeMaterial << " not found, cannot build the detector shell! " << G4endl;
         exit(1);
     }
 
-    G4VisAttributes* electrodeMat_vis_att = new G4VisAttributes(G4Colour(1.0,1.0,0.0));
-    electrodeMat_vis_att->SetVisibility(true);
+    G4VisAttributes* electrodeMatVisAtt = new G4VisAttributes(G4Colour(1.0,1.0,0.0));
+    electrodeMatVisAtt->SetVisibility(true);
 
     // electrodeMat layers between crystals - back part
-    G4RotationMatrix* rotate_electrodeMat_back = new G4RotationMatrix;
-    rotate_electrodeMat_back->rotateZ(M_PI/2.0);
-    G4ThreeVector move_inter_crystal_electrodeMat_back(this->germanium_length/2.0
-                                                       + this->germanium_bent_length/2.0
-                                                       + this->can_face_thickness/2.0
-                                                       + this->germanium_dist_from_can_face + this->shift
-                                                       + this->applied_back_shift, 0,0);
+    G4RotationMatrix* rotateElectrodeMatBack = new G4RotationMatrix;
+    rotateElectrodeMatBack->rotateZ(M_PI/2.0);
+    G4ThreeVector moveInterCrystalElectrodeMatBack(fGermaniumLength/2.0
+                                                       + fGermaniumBentLength/2.0
+                                                       + fCanFaceThickness/2.0
+                                                       + fGermaniumDistFromCanFace + fShift
+                                                       + fAppliedBackShift, 0,0);
 
-    G4UnionSolid* inter_crystal_electrodeMat_back = this->interCrystalelectrodeMatBack();
+    G4UnionSolid* interCrystalElectrodeMatBack = InterCrystalelectrodeMatBack();
 
-    inter_crystal_electrodeMat_back_log = new G4LogicalVolume(inter_crystal_electrodeMat_back,
-                                                              electrodeMat, "inter_crystal_electrodeMat_back_log", 0, 0, 0);
-    inter_crystal_electrodeMat_back_log->SetVisAttributes(electrodeMat_vis_att);
+    fInterCrystalElectrodeMatBackLog = new G4LogicalVolume(interCrystalElectrodeMatBack,
+                                                              electrodeMat, "interCrystalElectrodeMatBackLog", 0, 0, 0);
+    fInterCrystalElectrodeMatBackLog->SetVisAttributes(electrodeMatVisAtt);
 
-    this->assembly->AddPlacedVolume(inter_crystal_electrodeMat_back_log, move_inter_crystal_electrodeMat_back, rotate_electrodeMat_back);
+	 fAssembly->AddPlacedVolume(fInterCrystalElectrodeMatBackLog, moveInterCrystalElectrodeMatBack, rotateElectrodeMatBack);
 
     // electrodeMat between crystals - front part
-    G4RotationMatrix* rotate_electrodeMat_front = new G4RotationMatrix;
-    rotate_electrodeMat_front->rotateY(M_PI/2.0);
-    G4UnionSolid* inter_crystal_electrodeMat_front = this->interCrystalelectrodeMatFront();
+    G4RotationMatrix* rotateElectrodeMatFront = new G4RotationMatrix;
+    rotateElectrodeMatFront->rotateY(M_PI/2.0);
+    G4UnionSolid* interCrystalElectrodeMatFront = InterCrystalelectrodeMatFront();
 
-    G4ThreeVector move_inter_crystal_electrodeMat_front(this->germanium_bent_length/2.0
-                                                        + this->electrodeMat_starting_depth/2.0
-                                                        + this->can_face_thickness/2.0
-                                                        + this->germanium_dist_from_can_face + this->shift
-                                                        + this->applied_back_shift, 0,0);
+    G4ThreeVector moveInterCrystalElectrodeMatFront(fGermaniumBentLength/2.0
+                                                        + fElectrodeMatStartingDepth/2.0
+                                                        + fCanFaceThickness/2.0
+                                                        + fGermaniumDistFromCanFace + fShift
+                                                        + fAppliedBackShift, 0,0);
 
-    inter_crystal_electrodeMat_front_log = new G4LogicalVolume(inter_crystal_electrodeMat_front,
-                                                               electrodeMat, "inter_crystal_electrodeMat_front_log", 0, 0, 0);
-    inter_crystal_electrodeMat_front_log->SetVisAttributes(electrodeMat_vis_att);
+    fInterCrystalElectrodeMatFrontLog = new G4LogicalVolume(interCrystalElectrodeMatFront,
+                                                               electrodeMat, "interCrystalElectrodeMatFrontLog", 0, 0, 0);
+    fInterCrystalElectrodeMatFrontLog->SetVisAttributes(electrodeMatVisAtt);
 
-    this->assembly->AddPlacedVolume(inter_crystal_electrodeMat_front_log, move_inter_crystal_electrodeMat_front, rotate_electrodeMat_front);
+    fAssembly->AddPlacedVolume(fInterCrystalElectrodeMatFrontLog, moveInterCrystalElectrodeMatFront, rotateElectrodeMatFront);
 }//end ::BuildelectrodeMatElectrodes
 
 ///////////////////////////////////////////////////////////////////////
@@ -1243,115 +898,113 @@ void DetectionSystemGriffin::BuildelectrodeMatElectrodes()
 // and liquid nitrogen tank. Since the can's face is built first, 
 // everything else is placed relative to it  
 ///////////////////////////////////////////////////////////////////////
-void DetectionSystemGriffin::ConstructDetector() 
-{
+void DetectionSystemGriffin::ConstructDetector()  {
 
     G4double x0, y0, z0, yMov, zMov;
     G4int i;
-    G4RotationMatrix* rotate_piece[4] ;
-    G4ThreeVector move_piece[4] ;
+    G4RotationMatrix* rotatePiece[4] ;
+    G4ThreeVector movePiece[4] ;
 
-    G4Material* structureMat = G4Material::GetMaterial(structureMaterial);
-    if( !structureMat ) {
-        G4cout << " ----> Material " << structureMaterial << " not found, cannot build the detector shell! " << G4endl;
+    G4Material* structureMat = G4Material::GetMaterial(fStructureMaterial);
+    if(!structureMat) {
+        G4cout << " ----> Material " << fStructureMaterial << " not found, cannot build the detector shell! " << G4endl;
         exit(1);
     }
-    G4Material* liquidN2Material = G4Material::GetMaterial("Liquid_N2");
-    if( !liquidN2Material ) {
-        G4cout << " ----> Material Liquid_N2 not found, cannot build the detector shell! " << G4endl;
+    G4Material* liquidN2Material = G4Material::GetMaterial("LiquidN2");
+    if(!liquidN2Material) {
+        G4cout << " ----> Material LiquidN2 not found, cannot build the detector shell! " << G4endl;
         exit(1);
     }
     // first we make the can's front face
-    G4Box* front_face = this->squareFrontFace();
-    front_face_log = new G4LogicalVolume(front_face, structureMat, "front_face_log", 0, 0, 0);
+    G4Box* frontFace = SquareFrontFace();
+    fFrontFaceLog = new G4LogicalVolume(frontFace, structureMat, "frontFaceLog", 0, 0, 0);
 
-    G4ThreeVector move_front_face(this->shift +this->applied_back_shift, 0, 0);
+    G4ThreeVector moveFrontFace(fShift + fAppliedBackShift, 0, 0);
 
-    this->assembly->AddPlacedVolume(front_face_log, move_front_face, this->rotate_null);
+    fAssembly->AddPlacedVolume(fFrontFaceLog, moveFrontFace, fRotateNull);
 
     // now we put on the four angled side pieces
 
-    x0 = ((this->bent_end_length)/2.0) + this->shift + this->applied_back_shift ;
+    x0 = ((fBentEndLength)/2.0) + fShift + fAppliedBackShift ;
 
-    z0 = ((this->can_face_thickness - this->bent_end_length) * tan(this->bent_end_angle)
-          + this->detector_total_width - this->can_face_thickness)/2.0 ;
+    z0 = ((fCanFaceThickness - fBentEndLength) * tan(fBentEndAngle)
+          + fDetectorTotalWidth - fCanFaceThickness)/2.0 ;
 
-    G4Para* side_piece[4] ;
+    G4Para* sidePiece[4] ;
     
-    for( i = 0 ; i < 4 ; i++ )
+    for(i = 0 ; i < 4 ; i++)
     {
         // Top, Right, Bottom, Left
-        side_piece[i] = this->bentSidePiece() ;
-        rotate_piece[i] = new G4RotationMatrix ;
+        sidePiece[i] = BentSidePiece() ;
+        rotatePiece[i] = new G4RotationMatrix ;
 
         // The left side is slightly different than the others, so this if statement is required. The order of rotation matters.
         if(i == 3)
         {
-            rotate_piece[i]->rotateX( -M_PI/2.0 + i*M_PI/2.0 ) ;
-            rotate_piece[i]->rotateY(this->bent_end_angle) ;
+            rotatePiece[i]->rotateX(-M_PI/2.0 + i*M_PI/2.0) ;
+            rotatePiece[i]->rotateY(fBentEndAngle) ;
         }
         else
         {
-            rotate_piece[i]->rotateY( -this->bent_end_angle) ;
-            rotate_piece[i]->rotateX( -M_PI/2.0 + i*M_PI/2.0 ) ;
+            rotatePiece[i]->rotateY(-fBentEndAngle) ;
+            rotatePiece[i]->rotateX(-M_PI/2.0 + i*M_PI/2.0) ;
         }
 
-        yMov = z0 * cos( i * M_PI/2.0 ) ;
-        zMov = z0 * sin( i * M_PI/2.0 ) ;
+        yMov = z0 * cos(i * M_PI/2.0) ;
+        zMov = z0 * sin(i * M_PI/2.0) ;
 
-        move_piece[i] = G4ThreeVector(x0, yMov, zMov) ;
+        movePiece[i] = G4ThreeVector(x0, yMov, zMov) ;
     }
 
-    top_bent_piece_log = new G4LogicalVolume(side_piece[0], structureMat, "top_bent_piece", 0, 0, 0);
-    this->assembly->AddPlacedVolume(top_bent_piece_log, move_piece[0], rotate_piece[0]);
+    fTopBentPieceLog = new G4LogicalVolume(sidePiece[0], structureMat, "topBentPiece", 0, 0, 0);
+    fAssembly->AddPlacedVolume(fTopBentPieceLog, movePiece[0], rotatePiece[0]);
 
-    right_bent_piece_log = new G4LogicalVolume(side_piece[1], structureMat, "right_bent_piece", 0, 0, 0);
-    this->assembly->AddPlacedVolume(right_bent_piece_log, move_piece[1], rotate_piece[1]);
+    fRightBentPieceLog = new G4LogicalVolume(sidePiece[1], structureMat, "rightBentPiece", 0, 0, 0);
+    fAssembly->AddPlacedVolume(fRightBentPieceLog, movePiece[1], rotatePiece[1]);
 
-    bottom_bent_piece_log = new G4LogicalVolume(side_piece[2], structureMat, "right_bent_piece", 0, 0, 0);
-    this->assembly->AddPlacedVolume(right_bent_piece_log, move_piece[2], rotate_piece[2]);
+    fBottomBentPieceLog = new G4LogicalVolume(sidePiece[2], structureMat, "bottomBentPiece", 0, 0, 0);
+    fAssembly->AddPlacedVolume(fBottomBentPieceLog, movePiece[2], rotatePiece[2]);
 
-    left_bent_piece_log = new G4LogicalVolume(side_piece[3], structureMat, "right_bent_piece", 0, 0, 0);
-    this->assembly->AddPlacedVolume(right_bent_piece_log, move_piece[3], rotate_piece[3]);
+    fLeftBentPieceLog = new G4LogicalVolume(sidePiece[3], structureMat, "leftBentPiece", 0, 0, 0);
+    fAssembly->AddPlacedVolume(fRightBentPieceLog, movePiece[3], rotatePiece[3]);
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // now we add the wedges to the edges of the face. These complete the angled side pieces
-    G4Trap* side_wedge[4] ;
+    G4Trap* sideWedge[4] ;
 
-    x0 = this->shift +this->applied_back_shift ;
+    x0 = fShift +fAppliedBackShift ;
 
-    y0 = (this->detector_total_width/2.0) - (this->bent_end_length * tan(this->bent_end_angle))
-            + (this->can_face_thickness/2.0) *tan(this->bent_end_angle)/2.0 ;
+    y0 = (fDetectorTotalWidth/2.0) - (fBentEndLength * tan(fBentEndAngle))
+            + (fCanFaceThickness/2.0) *tan(fBentEndAngle)/2.0 ;
 
-    for( i = 0 ; i < 4 ; i++ )
-    {
+    for(i = 0 ; i < 4 ; i++) {
         // Top, Right, Bottom, Left
-        side_wedge[i] = this->cornerWedge() ;
-        rotate_piece[i] = new G4RotationMatrix ;
+        sideWedge[i] = CornerWedge() ;
+        rotatePiece[i] = new G4RotationMatrix ;
 
-        rotate_piece[i]->rotateX( M_PI/2.0 ) ;
-        rotate_piece[i]->rotateY( -M_PI/2.0 ) ;
-        rotate_piece[i]->rotateX( -M_PI/2.0 + i*M_PI/2.0 ) ;
+        rotatePiece[i]->rotateX(M_PI/2.0) ;
+        rotatePiece[i]->rotateY(-M_PI/2.0) ;
+        rotatePiece[i]->rotateX(-M_PI/2.0 + i*M_PI/2.0) ;
 
-        yMov = y0 * cos( i*M_PI/2.0 ) ;
-        zMov = y0 * sin( i*M_PI/2.0 ) ;
+        yMov = y0 * cos(i*M_PI/2.0) ;
+        zMov = y0 * sin(i*M_PI/2.0) ;
 
-        move_piece[i] = G4ThreeVector(x0, yMov, zMov) ;
+        movePiece[i] = G4ThreeVector(x0, yMov, zMov) ;
     }
 
-    top_wedge_log = new G4LogicalVolume(side_wedge[0], structureMat, "top_wedge_log", 0, 0, 0);
-    this->assembly->AddPlacedVolume(top_wedge_log, move_piece[0], rotate_piece[0]);
+    fTopWedgeLog = new G4LogicalVolume(sideWedge[0], structureMat, "topWedgeLog", 0, 0, 0);
+    fAssembly->AddPlacedVolume(fTopWedgeLog, movePiece[0], rotatePiece[0]);
 
-    right_wedge_log = new G4LogicalVolume(side_wedge[1], structureMat, "right_wedge_log", 0, 0, 0);
-    this->assembly->AddPlacedVolume(right_wedge_log, move_piece[1], rotate_piece[1]);
+    fRightWedgeLog = new G4LogicalVolume(sideWedge[1], structureMat, "rightWedgeLog", 0, 0, 0);
+    fAssembly->AddPlacedVolume(fRightWedgeLog, movePiece[1], rotatePiece[1]);
 
-    bottom_wedge_log = new G4LogicalVolume(side_wedge[2], structureMat, "bottom_wedge_log", 0, 0, 0);
-    this->assembly->AddPlacedVolume(bottom_wedge_log, move_piece[2], rotate_piece[2]);
+    fBottomWedgeLog = new G4LogicalVolume(sideWedge[2], structureMat, "bottomWedgeLog", 0, 0, 0);
+    fAssembly->AddPlacedVolume(fBottomWedgeLog, movePiece[2], rotatePiece[2]);
 
-    left_wedge_log = new G4LogicalVolume(side_wedge[3], structureMat, "left_wedge_log", 0, 0, 0);
-    this->assembly->AddPlacedVolume(left_wedge_log, move_piece[3], rotate_piece[3]);
+    fLeftWedgeLog = new G4LogicalVolume(sideWedge[3], structureMat, "leftWedgeLog", 0, 0, 0);
+    fAssembly->AddPlacedVolume(fLeftWedgeLog, movePiece[3], rotatePiece[3]);
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1361,39 +1014,39 @@ void DetectionSystemGriffin::ConstructDetector()
     // Correction factor used to move the corner cones so as to avoid
     // holes left in the can caused by the bent side pieces
 
-    G4double hole_eliminator = this->can_face_thickness *(1.0 -tan(this->bent_end_angle));
-    G4Cons* cone_location[4] ;
+    G4double holeEliminator = fCanFaceThickness *(1.0 -tan(fBentEndAngle));
+    G4Cons* coneLocation[4] ;
 
-    x0 = this->bent_end_length/2.0 + this->shift + this->applied_back_shift ;
+    x0 = fBentEndLength/2.0 + fShift + fAppliedBackShift ;
 
-    y0 = (this->detector_total_width/2.0) - (this->bent_end_length * tan(this->bent_end_angle)) - hole_eliminator ;
+    y0 = (fDetectorTotalWidth/2.0) - (fBentEndLength * tan(fBentEndAngle)) - holeEliminator ;
 
-    for( i = 0 ; i < 4 ; i++ )
+    for(i = 0 ; i < 4 ; i++)
     {
         // Lower Left, Upper Left, Upper Right, Lower Right
-        cone_location[i] = this->roundedEndEdge() ;
-        rotate_piece[i] = new G4RotationMatrix ;
+        coneLocation[i] = RoundedEndEdge() ;
+        rotatePiece[i] = new G4RotationMatrix ;
 
-        rotate_piece[i]->rotateY( M_PI/2.0 ) ;
-        rotate_piece[i]->rotateX( -M_PI/2.0 + i*M_PI/2.0 ) ;
+        rotatePiece[i]->rotateY(M_PI/2.0) ;
+        rotatePiece[i]->rotateX(-M_PI/2.0 + i*M_PI/2.0) ;
 
-        yMov = y0 * ( -cos(i*M_PI/2.0) + sin(i*M_PI/2.0) ) ;
-        zMov = y0 * ( -cos(i*M_PI/2.0) - sin(i*M_PI/2.0) ) ;
+        yMov = y0 * (-cos(i*M_PI/2.0) + sin(i*M_PI/2.0)) ;
+        zMov = y0 * (-cos(i*M_PI/2.0) - sin(i*M_PI/2.0)) ;
 
-        move_piece[i] = G4ThreeVector(x0, yMov, zMov) ;
+        movePiece[i] = G4ThreeVector(x0, yMov, zMov) ;
     }
 
-    lower_left_cone_log = new G4LogicalVolume(cone_location[0], structureMat, "lower_left_cone_log", 0, 0, 0);
-    this->assembly->AddPlacedVolume(lower_left_cone_log, move_piece[0],  rotate_piece[0]);
+    fLowerLeftConeLog = new G4LogicalVolume(coneLocation[0], structureMat, "lowerLeftConeLog", 0, 0, 0);
+    fAssembly->AddPlacedVolume(fLowerLeftConeLog, movePiece[0],  rotatePiece[0]);
 
-    upper_left_cone_log = new G4LogicalVolume(cone_location[1], structureMat, "upper_left_cone_log", 0, 0, 0);
-    this->assembly->AddPlacedVolume(upper_left_cone_log, move_piece[1], rotate_piece[1]);
+    fUpperLeftConeLog = new G4LogicalVolume(coneLocation[1], structureMat, "upperLeftConeLog", 0, 0, 0);
+    fAssembly->AddPlacedVolume(fUpperLeftConeLog, movePiece[1], rotatePiece[1]);
 
-    upper_right_cone_log = new G4LogicalVolume(cone_location[2], structureMat, "upper_right_cone_log", 0, 0, 0);
-    this->assembly->AddPlacedVolume(upper_right_cone_log, move_piece[2], rotate_piece[2]);
+    fUpperRightConeLog = new G4LogicalVolume(coneLocation[2], structureMat, "upperRightConeLog", 0, 0, 0);
+    fAssembly->AddPlacedVolume(fUpperRightConeLog, movePiece[2], rotatePiece[2]);
 
-    lower_right_cone_log = new G4LogicalVolume(cone_location[3], structureMat, "lower_right_cone_log", 0, 0, 0);
-    this->assembly->AddPlacedVolume(lower_right_cone_log, move_piece[3], rotate_piece[3]);
+    fLowerRightConeLog = new G4LogicalVolume(coneLocation[3], structureMat, "lowerRightConeLog", 0, 0, 0);
+    fAssembly->AddPlacedVolume(fLowerRightConeLog, movePiece[3], rotatePiece[3]);
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1405,40 +1058,40 @@ void DetectionSystemGriffin::ConstructDetector()
   * might not be a huge benefit.
   */
 
-    G4Tubs* tube_location[4] ;
+    G4Tubs* tubeLocation[4] ;
 
-    x0 = (this->detector_total_length +this->bent_end_length
-          - this->rear_plate_thickness -this->can_face_thickness)/2.0
-            + this->shift +this->applied_back_shift ;
+    x0 = (fDetectorTotalLength +fBentEndLength
+          - fRearPlateThickness -fCanFaceThickness)/2.0
+            + fShift +fAppliedBackShift ;
 
-    y0 = (this->detector_total_width/2.0) - (this->bent_end_length * tan(this->bent_end_angle)) ;
+    y0 = (fDetectorTotalWidth/2.0) - (fBentEndLength * tan(fBentEndAngle)) ;
 
-    for( i = 0 ; i < 4 ; i++ )
+    for(i = 0 ; i < 4 ; i++)
     {
         // Lower Left, Upper Left, Upper Right, Lower Right
-        tube_location[i] = this->cornerTube() ;
-        rotate_piece[i] = new G4RotationMatrix ;
-        rotate_piece[i]->rotateY(M_PI/2.0) ;
-        rotate_piece[i]->rotateX( -M_PI/2.0 + i*M_PI/2.0 ) ;
+        tubeLocation[i] = CornerTube() ;
+        rotatePiece[i] = new G4RotationMatrix ;
+        rotatePiece[i]->rotateY(M_PI/2.0) ;
+        rotatePiece[i]->rotateX(-M_PI/2.0 + i*M_PI/2.0) ;
 
-        yMov = y0 * ( -cos(i*M_PI/2.0) + sin(i*M_PI/2.0) ) ;
-        zMov = y0 * ( -cos(i*M_PI/2.0) - sin(i*M_PI/2.0) ) ;
+        yMov = y0 * (-cos(i*M_PI/2.0) + sin(i*M_PI/2.0)) ;
+        zMov = y0 * (-cos(i*M_PI/2.0) - sin(i*M_PI/2.0)) ;
 
-        move_piece[i] = G4ThreeVector(x0, yMov, zMov) ;
+        movePiece[i] = G4ThreeVector(x0, yMov, zMov) ;
 
     }
 
-    lower_left_tube_log = new G4LogicalVolume(tube_location[0], structureMat, "lower_left_tube_log", 0, 0, 0);
-    this->assembly->AddPlacedVolume(lower_left_tube_log, move_piece[0], rotate_piece[0]);
+    fLowerLeftTubeLog = new G4LogicalVolume(tubeLocation[0], structureMat, "lowerLeftTubeLog", 0, 0, 0);
+    fAssembly->AddPlacedVolume(fLowerLeftTubeLog, movePiece[0], rotatePiece[0]);
 
-    upper_left_tube_log = new G4LogicalVolume(tube_location[1], structureMat, "upper_left_tube_log", 0, 0, 0);
-    this->assembly->AddPlacedVolume(upper_left_tube_log, move_piece[1], rotate_piece[1]);
+    fUpperLeftTubeLog = new G4LogicalVolume(tubeLocation[1], structureMat, "upperLeftTubeLog", 0, 0, 0);
+    fAssembly->AddPlacedVolume(fUpperLeftTubeLog, movePiece[1], rotatePiece[1]);
 
-    upper_right_tube_log = new G4LogicalVolume(tube_location[2], structureMat, "upper_right_tube_log", 0, 0, 0);
-    this->assembly->AddPlacedVolume(upper_right_tube_log, move_piece[2], rotate_piece[2]);
+    fUpperRightTubeLog = new G4LogicalVolume(tubeLocation[2], structureMat, "upperRightTubeLog", 0, 0, 0);
+    fAssembly->AddPlacedVolume(fUpperRightTubeLog, movePiece[2], rotatePiece[2]);
 
-    lower_right_tube_log = new G4LogicalVolume(tube_location[3], structureMat, "lower_right_tube_log", 0, 0, 0);
-    this->assembly->AddPlacedVolume(lower_right_tube_log, move_piece[3], rotate_piece[3]);
+    fLowerRightTubeLog = new G4LogicalVolume(tubeLocation[3], structureMat, "lowerRightTubeLog", 0, 0, 0);
+    fAssembly->AddPlacedVolume(fLowerRightTubeLog, movePiece[3], rotatePiece[3]);
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1446,117 +1099,117 @@ void DetectionSystemGriffin::ConstructDetector()
     // now we add the side panels that extend from the bent pieces to the back of the can
 
 
-    G4Box* panel_location[4] ;
+    G4Box* panelLocation[4] ;
 
-    x0 = (this->detector_total_length + this->bent_end_length - this->rear_plate_thickness - this->can_face_thickness)/2.0
-            + this->shift + this->applied_back_shift ;
+    x0 = (fDetectorTotalLength + fBentEndLength - fRearPlateThickness - fCanFaceThickness)/2.0
+            + fShift + fAppliedBackShift ;
 
     y0 = 0 ;
 
-    z0 = (this->detector_total_width - this->can_side_thickness)/2.0 ;
+    z0 = (fDetectorTotalWidth - fCanSideThickness)/2.0 ;
 
-    for( i = 0 ; i < 4 ; i++ )
+    for(i = 0 ; i < 4 ; i++)
     {
         // Right, Top, Left, Bottom
-        panel_location[i] = this->sidePanel() ;
-        rotate_piece[i] = new G4RotationMatrix ;
-        rotate_piece[i]->rotateX( M_PI/2.0 - i*M_PI/2.0 ) ;
+        panelLocation[i] = SidePanel() ;
+        rotatePiece[i] = new G4RotationMatrix ;
+        rotatePiece[i]->rotateX(M_PI/2.0 - i*M_PI/2.0) ;
 
-        yMov = z0*sin( i*M_PI/2.0 ) ;
-        zMov = z0*cos( i*M_PI/2.0 ) ;
+        yMov = z0*sin(i*M_PI/2.0) ;
+        zMov = z0*cos(i*M_PI/2.0) ;
 
-        move_piece[i] = G4ThreeVector( x0, yMov, zMov ) ;
+        movePiece[i] = G4ThreeVector(x0, yMov, zMov) ;
 
     }
 
-    right_side_panel_log = new G4LogicalVolume(panel_location[0], structureMat, "right_side_panel_log", 0, 0, 0);
-    this->assembly->AddPlacedVolume(right_side_panel_log, move_piece[0], rotate_piece[0]);
+    fRightSidePanelLog = new G4LogicalVolume(panelLocation[0], structureMat, "rightSidePanelLog", 0, 0, 0);
+    fAssembly->AddPlacedVolume(fRightSidePanelLog, movePiece[0], rotatePiece[0]);
 
-    top_side_panel_log = new G4LogicalVolume(panel_location[1], structureMat, "top_side_panel_log", 0, 0, 0);
-    this->assembly->AddPlacedVolume(top_side_panel_log, move_piece[1], this->rotate_null);
+    fTopSidePanelLog = new G4LogicalVolume(panelLocation[1], structureMat, "topSidePanelLog", 0, 0, 0);
+    fAssembly->AddPlacedVolume(fTopSidePanelLog, movePiece[1], fRotateNull);
 
-    left_side_panel_log = new G4LogicalVolume(panel_location[2], structureMat, "left_side_panel_log", 0, 0, 0);
-    this->assembly->AddPlacedVolume(left_side_panel_log, move_piece[2], rotate_piece[2]);
+    fLeftSidePanelLog = new G4LogicalVolume(panelLocation[2], structureMat, "leftSidePanelLog", 0, 0, 0);
+    fAssembly->AddPlacedVolume(fLeftSidePanelLog, movePiece[2], rotatePiece[2]);
 
-    bottom_side_panel_log = new G4LogicalVolume(panel_location[3], structureMat, "bottom_side_panel_log", 0, 0, 0);
-    this->assembly->AddPlacedVolume(bottom_side_panel_log, move_piece[3], rotate_piece[3]);
+    fBottomSidePanelLog = new G4LogicalVolume(panelLocation[3], structureMat, "bottomSidePanelLog", 0, 0, 0);
+    fAssembly->AddPlacedVolume(fBottomSidePanelLog, movePiece[3], rotatePiece[3]);
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // now we add the rear plate, which has a hole for the cold finger to pass through
-    G4SubtractionSolid* rear_plate = this->rearPlate();
+    G4SubtractionSolid* rearPlate = RearPlate();
 
-    G4RotationMatrix* rotate_rear_plate = new G4RotationMatrix;
-    rotate_rear_plate->rotateY(M_PI/2.0);
+    G4RotationMatrix* rotateRearPlate = new G4RotationMatrix;
+    rotateRearPlate->rotateY(M_PI/2.0);
 
-    x0 = this->detector_total_length -this->can_face_thickness/2.0
-            - this->rear_plate_thickness/2.0 +this->shift
-            + this->applied_back_shift ;
+    x0 = fDetectorTotalLength -fCanFaceThickness/2.0
+            - fRearPlateThickness/2.0 +fShift
+            + fAppliedBackShift ;
 
-    G4ThreeVector move_rear_plate(this->detector_total_length -this->can_face_thickness/2.0
-                                  - this->rear_plate_thickness/2.0 +this->shift
-                                  + this->applied_back_shift, 0, 0);
+    G4ThreeVector moveRearPlate(fDetectorTotalLength -fCanFaceThickness/2.0
+                                  - fRearPlateThickness/2.0 +fShift
+                                  + fAppliedBackShift, 0, 0);
 
-    rear_plate_log = new G4LogicalVolume(rear_plate, structureMat, "rear_plate_log", 0, 0, 0);
+    fRearPlateLog = new G4LogicalVolume(rearPlate, structureMat, "rearPlateLog", 0, 0, 0);
 
-    this->assembly->AddPlacedVolume(rear_plate_log, move_rear_plate, rotate_rear_plate);
+    fAssembly->AddPlacedVolume(fRearPlateLog, moveRearPlate, rotateRearPlate);
 
     // we know add the cold finger shell, which extends out the back of the can
-    G4Tubs* finger_shell = this->coldFingerShell();
+    G4Tubs* fingerShell = ColdFingerShell();
 
-    G4RotationMatrix* rotate_finger_shell = new G4RotationMatrix;
-    rotate_finger_shell->rotateY(M_PI/2.0);
+    G4RotationMatrix* rotateFingerShell = new G4RotationMatrix;
+    rotateFingerShell->rotateY(M_PI/2.0);
 
-    G4ThreeVector move_finger_shell(this->cold_finger_shell_length/2.0 -this->can_face_thickness/2.0
-                                    + this->detector_total_length +this->shift
-                                    + this->applied_back_shift, 0, 0);
+    G4ThreeVector moveFingerShell(fColdFingerShellLength/2.0 -fCanFaceThickness/2.0
+                                    + fDetectorTotalLength +fShift
+                                    + fAppliedBackShift, 0, 0);
 
-    finger_shell_log = new G4LogicalVolume(finger_shell, structureMat, "finger_shell_log", 0, 0, 0);
+    fFingerShellLog = new G4LogicalVolume(fingerShell, structureMat, "fingerShellLog", 0, 0, 0);
 
-    this->assembly->AddPlacedVolume(finger_shell_log, move_finger_shell, rotate_finger_shell);
+    fAssembly->AddPlacedVolume(fFingerShellLog, moveFingerShell, rotateFingerShell);
 
     // lastly we add the liquid nitrogen tank at the back, past the cold finger shell
-    G4Tubs* tank = this->liquidNitrogenTank();
+    G4Tubs* tank = LiquidNitrogenTank();
 
-    G4RotationMatrix* rotate_tank = new G4RotationMatrix;
-    rotate_tank->rotateY(M_PI/2.0);
+    G4RotationMatrix* rotateTank = new G4RotationMatrix;
+    rotateTank->rotateY(M_PI/2.0);
 
-    G4ThreeVector move_tank((this->coolant_length -this->can_face_thickness)/2.0 + this->detector_total_length
-                            + this->cold_finger_shell_length + this->shift +this->applied_back_shift, 0, 0);
+    G4ThreeVector moveTank((fCoolantLength -fCanFaceThickness)/2.0 + fDetectorTotalLength
+                            + fColdFingerShellLength + fShift +fAppliedBackShift, 0, 0);
 
-    tank_log = new G4LogicalVolume(tank, structureMat, "tank_log", 0, 0, 0);
+    fTankLog = new G4LogicalVolume(tank, structureMat, "tankLog", 0, 0, 0);
 
-    this->assembly->AddPlacedVolume(tank_log, move_tank, rotate_tank);
+    fAssembly->AddPlacedVolume(fTankLog, moveTank, rotateTank);
 
     // lids
-    G4Tubs* lid = this->liquidNitrogenTankLid();
+    G4Tubs* lid = LiquidNitrogenTankLid();
 
-    G4RotationMatrix* rotate_lid = new G4RotationMatrix;
-    rotate_lid->rotateY(M_PI/2.0);
+    G4RotationMatrix* rotateLid = new G4RotationMatrix;
+    rotateLid->rotateY(M_PI/2.0);
 
-    G4ThreeVector move_lid1( this->coolant_length/2.0 - this->coolant_thickness/2.0 + (this->coolant_length -this->can_face_thickness)/2.0 + this->detector_total_length
-                            + this->cold_finger_shell_length + this->shift +this->applied_back_shift, 0, 0);
-    G4ThreeVector move_lid2( -1.0*this->coolant_length/2.0 + this->coolant_thickness/2.0 + (this->coolant_length -this->can_face_thickness)/2.0 + this->detector_total_length
-                            + this->cold_finger_shell_length + this->shift +this->applied_back_shift, 0, 0);
+    G4ThreeVector moveLid1(fCoolantLength/2.0 - fCoolantThickness/2.0 + (fCoolantLength -fCanFaceThickness)/2.0 + fDetectorTotalLength
+                            + fColdFingerShellLength + fShift +fAppliedBackShift, 0, 0);
+    G4ThreeVector moveLid2(-1.0*fCoolantLength/2.0 + fCoolantThickness/2.0 + (fCoolantLength -fCanFaceThickness)/2.0 + fDetectorTotalLength
+                            + fColdFingerShellLength + fShift +fAppliedBackShift, 0, 0);
 
-    tank_lid1_log = new G4LogicalVolume(lid, structureMat, "tank_lid1_log", 0, 0, 0);
-    tank_lid2_log = new G4LogicalVolume(lid, structureMat, "tank_lid2_log", 0, 0, 0);
+    fTankLid1Log = new G4LogicalVolume(lid, structureMat, "tankLid1Log", 0, 0, 0);
+    fTankLid2Log = new G4LogicalVolume(lid, structureMat, "tankLid2Log", 0, 0, 0);
 
-    this->assembly->AddPlacedVolume(tank_lid1_log, move_lid1, rotate_lid);
-    this->assembly->AddPlacedVolume(tank_lid2_log, move_lid2, rotate_lid);
+    fAssembly->AddPlacedVolume(fTankLid1Log, moveLid1, rotateLid);
+    fAssembly->AddPlacedVolume(fTankLid2Log, moveLid2, rotateLid);
 
     // LN2
-    G4Tubs* liquidn2 = this->liquidNitrogen();
+    G4Tubs* liquidn2 = LiquidNitrogen();
 
-    G4RotationMatrix* rotate_liquidn2 = new G4RotationMatrix;
-    rotate_liquidn2->rotateY(M_PI/2.0);
+    G4RotationMatrix* rotateLiquidn2 = new G4RotationMatrix;
+    rotateLiquidn2->rotateY(M_PI/2.0);
 
-    G4ThreeVector move_liquidn2((this->coolant_length -this->can_face_thickness)/2.0 + this->detector_total_length
-                            + this->cold_finger_shell_length + this->shift +this->applied_back_shift, 0, 0);
+    G4ThreeVector moveLiquidn2((fCoolantLength -fCanFaceThickness)/2.0 + fDetectorTotalLength
+                            + fColdFingerShellLength + fShift +fAppliedBackShift, 0, 0);
 
-    tank_liquid_log = new G4LogicalVolume(liquidn2, liquidN2Material, "tank_lid1_log", 0, 0, 0);
+    fTankLiquidLog = new G4LogicalVolume(liquidn2, liquidN2Material, "tankLiquidLog", 0, 0, 0);
 
-    this->assembly->AddPlacedVolume(tank_liquid_log, move_liquidn2, rotate_liquidn2);
+    fAssembly->AddPlacedVolume(fTankLiquidLog, moveLiquidn2, rotateLiquidn2);
 }// end::ConstructDetector
 
 ///////////////////////////////////////////////////////////////////////
@@ -1566,470 +1219,439 @@ void DetectionSystemGriffin::ConstructDetector()
 // cold plate. The finger extends to the Liquid Nitrogen tank, while 
 // the plate is always the same distance from the back of the germanium  
 ///////////////////////////////////////////////////////////////////////
-void DetectionSystemGriffin::ConstructColdFinger()
-{
+void DetectionSystemGriffin::ConstructColdFinger() {
 
     G4Material* materialAir = G4Material::GetMaterial("Air");
-    if( !materialAir ) {
-        G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
+    if(!materialAir) {
+        G4cout << " ----> Material Air not found, cannot build the detector shell! " << G4endl;
         exit(1);
     }
-    G4Material* structureMat = G4Material::GetMaterial(structureMaterial);
-    if( !structureMaterial ) {
-        G4cout << " ----> Material " << structureMaterial << " not found, cannot build the detector shell! " << G4endl;
+    G4Material* structureMat = G4Material::GetMaterial(fStructureMaterial);
+    if(!structureMat) {
+        G4cout << " ----> Material " << fStructureMaterial << " not found, cannot build the detector shell! " << G4endl;
         exit(1);
     }
-    G4Material* electrodeMat = G4Material::GetMaterial(electrodeMaterial);
-    if( !electrodeMaterial ) {
-        G4cout << " ----> Material " << electrodeMaterial << " not found, cannot build the detector shell! " << G4endl;
+    G4Material* electrodeMat = G4Material::GetMaterial(fElectrodeMaterial);
+    if(!electrodeMat) {
+        G4cout << " ----> Material " << fElectrodeMaterial << " not found, cannot build the detector shell! " << G4endl;
         exit(1);
     }
 
-    G4VisAttributes* cold_finger_vis_att = new G4VisAttributes(G4Colour(0.0,0.0,1.0));
-    cold_finger_vis_att->SetVisibility(true);
+    G4VisAttributes* coldFingerVisAtt = new G4VisAttributes(G4Colour(0.0,0.0,1.0));
+    coldFingerVisAtt->SetVisibility(true);
 
-    G4VisAttributes* structureMat_vis_att = new G4VisAttributes(G4Colour(1.0,1.0,1.0));
-    structureMat_vis_att->SetVisibility(true);
+    G4VisAttributes* structureMatVisAtt = new G4VisAttributes(G4Colour(1.0,1.0,1.0));
+    structureMatVisAtt->SetVisibility(true);
 
-    G4VisAttributes* air_vis_att = new G4VisAttributes(G4Colour(0.8,0.8,0.8));
-    air_vis_att->SetVisibility(true);
+    G4VisAttributes* airVisAtt = new G4VisAttributes(G4Colour(0.8,0.8,0.8));
+    airVisAtt->SetVisibility(true);
 
-    G4Box* end_plate = this->endPlate();
+    G4Box* endPlate = EndPlate();
 
     // cut out holes
-    G4double air_hole_distance = this->germanium_separation/2.0
-            + (this->germanium_width/2.0 - this->germanium_shift); //centre of the middle hole
+    G4double airHoleDistance = fGermaniumSeparation/2.0
+            + (fGermaniumWidth/2.0 - fGermaniumShift); //centre of the middle hole
 
-    G4RotationMatrix* rotate_fet_air_hole = new G4RotationMatrix;
-    rotate_fet_air_hole->rotateY(M_PI/2.0);
+    G4RotationMatrix* rotateFetAirHole = new G4RotationMatrix;
+    rotateFetAirHole->rotateY(M_PI/2.0);
 
-    G4Tubs* fet_air_hole_cut = this->airHoleCut();
+    G4Tubs* fetAirHoleCut = AirHoleCut();
 
-    G4ThreeVector move_piece[8] ;
-    G4SubtractionSolid* end_plate_cut[4] ;
+    G4ThreeVector movePiece[8] ;
+    G4SubtractionSolid* endPlateCut[8] ;
     G4int i ;
     G4double x, y, z, y0, z0, y01, y02;
 
-    y0 = air_hole_distance ;
-    z0 = air_hole_distance ;
+    y0 = airHoleDistance ;
+    z0 = airHoleDistance ;
 
-    for( i = 0 ; i < 4 ; i++ )
+    for(i = 0 ; i < 4 ; i++)
     {
-        y = y0 * ( -cos( i*M_PI/2.0 ) + sin( i*M_PI/2.0 ) ) ;
-        z = z0 * ( cos( i*M_PI/2.0 ) + sin( i*M_PI/2.0 ) ) ;
-        move_piece[i] = G4ThreeVector( 0 , y, z ) ;
+        y = y0 * (-cos(i*M_PI/2.0) + sin(i*M_PI/2.0)) ;
+        z = z0 * (cos(i*M_PI/2.0) + sin(i*M_PI/2.0)) ;
+        movePiece[i] = G4ThreeVector(0 , y, z) ;
 
-        if( i == 0 )
+        if(i == 0)
             // Slightly different than the rest. Sorry I couldnt think of a better workaround
-            end_plate_cut[i] = new G4SubtractionSolid("end_plate_cut", end_plate, fet_air_hole_cut, rotate_fet_air_hole, move_piece[i] ) ;
+            endPlateCut[i] = new G4SubtractionSolid("endPlateCut", endPlate, fetAirHoleCut, rotateFetAirHole, movePiece[i]) ;
         else
-            end_plate_cut[i] = new G4SubtractionSolid("end_plate_cut", end_plate_cut[i-1], fet_air_hole_cut, rotate_fet_air_hole, move_piece[i] ) ;
+            endPlateCut[i] = new G4SubtractionSolid("endPlateCut", endPlateCut[i-1], fetAirHoleCut, rotateFetAirHole, movePiece[i]) ;
     }
 
-    x = this->cold_finger_end_plate_thickness/2.0 +this->can_face_thickness/2.0
-            + this->germanium_dist_from_can_face +this->germanium_length
-            + this->cold_finger_space +this->shift +this->applied_back_shift ;
+    x = fColdFingerEndPlateThickness/2.0 +fCanFaceThickness/2.0
+            + fGermaniumDistFromCanFace +fGermaniumLength
+            + fColdFingerSpace +fShift +fAppliedBackShift ;
     
-    G4ThreeVector move_end_plate( x, 0, 0 ) ;
+    G4ThreeVector moveEndPlate(x, 0, 0) ;
 
 
 
     // Fix overlap.
 
-    G4double cut_tube_x0, cut_tube_y0, cut_yMov, cut_zMov;
-    G4RotationMatrix* cut_rotate_piece[4] ;
-    G4ThreeVector cut_move_piece[4] ;
-    G4Tubs* cut_tube_location[4] ;
+    G4double cutTubeX0, cutTubeY0, cutYMov, cutZMov;
+    G4RotationMatrix* cutRotatePiece[4] ;
+    G4ThreeVector cutMovePiece[4] ;
+    G4Tubs* cutTubeLocation[4] ;
 
-    cut_tube_x0 = (this->detector_total_length +this->bent_end_length
-          - this->rear_plate_thickness -this->can_face_thickness)/2.0
-            + this->shift +this->applied_back_shift ;
+    cutTubeX0 = (fDetectorTotalLength +fBentEndLength
+          - fRearPlateThickness -fCanFaceThickness)/2.0
+            + fShift +fAppliedBackShift ;
 
-    cut_tube_y0 = (this->detector_total_width/2.0) - (this->bent_end_length * tan(this->bent_end_angle)) ;
+    cutTubeY0 = (fDetectorTotalWidth/2.0) - (fBentEndLength * tan(fBentEndAngle)) ;
 
-    for( i = 0 ; i < 4 ; i++ )
+    for(i = 0 ; i < 4 ; i++)
     {
         // Lower Left, Upper Left, Upper Right, Lower Right
-        cut_tube_location[i] = this->cornerTube() ;
-        cut_rotate_piece[i] = new G4RotationMatrix ;
-        cut_rotate_piece[i]->rotateY(M_PI/2.0) ;
-        cut_rotate_piece[i]->rotateZ( -M_PI/2.0 + (i-1)*M_PI/2.0 ) ;
+        cutTubeLocation[i] = CornerTube() ;
+        cutRotatePiece[i] = new G4RotationMatrix ;
+        cutRotatePiece[i]->rotateY(M_PI/2.0) ;
+        cutRotatePiece[i]->rotateZ(-M_PI/2.0 + (i-1)*M_PI/2.0) ;
 
-        //cut_rotate_piece[i]->rotateX( -M_PI/2.0 + i*M_PI/2.0 ) ;
+        //cutRotatePiece[i]->rotateX(-M_PI/2.0 + i*M_PI/2.0) ;
 
-        cut_yMov = cut_tube_y0 * ( -cos(i*M_PI/2.0) + sin(i*M_PI/2.0) ) ;
-        cut_zMov = cut_tube_y0 * ( -cos(i*M_PI/2.0) - sin(i*M_PI/2.0) ) ;
+        cutYMov = cutTubeY0 * (-cos(i*M_PI/2.0) + sin(i*M_PI/2.0)) ;
+        cutZMov = cutTubeY0 * (-cos(i*M_PI/2.0) - sin(i*M_PI/2.0)) ;
 
-        cut_move_piece[i] = G4ThreeVector(0, cut_yMov, cut_zMov) ;
+        cutMovePiece[i] = G4ThreeVector(0, cutYMov, cutZMov) ;
 
-
-        end_plate_cut[i+4] = new G4SubtractionSolid("end_plate_cut", end_plate_cut[i+3], cut_tube_location[i], cut_rotate_piece[i], cut_move_piece[i] ) ;
-
+        endPlateCut[i+4] = new G4SubtractionSolid("endPlateCut", endPlateCut[i+3], cutTubeLocation[i], cutRotatePiece[i], cutMovePiece[i]) ;
     }
 
+    fEndPlateLog = new G4LogicalVolume(endPlateCut[7], structureMat, "endPlateLog", 0, 0, 0);
 
+    fEndPlateLog->SetVisAttributes(structureMatVisAtt);
 
-
-
-
-
-
-
-
-
-
-    end_plate_log = new G4LogicalVolume(end_plate_cut[7], structureMat, "end_plate_log", 0, 0, 0);
-
-    end_plate_log->SetVisAttributes(structureMat_vis_att);
-
-    this->assembly->AddPlacedVolume(end_plate_log, move_end_plate, 0);
+    fAssembly->AddPlacedVolume(fEndPlateLog, moveEndPlate, 0);
 
     // Place holes in the old cold plate
-    G4Tubs* fet_air_hole = this->airHole();
+    G4Tubs* fetAirHole = AirHole();
 
-    fet_air_hole_log = new G4LogicalVolume(fet_air_hole, materialAir, "fet_air_hole_log", 0, 0, 0);
-    fet_air_hole_log->SetVisAttributes(air_vis_att);
+    fFetAirHoleLog = new G4LogicalVolume(fetAirHole, materialAir, "fetAirHoleLog", 0, 0, 0);
+    fFetAirHoleLog->SetVisAttributes(airVisAtt);
 
-    for( i = 0 ; i < 4 ; i++ )
-    {
-        y = y0 * ( -cos( i*M_PI/2.0 ) + sin( i*M_PI/2.0 ) ) ;
-        z = z0 * ( cos( i*M_PI/2.0 ) + sin( i*M_PI/2.0 ) ) ;
-        move_piece[i] = G4ThreeVector( x, y, z ) ;
-        this->assembly->AddPlacedVolume( fet_air_hole_log, move_piece[i], rotate_fet_air_hole ) ;
+    for(i = 0 ; i < 4 ; i++) {
+        y = y0 * (-cos(i*M_PI/2.0) + sin(i*M_PI/2.0)) ;
+        z = z0 * (cos(i*M_PI/2.0) + sin(i*M_PI/2.0)) ;
+        movePiece[i] = G4ThreeVector(x, y, z) ;
+        fAssembly->AddPlacedVolume(fFetAirHoleLog, movePiece[i], rotateFetAirHole) ;
     }
 
     // Cold Finger
-    G4Tubs* fing = finger();
+    G4Tubs* fing = Finger();
 
-    G4RotationMatrix* rotate_finger = new G4RotationMatrix;
-    rotate_finger->rotateY(M_PI/2.0);
+    G4RotationMatrix* rotateFinger = new G4RotationMatrix;
+    rotateFinger->rotateY(M_PI/2.0);
 
-    G4ThreeVector move_finger((this->cold_finger_length +this->can_face_thickness)/2.0
-                              + this->germanium_dist_from_can_face +this->germanium_length
-                              + this->cold_finger_space +this->cold_finger_end_plate_thickness
-                              + this->shift +this->applied_back_shift
-                              + this->structureMat_cold_finger_thickness/2.0 , 0, 0); //changed Jan 2005
+    G4ThreeVector moveFinger((fColdFingerLength +fCanFaceThickness)/2.0
+                              + fGermaniumDistFromCanFace +fGermaniumLength
+                              + fColdFingerSpace +fColdFingerEndPlateThickness
+                              + fShift +fAppliedBackShift
+                              + fStructureMatColdFingerThickness/2.0 , 0, 0); //changed Jan 2005
 
-    finger_log = new G4LogicalVolume(fing, electrodeMat, "finger_log", 0, 0, 0);
-    finger_log->SetVisAttributes(cold_finger_vis_att);
+    fFingerLog = new G4LogicalVolume(fing, electrodeMat, "fingerLog", 0, 0, 0);
+    fFingerLog->SetVisAttributes(coldFingerVisAtt);
 
-    this->assembly->AddPlacedVolume(finger_log, move_finger, rotate_finger);
+    fAssembly->AddPlacedVolume(fFingerLog, moveFinger, rotateFinger);
 
     // The extra block of structureMat that's in the diagram "Cut C"
-    G4SubtractionSolid* extra_cold_block = this->extraColdBlock();
-    G4RotationMatrix* rotate_extra_cold_block = new G4RotationMatrix;
-    rotate_extra_cold_block->rotateY(M_PI/2.0);
+    G4SubtractionSolid* extraColdBlock = ExtraColdBlock();
+    G4RotationMatrix* rotateExtraColdBlock = new G4RotationMatrix;
+    rotateExtraColdBlock->rotateY(M_PI/2.0);
 
-    G4ThreeVector move_extra_cold_block(this->detector_total_length -this->can_face_thickness/2.0
-                                        - this->rear_plate_thickness +this->shift
-                                        + this->applied_back_shift -this->extra_block_distance_from_back_plate
-                                        - this->extra_block_thickness/2.0, 0, 0);
+    G4ThreeVector moveExtraColdBlock(fDetectorTotalLength - fCanFaceThickness/2.0
+                                        - fRearPlateThickness + fShift
+                                        + fAppliedBackShift - fExtraBlockDistanceFromBackPlate
+                                        - fExtraBlockThickness/2.0, 0, 0);
 
-    extra_cold_block_log = new G4LogicalVolume(extra_cold_block, structureMat, "extra_cold_block_log", 0, 0, 0);
+    fExtraColdBlockLog = new G4LogicalVolume(extraColdBlock, structureMat, "extraColdBlockLog", 0, 0, 0);
 
-    this->assembly->AddPlacedVolume(extra_cold_block_log, move_extra_cold_block, rotate_extra_cold_block);
+    fAssembly->AddPlacedVolume(fExtraColdBlockLog, moveExtraColdBlock, rotateExtraColdBlock);
 
     // The structures above the cooling end plate
-    G4Tubs* structureMat_cold_finger = this->structureMatColdFinger();
-    structureMat_cold_finger_log = new G4LogicalVolume(structureMat_cold_finger, structureMat, "structureMat_cold_finger_log", 0, 0, 0);
-    structureMat_cold_finger_log->SetVisAttributes(structureMat_vis_att);
+    G4Tubs* structureMatColdFinger = StructureMatColdFinger();
+    fStructureMatColdFingerLog = new G4LogicalVolume(structureMatColdFinger, structureMat, "structureMatColdFingerLog", 0, 0, 0);
+    fStructureMatColdFingerLog->SetVisAttributes(structureMatVisAtt);
 
-    G4RotationMatrix* rotate_structureMat_cold_finger = new G4RotationMatrix;
-    rotate_structureMat_cold_finger->rotateY(M_PI/2.0);
-    G4ThreeVector move_structureMat_cold_finger(this->structureMat_cold_finger_thickness/2.0
-                                                + this->cold_finger_end_plate_thickness
-                                                + this->can_face_thickness/2.0
-                                                + this->germanium_dist_from_can_face +this->germanium_length
-                                                + this->cold_finger_space +this->shift +this->applied_back_shift, 0, 0);
+    G4RotationMatrix* rotateStructureMatColdFinger = new G4RotationMatrix;
+    rotateStructureMatColdFinger->rotateY(M_PI/2.0);
+    G4ThreeVector moveStructureMatColdFinger(fStructureMatColdFingerThickness/2.0
+                                                + fColdFingerEndPlateThickness
+                                                + fCanFaceThickness/2.0
+                                                + fGermaniumDistFromCanFace +fGermaniumLength
+                                                + fColdFingerSpace +fShift +fAppliedBackShift, 0, 0);
 
-    this->assembly->AddPlacedVolume(structureMat_cold_finger_log, move_structureMat_cold_finger, rotate_structureMat_cold_finger);
+    fAssembly->AddPlacedVolume(fStructureMatColdFingerLog, moveStructureMatColdFinger, rotateStructureMatColdFinger);
 
     // Cooling Side Block
-    G4Box* cooling_side_block = this->coolingSideBlock();
-    cooling_side_block_log = new G4LogicalVolume(cooling_side_block, structureMat, "cooling_side_block_log", 0, 0, 0);
-    cooling_side_block_log->SetVisAttributes(structureMat_vis_att);
+    G4Box* coolingSideBlock = CoolingSideBlock();
+    fCoolingSideBlockLog = new G4LogicalVolume(coolingSideBlock, structureMat, "coolingSideBlockLog", 0, 0, 0);
+    fCoolingSideBlockLog->SetVisAttributes(structureMatVisAtt);
 
-    G4Box* cooling_bar = this->coolingBar();
-    cooling_bar_log = new G4LogicalVolume(cooling_bar, structureMat, "cooling_bar_log", 0, 0, 0);
-    cooling_bar_log->SetVisAttributes(structureMat_vis_att);
+    G4Box* coolingBar = CoolingBar();
+    fCoolingBarLog = new G4LogicalVolume(coolingBar, structureMat, "coolingBarLog", 0, 0, 0);
+    fCoolingBarLog->SetVisAttributes(structureMatVisAtt);
 
-    G4RotationMatrix* rotate_piece[8] ;
+    G4RotationMatrix* rotatePiece[8] ;
 
-    x = this->cooling_side_block_thickness/2.0
-            + this->cold_finger_end_plate_thickness
-            + this->can_face_thickness/2.0
-            + this->germanium_dist_from_can_face +this->germanium_length
-            + this->cold_finger_space +this->shift +this->applied_back_shift ;
+    x = fCoolingSideBlockThickness/2.0
+            + fColdFingerEndPlateThickness
+            + fCanFaceThickness/2.0
+            + fGermaniumDistFromCanFace +fGermaniumLength
+            + fColdFingerSpace +fShift +fAppliedBackShift ;
 
-    y01 = this->germanium_width - this->cooling_side_block_horizontal_depth/2.0 ;
+    y01 = fGermaniumWidth - fCoolingSideBlockHorizontalDepth/2.0 ;
 
-    y02 = this->germanium_width
-            - this->cooling_side_block_horizontal_depth
-            - (this->germanium_width
-               - this->cooling_side_block_horizontal_depth
-               - this->structureMat_cold_finger_radius)/2.0 ;
+    y02 = fGermaniumWidth
+            - fCoolingSideBlockHorizontalDepth
+            - (fGermaniumWidth
+               - fCoolingSideBlockHorizontalDepth
+               - fStructureMatColdFingerRadius)/2.0 ;
 
-    for( i = 0 ; i < 4 ; i++ )
+    for(i = 0 ; i < 4 ; i++)
     {
         // Add cooling side blocks and cooling bars at the same time.
-        rotate_piece[2*i] = new G4RotationMatrix ; // cooling side blocks
-        rotate_piece[2*i]->rotateZ( M_PI/2.0 ) ;
-        rotate_piece[2*i]->rotateX( M_PI/2.0 - i*M_PI/2.0 ) ;
+        rotatePiece[2*i] = new G4RotationMatrix ; // cooling side blocks
+        rotatePiece[2*i]->rotateZ(M_PI/2.0) ;
+        rotatePiece[2*i]->rotateX(M_PI/2.0 - i*M_PI/2.0) ;
 
-        y = -y01 * cos( i*M_PI/2.0 ) ;
-        z = -y01 * sin( i*M_PI/2.0 ) ;
+        y = -y01 * cos(i*M_PI/2.0) ;
+        z = -y01 * sin(i*M_PI/2.0) ;
 
-        move_piece[2*i] = G4ThreeVector( x, y, z ) ;
+        movePiece[2*i] = G4ThreeVector(x, y, z) ;
 
-        rotate_piece[2*i+1] = new G4RotationMatrix ; // cooling bars
-        rotate_piece[2*i+1]->rotateZ( M_PI/2.0 ) ;
-        rotate_piece[2*i+1]->rotateX( M_PI/2.0 - i*M_PI/2.0 ) ;
+        rotatePiece[2*i+1] = new G4RotationMatrix ; // cooling bars
+        rotatePiece[2*i+1]->rotateZ(M_PI/2.0) ;
+        rotatePiece[2*i+1]->rotateX(M_PI/2.0 - i*M_PI/2.0) ;
 
-        y = -y02 * cos( i*M_PI/2.0 ) ;
-        z = -y02 * sin( i*M_PI/2.0 ) ;
+        y = -y02 * cos(i*M_PI/2.0) ;
+        z = -y02 * sin(i*M_PI/2.0) ;
 
-        move_piece[2*i+1] = G4ThreeVector( x, y, z ) ;
+        movePiece[2*i+1] = G4ThreeVector(x, y, z) ;
 
-        this->assembly->AddPlacedVolume( cooling_side_block_log, move_piece[2*i], rotate_piece[2*i] );
-        this->assembly->AddPlacedVolume( cooling_bar_log, move_piece[2*i+1], rotate_piece[2*i+1] );
+        fAssembly->AddPlacedVolume(fCoolingSideBlockLog, movePiece[2*i], rotatePiece[2*i]);
+        fAssembly->AddPlacedVolume(fCoolingBarLog, movePiece[2*i+1], rotatePiece[2*i+1]);
     }
 
     // Triangle posts from "Cut A"
     // First, find how far from the centre to place the tips of the triangles
 
-    G4double distance_of_the_tip = this->germanium_separation/2.0
-            + (this->germanium_width/2.0 - this->germanium_shift) //centre of the middle hole
-            + sqrt( pow((this->germanium_outer_radius
-                         + this->triangle_posts_distance_from_crystals), 2.0)
-                    - pow(this->germanium_width/2.0 - this->germanium_shift, 2.0) );
+    G4double distanceOfTheTip = fGermaniumSeparation/2.0
+            + (fGermaniumWidth/2.0 - fGermaniumShift) //centre of the middle hole
+            + sqrt(pow((fGermaniumOuterRadius
+                         + fTrianglePostsDistanceFromCrystals), 2.0)
+                    - pow(fGermaniumWidth/2.0 - fGermaniumShift, 2.0));
 
     // The distance of the base from the detector centre
-    G4double distance_of_the_base = this->germanium_separation/2.0 + this->germanium_width;
+    G4double distanceOfTheBase = fGermaniumSeparation/2.0 + fGermaniumWidth;
 
-    G4double triangle_post_length = this->germanium_length - this->triangle_post_starting_depth
-            + this->cold_finger_space;
+    G4double trianglePostLength = fGermaniumLength - fTrianglePostStartingDepth
+            + fColdFingerSpace;
 
-    G4Trd* triangle_post = this->trianglePost();
-    triangle_post_log = new G4LogicalVolume(triangle_post, structureMat, "triangle_post_log", 0, 0, 0);
+    G4Trd* trianglePost = TrianglePost();
+    fTrianglePostLog = new G4LogicalVolume(trianglePost, structureMat, "trianglePostLog", 0, 0, 0);
 
-    x = this->can_face_thickness/2.0
-            + this->germanium_dist_from_can_face +this->germanium_length
-            + this->cold_finger_space +this->shift +this->applied_back_shift
-            - triangle_post_length/2.0 ;
+    x = fCanFaceThickness/2.0
+            + fGermaniumDistFromCanFace +fGermaniumLength
+            + fColdFingerSpace +fShift +fAppliedBackShift
+            - trianglePostLength/2.0 ;
 
-    y0 = (distance_of_the_base + distance_of_the_tip)/2.0 ;
+    y0 = (distanceOfTheBase + distanceOfTheTip)/2.0 ;
 
-    for( i = 0 ; i < 4 ; i++ )
+    for(i = 0 ; i < 4 ; i++)
     {
-        rotate_piece[i] = new G4RotationMatrix ;
-        rotate_piece[i]->rotateY(0) ; // Initially included...seems a little redundant.
-        rotate_piece[i]->rotateX( M_PI/2.0 - i*M_PI/2.0 ) ;  // 4, 1, 2, 3
+        rotatePiece[i] = new G4RotationMatrix ;
+        rotatePiece[i]->rotateY(0) ; // Initially included...seems a little redundant.
+        rotatePiece[i]->rotateX(M_PI/2.0 - i*M_PI/2.0) ;  // 4, 1, 2, 3
 
-        y = -y0 * cos( i*M_PI/2.0 ) ;
-        z =  y0 * sin( i*M_PI/2.0 ) ;
+        y = -y0 * cos(i*M_PI/2.0) ;
+        z =  y0 * sin(i*M_PI/2.0) ;
 
-        move_piece[i] = G4ThreeVector( x, y, z ) ;
+        movePiece[i] = G4ThreeVector(x, y, z) ;
 
-        this->assembly->AddPlacedVolume(triangle_post_log, move_piece[i], rotate_piece[i]);
+        fAssembly->AddPlacedVolume(fTrianglePostLog, movePiece[i], rotatePiece[i]);
     }
 }//end ::ConstructColdFinger
 
 ///////////////////////////////////////////////////////////////////////
 // methods used in ConstructColdFinger()
 ///////////////////////////////////////////////////////////////////////
-G4Box* DetectionSystemGriffin::endPlate()
-{
-    G4double half_thickness_x = this->cold_finger_end_plate_thickness/2.0;
-    G4double half_length_y = this->germanium_width;  //Since it must cover the back of the detector
-    G4double half_length_z = half_length_y;  //Since it is symmetric
+G4Box* DetectionSystemGriffin::EndPlate() {
+    G4double halfThicknessX = fColdFingerEndPlateThickness/2.0;
+    G4double halfLengthY = fGermaniumWidth;  //Since it must cover the back of the detector
+    G4double halfLengthZ = halfLengthY;  //Since it is symmetric
 
-    G4Box* end_plate = new G4Box("end_plate", half_thickness_x, half_length_y, half_length_z);
+    G4Box* endPlate = new G4Box("endPlate", halfThicknessX, halfLengthY, halfLengthZ);
 
-    return end_plate;
+    return endPlate;
 }//end ::endPlate
 
 
-G4Tubs* DetectionSystemGriffin::finger()
-{
-    G4double inner_radius = 0.0*cm;
-    G4double outer_radius = this->cold_finger_radius;
-    G4double half_length_z = (this->cold_finger_length
-                              - this->structureMat_cold_finger_thickness)/2.0;
-    G4double start_angle = 0.0*M_PI;
-    G4double final_angle = 2.0*M_PI;
+G4Tubs* DetectionSystemGriffin::Finger() {
+    G4double innerRadius = 0.0*cm;
+    G4double outerRadius = fColdFingerRadius;
+    G4double halfLengthZ = (fColdFingerLength
+                              - fStructureMatColdFingerThickness)/2.0;
+    G4double startAngle = 0.0*M_PI;
+    G4double finalAngle = 2.0*M_PI;
 
-    G4Tubs* fing = new G4Tubs("finger", inner_radius, outer_radius, half_length_z, start_angle, final_angle);
+    G4Tubs* fing = new G4Tubs("finger", innerRadius, outerRadius, halfLengthZ, startAngle, finalAngle);
 
     return fing;
 }//end ::finger
 
 
-G4SubtractionSolid* DetectionSystemGriffin::extraColdBlock()
-{
-    G4double half_width_x = this->germanium_width;
-    G4double half_width_y = half_width_x;
-    G4double half_thickness_z = this->extra_block_thickness/2.0;
+G4SubtractionSolid* DetectionSystemGriffin::ExtraColdBlock() {
+    G4double halfWidthX = fGermaniumWidth;
+    G4double halfWidthY = halfWidthX;
+    G4double halfThicknessZ = fExtraBlockThickness/2.0;
 
-    G4Box* plate = new G4Box("plate", half_width_x, half_width_y, half_thickness_z);
+    G4Box* plate = new G4Box("plate", halfWidthX, halfWidthY, halfThicknessZ);
 
-    G4double inner_radius = 0.0;
-    G4double outer_radius = this->extra_block_inner_diameter/2.0;
+    G4double innerRadius = 0.0;
+    G4double outerRadius = fExtraBlockInnerDiameter/2.0;
 
-    G4double half_height_z = half_thickness_z +1.0*cm;  //+1.0*cm just to make sure the hole goes completely through the plate
-    G4double start_angle = 0.0*M_PI;
-    G4double final_angle = 2.0*M_PI;
+    G4double halfHeightZ = halfThicknessZ +1.0*cm;  //+1.0*cm just to make sure the hole goes completely through the plate
+    G4double startAngle = 0.0*M_PI;
+    G4double finalAngle = 2.0*M_PI;
 
-    G4Tubs* hole = new G4Tubs("hole", inner_radius, outer_radius, half_height_z, start_angle, final_angle);
+    G4Tubs* hole = new G4Tubs("hole", innerRadius, outerRadius, halfHeightZ, startAngle, finalAngle);
 
-    G4SubtractionSolid* extra_cold_block = new G4SubtractionSolid("extra_cold_block", plate, hole);
+    G4SubtractionSolid* extraColdBlock = new G4SubtractionSolid("extraColdBlock", plate, hole);
 
 
 
     // Fix overlap
-    G4SubtractionSolid* fix_extra_cold_block[4];
-    G4double cut_tube_x0, cut_tube_y0, cut_yMov, cut_zMov;
-    G4RotationMatrix* cut_rotate_piece[4] ;
-    G4ThreeVector cut_move_piece[4] ;
-    G4Tubs* cut_tube_location[4] ;
+    G4SubtractionSolid* fixExtraColdBlock[4];
+    G4double cutTubeX0, cutTubeY0, cutYMov, cutZMov;
+    G4RotationMatrix* cutRotatePiece[4] ;
+    G4ThreeVector cutMovePiece[4] ;
+    G4Tubs* cutTubeLocation[4] ;
 
-    cut_tube_x0 = (this->detector_total_length +this->bent_end_length
-          - this->rear_plate_thickness -this->can_face_thickness)/2.0
-            + this->shift +this->applied_back_shift ;
+    cutTubeX0 = (fDetectorTotalLength +fBentEndLength
+          - fRearPlateThickness -fCanFaceThickness)/2.0
+            + fShift +fAppliedBackShift ;
 
-    cut_tube_y0 = (this->detector_total_width/2.0) - (this->bent_end_length * tan(this->bent_end_angle)) ;
+    cutTubeY0 = (fDetectorTotalWidth/2.0) - (fBentEndLength * tan(fBentEndAngle)) ;
 
-    for( G4int i = 0 ; i < 4 ; i++ )
-    {
+    for(G4int i = 0 ; i < 4 ; i++) {
         // Lower Left, Upper Left, Upper Right, Lower Right
-        cut_tube_location[i] = this->cornerTube() ;
-        cut_rotate_piece[i] = new G4RotationMatrix ;
-        cut_rotate_piece[i]->rotateZ( -M_PI/2.0 + (i-1)*M_PI/2.0 ) ;
+        cutTubeLocation[i] = CornerTube() ;
+        cutRotatePiece[i] = new G4RotationMatrix ;
+        cutRotatePiece[i]->rotateZ(-M_PI/2.0 + (i-1)*M_PI/2.0) ;
 
-        cut_yMov = cut_tube_y0 * ( -cos(i*M_PI/2.0) + sin(i*M_PI/2.0) ) ;
-        cut_zMov = cut_tube_y0  * ( -cos(i*M_PI/2.0) - sin(i*M_PI/2.0) ) ;
+        cutYMov = cutTubeY0 * (-cos(i*M_PI/2.0) + sin(i*M_PI/2.0)) ;
+        cutZMov = cutTubeY0  * (-cos(i*M_PI/2.0) - sin(i*M_PI/2.0)) ;
 
-        cut_move_piece[i] = G4ThreeVector(cut_zMov, cut_yMov, 0) ;
+        cutMovePiece[i] = G4ThreeVector(cutZMov, cutYMov, 0) ;
 
         if(i == 0) {
-            fix_extra_cold_block[i] = new G4SubtractionSolid("extra_cold_block", extra_cold_block, cut_tube_location[i], cut_rotate_piece[i], cut_move_piece[i] ) ;
-        }
-        else {
-            fix_extra_cold_block[i] = new G4SubtractionSolid("extra_cold_block", fix_extra_cold_block[i-1], cut_tube_location[i], cut_rotate_piece[i], cut_move_piece[i] ) ;
+            fixExtraColdBlock[i] = new G4SubtractionSolid("extraColdBlock", extraColdBlock, cutTubeLocation[i], cutRotatePiece[i], cutMovePiece[i]) ;
+        } else {
+			 fixExtraColdBlock[i] = new G4SubtractionSolid("extraColdBlock", fixExtraColdBlock[i-1], cutTubeLocation[i], cutRotatePiece[i], cutMovePiece[i]) ;
         }
     }
 
-
-
-
-
-
-    return fix_extra_cold_block[3];
+    return fixExtraColdBlock[3];
 }//end ::extraColdBlock
 
 
-G4Trd* DetectionSystemGriffin::trianglePost()
-{
+G4Trd* DetectionSystemGriffin::TrianglePost() {
     // Calculations that are also done in ConstructColdFinger for positioning
     // First, find how far from the centre to place the tips of the triangles
-    G4double distance_of_the_tip	= this->germanium_separation/2.0
-            + (this->germanium_width/2.0 - this->germanium_shift) //centre of the middle hole
-            + sqrt( pow((this->germanium_outer_radius
-                         + this->triangle_posts_distance_from_crystals), 2.0)
-                    - pow(this->germanium_width/2.0 - this->germanium_shift, 2.0) );
+    G4double distanceOfTheTip	= fGermaniumSeparation/2.0
+            + (fGermaniumWidth/2.0 - fGermaniumShift) //centre of the middle hole
+            + sqrt(pow((fGermaniumOuterRadius
+                         + fTrianglePostsDistanceFromCrystals), 2.0)
+                    - pow(fGermaniumWidth/2.0 - fGermaniumShift, 2.0));
 
     // The distance of the base from the detector centre
-    G4double distance_of_the_base = this->germanium_separation/2.0
-            + this->germanium_width;
+    G4double distanceOfTheBase = fGermaniumSeparation/2.0
+            + fGermaniumWidth;
 
     // The distance away from the boundary between crystals of the side points
-    G4double distance_of_the_side_points 	= sqrt( pow((this->germanium_outer_radius
-                                                         + this->triangle_posts_distance_from_crystals), 2.0)
-                                                    - pow(this->germanium_width/2.0 +/*notice*/ this->germanium_shift, 2.0) );
+    G4double distanceOfTheSidePoints 	= sqrt(pow((fGermaniumOuterRadius
+                                                         + fTrianglePostsDistanceFromCrystals), 2.0)
+                                                    - pow(fGermaniumWidth/2.0 +/*notice*/ fGermaniumShift, 2.0));
 
     // Measurements to make the posts with
-    G4double length = this->germanium_length - this->triangle_post_starting_depth
-            + this->cold_finger_space;
+    G4double length = fGermaniumLength - fTrianglePostStartingDepth
+            + fColdFingerSpace;
 
-    G4double base_to_tip_height = (distance_of_the_base-distance_of_the_tip);
+    G4double baseToTipHeight = (distanceOfTheBase-distanceOfTheTip);
 
-    G4double half_width_of_base = distance_of_the_side_points;
+    G4double halfWidthOfBase = distanceOfTheSidePoints;
 
-    G4double half_width_of_top = this->trianglePostDim; //the easiest way to make a triangle
-    //G4Trd( const G4String& pName,G4double  dx1, G4double dx2, G4double  dy1, G4double dy2,G4double  dz )
-    G4Trd* triangle_post = new G4Trd(	"triangle_post", length / 2.0, length / 2.0,
-                                        half_width_of_top, half_width_of_base, base_to_tip_height / 2.0 );
+    G4double halfWidthOfTop = fTrianglePostDim; //the easiest way to make a triangle
+    //G4Trd(const G4String& pName,G4double  dx1, G4double dx2, G4double  dy1, G4double dy2,G4double  dz)
+    G4Trd* trianglePost = new G4Trd(	"trianglePost", length / 2.0, length / 2.0,
+                                        halfWidthOfTop, halfWidthOfBase, baseToTipHeight / 2.0);
 
-    return triangle_post;
+    return trianglePost;
 }//end ::trianglePost
 
 
-G4Tubs* DetectionSystemGriffin::airHole()
-{
-    G4double inner_radius = 0.0*cm;
-    G4double outer_radius = this->fet_air_hole_radius;
-    G4double half_length_z = this->cold_finger_end_plate_thickness/2.0;
-    G4double start_angle = 0.0*M_PI;
-    G4double final_angle = 2.0*M_PI;
+G4Tubs* DetectionSystemGriffin::AirHole() {
+    G4double innerRadius = 0.0*cm;
+    G4double outerRadius = fFetAirHoleRadius;
+    G4double halfLengthZ = fColdFingerEndPlateThickness/2.0;
+    G4double startAngle = 0.0*M_PI;
+    G4double finalAngle = 2.0*M_PI;
 
-    G4Tubs* fet_air_hole = new G4Tubs("fet_air_hole", inner_radius,
-                                      outer_radius, half_length_z, start_angle, final_angle);
+    G4Tubs* fetAirHole = new G4Tubs("fetAirHole", innerRadius,
+                                      outerRadius, halfLengthZ, startAngle, finalAngle);
 
-    return fet_air_hole;
+    return fetAirHole;
 }//end ::airHole
 
-G4Tubs* DetectionSystemGriffin::airHoleCut()
-{
-    G4double inner_radius = 0.0*cm;
-    G4double outer_radius = this->fet_air_hole_radius;
-    G4double half_length_z = this->cold_finger_end_plate_thickness/2.0 + 1.0*cm;
-    G4double start_angle = 0.0*M_PI;
-    G4double final_angle = 2.0*M_PI;
+G4Tubs* DetectionSystemGriffin::AirHoleCut() {
+    G4double innerRadius = 0.0*cm;
+    G4double outerRadius = fFetAirHoleRadius;
+    G4double halfLengthZ = fColdFingerEndPlateThickness/2.0 + 1.0*cm;
+    G4double startAngle = 0.0*M_PI;
+    G4double finalAngle = 2.0*M_PI;
 
-    G4Tubs* fet_air_hole = new G4Tubs("fet_air_hole", inner_radius,
-                                      outer_radius, half_length_z, start_angle, final_angle);
+    G4Tubs* fetAirHole = new G4Tubs("fetAirHole", innerRadius,
+                                      outerRadius, halfLengthZ, startAngle, finalAngle);
 
-    return fet_air_hole;
+    return fetAirHole;
 }//end ::airHoleCut
 
-G4Box* DetectionSystemGriffin::coolingBar()
-{
-    G4double half_thickness_x = this->cooling_bar_thickness/2.0;
-    G4double half_length_y = this->cooling_bar_width/2.0;
-    G4double half_length_z = (this->germanium_width
-                              - this->cooling_side_block_horizontal_depth
-                              - this->structureMat_cold_finger_radius)/2.0;
+G4Box* DetectionSystemGriffin::CoolingBar() {
+    G4double halfThicknessX = fCoolingBarThickness/2.0;
+    G4double halfLengthY = fCoolingBarWidth/2.0;
+    G4double halfLengthZ = (fGermaniumWidth
+                              - fCoolingSideBlockHorizontalDepth
+                              - fStructureMatColdFingerRadius)/2.0;
 
-    G4Box* cooling_bar = new G4Box("cooling_bar", half_thickness_x, half_length_y, half_length_z);
+    G4Box* coolingBar = new G4Box("coolingBar", halfThicknessX, halfLengthY, halfLengthZ);
 
-    return cooling_bar;
+    return coolingBar;
 }//end ::coolingBar
 
 
-G4Box* DetectionSystemGriffin::coolingSideBlock()
-{
-    G4double half_thickness_x = this->cooling_side_block_width/2.0;
-    G4double half_length_y = this->cooling_side_block_thickness/2.0;
-    G4double half_length_z = this->cooling_side_block_horizontal_depth/2.0;
+G4Box* DetectionSystemGriffin::CoolingSideBlock() {
+    G4double halfThicknessX = fCoolingSideBlockWidth/2.0;
+    G4double halfLengthY = fCoolingSideBlockThickness/2.0;
+    G4double halfLengthZ = fCoolingSideBlockHorizontalDepth/2.0;
 
-    G4Box* cooling_side_block = new G4Box("cooling_side_block",
-                                          half_thickness_x, half_length_y, half_length_z);
+    G4Box* coolingSideBlock = new G4Box("coolingSideBlock",
+                                          halfThicknessX, halfLengthY, halfLengthZ);
 
-    return cooling_side_block;
+    return coolingSideBlock;
 }//end ::coolingSideBlock
 
 
-G4Tubs* DetectionSystemGriffin::structureMatColdFinger()
-{
-    G4double inner_radius = 0.0*cm;
-    G4double outer_radius = this->structureMat_cold_finger_radius;
-    G4double half_length_z = this->structureMat_cold_finger_thickness/2.0;
-    G4double start_angle = 0.0*M_PI;
-    G4double final_angle = 2.0*M_PI;
+G4Tubs* DetectionSystemGriffin::StructureMatColdFinger() {
+    G4double innerRadius = 0.0*cm;
+    G4double outerRadius = fStructureMatColdFingerRadius;
+    G4double halfLengthZ = fStructureMatColdFingerThickness/2.0;
+    G4double startAngle = 0.0*M_PI;
+    G4double finalAngle = 2.0*M_PI;
 
-    G4Tubs* structureMat_cold_finger= new G4Tubs("structureMat_cold_finger",
-                                                 inner_radius, outer_radius, half_length_z, start_angle, final_angle);
+    G4Tubs* structureMatColdFinger= new G4Tubs("structureMatColdFinger",
+                                                 innerRadius, outerRadius, halfLengthZ, startAngle, finalAngle);
 
-    return structureMat_cold_finger;
+    return structureMatColdFinger;
 }//end ::structureMatColdFinger
 
 
@@ -2040,103 +1662,99 @@ G4Tubs* DetectionSystemGriffin::structureMatColdFinger()
 // as per the design in the specifications. Also, there is a layer
 // of structureMat that surrounds the physical pieces.
 ///////////////////////////////////////////////////////////////////////
-void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells()
-{
+void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells() {
     G4int i;
     G4double x0, y0, z0, x, y, z;
 
-    G4Material* structureMat = G4Material::GetMaterial(structureMaterial);
-    if( !structureMat ) {
-        G4cout << " ----> Material " << structureMaterial << " not found, cannot build the detector shell! " << G4endl;
+    G4Material* structureMat = G4Material::GetMaterial(fStructureMaterial);
+    if(!structureMat) {
+        G4cout << " ----> Material " << fStructureMaterial << " not found, cannot build the detector shell! " << G4endl;
         exit(1);
     }
-    G4Material* materialBGO = G4Material::GetMaterial(BGO_material);
-    if( !materialBGO ) {
-        G4cout << " ----> Material " << BGO_material << " not found, cannot build the detector shell! " << G4endl;
+    G4Material* materialBGO = G4Material::GetMaterial(fBGOMaterial);
+    if(!materialBGO) {
+        G4cout << " ----> Material " << fBGOMaterial << " not found, cannot build the detector shell! " << G4endl;
         exit(1);
     }
 
     // Change some values to accomodate the shells
-    // Replacement for this->side_suppressor_length
-    G4double shell_side_suppressor_length = this->side_suppressor_length
-            + (this->suppressor_shell_thickness*2.0);
+    // Replacement for sideSuppressorLength
+    G4double shellSideSuppressorLength = fSideSuppressorLength
+            + (fSuppressorShellThickness*2.0);
 
-    // Replacement for this->suppressor_extension_length
-    G4double shell_suppressor_extension_length = this->suppressor_extension_length
-            + (this->suppressor_shell_thickness*2.0)*(1.0/tan(this->bent_end_angle)
-                                                      - tan(this->bent_end_angle));
+    // Replacement for suppressorExtensionLength
+    G4double shellSuppressorExtensionLength = fSuppressorExtensionLength
+            + (fSuppressorShellThickness*2.0)*(1.0/tan(fBentEndAngle)
+                                                      - tan(fBentEndAngle));
 
-    // Replacement for this->suppressor_extension_angle: must totally recalculate
-    G4double shell_suppressor_extension_angle = atan(((this->suppressor_back_radius
-                                                       + this->bent_end_length +(this->BGO_can_seperation
-                                                                                 + this->side_BGO_thickness + this->suppressor_shell_thickness*2.0)
-                                                       / tan(this->bent_end_angle)
-                                                       - (this->suppressor_extension_thickness + this->suppressor_shell_thickness*2.0)
-                                                       * sin(this->bent_end_angle))
-                                                      * tan(this->bent_end_angle) -(this->suppressor_forward_radius +this->hevimet_tip_thickness)
-                                                      * sin(this->bent_end_angle))/(shell_suppressor_extension_length));
+    // Replacement for suppressorExtensionAngle: must totally recalculate
+    G4double shellSuppressorExtensionAngle = atan(((fSuppressorBackRadius
+                                                       + fBentEndLength +(fBGOCanSeperation
+                                                                                 + fSideBGOThickness + fSuppressorShellThickness*2.0)
+                                                       / tan(fBentEndAngle)
+                                                       - (fSuppressorExtensionThickness + fSuppressorShellThickness*2.0)
+                                                       * sin(fBentEndAngle))
+                                                      * tan(fBentEndAngle) -(fSuppressorForwardRadius +fHevimetTipThickness)
+                                                      * sin(fBentEndAngle))/(shellSuppressorExtensionLength));
 
-    G4VisAttributes* Suppressor_vis_att = new G4VisAttributes(G4Colour(0.75,0.75,0.75));
-    Suppressor_vis_att->SetVisibility(true);
-    G4VisAttributes* innards_vis_att = new G4VisAttributes(G4Colour(0.75, 0.75, 0.75));
-    innards_vis_att->SetVisibility(true);
-    G4VisAttributes* back_innards_vis_att = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
-    back_innards_vis_att->SetVisibility(true);
+    G4VisAttributes* SuppressorVisAtt = new G4VisAttributes(G4Colour(0.75,0.75,0.75));
+    SuppressorVisAtt->SetVisibility(true);
+    G4VisAttributes* innardsVisAtt = new G4VisAttributes(G4Colour(0.75, 0.75, 0.75));
+    innardsVisAtt->SetVisibility(true);
+    G4VisAttributes* backInnardsVisAtt = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
+    backInnardsVisAtt->SetVisibility(true);
 
     // first we add the four pieces of back suppressor, and their shells
 
-    G4SubtractionSolid* back_quarter_suppressor = this->backSuppressorQuarter();
+    G4SubtractionSolid* backQuarterSuppressor = BackSuppressorQuarter();
 
-    G4SubtractionSolid* back_quarter_suppressor_shell = this->shellForBackSuppressorQuarter();
+    G4SubtractionSolid* backQuarterSuppressorShell = ShellForBackSuppressorQuarter();
 
     // Insert the structureMat shell first.  The shells must be given numbers, rather than
     // the suppressor pieces themselves.  As an error checking method, the suppressor
     // pieces are given a copy number value far out of range of any useful copy number.
-    if(include_back_suppressors)
-    {
-        back_quarter_suppressor_shell_log = new G4LogicalVolume(
-                    back_quarter_suppressor_shell, structureMat,
-                    "back_quarter_suppressor_log", 0, 0, 0);
+    if(fIncludeBackSuppressors) {
+        fBackQuarterSuppressorShellLog = new G4LogicalVolume(
+                    backQuarterSuppressorShell, structureMat,
+                    "backQuarterSuppressorLog", 0, 0, 0);
 
-        back_quarter_suppressor_shell_log->SetVisAttributes( Suppressor_vis_att );
+        fBackQuarterSuppressorShellLog->SetVisAttributes(SuppressorVisAtt);
 
-        G4Material* back_material = G4Material::GetMaterial(back_suppressor_material);
-        if( !back_material )
-        {
-            G4cout << " ----> Material " << back_suppressor_material << " not found, cannot build the detector shell! " << G4endl;
+        G4Material* backMaterial = G4Material::GetMaterial(fBackSuppressorMaterial);
+        if(!backMaterial) {
+            G4cout << " ----> Material " << fBackSuppressorMaterial << " not found, cannot build the detector shell! " << G4endl;
             exit(1);
         }
 
-        back_quarter_suppressor_log = new G4LogicalVolume(back_quarter_suppressor, back_material,
-                                                          "back_quarter_suppressor_log", 0, 0, 0);
-        back_quarter_suppressor_log->SetVisAttributes(back_innards_vis_att);
+        fBackQuarterSuppressorLog = new G4LogicalVolume(backQuarterSuppressor, backMaterial,
+                                                          "backQuarterSuppressorLog", 0, 0, 0);
+        fBackQuarterSuppressorLog->SetVisAttributes(backInnardsVisAtt);
 
-        this->suppressorBackAssembly->AddPlacedVolume(back_quarter_suppressor_log, this->move_null, this->rotate_null);
+        fSuppressorBackAssembly->AddPlacedVolume(fBackQuarterSuppressorLog, fMoveNull, fRotateNull);
 
-        x0 = 	( this->back_BGO_thickness -this->can_face_thickness)/2.0 + this->suppressor_shell_thickness
-                + this->detector_total_length +this->BGO_can_seperation
-                + this->shift + this->applied_back_shift ;
+        x0 = 	(fBackBGOThickness -fCanFaceThickness)/2.0 + fSuppressorShellThickness
+                + fDetectorTotalLength +fBGOCanSeperation
+                + fShift + fAppliedBackShift ;
 
-        y0 = this->detector_total_width/4.0 ;
+        y0 = fDetectorTotalWidth/4.0 ;
 
-        z0 = this->detector_total_width/4.0 ;
+        z0 = fDetectorTotalWidth/4.0 ;
 
-        G4RotationMatrix* rotate_back_suppressor_shells[4] ;
-        G4ThreeVector move_back_quarter_suppressor[4] ;
+        G4RotationMatrix* rotateBackSuppressorShells[4] ;
+        G4ThreeVector moveBackQuarterSuppressor[4] ;
 
-        for( i = 0 ; i < 4 ; i++ )
-        {
-            rotate_back_suppressor_shells[i] = new G4RotationMatrix ;
-            rotate_back_suppressor_shells[i]->rotateX( -M_PI / 2.0 + i * M_PI / 2.0 ) ;
+        for(i = 0 ; i < 4 ; i++) {
+            rotateBackSuppressorShells[i] = new G4RotationMatrix ;
+            rotateBackSuppressorShells[i]->rotateX(-M_PI / 2.0 + i * M_PI / 2.0) ;
 
             x = x0 ;
 
-            y = y0 * ( sin( i * M_PI/2.0 ) - cos( i * M_PI/2.0 ) ) ;
-            z = -z0 * ( sin( i * M_PI/2.0 ) + cos( i * M_PI/2.0 ) ) ;
+            y = y0 * (sin(i * M_PI/2.0) - cos(i * M_PI/2.0)) ;
+            z = -z0 * (sin(i * M_PI/2.0) + cos(i * M_PI/2.0)) ;
 
-            move_back_quarter_suppressor[i] = G4ThreeVector( x, y, z ) ;
+            moveBackQuarterSuppressor[i] = G4ThreeVector(x, y, z) ;
 
-            this->backAndSideSuppressorShellAssembly->AddPlacedVolume( back_quarter_suppressor_shell_log, move_back_quarter_suppressor[i], rotate_back_suppressor_shells[i] ) ;
+            fBackAndSideSuppressorShellAssembly->AddPlacedVolume(fBackQuarterSuppressorShellLog, moveBackQuarterSuppressor[i], rotateBackSuppressorShells[i]) ;
         }
     }
 
@@ -2144,32 +1762,31 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells()
 
     // Define the structureMat shell logical volume
     G4cout << "Calling: shellForFrontRightSlantSuppressor" << G4endl ;
-    G4SubtractionSolid* right_suppressor_shell = this->shellForFrontSlantSuppressor("right");
+    G4SubtractionSolid* rightSuppressorShell = ShellForFrontSlantSuppressor("right");
 
-
-    right_suppressor_shell_log = new G4LogicalVolume(right_suppressor_shell, structureMat,
-                                                     "right_suppressor_shell_log", 0,0,0);
-    right_suppressor_shell_log->SetVisAttributes(Suppressor_vis_att);
+    fRightSuppressorShellLog = new G4LogicalVolume(rightSuppressorShell, structureMat,
+                                                     "rightSuppressorShellLog", 0,0,0);
+    fRightSuppressorShellLog->SetVisAttributes(SuppressorVisAtt);
 
     G4cout << "Calling: shellForFrontLeftSlantSuppressor" << G4endl ;
-    G4SubtractionSolid* left_suppressor_shell = this->shellForFrontSlantSuppressor("left");
+    G4SubtractionSolid* leftSuppressorShell = ShellForFrontSlantSuppressor("left");
 
-    left_suppressor_shell_log = new G4LogicalVolume(left_suppressor_shell, structureMat,
-                                                    "left_suppressor_shell_log", 0,0,0);
-    left_suppressor_shell_log->SetVisAttributes(Suppressor_vis_att);
+    fLeftSuppressorShellLog = new G4LogicalVolume(leftSuppressorShell, structureMat,
+                                                    "leftSuppressorShellLog", 0,0,0);
+    fLeftSuppressorShellLog->SetVisAttributes(SuppressorVisAtt);
 
-    G4SubtractionSolid* right_suppressor = this->frontSlantSuppressor("right", false); // Right, non-chopping.
+    G4SubtractionSolid* rightSuppressor = FrontSlantSuppressor("right", false); // Right, non-chopping.
 
-    right_suppressor_log = new G4LogicalVolume(right_suppressor, materialBGO, "right_suppressor_casing_log", 0, 0, 0);
-    right_suppressor_log->SetVisAttributes(innards_vis_att);
+    fRightSuppressorLog = new G4LogicalVolume(rightSuppressor, materialBGO, "rightSuppressorCasingLog", 0, 0, 0);
+    fRightSuppressorLog->SetVisAttributes(innardsVisAtt);
 
-    G4SubtractionSolid* left_suppressor = this->frontSlantSuppressor("left", false); // Left, non-chopping.
+    G4SubtractionSolid* leftSuppressor = FrontSlantSuppressor("left", false); // Left, non-chopping.
 
-    left_suppressor_log = new G4LogicalVolume(left_suppressor, materialBGO, "left_suppressor_casing_log", 0, 0, 0);
-    left_suppressor_log->SetVisAttributes(innards_vis_att);
+    fLeftSuppressorLog = new G4LogicalVolume(leftSuppressor, materialBGO, "leftSuppressorCasingLog", 0, 0, 0);
+    fLeftSuppressorLog->SetVisAttributes(innardsVisAtt);
 
-    this->rightSuppressorCasingAssembly->AddPlacedVolume(right_suppressor_log, this->move_null, this->rotate_null);
-    this->leftSuppressorCasingAssembly->AddPlacedVolume(left_suppressor_log, this->move_null, this->rotate_null);
+    fRightSuppressorCasingAssembly->AddPlacedVolume(fRightSuppressorLog, fMoveNull, fRotateNull);
+    fLeftSuppressorCasingAssembly->AddPlacedVolume(fLeftSuppressorLog, fMoveNull, fRotateNull);
 
 
     /////////////////////////////////////////////////////////////////////
@@ -2180,52 +1797,52 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells()
     // Suppressors 7 and 8 cover germanium 4
     /////////////////////////////////////////////////////////////////////
 
-    x0 =    shell_side_suppressor_length/2.0 -this->can_face_thickness/2.0
-            + this->bent_end_length + (this->BGO_can_seperation
-                                       + this->BGO_chopped_tip) / tan(this->bent_end_angle)
-            + this->shift + this->applied_back_shift ;
+    x0 =    shellSideSuppressorLength/2.0 -fCanFaceThickness/2.0
+            + fBentEndLength + (fBGOCanSeperation
+                                       + fBGOChoppedTip) / tan(fBentEndAngle)
+            + fShift + fAppliedBackShift ;
 
-    y0 =    this->side_BGO_thickness/2.0 + this->suppressor_shell_thickness
-            + this->detector_total_width/2.0 + this->BGO_can_seperation ;
+    y0 =    fSideBGOThickness/2.0 + fSuppressorShellThickness
+            + fDetectorTotalWidth/2.0 + fBGOCanSeperation ;
 
-    z0 =    this->side_BGO_thickness/2.0 + this->suppressor_shell_thickness
-            + this->detector_total_width/2.0 + this->BGO_can_seperation ;
+    z0 =    fSideBGOThickness/2.0 + fSuppressorShellThickness
+            + fDetectorTotalWidth/2.0 + fBGOCanSeperation ;
 
-    G4RotationMatrix* rotate_suppressor_extension_shell[8] ;
-    G4ThreeVector move_suppressor_extension_shell[8] ;
+    G4RotationMatrix* rotateSuppressorExtensionShell[8] ;
+    G4ThreeVector moveSuppressorExtensionShell[8] ;
 
-    for( i = 0 ; i < 4 ; i++ )
+    for(i = 0 ; i < 4 ; i++)
     {
         //********************** RIGHT **********************//
-        rotate_suppressor_extension_shell[2*i] = new G4RotationMatrix ;
-        rotate_suppressor_extension_shell[2*i]->rotateZ( M_PI/2.0 ) ;
-        rotate_suppressor_extension_shell[2*i]->rotateY( M_PI/2.0 ) ;
-        rotate_suppressor_extension_shell[2*i]->rotateX( M_PI * ( 1 - i/2.0 ) ) ;
+        rotateSuppressorExtensionShell[2*i] = new G4RotationMatrix ;
+        rotateSuppressorExtensionShell[2*i]->rotateZ(M_PI/2.0) ;
+        rotateSuppressorExtensionShell[2*i]->rotateY(M_PI/2.0) ;
+        rotateSuppressorExtensionShell[2*i]->rotateX(M_PI * (1 - i/2.0)) ;
 
         x = x0 ;
 
-        y = y0 * ( -cos( i * M_PI/2.0 ) + sin( i * M_PI/2.0 ) ) / ( 1 + ( i + 1 ) % 2 ) ; // -y/2, y, y/2, -y
+        y = y0 * (-cos(i * M_PI/2.0) + sin(i * M_PI/2.0)) / (1 + (i + 1) % 2) ; // -y/2, y, y/2, -y
 
-        z = z0 * ( cos( i * M_PI/2.0 ) + sin( i * M_PI/2.0 ) ) / ( 1 + i % 2 ) ;  // z, z/2, -z, -z/2
+        z = z0 * (cos(i * M_PI/2.0) + sin(i * M_PI/2.0)) / (1 + i % 2) ;  // z, z/2, -z, -z/2
 
-        move_suppressor_extension_shell[2*i] = G4ThreeVector( x, y, z ) ;
+        moveSuppressorExtensionShell[2*i] = G4ThreeVector(x, y, z) ;
 
-        this->backAndSideSuppressorShellAssembly->AddPlacedVolume(right_suppressor_shell_log, move_suppressor_extension_shell[2*i], rotate_suppressor_extension_shell[2*i] ) ;
+        fBackAndSideSuppressorShellAssembly->AddPlacedVolume(fRightSuppressorShellLog, moveSuppressorExtensionShell[2*i], rotateSuppressorExtensionShell[2*i]) ;
 
         //*********************** LEFT ***********************//
-        rotate_suppressor_extension_shell[2*i+1] = new G4RotationMatrix ;
-        rotate_suppressor_extension_shell[2*i+1]->rotateY( -M_PI/2.0 ) ;
-        rotate_suppressor_extension_shell[2*i+1]->rotateX( M_PI * ( 1 - i/2.0 ) ) ;
+        rotateSuppressorExtensionShell[2*i+1] = new G4RotationMatrix ;
+        rotateSuppressorExtensionShell[2*i+1]->rotateY(-M_PI/2.0) ;
+        rotateSuppressorExtensionShell[2*i+1]->rotateX(M_PI * (1 - i/2.0)) ;
 
         x = x0 ;
 
-        y = y0 * ( cos( i * M_PI/2.0 ) - sin( i * M_PI/2.0 ) ) / ( 1 + i % 2 ) ; // y, -y/2, -y, y/2
+        y = y0 * (cos(i * M_PI/2.0) - sin(i * M_PI/2.0)) / (1 + i % 2) ; // y, -y/2, -y, y/2
 
-        z = -z0 * ( cos( i * M_PI/2.0 ) + sin( i * M_PI/2.0 ) ) / ( 1 + ( i + 1 ) % 2 ) ; // -z/2, -z, z/2, z
+        z = -z0 * (cos(i * M_PI/2.0) + sin(i * M_PI/2.0)) / (1 + (i + 1) % 2) ; // -z/2, -z, z/2, z
 
-        move_suppressor_extension_shell[2*i+1] = G4ThreeVector( x, y, z ) ;
+        moveSuppressorExtensionShell[2*i+1] = G4ThreeVector(x, y, z) ;
 
-        this->backAndSideSuppressorShellAssembly->AddPlacedVolume(left_suppressor_shell_log, move_suppressor_extension_shell[2*i+1], rotate_suppressor_extension_shell[2*i+1] ) ;
+        fBackAndSideSuppressorShellAssembly->AddPlacedVolume(fLeftSuppressorShellLog, moveSuppressorExtensionShell[2*i+1], rotateSuppressorExtensionShell[2*i+1]) ;
 
     }
 
@@ -2234,89 +1851,89 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells()
 
     // Define the shell right logical volume
     G4cout << "Calling: shellForRightSuppressorExtension" << G4endl ;
-    // G4SubtractionSolid* right_suppressor_shell_extension = this->shellForRightSuppressorExtension();
-    G4SubtractionSolid* right_suppressor_shell_extension = this->shellForSuppressorExtension("right");
+    // G4SubtractionSolid* rightSuppressorShellExtension = ShellForRightSuppressorExtension();
+    G4SubtractionSolid* rightSuppressorShellExtension = ShellForSuppressorExtension("right");
 
-    right_suppressor_shell_extension_log = new G4LogicalVolume(right_suppressor_shell_extension,
-                                                               materialBGO, "right_suppressor_shell_extension_log", 0, 0, 0);
-    right_suppressor_shell_extension_log->SetVisAttributes(Suppressor_vis_att);
+    fRightSuppressorShellExtensionLog = new G4LogicalVolume(rightSuppressorShellExtension,
+                                                               materialBGO, "rightSuppressorShellExtensionLog", 0, 0, 0);
+    fRightSuppressorShellExtensionLog->SetVisAttributes(SuppressorVisAtt);
 
-    G4SubtractionSolid* right_suppressor_extension = this->sideSuppressorExtension( "right", false ); // Right, non-chopping // CALLED
+    G4SubtractionSolid* rightSuppressorExtension = SideSuppressorExtension("right", false); // Right, non-chopping // CALLED
 
-    right_suppressor_extension_log = new G4LogicalVolume(right_suppressor_extension, materialBGO,
-                                                         "right_suppressor_extension_log", 0, 0, 0);
-    right_suppressor_extension_log->SetVisAttributes(innards_vis_att);
+    fRightSuppressorExtensionLog = new G4LogicalVolume(rightSuppressorExtension, materialBGO,
+                                                         "rightSuppressorExtensionLog", 0, 0, 0);
+    fRightSuppressorExtensionLog->SetVisAttributes(innardsVisAtt);
 
     // Define the left shell logical volume
     G4cout << "Calling: shellForLeftSuppressorExtension" << G4endl ;
-    // G4SubtractionSolid* left_suppressor_shell_extension = this->shellForLeftSuppressorExtension();
-    G4SubtractionSolid* left_suppressor_shell_extension = this->shellForSuppressorExtension("left");
+    // G4SubtractionSolid* leftSuppressorShellExtension = ShellForLeftSuppressorExtension();
+    G4SubtractionSolid* leftSuppressorShellExtension = ShellForSuppressorExtension("left");
 
 
-    left_suppressor_shell_extension_log = new G4LogicalVolume(left_suppressor_shell_extension,
-                                                              materialBGO, "left_suppressor_shell_extension_log", 0, 0, 0);
-    left_suppressor_shell_extension_log->SetVisAttributes(Suppressor_vis_att);
+    fLeftSuppressorShellExtensionLog = new G4LogicalVolume(leftSuppressorShellExtension,
+                                                              materialBGO, "leftSuppressorShellExtensionLog", 0, 0, 0);
+    fLeftSuppressorShellExtensionLog->SetVisAttributes(SuppressorVisAtt);
 
-    G4SubtractionSolid* left_suppressor_extension = this->sideSuppressorExtension( "left", false ); // Left, Non-chopping // CALLED
+    G4SubtractionSolid* leftSuppressorExtension = SideSuppressorExtension("left", false); // Left, Non-chopping // CALLED
 
-    left_suppressor_extension_log = new G4LogicalVolume(left_suppressor_extension, materialBGO,
-                                                        "left_suppressor_extension_log", 0, 0, 0);
-    left_suppressor_extension_log->SetVisAttributes(innards_vis_att);
+    fLeftSuppressorExtensionLog = new G4LogicalVolume(leftSuppressorExtension, materialBGO,
+                                                        "leftSuppressorExtensionLog", 0, 0, 0);
+    fLeftSuppressorExtensionLog->SetVisAttributes(innardsVisAtt);
 
-    this->rightSuppressorExtensionAssembly->AddPlacedVolume(right_suppressor_extension_log, this->move_null, this->rotate_null);
-    this->leftSuppressorExtensionAssembly->AddPlacedVolume(left_suppressor_extension_log, this->move_null, this->rotate_null);
+    fRightSuppressorExtensionAssembly->AddPlacedVolume(fRightSuppressorExtensionLog, fMoveNull, fRotateNull);
+    fLeftSuppressorExtensionAssembly->AddPlacedVolume(fLeftSuppressorExtensionLog, fMoveNull, fRotateNull);
 
     //geometry objects for the following:
     G4RotationMatrix* rotateExtension[8];
     G4ThreeVector moveExtension[8];
 
-    x0 =  - this->can_face_thickness/2.0 -(shell_suppressor_extension_length/2.0
-                                           - (this->suppressor_extension_thickness + this->suppressor_shell_thickness*2.0)
-                                           * tan(this->bent_end_angle)/2.0)
-            * cos(this->bent_end_angle) +this->bent_end_length +(this->BGO_can_seperation
-                                                                 + this->side_BGO_thickness
-                                                                 + this->suppressor_shell_thickness*2.0)/tan(this->bent_end_angle)
-            - (this->suppressor_extension_thickness + this->suppressor_shell_thickness*2.0)
-            * sin(this->bent_end_angle) +this->suppShift +this->suppressor_back_radius
-            - this->suppressor_forward_radius ;
+    x0 =  - fCanFaceThickness/2.0 -(shellSuppressorExtensionLength/2.0
+                                           - (fSuppressorExtensionThickness + fSuppressorShellThickness*2.0)
+                                           * tan(fBentEndAngle)/2.0)
+            * cos(fBentEndAngle) +fBentEndLength +(fBGOCanSeperation
+                                                                 + fSideBGOThickness
+                                                                 + fSuppressorShellThickness*2.0)/tan(fBentEndAngle)
+            - (fSuppressorExtensionThickness + fSuppressorShellThickness*2.0)
+            * sin(fBentEndAngle) +fSuppShift +fSuppressorBackRadius
+            - fSuppressorForwardRadius ;
 
-    y0 =  - ( shell_suppressor_extension_length * tan( shell_suppressor_extension_angle ) / 2.0
-              + ( this->suppressor_forward_radius + this->hevimet_tip_thickness )
-              * sin(this->bent_end_angle))/2.0;
+    y0 =  - (shellSuppressorExtensionLength * tan(shellSuppressorExtensionAngle) / 2.0
+              + (fSuppressorForwardRadius + fHevimetTipThickness)
+              * sin(fBentEndAngle))/2.0;
 
-    z0 =  - ((this->suppressor_extension_thickness/2.0 + this->suppressor_shell_thickness)
-             / cos(this->bent_end_angle)
-             + (shell_suppressor_extension_length/2.0 -(this->suppressor_extension_thickness
-                                                        + this->suppressor_shell_thickness*2.0)
-                * tan(this->bent_end_angle)/2.0)*sin(this->bent_end_angle) -(this->suppressor_back_radius
-                                                                             + this->bent_end_length +(this->BGO_can_seperation
-                                                                                                       + this->side_BGO_thickness + this->suppressor_shell_thickness*2.0)
-                                                                             / tan(this->bent_end_angle) -(this->suppressor_extension_thickness
-                                                                                                           + this->suppressor_shell_thickness*2.0)
-                                                                             * sin(this->bent_end_angle)) * tan(this->bent_end_angle)) ;
+    z0 =  - ((fSuppressorExtensionThickness/2.0 + fSuppressorShellThickness)
+             / cos(fBentEndAngle)
+             + (shellSuppressorExtensionLength/2.0 -(fSuppressorExtensionThickness
+                                                        + fSuppressorShellThickness*2.0)
+                * tan(fBentEndAngle)/2.0)*sin(fBentEndAngle) -(fSuppressorBackRadius
+                                                                             + fBentEndLength +(fBGOCanSeperation
+                                                                                                       + fSideBGOThickness + fSuppressorShellThickness*2.0)
+                                                                             / tan(fBentEndAngle) -(fSuppressorExtensionThickness
+                                                                                                           + fSuppressorShellThickness*2.0)
+                                                                             * sin(fBentEndAngle)) * tan(fBentEndAngle)) ;
 
-    if( this->suppressor_position_selector == 0 && this->include_extension_suppressors)
+    if(fSuppressorPositionSelector == 0 && fIncludeExtensionSuppressors)
     {
 
         // these two parameters are for shifting the extensions back and out when in their BACK position
-        G4double extension_back_shift =   this->air_box_front_length
-                - (this->hevimet_tip_thickness +shell_suppressor_extension_length
-                   + (this->suppressor_extension_thickness + this->suppressor_shell_thickness*2.0)
-                   * tan(this->bent_end_angle)) * cos(this->bent_end_angle) ;
+        G4double extensionBackShift =   fAirBoxFrontLength
+                - (fHevimetTipThickness +shellSuppressorExtensionLength
+                   + (fSuppressorExtensionThickness + fSuppressorShellThickness*2.0)
+                   * tan(fBentEndAngle)) * cos(fBentEndAngle) ;
 
-        G4double extension_radial_shift = extension_back_shift * tan(this->bent_end_angle) ;
+        G4double extensionRadialShift = extensionBackShift * tan(fBentEndAngle) ;
 
         // The suppressors are put into the back position
 
-        x0 += extension_back_shift ;
+        x0 += extensionBackShift ;
 
-        z0 += extension_radial_shift ;
+        z0 += extensionRadialShift ;
 
         for(i=0; i<4; i++)
         {
             rotateExtension[i*2] = new G4RotationMatrix;
             rotateExtension[i*2]->rotateZ(M_PI/2.0);
-            rotateExtension[i*2]->rotateY(this->bent_end_angle);
+            rotateExtension[i*2]->rotateY(fBentEndAngle);
             rotateExtension[i*2]->rotateX(M_PI - M_PI/2.0*i);
 
             x = x0;
@@ -2325,11 +1942,11 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells()
 
             moveExtension[i*2] = G4ThreeVector(x, y, z);
 
-            this->extensionSuppressorShellAssembly->AddPlacedVolume(right_suppressor_shell_extension_log, moveExtension[i*2], rotateExtension[i*2]);
+            fExtensionSuppressorShellAssembly->AddPlacedVolume(fRightSuppressorShellExtensionLog, moveExtension[i*2], rotateExtension[i*2]);
 
             rotateExtension[i*2+1] = new G4RotationMatrix;
             rotateExtension[i*2+1]->rotateY(M_PI/2.0);
-            rotateExtension[i*2+1]->rotateZ(M_PI/2.0 + this->bent_end_angle);
+            rotateExtension[i*2+1]->rotateZ(M_PI/2.0 + fBentEndAngle);
             rotateExtension[i*2+1]->rotateX(M_PI - M_PI/2.0*i);
 
             x = x0;
@@ -2338,20 +1955,20 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells()
 
             moveExtension[i*2+1] = G4ThreeVector(x, y, z);
 
-            this->extensionSuppressorShellAssembly->AddPlacedVolume(left_suppressor_shell_extension_log, moveExtension[i*2+1], rotateExtension[i*2+1]);
+            fExtensionSuppressorShellAssembly->AddPlacedVolume(fLeftSuppressorShellExtensionLog, moveExtension[i*2+1], rotateExtension[i*2+1]);
         }
 
 
     }//end if(detectors forward) statement
 
     // Otherwise, put them forward
-    else if( this->suppressor_position_selector == 1 && this->include_extension_suppressors)
+    else if(fSuppressorPositionSelector == 1 && fIncludeExtensionSuppressors)
     {
 
-        for( i = 0 ; i < 4 ; i++){
+        for(i = 0 ; i < 4 ; i++){
             rotateExtension[2*i] = new G4RotationMatrix;
             rotateExtension[2*i]->rotateZ(M_PI/2.0);
-            rotateExtension[2*i]->rotateY(this->bent_end_angle);
+            rotateExtension[2*i]->rotateY(fBentEndAngle);
             rotateExtension[2*i]->rotateX(M_PI - i*M_PI/2.0);
 
             x = x0;
@@ -2360,11 +1977,11 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells()
 
             moveExtension[i*2] = G4ThreeVector(x, y, z);
 
-            this->extensionSuppressorShellAssembly->AddPlacedVolume(right_suppressor_shell_extension_log, moveExtension[2*i], rotateExtension[2*i]);
+            fExtensionSuppressorShellAssembly->AddPlacedVolume(fRightSuppressorShellExtensionLog, moveExtension[2*i], rotateExtension[2*i]);
 
             rotateExtension[2*i+1] = new G4RotationMatrix;
             rotateExtension[2*i+1]->rotateY(M_PI/2.0);
-            rotateExtension[2*i+1]->rotateZ(M_PI/2.0 + this->bent_end_angle);
+            rotateExtension[2*i+1]->rotateZ(M_PI/2.0 + fBentEndAngle);
             rotateExtension[2*i+1]->rotateX(M_PI - i*M_PI/2);
 
             x =  x0;
@@ -2373,7 +1990,7 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells()
 
             moveExtension[i*2+1] = G4ThreeVector(x, y, z);
 
-            this->extensionSuppressorShellAssembly->AddPlacedVolume(left_suppressor_shell_extension_log, moveExtension[2*i+1], rotateExtension[2*i+1]);
+            fExtensionSuppressorShellAssembly->AddPlacedVolume(fLeftSuppressorShellExtensionLog, moveExtension[2*i+1], rotateExtension[2*i+1]);
         }
 
     }//end if(detectors back) statement
@@ -2381,89 +1998,86 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells()
 }//end ::ConstructNewSuppressorCasingWithShells
 
 
-void DetectionSystemGriffin::ConstructNewSuppressorCasingDetectorSpecificDeadLayer(G4int det, G4int cry)
-{
+void DetectionSystemGriffin::ConstructNewSuppressorCasingDetectorSpecificDeadLayer(G4int det, G4int cry) {
     G4String strdet = G4UIcommand::ConvertToString(det);
     G4String strcry = G4UIcommand::ConvertToString(cry);
 
-    G4Material* materialBGO = G4Material::GetMaterial(BGO_material);
-    if( !materialBGO ) {
-        G4cout << " ----> Material " << BGO_material << " not found, cannot build the detector shell! " << G4endl;
+    G4Material* materialBGO = G4Material::GetMaterial(fBGOMaterial);
+    if(!materialBGO) {
+        G4cout << " ----> Material " << fBGOMaterial << " not found, cannot build the detector shell! " << G4endl;
         exit(1);
     }
 
-    G4VisAttributes* Suppressor_vis_att = new G4VisAttributes(G4Colour(0.75,0.75,0.75));
-    Suppressor_vis_att->SetVisibility(true);
-    G4VisAttributes* innards_vis_att = new G4VisAttributes(G4Colour(0.75, 0.75, 0.75));
-    innards_vis_att->SetVisibility(true);
-    G4VisAttributes* back_innards_vis_att = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
-    back_innards_vis_att->SetVisibility(true);
+    G4VisAttributes* SuppressorVisAtt = new G4VisAttributes(G4Colour(0.75,0.75,0.75));
+    SuppressorVisAtt->SetVisibility(true);
+    G4VisAttributes* innardsVisAtt = new G4VisAttributes(G4Colour(0.75, 0.75, 0.75));
+    innardsVisAtt->SetVisibility(true);
+    G4VisAttributes* backInnardsVisAtt = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
+    backInnardsVisAtt->SetVisibility(true);
 
     // first we add the four pieces of back suppressor, and their shells
 
-    G4SubtractionSolid* back_quarter_suppressor = this->backSuppressorQuarter();
+    G4SubtractionSolid* backQuarterSuppressor = BackSuppressorQuarter();
 
     // Insert the structureMat shell first.  The shells must be given numbers, rather than
     // the suppressor pieces themselves.  As an error checking method, the suppressor
     // pieces are given a copy number value far out of range of any useful copy number.
-    if(include_back_suppressors)
-    {
-        G4Material* back_material = G4Material::GetMaterial(this->back_suppressor_material);
+    if(fIncludeBackSuppressors) {
+        G4Material* backMaterial = G4Material::GetMaterial(fBackSuppressorMaterial);
 
-        if( !back_material )
-        {
-            G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
+        if(!backMaterial) {
+            G4cout << " ----> Material " << fBackSuppressorMaterial << " not found, cannot build the detector shell! " << G4endl;
             exit(1);
         }
 
-        G4String back_quarter_suppressor_name = "back_dls_quarter_suppressor_" + strdet + "_" + strcry + "_log" ;
+        G4String backQuarterSuppressorName = "backDlsQuarterSuppressor_" + strdet + "_" + strcry + "_log" ;
 
-        back_quarter_suppressor_log = new G4LogicalVolume(back_quarter_suppressor, back_material,
-                                                          back_quarter_suppressor_name, 0, 0, 0);
+        fBackQuarterSuppressorLog = new G4LogicalVolume(backQuarterSuppressor, backMaterial,
+                                                          backQuarterSuppressorName, 0, 0, 0);
 
-        back_quarter_suppressor_log->SetVisAttributes(back_innards_vis_att);
+        fBackQuarterSuppressorLog->SetVisAttributes(backInnardsVisAtt);
 
-        this->suppressorBackAssemblyCry[cry]->AddPlacedVolume(back_quarter_suppressor_log, this->move_null, this->rotate_null);
+        fSuppressorBackAssemblyCry[cry]->AddPlacedVolume(fBackQuarterSuppressorLog, fMoveNull, fRotateNull);
 
     }
 
     // now we add the side pieces of suppressor that taper off towards the front of the can
 
-    G4String right_suppressor_casing_name = "right_dls_suppressor_casing_" + strdet + "_" + strcry + "_log" ;
-    G4String left_suppressor_casing_name = "left_dls_suppressor_casing_" + strdet + "_" + strcry + "_log" ;
+    G4String rightSuppressorCasingName = "rightDlsSuppressorCasing_" + strdet + "_" + strcry + "_log" ;
+    G4String leftSuppressorCasingName = "leftDlsSuppressorCasing_" + strdet + "_" + strcry + "_log" ;
 
-    G4SubtractionSolid* right_suppressor = this->frontSlantSuppressor("right", false); // Right, non-chopping. // CALLED
+    G4SubtractionSolid* rightSuppressor = FrontSlantSuppressor("right", false); // Right, non-chopping. // CALLED
 
-    right_suppressor_log = new G4LogicalVolume(right_suppressor, materialBGO, right_suppressor_casing_name, 0, 0, 0);
-    right_suppressor_log->SetVisAttributes(innards_vis_att);
+    fRightSuppressorLog = new G4LogicalVolume(rightSuppressor, materialBGO, rightSuppressorCasingName, 0, 0, 0);
+    fRightSuppressorLog->SetVisAttributes(innardsVisAtt);
 
-    G4SubtractionSolid* left_suppressor = this->frontSlantSuppressor("left", false); // Left, non-chopping. // CALLED
+    G4SubtractionSolid* leftSuppressor = FrontSlantSuppressor("left", false); // Left, non-chopping. // CALLED
 
-    left_suppressor_log = new G4LogicalVolume(left_suppressor, materialBGO, left_suppressor_casing_name, 0, 0, 0);
-    left_suppressor_log->SetVisAttributes(innards_vis_att);
+    fLeftSuppressorLog = new G4LogicalVolume(leftSuppressor, materialBGO, leftSuppressorCasingName, 0, 0, 0);
+    fLeftSuppressorLog->SetVisAttributes(innardsVisAtt);
 
-    this->rightSuppressorCasingAssemblyCry[cry]->AddPlacedVolume(right_suppressor_log, this->move_null, this->rotate_null);
-    this->leftSuppressorCasingAssemblyCry[cry]->AddPlacedVolume(left_suppressor_log, this->move_null, this->rotate_null);
+    fRightSuppressorCasingAssemblyCry[cry]->AddPlacedVolume(fRightSuppressorLog, fMoveNull, fRotateNull);
+    fLeftSuppressorCasingAssemblyCry[cry]->AddPlacedVolume(fLeftSuppressorLog, fMoveNull, fRotateNull);
 
-    G4String right_suppressor_extension_name = "right_dls_suppressor_extension_" + strdet + "_" + strcry + "_log" ;
-    G4String left_suppressor_extension_name = "left_dls_suppressor_extension_" + strdet + "_" + strcry + "_log" ;
+    G4String rightSuppressorExtensionName = "rightDlsSuppressorExtension_" + strdet + "_" + strcry + "_log" ;
+    G4String leftSuppressorExtensionName = "leftDlsSuppressorExtension_" + strdet + "_" + strcry + "_log" ;
 
     // now we add the side pieces of suppressor that extend out in front of the can when it's in the back position
 
-    G4SubtractionSolid* right_suppressor_extension = this->sideSuppressorExtension( "right", false ); // Right, non-chopping // CALLED
+    G4SubtractionSolid* rightSuppressorExtension = SideSuppressorExtension("right", false); // Right, non-chopping // CALLED
 
-    right_suppressor_extension_log = new G4LogicalVolume(	right_suppressor_extension, materialBGO,
-                                                            right_suppressor_extension_name, 0, 0, 0);
-    right_suppressor_extension_log->SetVisAttributes(innards_vis_att);
+    fRightSuppressorExtensionLog = new G4LogicalVolume(rightSuppressorExtension, materialBGO,
+                                                            rightSuppressorExtensionName, 0, 0, 0);
+    fRightSuppressorExtensionLog->SetVisAttributes(innardsVisAtt);
 
-    G4SubtractionSolid* left_suppressor_extension = this->sideSuppressorExtension( "left", false ); // Left, Non-chopping // CALLED
+    G4SubtractionSolid* leftSuppressorExtension = SideSuppressorExtension("left", false); // Left, Non-chopping // CALLED
 
-    left_suppressor_extension_log = new G4LogicalVolume(left_suppressor_extension, materialBGO,
-                                                        left_suppressor_extension_name, 0, 0, 0);
-    left_suppressor_extension_log->SetVisAttributes(innards_vis_att);
+    fLeftSuppressorExtensionLog = new G4LogicalVolume(leftSuppressorExtension, materialBGO,
+                                                        leftSuppressorExtensionName, 0, 0, 0);
+    fLeftSuppressorExtensionLog->SetVisAttributes(innardsVisAtt);
 
-    this->rightSuppressorExtensionAssemblyCry[cry]->AddPlacedVolume(right_suppressor_extension_log, this->move_null, this->rotate_null);
-    this->leftSuppressorExtensionAssemblyCry[cry]->AddPlacedVolume(left_suppressor_extension_log, this->move_null, this->rotate_null);
+    fRightSuppressorExtensionAssemblyCry[cry]->AddPlacedVolume(fRightSuppressorExtensionLog, fMoveNull, fRotateNull);
+    fLeftSuppressorExtensionAssemblyCry[cry]->AddPlacedVolume(fLeftSuppressorExtensionLog, fMoveNull, fRotateNull);
 
 
 }//end ::ConstructNewSuppressorCasingDetectorSpecificDeadLayer
@@ -2473,72 +2087,70 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingDetectorSpecificDeadLay
 // This is a messy place to put it, but these are the methods to make
 // the electrodeMat layers between the crystals
 ///////////////////////////////////////////////////////////////////////
-G4UnionSolid* DetectionSystemGriffin::interCrystalelectrodeMatBack()
-{
-    G4double distance_of_the_triangle_tips = this->germanium_separation/2.0
-            + (this->germanium_width/2.0 - this->germanium_shift) //centre of the middle hole
-            + sqrt( pow((this->germanium_outer_radius
-                         + this->triangle_posts_distance_from_crystals), 2.0)
-                    - pow(this->germanium_width/2.0 - this->germanium_shift, 2.0) );
+G4UnionSolid* DetectionSystemGriffin::InterCrystalelectrodeMatBack() {
+    G4double distanceOfTheTriangleTips = fGermaniumSeparation/2.0
+            + (fGermaniumWidth/2.0 - fGermaniumShift) //centre of the middle hole
+            + sqrt(pow((fGermaniumOuterRadius
+                         + fTrianglePostsDistanceFromCrystals), 2.0)
+                    - pow(fGermaniumWidth/2.0 - fGermaniumShift, 2.0));
 
-    G4double extent_of_the_electrodeMat_pieces = distance_of_the_triangle_tips
-            - this->triangle_posts_distance_from_crystals;
+    G4double extentOfTheElectrodeMatPieces = distanceOfTheTriangleTips
+            - fTrianglePostsDistanceFromCrystals;
 
-    G4Box* electrodeMat_piece1 = new G4Box( "electrodeMat_piece1", extent_of_the_electrodeMat_pieces,
-                                            (this->germanium_length-this->germanium_bent_length)/2.0,
-                                            this->inter_crystal_electrodeMat_thickness/2.0);
+    G4Box* electrodeMatPiece1 = new G4Box("electrodeMatPiece1", extentOfTheElectrodeMatPieces,
+                                            (fGermaniumLength-fGermaniumBentLength)/2.0,
+                                            fInterCrystalElectrodeMatThickness/2.0);
 
-    G4Box* electrodeMat_piece2 = new G4Box( "electrodeMat_piece2", extent_of_the_electrodeMat_pieces,
-                                            (this->germanium_length-this->germanium_bent_length)/2.0,
-                                            this->inter_crystal_electrodeMat_thickness/2.0);
+    G4Box* electrodeMatPiece2 = new G4Box("electrodeMatPiece2", extentOfTheElectrodeMatPieces,
+                                            (fGermaniumLength-fGermaniumBentLength)/2.0,
+                                            fInterCrystalElectrodeMatThickness/2.0);
 
-    G4RotationMatrix* rotate_piece2 = new G4RotationMatrix;
-    rotate_piece2->rotateY(M_PI/2.0);
+    G4RotationMatrix* rotatePiece2 = new G4RotationMatrix;
+    rotatePiece2->rotateY(M_PI/2.0);
 
-    G4ThreeVector move_zero(0,0,0);
+    G4ThreeVector moveZero(0,0,0);
 
-    G4UnionSolid* inter_crystal_electrodeMat_back = new G4UnionSolid(
-                "inter_crystal_electrodeMat_back", electrodeMat_piece1, electrodeMat_piece2,
-                rotate_piece2, move_zero);
+    G4UnionSolid* interCrystalElectrodeMatBack = new G4UnionSolid(
+                "interCrystalElectrodeMatBack", electrodeMatPiece1, electrodeMatPiece2,
+                rotatePiece2, moveZero);
 
-    return inter_crystal_electrodeMat_back;
+    return interCrystalElectrodeMatBack;
 } //end ::interCrystalelectrodeMatBack
 
-G4UnionSolid* DetectionSystemGriffin::interCrystalelectrodeMatFront()
-{
+G4UnionSolid* DetectionSystemGriffin::InterCrystalelectrodeMatFront() {
 
-    G4double distance_of_the_triangle_tips = this->germanium_separation/2.0
-            + (this->germanium_width/2.0 - this->germanium_shift) //centre of the middle hole
-            + sqrt( pow((this->germanium_outer_radius
-                         + this->triangle_posts_distance_from_crystals), 2.0)
-                    - pow(this->germanium_width/2.0 - this->germanium_shift, 2.0) );
+    G4double distanceOfTheTriangleTips = fGermaniumSeparation/2.0
+            + (fGermaniumWidth/2.0 - fGermaniumShift) //centre of the middle hole
+            + sqrt(pow((fGermaniumOuterRadius
+                         + fTrianglePostsDistanceFromCrystals), 2.0)
+                    - pow(fGermaniumWidth/2.0 - fGermaniumShift, 2.0));
 
-    G4Trd* electrodeMat_piece1 = new G4Trd("electrodeMat_piece1", distance_of_the_triangle_tips
-                                           - this->triangle_posts_distance_from_crystals,
-                                           this->germanium_width - this->germanium_bent_length
-                                           *tan(this->bent_end_angle),
-                                           this->germanium_separation/2.0,
-                                           this->germanium_separation/2.0, (this->germanium_bent_length
-                                                                            - this->electrodeMat_starting_depth)/2.0);
+    G4Trd* electrodeMatPiece1 = new G4Trd("electrodeMatPiece1", distanceOfTheTriangleTips
+                                           - fTrianglePostsDistanceFromCrystals,
+                                           fGermaniumWidth - fGermaniumBentLength
+                                           *tan(fBentEndAngle),
+                                           fGermaniumSeparation/2.0,
+                                           fGermaniumSeparation/2.0, (fGermaniumBentLength
+                                                                            - fElectrodeMatStartingDepth)/2.0);
 
-    G4Trd* electrodeMat_piece2 = new G4Trd("electrodeMat_piece2", distance_of_the_triangle_tips
-                                           - this->triangle_posts_distance_from_crystals,
-                                           this->germanium_width - this->germanium_bent_length
-                                           *tan(this->bent_end_angle),
-                                           this->germanium_separation/2.0,
-                                           this->germanium_separation/2.0, (this->germanium_bent_length
-                                                                            - this->electrodeMat_starting_depth)/2.0);
+    G4Trd* electrodeMatPiece2 = new G4Trd("electrodeMatPiece2", distanceOfTheTriangleTips
+                                           - fTrianglePostsDistanceFromCrystals,
+                                           fGermaniumWidth - fGermaniumBentLength
+                                           *tan(fBentEndAngle),
+                                           fGermaniumSeparation/2.0,
+                                           fGermaniumSeparation/2.0, (fGermaniumBentLength
+                                                                            - fElectrodeMatStartingDepth)/2.0);
 
-    G4RotationMatrix* rotate_piece2 = new G4RotationMatrix;
-    rotate_piece2->rotateZ(M_PI/2.0);
+    G4RotationMatrix* rotatePiece2 = new G4RotationMatrix;
+    rotatePiece2->rotateZ(M_PI/2.0);
 
-    G4ThreeVector move_zero(0,0,0);
+    G4ThreeVector moveZero(0,0,0);
 
-    G4UnionSolid* inter_crystal_electrodeMat_front = new G4UnionSolid(
-                "inter_crystal_electrodeMat_front", electrodeMat_piece1, electrodeMat_piece2,
-                rotate_piece2, move_zero);
+    G4UnionSolid* interCrystalElectrodeMatFront = new G4UnionSolid(
+                "interCrystalElectrodeMatFront", electrodeMatPiece1, electrodeMatPiece2,
+                rotatePiece2, moveZero);
 
-    return inter_crystal_electrodeMat_front;
+    return interCrystalElectrodeMatFront;
 } //end ::interCrystalelectrodeMatFront
 
 ///////////////////////////////////////////////////////////////////////
@@ -2546,36 +2158,34 @@ G4UnionSolid* DetectionSystemGriffin::interCrystalelectrodeMatFront()
 // of the Suppressor. It only goes on when the extensions are in their 
 // forward position   
 ///////////////////////////////////////////////////////////////////////
-void DetectionSystemGriffin::ConstructNewHeavyMet()
-{
+void DetectionSystemGriffin::ConstructNewHeavyMet() {
     G4Material* materialHevimetal = G4Material::GetMaterial("Hevimetal");
-    if( !materialHevimetal ) {
-        G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
+    if(!materialHevimetal) {
+        G4cout << " ----> Material Hevimetal not found, cannot build the detector shell! " << G4endl;
         exit(1);
     }
 
-    G4VisAttributes* HeviMet_vis_att = new G4VisAttributes(G4Colour(0.5,0.5,0.5));
-    HeviMet_vis_att->SetVisibility(true);
+    G4VisAttributes* heviMetVisAtt = new G4VisAttributes(G4Colour(0.5,0.5,0.5));
+    heviMetVisAtt->SetVisibility(true);
 
-    G4SubtractionSolid* hevimet = this->newHeavyMet();
+    G4SubtractionSolid* hevimet = NewHeavyMet();
     
-    G4RotationMatrix* rotate_hevimet = new G4RotationMatrix;
-    rotate_hevimet->rotateY(-1.0*M_PI/2.0);
+    G4RotationMatrix* rotateHevimet = new G4RotationMatrix;
+    rotateHevimet->rotateY(-1.0*M_PI/2.0);
 
-    G4ThreeVector move_hevimet( (( this->hevimet_tip_thickness / cos( this->hevimet_tip_angle ) ) * cos( this->bent_end_angle -this->hevimet_tip_angle )
-                                 + this->suppressor_forward_radius* tan(this->hevimet_tip_angle)*sin(this->bent_end_angle))/2.0
-                                - this->air_box_back_length/2.0 -this->air_box_front_length, 0.0, 0.0);
+    G4ThreeVector moveHevimet(((fHevimetTipThickness / cos(fHevimetTipAngle)) * cos(fBentEndAngle -fHevimetTipAngle)
+                                 + fSuppressorForwardRadius* tan(fHevimetTipAngle)*sin(fBentEndAngle))/2.0
+                                - fAirBoxBackLength/2.0 -fAirBoxFrontLength, 0.0, 0.0);
 
-    // NOTE** The hevimet does not require the "shift" parameter, as the air_box has been designed
+    // NOTE** The hevimet does not require the "shift" parameter, as the airBox has been designed
     // so that the hevimet sits right at the front, and has been moved accordingly. Also, the
-    // "applied_back_shift" parameter is missing, as the hevimet only goes on in the "detector back" position
+    // "appliedBackShift" parameter is missing, as the hevimet only goes on in the "detector back" position
 
-    hevimet_log = new G4LogicalVolume(hevimet, materialHevimetal, "hevimet_log", 0, 0, 0);
+    fHevimetLog = new G4LogicalVolume(hevimet, materialHevimetal, "hevimetLog", 0, 0, 0);
 
-    hevimet_log->SetVisAttributes(HeviMet_vis_att);
+    fHevimetLog->SetVisAttributes(heviMetVisAtt);
 
-    // this->assembly->AddPlacedVolume(hevimet_log, move_hevimet, rotate_hevimet);
-    this->hevimetAssembly->AddPlacedVolume(hevimet_log, move_hevimet, rotate_hevimet);
+    fHevimetAssembly->AddPlacedVolume(fHevimetLog, moveHevimet, rotateHevimet);
 
 
 }//end ::ConstructHeavyMet
@@ -2584,32 +2194,30 @@ void DetectionSystemGriffin::ConstructNewHeavyMet()
 ///////////////////////////////////////////////////////////////////////
 // methods used in ConstructDetector()
 ///////////////////////////////////////////////////////////////////////
-G4Box* DetectionSystemGriffin::squareFrontFace()
-{
+G4Box* DetectionSystemGriffin::SquareFrontFace() {
 
-    G4double fix_overlap = 250*nm;
+    G4double fixOverlap = 250*nm;
 
-    G4double half_thickness_x = this->can_face_thickness/2.0;
+    G4double halfThicknessX = fCanFaceThickness/2.0;
     
-    G4double half_length_y = ((this->detector_total_width/2.0) -(this->bent_end_length
-                                                                *tan(this->bent_end_angle)))-fix_overlap;
+    G4double halfLengthY = ((fDetectorTotalWidth/2.0) -(fBentEndLength
+                                                                *tan(fBentEndAngle)))-fixOverlap;
     
-    G4double half_length_z = half_length_y;
+    G4double halfLengthZ = halfLengthY;
 
-    G4Box* front_face = new G4Box("front_face", half_thickness_x, half_length_y, half_length_z);
+    G4Box* frontFace = new G4Box("frontFace", halfThicknessX, halfLengthY, halfLengthZ);
 
-    return front_face;
+    return frontFace;
 
 }//end ::squareFrontFace
 
 
-G4Trap* DetectionSystemGriffin::cornerWedge()
-{
-    G4double height_y = this->can_face_thickness;
-    G4double length_z = this->detector_total_width -2.0*(this->bent_end_length *tan(this->bent_end_angle));
-    G4double extension_length_x = height_y *tan(this->bent_end_angle);
+G4Trap* DetectionSystemGriffin::CornerWedge() {
+    G4double heightY = fCanFaceThickness;
+    G4double lengthZ = fDetectorTotalWidth -2.0*(fBentEndLength *tan(fBentEndAngle));
+    G4double extensionLengthX = heightY *tan(fBentEndAngle);
 
-    G4Trap* wedge = new G4Trap("wedge", length_z, height_y, extension_length_x, this->wedgeDim);
+    G4Trap* wedge = new G4Trap("wedge", lengthZ, heightY, extensionLengthX, fWedgeDim);
 
     return wedge;
 }//end ::cornerWedge
@@ -2620,161 +2228,149 @@ G4Trap* DetectionSystemGriffin::cornerWedge()
 // outwards, so the face is smaller than the main part of 
 // the can four are needed for a square-faced detector
 ///////////////////////////////////////////////////////////////////////
-G4Para* DetectionSystemGriffin::bentSidePiece()
-{
+G4Para* DetectionSystemGriffin::BentSidePiece() {
 
-    G4double half_length_x = ((this->bent_end_length -this->can_face_thickness)
-                              /cos(this->bent_end_angle))/2.0;
+    G4double halfLengthX = ((fBentEndLength -fCanFaceThickness)
+                              /cos(fBentEndAngle))/2.0;
 
-    G4double half_length_y = (this->detector_total_width/2.0) -(this->bent_end_length
-                                                                *tan(this->bent_end_angle)) -this->can_face_thickness
-            *(1.0 -tan(this->bent_end_angle));
+    G4double halfLengthY = (fDetectorTotalWidth/2.0) -(fBentEndLength
+                                                                *tan(fBentEndAngle)) -fCanFaceThickness
+            *(1.0 -tan(fBentEndAngle));
 
-    // Last two operations in "half_length_y" are correction
+    // Last two operations in "halfLengthY" are correction
     // factor to keep the bent pieces from overlapping
-    G4double half_length_z = this->can_face_thickness *cos(this->bent_end_angle)/2.0;
-    G4double alpha_angle = 0.0*M_PI;
-    G4double polar_angle = this->bent_end_angle;
-    G4double azimuthal_angle = 0.0*M_PI;
+    G4double halfLengthZ = fCanFaceThickness *cos(fBentEndAngle)/2.0;
+    G4double alphaAngle = 0.0*M_PI;
+    G4double polarAngle = fBentEndAngle;
+    G4double azimuthalAngle = 0.0*M_PI;
 
-    G4Para* bent_side_piece = new G4Para("bent_side_piece", half_length_x,
-                                         half_length_y, half_length_z, alpha_angle, polar_angle, azimuthal_angle);
+    G4Para* bentSidePiece = new G4Para("bentSidePiece", halfLengthX,
+                                         halfLengthY, halfLengthZ, alphaAngle, polarAngle, azimuthalAngle);
 
-    return bent_side_piece;
+    return bentSidePiece;
 
 }//end ::bentSidePiece
 
 
 // this is a conic piece that attaches two bent end pieces
-G4Cons* DetectionSystemGriffin::roundedEndEdge()
-{
-    G4double hole_eliminator = this->can_face_thickness *(1.0 -tan(this->bent_end_angle));
+G4Cons* DetectionSystemGriffin::RoundedEndEdge() {
+    G4double holeEliminator = fCanFaceThickness *(1.0 -tan(fBentEndAngle));
 
     // this is correction factor to avoid holes caused by bent pieces
-    G4double half_length_z = (this->bent_end_length -this->can_face_thickness)/2.0;
-    G4double inside_radius_at_apex = 0.0;
-    G4double outside_radius_at_apex = this->can_face_thickness *tan(this->bent_end_angle) +hole_eliminator;
-    G4double outside_radius_at_base = this->bent_end_length *tan(this->bent_end_angle) +hole_eliminator;
-    G4double inside_radius_at_base = outside_radius_at_base -this->can_face_thickness;
-    G4double start_angle = 0.0*M_PI;
-    G4double final_angle = 0.5*M_PI;
+    G4double halfLengthZ = (fBentEndLength -fCanFaceThickness)/2.0;
+    G4double insideRadiusAtApex = 0.0;
+    G4double outsideRadiusAtApex = fCanFaceThickness *tan(fBentEndAngle) +holeEliminator;
+    G4double outsideRadiusAtBase = fBentEndLength *tan(fBentEndAngle) +holeEliminator;
+    G4double insideRadiusAtBase = outsideRadiusAtBase -fCanFaceThickness;
+    G4double startAngle = 0.0*M_PI;
+    G4double finalAngle = 0.5*M_PI;
 
-    G4Cons* rounded_end_edge = new G4Cons("rounded_end_edge", inside_radius_at_apex,
-                                          outside_radius_at_apex, inside_radius_at_base, outside_radius_at_base,
-                                          half_length_z, start_angle, final_angle);
+    G4Cons* roundedEndEdge = new G4Cons("roundedEndEdge", insideRadiusAtApex,
+                                          outsideRadiusAtApex, insideRadiusAtBase, outsideRadiusAtBase,
+                                          halfLengthZ, startAngle, finalAngle);
 
-    return rounded_end_edge;
+    return roundedEndEdge;
 
 }//end ::roundedEndEdge
 
 
-G4Tubs* DetectionSystemGriffin::cornerTube()
-{
-    G4double outer_radius 	= this->bent_end_length *tan(this->bent_end_angle);
-    G4double inner_radius 	= outer_radius - this->can_side_thickness;
-    G4double half_height_z 	= (this->detector_total_length -this->bent_end_length
-                               -this->rear_plate_thickness)/2.0;
+G4Tubs* DetectionSystemGriffin::CornerTube() {
+    G4double outerRadius 	= fBentEndLength *tan(fBentEndAngle);
+    G4double innerRadius 	= outerRadius - fCanSideThickness;
+    G4double halfHeightZ 	= (fDetectorTotalLength -fBentEndLength
+                               -fRearPlateThickness)/2.0;
 
-    G4double start_angle = 0.0*M_PI;
-    G4double final_angle = 0.5*M_PI;
+    G4double startAngle = 0.0*M_PI;
+    G4double finalAngle = 0.5*M_PI;
 
-    G4Tubs* corner_tube = new G4Tubs("corner_tube", inner_radius, outer_radius, half_height_z, start_angle, final_angle);
+    G4Tubs* cornerTube = new G4Tubs("cornerTube", innerRadius, outerRadius, halfHeightZ, startAngle, finalAngle);
 
-    return corner_tube;
-
+    return cornerTube;
 }//end ::cornerTube
 
 
-G4Box* DetectionSystemGriffin::sidePanel()
-{
-    G4double half_length_x = (this->detector_total_length -this->bent_end_length -this->rear_plate_thickness)/2.0;
-    G4double half_thickness_y = (this->can_side_thickness)/2.0;
-    G4double half_width_z = (this->detector_total_width)/2.0 -(this->bent_end_length *tan(this->bent_end_angle));
+G4Box* DetectionSystemGriffin::SidePanel() {
+    G4double halfLengthX = (fDetectorTotalLength -fBentEndLength -fRearPlateThickness)/2.0;
+    G4double halfThicknessY = (fCanSideThickness)/2.0;
+    G4double halfWidthZ = (fDetectorTotalWidth)/2.0 -(fBentEndLength *tan(fBentEndAngle));
 
-    G4Box* side_panel = new G4Box("side_panel", half_length_x, half_thickness_y, half_width_z);
+    G4Box* sidePanel = new G4Box("sidePanel", halfLengthX, halfThicknessY, halfWidthZ);
 
-    return side_panel;
-
+    return sidePanel;
 }//end ::sidePanel
 
 
-G4SubtractionSolid* DetectionSystemGriffin::rearPlate()
-{
+G4SubtractionSolid* DetectionSystemGriffin::RearPlate() {
 
-    G4double half_width_x = this->detector_total_width/2.0;
-    G4double half_width_y = half_width_x;
-    G4double half_thickness_z = this->rear_plate_thickness/2.0;
+    G4double halfWidthX = fDetectorTotalWidth/2.0;
+    G4double halfWidthY = halfWidthX;
+    G4double halfThicknessZ = fRearPlateThickness/2.0;
 
-    G4Box* plate = new G4Box("plate", half_width_x, half_width_y, half_thickness_z);
+    G4Box* plate = new G4Box("plate", halfWidthX, halfWidthY, halfThicknessZ);
 
-    G4double inner_radius = 0.0;
-    G4double outer_radius = this->cold_finger_outer_shell_radius;
-    G4double half_height_z = half_thickness_z +1.0*cm;  // +1.0*cm just to make sure the hole goes completely through the plate
-    G4double start_angle = 0.0*M_PI;
-    G4double final_angle = 2.0*M_PI;
+    G4double innerRadius = 0.0;
+    G4double outerRadius = fColdFingerOuterShellRadius;
+    G4double halfHeightZ = halfThicknessZ +1.0*cm;  // +1.0*cm just to make sure the hole goes completely through the plate
+    G4double startAngle = 0.0*M_PI;
+    G4double finalAngle = 2.0*M_PI;
 
-    G4Tubs* hole = new G4Tubs("hole", inner_radius, outer_radius, half_height_z, start_angle, final_angle);
+    G4Tubs* hole = new G4Tubs("hole", innerRadius, outerRadius, halfHeightZ, startAngle, finalAngle);
 
-    G4SubtractionSolid* rear_plate = new G4SubtractionSolid("rear_plate", plate, hole);
+    G4SubtractionSolid* rearPlate = new G4SubtractionSolid("rearPlate", plate, hole);
 
-    return rear_plate;
-
+    return rearPlate;
 }//end ::rearPlate
 
 
-G4Tubs* DetectionSystemGriffin::coldFingerShell()
-{
-    G4double outer_radius = this->cold_finger_outer_shell_radius;
-    G4double inner_radius = outer_radius - this->cold_finger_shell_thickness;
-    G4double half_length_z = this->cold_finger_shell_length/2.0;
-    G4double start_angle = 0.0*M_PI;
-    G4double final_angle = 2.0*M_PI;
+G4Tubs* DetectionSystemGriffin::ColdFingerShell() {
+    G4double outerRadius = fColdFingerOuterShellRadius;
+    G4double innerRadius = outerRadius - fColdFingerShellThickness;
+    G4double halfLengthZ = fColdFingerShellLength/2.0;
+    G4double startAngle = 0.0*M_PI;
+    G4double finalAngle = 2.0*M_PI;
 
-    G4Tubs* cold_finger_shell = new G4Tubs("cold_finger_shell", inner_radius,
-                                           outer_radius, half_length_z, start_angle, final_angle);
+    G4Tubs* coldFingerShell = new G4Tubs("coldFingerShell", innerRadius,
+                                           outerRadius, halfLengthZ, startAngle, finalAngle);
 
-    return cold_finger_shell;
+    return coldFingerShell;
 
 }//end ::coldFingerShell
 
 
-G4Tubs* DetectionSystemGriffin::liquidNitrogenTank()
-{
-    G4double inner_radius = this->coolant_radius - this->coolant_thickness;
-    G4double outer_radius = this->coolant_radius;
-    G4double half_length_z = (this->coolant_length - 2.0*this->coolant_thickness)/2.0;
-    G4double start_angle = 0.0*M_PI;
-    G4double final_angle = 2.0*M_PI;
+G4Tubs* DetectionSystemGriffin::LiquidNitrogenTank() {
+    G4double innerRadius = fCoolantRadius - fCoolantThickness;
+    G4double outerRadius = fCoolantRadius;
+    G4double halfLengthZ = (fCoolantLength - 2.0*fCoolantThickness)/2.0;
+    G4double startAngle = 0.0*M_PI;
+    G4double finalAngle = 2.0*M_PI;
 
-    G4Tubs* tank = new G4Tubs("tank", inner_radius, outer_radius, half_length_z, start_angle, final_angle);
+    G4Tubs* tank = new G4Tubs("tank", innerRadius, outerRadius, halfLengthZ, startAngle, finalAngle);
 
     return tank;
 
 }//end ::liquidNitrogenTank
 
-G4Tubs* DetectionSystemGriffin::liquidNitrogenTankLid()
-{
-    G4double inner_radius = 0.0*mm;
-    G4double outer_radius = this->coolant_radius;
-    G4double half_length_z = (this->coolant_thickness)/2.0;
-    G4double start_angle = 0.0*M_PI;
-    G4double final_angle = 2.0*M_PI;
+G4Tubs* DetectionSystemGriffin::LiquidNitrogenTankLid() {
+    G4double innerRadius = 0.0*mm;
+    G4double outerRadius = fCoolantRadius;
+    G4double halfLengthZ = (fCoolantThickness)/2.0;
+    G4double startAngle = 0.0*M_PI;
+    G4double finalAngle = 2.0*M_PI;
 
-    G4Tubs* tank = new G4Tubs("tank", inner_radius, outer_radius, half_length_z, start_angle, final_angle);
+    G4Tubs* tank = new G4Tubs("tank", innerRadius, outerRadius, halfLengthZ, startAngle, finalAngle);
 
     return tank;
 
 }//end ::liquidNitrogenTankLid
 
-G4Tubs* DetectionSystemGriffin::liquidNitrogen()
-{
-    G4double inner_radius = 0.0*mm;
-    G4double outer_radius = this->coolant_radius - this->coolant_thickness;
-    G4double half_length_z = (this->coolant_length - 2.0*this->coolant_thickness)/2.0;
-    G4double start_angle = 0.0*M_PI;
-    G4double final_angle = 2.0*M_PI;
+G4Tubs* DetectionSystemGriffin::LiquidNitrogen() {
+    G4double innerRadius = 0.0*mm;
+    G4double outerRadius = fCoolantRadius - fCoolantThickness;
+    G4double halfLengthZ = (fCoolantLength - 2.0*fCoolantThickness)/2.0;
+    G4double startAngle = 0.0*M_PI;
+    G4double finalAngle = 2.0*M_PI;
 
-    G4Tubs* tank = new G4Tubs("tank", inner_radius, outer_radius, half_length_z, start_angle, final_angle);
+    G4Tubs* tank = new G4Tubs("tank", innerRadius, outerRadius, halfLengthZ, startAngle, finalAngle);
 
     return tank;
 
@@ -2785,31 +2381,29 @@ G4Tubs* DetectionSystemGriffin::liquidNitrogen()
 // Both the rectangularSegment and the trapezoidalSegment join
 // to form a UnionSolid
 ///////////////////////////////////////////////////////////////////////
-G4Box* DetectionSystemGriffin::rectangularSegment()
-{
-    G4double half_length_x = this->detector_block_height/2.0;
-    G4double half_length_y = this->detector_block_length/2.0;
-    G4double half_length_z = half_length_y; 	// Since it is symmetric
+G4Box* DetectionSystemGriffin::RectangularSegment() {
+    G4double halfLengthX = fDetectorBlockHeight/2.0;
+    G4double halfLengthY = fDetectorBlockLength/2.0;
+    G4double halfLengthZ = halfLengthY; 	// Since it is symmetric
 
-    G4Box* rectangular_segment = new G4Box("rectangular_segment", half_length_x, half_length_y, half_length_z);
+    G4Box* rectangularSegment = new G4Box("rectangularSegment", halfLengthX, halfLengthY, halfLengthZ);
 
-    return rectangular_segment;
+    return rectangularSegment;
 
 }// end ::rectangularSegment
 
 
-G4Trd* DetectionSystemGriffin::trapezoidalSegment()
-{
-    G4double half_base_x 		= this->detector_block_length/2.0;
-    G4double half_top_x 		= half_base_x - (this->detector_block_trapezoidal_height *tan(this->bent_end_angle));
-    G4double half_base_y 		= half_base_x; 	// Since it is symmetric
-    G4double half_top_y 		= half_top_x;
-    G4double half_height_z 	= this->detector_block_trapezoidal_height/2.0;
+G4Trd* DetectionSystemGriffin::TrapezoidalSegment() {
+    G4double halfBaseX 		= fDetectorBlockLength/2.0;
+    G4double halfTopX 		= halfBaseX - (fDetectorBlockTrapezoidalHeight *tan(fBentEndAngle));
+    G4double halfBaseY 		= halfBaseX; 	// Since it is symmetric
+    G4double halfTopY 		= halfTopX;
+    G4double halfHeightZ 	= fDetectorBlockTrapezoidalHeight/2.0;
 
-    G4Trd* trapezoidal_segment = new G4Trd("trapezoidal_segment",
-                                           half_base_x, half_top_x, half_base_y, half_top_y, half_height_z);
+    G4Trd* trapezoidalSegment = new G4Trd("trapezoidalSegment",
+                                           halfBaseX, halfTopX, halfBaseY, halfTopY, halfHeightZ);
 
-    return trapezoidal_segment;
+    return trapezoidalSegment;
 
 }//end ::trapezoidalSegment
 
@@ -2818,252 +2412,250 @@ G4Trd* DetectionSystemGriffin::trapezoidalSegment()
 // Starting with a rectangle, it gets chopped by an off-centered
 // cylinder, and then the two edges are chopped diagonaly
 ///////////////////////////////////////////////////////////////////////
-G4SubtractionSolid* DetectionSystemGriffin::quarterDetector()
-{
+G4SubtractionSolid* DetectionSystemGriffin::QuarterDetector() {
 
-    G4double half_width_x 	= this->germanium_width/2.0;
-    G4double half_width_y 	= half_width_x;
-    G4double half_length_z 	= this->germanium_length/2.0;
+    G4double halfWidthX 	= fGermaniumWidth/2.0;
+    G4double halfWidthY 	= halfWidthX;
+    G4double halfLengthZ 	= fGermaniumLength/2.0;
 
-    G4Box* rectangular_germanium 	= new G4Box("rectangular_germanium", half_width_x, half_width_y, half_length_z);
+    G4Box* rectangularGermanium 	= new G4Box("rectangularGermanium", halfWidthX, halfWidthY, halfLengthZ);
 
-    G4double outer_radius = ((this->germanium_width +this->germanium_shift)*1.5)/2.0;
+    G4double outerRadius = ((fGermaniumWidth +fGermaniumShift)*1.5)/2.0;
 
     // 1.5 is almost root 2, so this makes sure the corners are chopped off
 
-    G4double inner_radius = this->germanium_outer_radius;
-    G4double start_angle = 0.0*M_PI;
-    G4double final_angle = 2.0*M_PI;
+    G4double innerRadius = fGermaniumOuterRadius;
+    G4double startAngle = 0.0*M_PI;
+    G4double finalAngle = 2.0*M_PI;
 
-    G4ThreeVector move_chopping_cylinder(this->germanium_shift, -(this->germanium_shift), 0);
-    G4Tubs* chopping_cylinder = new G4Tubs("chopping_cylinder", inner_radius,
-                                           outer_radius, half_length_z+1.0*cm, start_angle, final_angle);
+    G4ThreeVector moveChoppingCylinder(fGermaniumShift, -(fGermaniumShift), 0);
+    G4Tubs* choppingCylinder = new G4Tubs("choppingCylinder", innerRadius,
+                                           outerRadius, halfLengthZ+1.0*cm, startAngle, finalAngle);
 
-    G4SubtractionSolid* germanium_rounded_corners = new G4SubtractionSolid("germanium_rounded_corners",
-                                                                           rectangular_germanium, chopping_cylinder, 0, move_chopping_cylinder);
+    G4SubtractionSolid* germaniumRoundedCorners = new G4SubtractionSolid("germaniumRoundedCorners",
+                                                                           rectangularGermanium, choppingCylinder, 0, moveChoppingCylinder);
 
-    G4double base_inner_radius = this->germanium_outer_radius;
-    G4double base_outer_radius = 2.0*base_inner_radius;
+    G4double baseInnerRadius = fGermaniumOuterRadius;
+    G4double baseOuterRadius = 2.0*baseInnerRadius;
 
-    // G4double tip_inner_radius = base_inner_radius - this->germanium_bent_length*tan(this->bent_end_angle);
-    G4double tip_inner_radius = base_inner_radius
-            - this->germanium_corner_cone_end_length*tan(this->bent_end_angle);
-    G4double tip_outer_radius = base_outer_radius;
+    // G4double tipInnerRadius = baseInnerRadius - fGermaniumBentLength*tan(fBentEndAngle);
+    G4double tipInnerRadius = baseInnerRadius
+            - fGermaniumCornerConeEndLength*tan(fBentEndAngle);
+    G4double tipOuterRadius = baseOuterRadius;
 
-    // G4double con_half_length_z = this->germanium_bent_length/2.0;
-    G4double con_half_length_z = this->germanium_corner_cone_end_length/2.0 + this->quarterDetectorCxn;
+    // G4double conHalfLengthZ = fGermaniumBentLength/2.0;
+    G4double conHalfLengthZ = fGermaniumCornerConeEndLength/2.0 + fQuarterDetectorCxn;
 
-    G4double initial_angle = acos((this->germanium_width/2.0 +this->germanium_shift)
-                                  /this->germanium_outer_radius);
-    G4double total_angle = M_PI/2.0 -2.0*initial_angle;
+    G4double initialAngle = acos((fGermaniumWidth/2.0 +fGermaniumShift)
+                                  /fGermaniumOuterRadius);
+    G4double totalAngle = M_PI/2.0 -2.0*initialAngle;
 
-    G4Cons* rounded_edge = new G4Cons("rounded_edge", base_inner_radius,
-                                      base_outer_radius, tip_inner_radius, tip_outer_radius,
-                                      con_half_length_z, initial_angle, total_angle);
+    G4Cons* roundedEdge = new G4Cons("roundedEdge", baseInnerRadius,
+                                      baseOuterRadius, tipInnerRadius, tipOuterRadius,
+                                      conHalfLengthZ, initialAngle, totalAngle);
 
 
-    G4RotationMatrix* rotate_rounded_edge = new G4RotationMatrix;
-    rotate_rounded_edge->rotateZ(-M_PI/2.0);
+    G4RotationMatrix* rotateRoundedEdge = new G4RotationMatrix;
+    rotateRoundedEdge->rotateZ(-M_PI/2.0);
 
-    G4ThreeVector move_rounded_edge(this->germanium_shift, -this->germanium_shift,
-                                    this->germanium_length/2.0 -this->germanium_corner_cone_end_length/2.0
-                                    + this->quarterDetectorCxnB);
+    G4ThreeVector moveRoundedEdge(fGermaniumShift, -fGermaniumShift,
+                                    fGermaniumLength/2.0 -fGermaniumCornerConeEndLength/2.0
+                                    + fQuarterDetectorCxnB);
 
-    G4SubtractionSolid* germanium_rounded_edge = new G4SubtractionSolid("germanium_rounded_edge",
-                                                                        germanium_rounded_corners, rounded_edge, rotate_rounded_edge,
-                                                                        move_rounded_edge);
+    G4SubtractionSolid* germaniumRoundedEdge = new G4SubtractionSolid("germaniumRoundedEdge",
+                                                                        germaniumRoundedCorners, roundedEdge, rotateRoundedEdge,
+                                                                        moveRoundedEdge);
 
     // now we make the diagonal slices
-    G4double half_chop_piece_width_x 	= this->germanium_width/2.0;
-    G4double half_chop_piece_width_y 	= this->germanium_width/2.0;
-    G4double half_chop_piece_length_z 	= (this->germanium_bent_length/cos(this->bent_end_angle))/2.0;
-    G4Box* chop_piece = new G4Box("chop_piece", half_chop_piece_width_x,
-                                  half_chop_piece_width_y, half_chop_piece_length_z);
+    G4double halfChopPieceWidthX 	= fGermaniumWidth/2.0;
+    G4double halfChopPieceWidthY 	= fGermaniumWidth/2.0;
+    G4double halfChopPieceLengthZ 	= (fGermaniumBentLength/cos(fBentEndAngle))/2.0;
+    G4Box* chopPiece = new G4Box("chopPiece", halfChopPieceWidthX,
+                                  halfChopPieceWidthY, halfChopPieceLengthZ);
 
-    G4RotationMatrix* rotate_chop_piece1 = new G4RotationMatrix;
-    rotate_chop_piece1->rotateX(-(this->bent_end_angle));
+    G4RotationMatrix* rotateChopPiece1 = new G4RotationMatrix;
+    rotateChopPiece1->rotateX(-(fBentEndAngle));
 
-    G4ThreeVector move_chop_piece1(0, this->germanium_width/2.0 +(this->germanium_bent_length
-                                                                  /tan(this->bent_end_angle) +this->germanium_width
-                                                                  *cos(this->bent_end_angle))/2.0 -((this->germanium_bent_length
-                                                                                                     /cos(this->bent_end_angle))/2.0) /sin(this->bent_end_angle),
-                                   this->germanium_length/2.0 -this->germanium_bent_length
-                                   +(this->germanium_bent_length +this->germanium_width
-                                     *sin(this->bent_end_angle))/2.0);
+    G4ThreeVector moveChopPiece1(0, fGermaniumWidth/2.0 +(fGermaniumBentLength
+                                                                  /tan(fBentEndAngle) +fGermaniumWidth
+                                                                  *cos(fBentEndAngle))/2.0 -((fGermaniumBentLength
+                                                                                                     /cos(fBentEndAngle))/2.0) /sin(fBentEndAngle),
+                                   fGermaniumLength/2.0 -fGermaniumBentLength
+                                   +(fGermaniumBentLength +fGermaniumWidth
+                                     *sin(fBentEndAngle))/2.0);
 
-    G4SubtractionSolid* chopped_germanium1 = new G4SubtractionSolid("chopped_germanium1",
-                                                                    germanium_rounded_edge, chop_piece, rotate_chop_piece1, move_chop_piece1);
+    G4SubtractionSolid* choppedGermanium1 = new G4SubtractionSolid("choppedGermanium1",
+                                                                    germaniumRoundedEdge, chopPiece, rotateChopPiece1, moveChopPiece1);
 
 
-    G4RotationMatrix* rotate_chop_piece2 = new G4RotationMatrix;
-    rotate_chop_piece2->rotateY(-(this->bent_end_angle));
+    G4RotationMatrix* rotateChopPiece2 = new G4RotationMatrix;
+    rotateChopPiece2->rotateY(-(fBentEndAngle));
 
-    G4ThreeVector move_chop_piece2(-(this->germanium_width/2.0 +(this->germanium_bent_length
-                                                                 /tan(this->bent_end_angle) +this->germanium_width
-                                                                 *cos(this->bent_end_angle))/2.0 -((this->germanium_bent_length
-                                                                                                    /cos(this->bent_end_angle))/2.0) /sin(this->bent_end_angle)), 0,
-                                   this->germanium_length/2.0 -this->germanium_bent_length
-                                   +(this->germanium_bent_length +this->germanium_width
-                                     *sin(this->bent_end_angle))/2.0);
+    G4ThreeVector moveChopPiece2(-(fGermaniumWidth/2.0 +(fGermaniumBentLength
+                                                                 /tan(fBentEndAngle) +fGermaniumWidth
+                                                                 *cos(fBentEndAngle))/2.0 -((fGermaniumBentLength
+                                                                                                    /cos(fBentEndAngle))/2.0) /sin(fBentEndAngle)), 0,
+                                   fGermaniumLength/2.0 -fGermaniumBentLength
+                                   +(fGermaniumBentLength +fGermaniumWidth
+                                     *sin(fBentEndAngle))/2.0);
 
-    G4SubtractionSolid* chopped_germanium2 = new G4SubtractionSolid("chopped_germanium2",
-                                                                    chopped_germanium1, chop_piece, rotate_chop_piece2, move_chop_piece2);
+    G4SubtractionSolid* choppedGermanium2 = new G4SubtractionSolid("choppedGermanium2",
+                                                                    choppedGermanium1, chopPiece, rotateChopPiece2, moveChopPiece2);
 
 
     // now we make the hole that will go in the back of each quarter detector, /////////////////////////////////////////////////////////
-    start_angle = 0.0*M_PI;
-    final_angle = 2.0*M_PI;
-    G4double hole_radius = this->germanium_hole_radius;
-    G4double hole_half_length_z = (this->germanium_length -this->germanium_hole_dist_from_face)/2.0;
+    startAngle = 0.0*M_PI;
+    finalAngle = 2.0*M_PI;
+    G4double holeRadius = fGermaniumHoleRadius;
+    G4double holeHalfLengthZ = (fGermaniumLength -fGermaniumHoleDistFromFace)/2.0;
 
-    G4Tubs* hole_tubs = new G4Tubs("hole_tubs", 0.0, hole_radius, hole_half_length_z, start_angle, final_angle);
-    G4ThreeVector move_hole(this->germanium_shift, -(this->germanium_shift),-((this->germanium_hole_dist_from_face)));
+    G4Tubs* holeTubs = new G4Tubs("holeTubs", 0.0, holeRadius, holeHalfLengthZ, startAngle, finalAngle);
+    G4ThreeVector moveHole(fGermaniumShift, -(fGermaniumShift),-((fGermaniumHoleDistFromFace)));
 
-    G4SubtractionSolid* chopped_germanium3 = new G4SubtractionSolid("chopped_germanium3",
-                                                                    chopped_germanium2, hole_tubs, 0, move_hole);
+    G4SubtractionSolid* choppedGermanium3 = new G4SubtractionSolid("choppedGermanium3",
+                                                                    choppedGermanium2, holeTubs, 0, moveHole);
 
-    start_angle = 0.0*M_PI;
-    final_angle = 2.0*M_PI;
-    G4double dead_layer_radius = this->germanium_hole_radius + this->inner_dead_layer_thickness;
-    G4double dead_layer_half_length_z = (this->germanium_length
-                                         - this->germanium_hole_dist_from_face
-                                         + this->inner_dead_layer_thickness)/2.0;
+    startAngle = 0.0*M_PI;
+    finalAngle = 2.0*M_PI;
+    G4double deadLayerRadius = fGermaniumHoleRadius + fInnerDeadLayerThickness;
+    G4double deadLayerHalfLengthZ = (fGermaniumLength
+                                         - fGermaniumHoleDistFromFace
+                                         + fInnerDeadLayerThickness)/2.0;
 
     // now dead layer
-    G4Tubs* dead_layer_tubs = new G4Tubs("dead_layer_tubs", 0.0,
-                                         dead_layer_radius, dead_layer_half_length_z, start_angle,final_angle);
+    G4Tubs* deadLayerTubs = new G4Tubs("deadLayerTubs", 0.0,
+                                         deadLayerRadius, deadLayerHalfLengthZ, startAngle,finalAngle);
 
-    G4ThreeVector move_dead_layer(this->germanium_shift, -(this->germanium_shift),
-                                  -((this->germanium_hole_dist_from_face
-                                     - this->inner_dead_layer_thickness)/2.0));
+    G4ThreeVector moveDeadLayer(fGermaniumShift, -(fGermaniumShift),
+                                  -((fGermaniumHoleDistFromFace
+                                     - fInnerDeadLayerThickness)/2.0));
 
-    G4SubtractionSolid* chopped_germanium4 = new G4SubtractionSolid("chopped_germanium4",
-                                                                    chopped_germanium3, dead_layer_tubs, 0, move_dead_layer);
+    G4SubtractionSolid* choppedGermanium4 = new G4SubtractionSolid("choppedGermanium4",
+                                                                    choppedGermanium3, deadLayerTubs, 0, moveDeadLayer);
 
-    return chopped_germanium4;
+    return choppedGermanium4;
 
 }//end ::quarterDetector
 
 
-G4SubtractionSolid* DetectionSystemGriffin::quarterSpecificDeadLayerDetector(G4int det, G4int cry)
-{
+G4SubtractionSolid* DetectionSystemGriffin::QuarterSpecificDeadLayerDetector(G4int det, G4int cry) {
 
-    G4double half_width_x 	= this->germanium_width/2.0;
-    G4double half_width_y 	= half_width_x;
-    G4double half_length_z 	= this->germanium_length/2.0;
+    G4double halfWidthX 	= fGermaniumWidth/2.0;
+    G4double halfWidthY 	= halfWidthX;
+    G4double halfLengthZ 	= fGermaniumLength/2.0;
 
-    G4Box* rectangular_germanium 	= new G4Box("rectangular_germanium", half_width_x, half_width_y, half_length_z);
+    G4Box* rectangularGermanium 	= new G4Box("rectangularGermanium", halfWidthX, halfWidthY, halfLengthZ);
 
-    G4double outer_radius = ((this->germanium_width +this->germanium_shift)*1.5)/2.0;
+    G4double outerRadius = ((fGermaniumWidth +fGermaniumShift)*1.5)/2.0;
 
     // 1.5 is almost root 2, so this makes sure the corners are chopped off
 
-    G4double inner_radius = this->germanium_outer_radius;
-    G4double start_angle = 0.0*M_PI;
-    G4double final_angle = 2.0*M_PI;
+    G4double innerRadius = fGermaniumOuterRadius;
+    G4double startAngle = 0.0*M_PI;
+    G4double finalAngle = 2.0*M_PI;
 
-    G4ThreeVector move_chopping_cylinder(this->germanium_shift, -(this->germanium_shift), 0);
-    G4Tubs* chopping_cylinder = new G4Tubs("chopping_cylinder", inner_radius,
-                                           outer_radius, half_length_z+1.0*cm, start_angle, final_angle);
+    G4ThreeVector moveChoppingCylinder(fGermaniumShift, -(fGermaniumShift), 0);
+    G4Tubs* choppingCylinder = new G4Tubs("choppingCylinder", innerRadius,
+                                           outerRadius, halfLengthZ+1.0*cm, startAngle, finalAngle);
 
-    G4SubtractionSolid* germanium_rounded_corners = new G4SubtractionSolid("germanium_rounded_corners",
-                                                                           rectangular_germanium, chopping_cylinder, 0, move_chopping_cylinder);
+    G4SubtractionSolid* germaniumRoundedCorners = new G4SubtractionSolid("germaniumRoundedCorners",
+                                                                           rectangularGermanium, choppingCylinder, 0, moveChoppingCylinder);
 
-    G4double base_inner_radius = this->germanium_outer_radius;
-    G4double base_outer_radius = 2.0*base_inner_radius;
+    G4double baseInnerRadius = fGermaniumOuterRadius;
+    G4double baseOuterRadius = 2.0*baseInnerRadius;
 
-    G4double tip_inner_radius = base_inner_radius - this->germanium_corner_cone_end_length*tan(this->bent_end_angle);
-    G4double tip_outer_radius = base_outer_radius;
+    G4double tipInnerRadius = baseInnerRadius - fGermaniumCornerConeEndLength*tan(fBentEndAngle);
+    G4double tipOuterRadius = baseOuterRadius;
 
-    G4double con_half_length_z = this->germanium_corner_cone_end_length/2.0 + this->quarterDetectorCxn;
+    G4double conHalfLengthZ = fGermaniumCornerConeEndLength/2.0 + fQuarterDetectorCxn;
 
-    G4double initial_angle = acos((this->germanium_width/2.0 +this->germanium_shift)
-                                  /this->germanium_outer_radius);
-    G4double total_angle = M_PI/2.0 -2.0*initial_angle;
+    G4double initialAngle = acos((fGermaniumWidth/2.0 +fGermaniumShift)
+                                  /fGermaniumOuterRadius);
+    G4double totalAngle = M_PI/2.0 -2.0*initialAngle;
 
-    G4Cons* rounded_edge = new G4Cons("rounded_edge", base_inner_radius,
-                                      base_outer_radius, tip_inner_radius, tip_outer_radius,
-                                      con_half_length_z, initial_angle, total_angle);
+    G4Cons* roundedEdge = new G4Cons("roundedEdge", baseInnerRadius,
+                                      baseOuterRadius, tipInnerRadius, tipOuterRadius,
+                                      conHalfLengthZ, initialAngle, totalAngle);
 
-    G4RotationMatrix* rotate_rounded_edge = new G4RotationMatrix;
-    rotate_rounded_edge->rotateZ(-M_PI/2.0);
+    G4RotationMatrix* rotateRoundedEdge = new G4RotationMatrix;
+    rotateRoundedEdge->rotateZ(-M_PI/2.0);
 
-    G4ThreeVector move_rounded_edge(this->germanium_shift, -this->germanium_shift,
-                                    this->germanium_length/2.0 -this->germanium_corner_cone_end_length/2.0
-                                    + this->quarterDetectorCxnB);
+    G4ThreeVector moveRoundedEdge(fGermaniumShift, -fGermaniumShift,
+                                    fGermaniumLength/2.0 -fGermaniumCornerConeEndLength/2.0
+                                    + fQuarterDetectorCxnB);
 
-    G4SubtractionSolid* germanium_rounded_edge = new G4SubtractionSolid("germanium_rounded_edge",
-                                                                        germanium_rounded_corners, rounded_edge, rotate_rounded_edge,
-                                                                        move_rounded_edge);
+    G4SubtractionSolid* germaniumRoundedEdge = new G4SubtractionSolid("germaniumRoundedEdge",
+                                                                        germaniumRoundedCorners, roundedEdge, rotateRoundedEdge,
+                                                                        moveRoundedEdge);
 
     // now we make the diagonal slices
-    G4double half_chop_piece_width_x 	= this->germanium_width/2.0;
-    G4double half_chop_piece_width_y 	= this->germanium_width/2.0;
-    G4double half_chop_piece_length_z 	= (this->germanium_bent_length/cos(this->bent_end_angle))/2.0;
-    G4Box* chop_piece = new G4Box("chop_piece", half_chop_piece_width_x,
-                                  half_chop_piece_width_y, half_chop_piece_length_z);
+    G4double halfChopPieceWidthX 	= fGermaniumWidth/2.0;
+    G4double halfChopPieceWidthY 	= fGermaniumWidth/2.0;
+    G4double halfChopPieceLengthZ 	= (fGermaniumBentLength/cos(fBentEndAngle))/2.0;
+    G4Box* chopPiece = new G4Box("chopPiece", halfChopPieceWidthX,
+                                  halfChopPieceWidthY, halfChopPieceLengthZ);
 
-    G4RotationMatrix* rotate_chop_piece1 = new G4RotationMatrix;
-    rotate_chop_piece1->rotateX(-(this->bent_end_angle));
+    G4RotationMatrix* rotateChopPiece1 = new G4RotationMatrix;
+    rotateChopPiece1->rotateX(-(fBentEndAngle));
 
-    G4ThreeVector move_chop_piece1(0, this->germanium_width/2.0 +(this->germanium_bent_length
-                                                                  /tan(this->bent_end_angle) +this->germanium_width
-                                                                  *cos(this->bent_end_angle))/2.0 -((this->germanium_bent_length
-                                                                                                     /cos(this->bent_end_angle))/2.0) /sin(this->bent_end_angle),
-                                   this->germanium_length/2.0 -this->germanium_bent_length
-                                   +(this->germanium_bent_length +this->germanium_width
-                                     *sin(this->bent_end_angle))/2.0);
+    G4ThreeVector moveChopPiece1(0, fGermaniumWidth/2.0 +(fGermaniumBentLength
+                                                                  /tan(fBentEndAngle) +fGermaniumWidth
+                                                                  *cos(fBentEndAngle))/2.0 -((fGermaniumBentLength
+                                                                                                     /cos(fBentEndAngle))/2.0) /sin(fBentEndAngle),
+                                   fGermaniumLength/2.0 -fGermaniumBentLength
+                                   +(fGermaniumBentLength +fGermaniumWidth
+                                     *sin(fBentEndAngle))/2.0);
 
-    G4SubtractionSolid* chopped_germanium1 = new G4SubtractionSolid("chopped_germanium1",
-                                                                    germanium_rounded_edge, chop_piece, rotate_chop_piece1, move_chop_piece1);
+    G4SubtractionSolid* choppedGermanium1 = new G4SubtractionSolid("choppedGermanium1",
+                                                                    germaniumRoundedEdge, chopPiece, rotateChopPiece1, moveChopPiece1);
 
 
-    G4RotationMatrix* rotate_chop_piece2 = new G4RotationMatrix;
-    rotate_chop_piece2->rotateY(-(this->bent_end_angle));
+    G4RotationMatrix* rotateChopPiece2 = new G4RotationMatrix;
+    rotateChopPiece2->rotateY(-(fBentEndAngle));
 
-    G4ThreeVector move_chop_piece2(-(this->germanium_width/2.0 +(this->germanium_bent_length
-                                                                 /tan(this->bent_end_angle) +this->germanium_width
-                                                                 *cos(this->bent_end_angle))/2.0 -((this->germanium_bent_length
-                                                                                                    /cos(this->bent_end_angle))/2.0) /sin(this->bent_end_angle)), 0,
-                                   this->germanium_length/2.0 -this->germanium_bent_length
-                                   +(this->germanium_bent_length +this->germanium_width
-                                     *sin(this->bent_end_angle))/2.0);
+    G4ThreeVector moveChopPiece2(-(fGermaniumWidth/2.0 +(fGermaniumBentLength
+                                                                 /tan(fBentEndAngle) +fGermaniumWidth
+                                                                 *cos(fBentEndAngle))/2.0 -((fGermaniumBentLength
+                                                                                                    /cos(fBentEndAngle))/2.0) /sin(fBentEndAngle)), 0,
+                                   fGermaniumLength/2.0 -fGermaniumBentLength
+                                   +(fGermaniumBentLength +fGermaniumWidth
+                                     *sin(fBentEndAngle))/2.0);
 
-    G4SubtractionSolid* chopped_germanium2 = new G4SubtractionSolid("chopped_germanium2",
-                                                                    chopped_germanium1, chop_piece, rotate_chop_piece2, move_chop_piece2);
+    G4SubtractionSolid* choppedGermanium2 = new G4SubtractionSolid("choppedGermanium2",
+                                                                    choppedGermanium1, chopPiece, rotateChopPiece2, moveChopPiece2);
 
 
     // now we make the hole that will go in the back of each quarter detector, /////////////////////////////////////////////////////////
-    start_angle = 0.0*M_PI;
-    final_angle = 2.0*M_PI;
-    G4double hole_radius = this->germanium_hole_radius;
-    G4double hole_half_length_z = (this->germanium_length -this->germanium_hole_dist_from_face)/2.0;
+    startAngle = 0.0*M_PI;
+    finalAngle = 2.0*M_PI;
+    G4double holeRadius = fGermaniumHoleRadius;
+    G4double holeHalfLengthZ = (fGermaniumLength -fGermaniumHoleDistFromFace)/2.0;
 
-    G4Tubs* hole_tubs = new G4Tubs("hole_tubs", 0.0, hole_radius, hole_half_length_z, start_angle, final_angle);
-    G4ThreeVector move_hole(this->germanium_shift, -(this->germanium_shift),-((this->germanium_hole_dist_from_face)));
+    G4Tubs* holeTubs = new G4Tubs("holeTubs", 0.0, holeRadius, holeHalfLengthZ, startAngle, finalAngle);
+    G4ThreeVector moveHole(fGermaniumShift, -(fGermaniumShift),-((fGermaniumHoleDistFromFace)));
 
-    G4SubtractionSolid* chopped_germanium3 = new G4SubtractionSolid("chopped_germanium3",
-                                                                    chopped_germanium2, hole_tubs, 0, move_hole);
+    G4SubtractionSolid* choppedGermanium3 = new G4SubtractionSolid("choppedGermanium3",
+                                                                    choppedGermanium2, holeTubs, 0, moveHole);
 
-    start_angle = 0.0*M_PI;
-    final_angle = 2.0*M_PI;
-    G4double dead_layer_radius = this->germanium_hole_radius + this->griffinDeadLayers[det][cry];
-    G4double dead_layer_half_length_z = (this->germanium_length
-                                         - this->germanium_hole_dist_from_face
-                                         + this->griffinDeadLayers[det][cry])/2.0;
+    startAngle = 0.0*M_PI;
+    finalAngle = 2.0*M_PI;
+    G4double deadLayerRadius = fGermaniumHoleRadius + fGriffinDeadLayers[det][cry];
+    G4double deadLayerHalfLengthZ = (fGermaniumLength
+                                         - fGermaniumHoleDistFromFace
+                                         + fGriffinDeadLayers[det][cry])/2.0;
 
     // now dead layer
-    G4Tubs* dead_layer_tubs = new G4Tubs("dead_layer_tubs", 0.0,
-                                         dead_layer_radius, dead_layer_half_length_z, start_angle,final_angle);
+    G4Tubs* deadLayerTubs = new G4Tubs("deadLayerTubs", 0.0,
+                                         deadLayerRadius, deadLayerHalfLengthZ, startAngle,finalAngle);
 
-    G4ThreeVector move_dead_layer(this->germanium_shift, -(this->germanium_shift),
-                                  -((this->germanium_hole_dist_from_face
-                                     - this->griffinDeadLayers[det][cry])/2.0));
+    G4ThreeVector moveDeadLayer(fGermaniumShift, -(fGermaniumShift),
+                                  -((fGermaniumHoleDistFromFace
+                                     - fGriffinDeadLayers[det][cry])/2.0));
 
-    G4SubtractionSolid* chopped_germanium4 = new G4SubtractionSolid("chopped_germanium4",
-                                                                    chopped_germanium3, dead_layer_tubs, 0, move_dead_layer);
+    G4SubtractionSolid* choppedGermanium4 = new G4SubtractionSolid("choppedGermanium4",
+                                                                    choppedGermanium3, deadLayerTubs, 0, moveDeadLayer);
 
-    return chopped_germanium4;
+    return choppedGermanium4;
 
 }//end ::quarterSpecificDeadLayerDetector
 
@@ -3071,162 +2663,159 @@ G4SubtractionSolid* DetectionSystemGriffin::quarterSpecificDeadLayerDetector(G4i
 // methods used in ConstructNewSuppressorCasingWithShells
 ///////////////////////////////////////////////////////////////////////
 
-G4SubtractionSolid* DetectionSystemGriffin::shellForBackSuppressorQuarter()
-{
-    G4double half_thickness_x = this->back_BGO_thickness/2.0 + this->suppressor_shell_thickness;
-    G4double half_length_y = this->detector_total_width/4.0;
-    G4double half_length_z = half_length_y;
-    G4Box* quarter_suppressor_shell = new G4Box("quarter_suppressor_shell", half_thickness_x, half_length_y, half_length_z);
+G4SubtractionSolid* DetectionSystemGriffin::ShellForBackSuppressorQuarter() {
+    G4double halfThicknessX = fBackBGOThickness/2.0 + fSuppressorShellThickness;
+    G4double halfLengthY = fDetectorTotalWidth/4.0;
+    G4double halfLengthZ = halfLengthY;
+    G4Box* quarterSuppressorShell = new G4Box("quarterSuppressorShell", halfThicknessX, halfLengthY, halfLengthZ);
 
-    G4double shell_hole_radius = this->cold_finger_outer_shell_radius;
-    G4Tubs* shell_hole = new G4Tubs("shell_hole", 0, shell_hole_radius, half_thickness_x +1.0*cm, 0.0*M_PI, 2.0*M_PI);
+    G4double shellHoleRadius = fColdFingerOuterShellRadius;
+    G4Tubs* shellHole = new G4Tubs("shellHole", 0, shellHoleRadius, halfThicknessX +1.0*cm, 0.0*M_PI, 2.0*M_PI);
 
-    G4RotationMatrix* rotate_shell_hole = new G4RotationMatrix;
-    rotate_shell_hole->rotateY(M_PI/2.0);
-    G4ThreeVector move_shell_hole(0, -half_length_y, half_length_z);
+    G4RotationMatrix* rotateShellHole = new G4RotationMatrix;
+    rotateShellHole->rotateY(M_PI/2.0);
+    G4ThreeVector moveShellHole(0, -halfLengthY, halfLengthZ);
 
-    G4SubtractionSolid* quarter_suppressor_shell_with_hole = new G4SubtractionSolid("quarter_suppressor_shell_with_hole",
-                                                                                    quarter_suppressor_shell, shell_hole, rotate_shell_hole, move_shell_hole);
+    G4SubtractionSolid* quarterSuppressorShellWithHole = new G4SubtractionSolid("quarterSuppressorShellWithHole",
+                                                                                    quarterSuppressorShell, shellHole, rotateShellHole, moveShellHole);
 
     //now we need to cut out inner cavity, first we define the cavity
-    half_thickness_x = this->back_BGO_thickness/2.0;
-    half_length_y = this->detector_total_width/4.0 - this->suppressor_shell_thickness;
-    half_length_z = half_length_y;
-    G4Box* quarter_suppressor = new G4Box("quarter_suppressor", half_thickness_x, half_length_y, half_length_z);
+    halfThicknessX = fBackBGOThickness/2.0;
+    halfLengthY = fDetectorTotalWidth/4.0 - fSuppressorShellThickness;
+    halfLengthZ = halfLengthY;
+    G4Box* quarterSuppressor = new G4Box("quarterSuppressor", halfThicknessX, halfLengthY, halfLengthZ);
 
-    G4ThreeVector move_cut(0,0,0);
+    G4ThreeVector moveCut(0,0,0);
 
     // cut
-    G4SubtractionSolid* quarter_suppressor_shell_with_hole_and_cavity = new G4SubtractionSolid("quarter_suppressor_shell_with_hole_and_cavity",
-                                                                                               quarter_suppressor_shell_with_hole, quarter_suppressor, 0, move_cut);
+    G4SubtractionSolid* quarterSuppressorShellWithHoleAndCavity = new G4SubtractionSolid("quarterSuppressorShellWithHoleAndCavity",
+                                                                                               quarterSuppressorShellWithHole, quarterSuppressor, 0, moveCut);
 
-    return quarter_suppressor_shell_with_hole_and_cavity;
+    return quarterSuppressorShellWithHoleAndCavity;
 
 }//end ::shellForBackSuppressorQuarter
 
 
-G4SubtractionSolid* DetectionSystemGriffin::shellForFrontSlantSuppressor(G4String sidePosition)
-{
+G4SubtractionSolid* DetectionSystemGriffin::ShellForFrontSlantSuppressor(G4String sidePosition) {
     // Change some values to accomodate the shells
-    // Replacement for this->side_suppressor_length
-    G4double shell_side_suppressor_shell_length = this->side_suppressor_length + (this->suppressor_shell_thickness*2.0);
+    // Replacement for sideSuppressorLength
+    G4double shellSideSuppressorShellLength = fSideSuppressorLength + (fSuppressorShellThickness*2.0);
 
-    G4double length_z         = shell_side_suppressor_shell_length;
-    G4double length_y         = this->side_BGO_thickness + this->suppressor_shell_thickness*2.0;
-    G4double length_longer_x  = this->detector_total_width/2.0 +this->BGO_can_seperation
-            + this->side_BGO_thickness + this->suppressor_shell_thickness*2.0;
-    G4double length_shorter_x = length_longer_x -this->side_BGO_thickness
-            - this->suppressor_shell_thickness*2.0;
+    G4double lengthZ         = shellSideSuppressorShellLength;
+    G4double lengthY         = fSideBGOThickness + fSuppressorShellThickness*2.0;
+    G4double lengthLongerX  = fDetectorTotalWidth/2.0 +fBGOCanSeperation
+            + fSideBGOThickness + fSuppressorShellThickness*2.0;
+    G4double lengthShorterX = lengthLongerX -fSideBGOThickness
+            - fSuppressorShellThickness*2.0;
 
-    G4Trap* suppressor_shell = new G4Trap("suppressor_shell", length_z, length_y, length_longer_x, length_shorter_x);
+    G4Trap* suppressorShell = new G4Trap("suppressorShell", lengthZ, lengthY, lengthLongerX, lengthShorterX);
 
-    G4double half_length_x      = length_longer_x/2.0 +1.0*cm;
-    G4double half_thickness_y   = this->side_BGO_thickness/2.0 + this->suppressor_shell_thickness;
-    G4double half_length_z      = ((this->side_BGO_thickness + this->suppressor_shell_thickness*2.0
-                                    - this->BGO_chopped_tip)/sin(this->bent_end_angle))/2.0;
+    G4double halfLengthX      = lengthLongerX/2.0 +1.0*cm;
+    G4double halfThicknessY   = fSideBGOThickness/2.0 + fSuppressorShellThickness;
+    G4double halfLengthZ      = ((fSideBGOThickness + fSuppressorShellThickness*2.0
+                                    - fBGOChoppedTip)/sin(fBentEndAngle))/2.0;
 
-    G4Box* chopping_shell_box = new G4Box("chopping_shell_box", half_length_x, half_thickness_y, half_length_z);
+    G4Box* choppingShellBox = new G4Box("choppingShellBox", halfLengthX, halfThicknessY, halfLengthZ);
 
-    G4RotationMatrix* rotate_chopping_shell_box = new G4RotationMatrix;
+    G4RotationMatrix* rotateChoppingShellBox = new G4RotationMatrix;
 
-    G4double y0 = this->side_BGO_thickness/2.0 - this->suppressor_shell_thickness * sin(this->bent_end_angle)
-            - this->BGO_chopped_tip - 0.5 * sqrt(pow((2.0 * half_length_z), 2.0)
-                                                 + pow((2.0 * half_thickness_y), 2.0)) * cos(M_PI/2.0 - this->bent_end_angle - atan(half_thickness_y/half_length_z)) ;
+    G4double y0 = fSideBGOThickness/2.0 - fSuppressorShellThickness * sin(fBentEndAngle)
+            - fBGOChoppedTip - 0.5 * sqrt(pow((2.0 * halfLengthZ), 2.0)
+                                                 + pow((2.0 * halfThicknessY), 2.0)) * cos(M_PI/2.0 - fBentEndAngle - atan(halfThicknessY/halfLengthZ)) ;
 
-    G4double z0 = length_z/2.0 - 0.5 * sqrt(pow((2.0 * half_length_z), 2.0) + pow((2.0 * half_thickness_y), 2.0)) * sin(M_PI/2.0
-                                                                                                                        - this->bent_end_angle - atan(half_thickness_y/half_length_z)) ;
-    G4ThreeVector move_chopping_shell_box ;
+    G4double z0 = lengthZ/2.0 - 0.5 * sqrt(pow((2.0 * halfLengthZ), 2.0) + pow((2.0 * halfThicknessY), 2.0)) * sin(M_PI/2.0
+                                                                                                                        - fBentEndAngle - atan(halfThicknessY/halfLengthZ)) ;
+    G4ThreeVector moveChoppingShellBox ;
 
     if(sidePosition == "left")
     {
-        rotate_chopping_shell_box->rotateX(this->bent_end_angle);
-        move_chopping_shell_box = G4ThreeVector( 0, y0, z0 ) ;
+        rotateChoppingShellBox->rotateX(fBentEndAngle);
+        moveChoppingShellBox = G4ThreeVector(0, y0, z0) ;
     }
     else if(sidePosition == "right")
     {
-        rotate_chopping_shell_box->rotateX(-this->bent_end_angle);
-        move_chopping_shell_box = G4ThreeVector( 0, y0, -z0 ) ;
+        rotateChoppingShellBox->rotateX(-fBentEndAngle);
+        moveChoppingShellBox = G4ThreeVector(0, y0, -z0) ;
     }
 
-    G4SubtractionSolid* side_suppressor_shell = new G4SubtractionSolid("side_suppressor_shell",
-                                                                       suppressor_shell, chopping_shell_box, rotate_chopping_shell_box, move_chopping_shell_box);
+    G4SubtractionSolid* sideSuppressorShell = new G4SubtractionSolid("sideSuppressorShell",
+                                                                       suppressorShell, choppingShellBox, rotateChoppingShellBox, moveChoppingShellBox);
 
-    G4SubtractionSolid* side_suppressor_shell_with_cavity ;
+    G4SubtractionSolid* sideSuppressorShellWithCavity = NULL;
 
     // cut out cavity
     if(sidePosition == "left")
     {
-        G4ThreeVector move_cut(-(this->suppressor_shell_thickness + ( this->extra_cut_length/2.0 - this->suppressor_shell_thickness)/2.0 ), 0, (this->suppressor_shell_thickness/2.0) );
+        G4ThreeVector moveCut(-(fSuppressorShellThickness + (fExtraCutLength/2.0 - fSuppressorShellThickness)/2.0), 0, (fSuppressorShellThickness/2.0));
 
-        side_suppressor_shell_with_cavity = new G4SubtractionSolid( "side_suppressor_shell_with_cavity", side_suppressor_shell,
-                                                                    this->frontSlantSuppressor("left", true), 0, move_cut); // chopping, left from frontSlantSuppressor.
+        sideSuppressorShellWithCavity = new G4SubtractionSolid("sideSuppressorShellWithCavity", sideSuppressorShell,
+                                                                    FrontSlantSuppressor("left", true), 0, moveCut); // chopping, left from frontSlantSuppressor.
     }
     else if(sidePosition == "right")
     {
-        G4ThreeVector move_cut(-(this->suppressor_shell_thickness + ( this->extra_cut_length/2.0 - this->suppressor_shell_thickness)/2.0 ), 0, -(this->suppressor_shell_thickness/2.0) );
+        G4ThreeVector moveCut(-(fSuppressorShellThickness + (fExtraCutLength/2.0 - fSuppressorShellThickness)/2.0), 0, -(fSuppressorShellThickness/2.0));
 
-        side_suppressor_shell_with_cavity = new G4SubtractionSolid( "side_suppressor_shell_with_cavity", side_suppressor_shell,
-                                                                    this->frontSlantSuppressor("right", true), 0, move_cut); // chopping, right from frontSlantSuppressor.
+        sideSuppressorShellWithCavity = new G4SubtractionSolid("sideSuppressorShellWithCavity", sideSuppressorShell,
+                                                                    FrontSlantSuppressor("right", true), 0, moveCut); // chopping, right from frontSlantSuppressor.
     }
 
-    return side_suppressor_shell_with_cavity;
+    return sideSuppressorShellWithCavity;
 } // end ::shellForFrontSlantSuppressor
 
 
-G4SubtractionSolid* DetectionSystemGriffin::shellForSuppressorExtension(G4String sidePosition)
-{
+G4SubtractionSolid* DetectionSystemGriffin::ShellForSuppressorExtension(G4String sidePosition) {
 
-    // Replacement for this->suppressor_extension_length
-    G4double shell_suppressor_shell_extension_length = this->suppressor_extension_length
-            + (this->suppressor_shell_thickness*2.0)*(1.0/tan(this->bent_end_angle)
-                                                      - tan(this->bent_end_angle));
+    // Replacement for suppressorExtensionLength
+    G4double shellSuppressorShellExtensionLength = fSuppressorExtensionLength
+            + (fSuppressorShellThickness*2.0)*(1.0/tan(fBentEndAngle)
+                                                      - tan(fBentEndAngle));
 
-    G4double thickness_z = this->suppressor_extension_thickness + this->suppressor_shell_thickness*2.0;
-    G4double length_y = shell_suppressor_shell_extension_length;
+    G4double thicknessZ = fSuppressorExtensionThickness + fSuppressorShellThickness*2.0;
+    G4double lengthY = shellSuppressorShellExtensionLength;
 
-    G4double longer_length_x =  ( this->suppressor_back_radius +this->bent_end_length +(this->BGO_can_seperation
-                                                                                        + this->side_BGO_thickness
-                                                                                        + this->suppressor_shell_thickness*2.0)
-                                  / tan(this->bent_end_angle)
-                                  - (this->suppressor_extension_thickness
-                                     + this->suppressor_shell_thickness*2.0)
-                                  * sin(this->bent_end_angle))*tan(this->bent_end_angle);
+    G4double longerLengthX =  (fSuppressorBackRadius +fBentEndLength +(fBGOCanSeperation
+                                                                                        + fSideBGOThickness
+                                                                                        + fSuppressorShellThickness*2.0)
+                                  / tan(fBentEndAngle)
+                                  - (fSuppressorExtensionThickness
+                                     + fSuppressorShellThickness*2.0)
+                                  * sin(fBentEndAngle))*tan(fBentEndAngle);
 
-    G4double shorter_length_x = (this->suppressor_forward_radius + this->hevimet_tip_thickness) * sin(this->bent_end_angle) ;
+    G4double shorterLengthX = (fSuppressorForwardRadius + fHevimetTipThickness) * sin(fBentEndAngle) ;
 
-    G4Trap* uncut_extension_shell = new G4Trap("uncut_extension_shell", thickness_z, length_y, longer_length_x, shorter_length_x);
+    G4Trap* uncutExtensionShell = new G4Trap("uncutExtensionShell", thicknessZ, lengthY, longerLengthX, shorterLengthX);
 
     // because these pieces are rotated in two planes, there are multiple angles that need to be calculated to make sure
     // all of the extensions join up
 
-    G4double beta = atan((longer_length_x -shorter_length_x)/(length_y));
-    G4double phi  = atan(1/cos(this->bent_end_angle));
+    G4double beta = atan((longerLengthX -shorterLengthX)/(lengthY));
+    G4double phi  = atan(1/cos(fBentEndAngle));
 
-    G4double chopping_half_length_x = ( thickness_z / sin(phi) ) / 2.0;
-    G4double chopping_half_length_y = length_y / ( 2.0 * cos(beta) );
-    G4double chopping_half_length_z = chopping_half_length_x;
-    G4double y_angle = -beta;
-    G4double x_angle = 0.0;
-    G4double z_angle ;
+    G4double choppingHalfLengthX = (thicknessZ / sin(phi)) / 2.0;
+    G4double choppingHalfLengthY = lengthY / (2.0 * cos(beta));
+    G4double choppingHalfLengthZ = choppingHalfLengthX;
+    G4double yAngle = -beta;
+    G4double xAngle = 0.0;
+    G4double zAngle = 0.;
 
-    if( sidePosition == "left" )
-        z_angle = M_PI/2.0 - phi ;
-    else if( sidePosition == "right" )
-        z_angle = phi - M_PI/2.0 ;
+    if(sidePosition == "left")
+        zAngle = M_PI/2.0 - phi ;
+    else if(sidePosition == "right")
+        zAngle = phi - M_PI/2.0 ;
 
 
-    G4Para* chopping_para_shell = new G4Para("chopping_para_shell", chopping_half_length_x,
-                                             chopping_half_length_y, chopping_half_length_z, y_angle, z_angle, x_angle);
+    G4Para* choppingParaShell = new G4Para("choppingParaShell", choppingHalfLengthX,
+                                             choppingHalfLengthY, choppingHalfLengthZ, yAngle, zAngle, xAngle);
 
-    G4ThreeVector move_para_shell(((longer_length_x -shorter_length_x)/2.0 +shorter_length_x)/2.0
-                                  + chopping_half_length_x -chopping_half_length_x*cos(phi), 0.0, 0.0);
+    G4ThreeVector moveParaShell(((longerLengthX -shorterLengthX)/2.0 +shorterLengthX)/2.0
+                                  + choppingHalfLengthX -choppingHalfLengthX*cos(phi), 0.0, 0.0);
 
-    G4SubtractionSolid* extension_shell = new G4SubtractionSolid("extension_shell",
-                                                                 uncut_extension_shell, chopping_para_shell, 0, move_para_shell);
+    G4SubtractionSolid* extensionShell = new G4SubtractionSolid("extensionShell",
+                                                                 uncutExtensionShell, choppingParaShell, 0, moveParaShell);
 
-    G4ThreeVector move_cut ;
-    G4SubtractionSolid* extension_suppressor_shell_with_cavity ;
-    G4SubtractionSolid* extension_suppressor_shell_with_cavity_pre;
+    G4ThreeVector moveCut ;
+    G4SubtractionSolid* extensionSuppressorShellWithCavity = NULL;
+    G4SubtractionSolid* extensionSuppressorShellWithCavityPre = NULL;
 
     // cut out cavity ----
     // We make two cuts, one "crude" one from a G4Trap, and a more refined cut using a G4SubtractionSolid. There are two reasons why we make two cuts.
@@ -3235,244 +2824,234 @@ G4SubtractionSolid* DetectionSystemGriffin::shellForSuppressorExtension(G4String
     // My experience is that the visulization will fail if two sides of the G4SubtractionSolids are close, that is do not have a LARGE (>~10mm) overlap. To get around this,
     // I simply make a "crude" first cut using a G4Trap.
     // The cuts are slightly larger than suppressor to allow for small gaps between the shell and the suppressor.
-    if( sidePosition == "left" )
+    if(sidePosition == "left")
     {
-        move_cut = G4ThreeVector(-30.0*mm,0.40*mm,0.25*mm);
-        extension_suppressor_shell_with_cavity_pre = new G4SubtractionSolid("extension_suppressor_shell_with_cavity_pre", extension_shell, this->sideSuppressorExtensionUncut(), 0, (move_cut)/2.0 ); // Left, Chopping sideSuppressorExtension
+        moveCut = G4ThreeVector(-30.0*mm,0.40*mm,0.25*mm);
+        extensionSuppressorShellWithCavityPre = new G4SubtractionSolid("extensionSuppressorShellWithCavityPre", extensionShell, SideSuppressorExtensionUncut(), 0, (moveCut)/2.0); // Left, Chopping sideSuppressorExtension
 
-        move_cut = G4ThreeVector(-1.15*mm,0.40*mm,0.25*mm);
-        extension_suppressor_shell_with_cavity = new G4SubtractionSolid("extension_suppressor_shell_with_cavity", extension_suppressor_shell_with_cavity_pre, this->sideSuppressorExtension( "left", true ), 0, (move_cut)/2.0 );
+        moveCut = G4ThreeVector(-1.15*mm,0.40*mm,0.25*mm);
+        extensionSuppressorShellWithCavity = new G4SubtractionSolid("extensionSuppressorShellWithCavity", extensionSuppressorShellWithCavityPre, SideSuppressorExtension("left", true), 0, (moveCut)/2.0);
     }
-    else if( sidePosition == "right" )
+    else if(sidePosition == "right")
     {
-        move_cut = G4ThreeVector(-30.0*mm,0.40*mm,-0.25*mm);
-        extension_suppressor_shell_with_cavity_pre = new G4SubtractionSolid("extension_suppressor_shell_with_cavity_pre", extension_shell, this->sideSuppressorExtensionUncut(), 0, (move_cut)/2.0 ); // Left, Chopping sideSuppressorExtension
+        moveCut = G4ThreeVector(-30.0*mm,0.40*mm,-0.25*mm);
+        extensionSuppressorShellWithCavityPre = new G4SubtractionSolid("extensionSuppressorShellWithCavityPre", extensionShell, SideSuppressorExtensionUncut(), 0, (moveCut)/2.0); // Left, Chopping sideSuppressorExtension
 
-        move_cut = G4ThreeVector(-1.15*mm,0.40*mm,-0.25*mm);
-        extension_suppressor_shell_with_cavity = new G4SubtractionSolid("extension_suppressor_shell_with_cavity", extension_suppressor_shell_with_cavity_pre, this->sideSuppressorExtension( "right", true ), 0, (move_cut)/2.0 );
+        moveCut = G4ThreeVector(-1.15*mm,0.40*mm,-0.25*mm);
+        extensionSuppressorShellWithCavity = new G4SubtractionSolid("extensionSuppressorShellWithCavity", extensionSuppressorShellWithCavityPre, SideSuppressorExtension("right", true), 0, (moveCut)/2.0);
     }
 
-    return extension_suppressor_shell_with_cavity;
+    return extensionSuppressorShellWithCavity;
 } // end ::shellForSuppressorExtension
 
 
 // Back to making the suppressor volumes themselves
-G4SubtractionSolid* DetectionSystemGriffin::backSuppressorQuarter()
-{
-    G4double half_thickness_x = this->back_BGO_thickness/2.0;
-    G4double half_length_y = this->detector_total_width/4.0 - this->suppressor_shell_thickness;
-    G4double half_length_z = half_length_y;
-    G4Box* quarter_suppressor = new G4Box("quarter_suppressor", half_thickness_x, half_length_y, half_length_z);
+G4SubtractionSolid* DetectionSystemGriffin::BackSuppressorQuarter() {
+    G4double halfThicknessX = fBackBGOThickness/2.0;
+    G4double halfLengthY = fDetectorTotalWidth/4.0 - fSuppressorShellThickness;
+    G4double halfLengthZ = halfLengthY;
+    G4Box* quarterSuppressor = new G4Box("quarterSuppressor", halfThicknessX, halfLengthY, halfLengthZ);
 
-    G4double hole_radius = this->cold_finger_outer_shell_radius;
-    G4Tubs* hole = new G4Tubs("hole", 0, hole_radius, half_thickness_x +1.0*cm, 0.0*M_PI, 2.0*M_PI);
+    G4double holeRadius = fColdFingerOuterShellRadius;
+    G4Tubs* hole = new G4Tubs("hole", 0, holeRadius, halfThicknessX +1.0*cm, 0.0*M_PI, 2.0*M_PI);
 
-    G4RotationMatrix* rotate_hole = new G4RotationMatrix;
-    rotate_hole->rotateY(M_PI/2.0);
-    G4ThreeVector move_hole(0, -half_length_y, half_length_z);
+    G4RotationMatrix* rotateHole = new G4RotationMatrix;
+    rotateHole->rotateY(M_PI/2.0);
+    G4ThreeVector moveHole(0, -halfLengthY, halfLengthZ);
 
-    G4SubtractionSolid* quarter_suppressor_with_hole = new G4SubtractionSolid("quarter_suppressor_with_hole",
-                                                                              quarter_suppressor, hole, rotate_hole, move_hole);
+    G4SubtractionSolid* quarterSuppressorWithHole = new G4SubtractionSolid("quarterSuppressorWithHole",
+                                                                              quarterSuppressor, hole, rotateHole, moveHole);
 
-    return quarter_suppressor_with_hole;
+    return quarterSuppressorWithHole;
 
 }//end ::backSuppressorQuarter
 
 
-G4SubtractionSolid* DetectionSystemGriffin::frontSlantSuppressor( G4String sidePosition, G4bool choppingSuppressor )
-{
+G4SubtractionSolid* DetectionSystemGriffin::FrontSlantSuppressor(G4String sidePosition, G4bool choppingSuppressor) {
     // If chop is true, it will be a chopping suppressor.
 
-    G4double length_z     = this->side_suppressor_length ;
-    G4double length_y     = this->side_BGO_thickness ;
-    G4double length_longer_x  = 0 ;
+    G4double lengthZ     = fSideSuppressorLength ;
+    G4double lengthY     = fSideBGOThickness ;
+    G4double lengthLongerX  = 0 ;
 
-    if( choppingSuppressor )
-        length_longer_x  = this->detector_total_width / 2.0 + this->BGO_can_seperation + this->side_BGO_thickness + this->extra_cut_length / 2.0 ;
+    if(choppingSuppressor)
+        lengthLongerX  = fDetectorTotalWidth / 2.0 + fBGOCanSeperation + fSideBGOThickness + fExtraCutLength / 2.0 ;
     else
-        length_longer_x  = this->detector_total_width / 2.0 + this->BGO_can_seperation + this->side_BGO_thickness;
+        lengthLongerX  = fDetectorTotalWidth / 2.0 + fBGOCanSeperation + fSideBGOThickness;
     
-    G4double length_shorter_x   = length_longer_x - this->side_BGO_thickness;
+    G4double lengthShorterX   = lengthLongerX - fSideBGOThickness;
 
-    G4Trap* suppressor = new G4Trap( "suppressor", length_z, length_y, length_longer_x, length_shorter_x ) ;
+    G4Trap* suppressor = new G4Trap("suppressor", lengthZ, lengthY, lengthLongerX, lengthShorterX) ;
 
-    G4double half_length_x  = length_longer_x / 2.0 + 1.0*cm ;
-    G4double half_thickness_y   = this->side_BGO_thickness / 2.0;
-    G4double half_length_z  = (( this->side_BGO_thickness - this->BGO_chopped_tip ) / sin( this->bent_end_angle ) ) / 2.0;
+    G4double halfLengthX  = lengthLongerX / 2.0 + 1.0*cm ;
+    G4double halfThicknessY   = fSideBGOThickness / 2.0;
+    G4double halfLengthZ  = ((fSideBGOThickness - fBGOChoppedTip) / sin(fBentEndAngle)) / 2.0;
 
-    G4Box* chopping_box = new G4Box("chopping_box", half_length_x, half_thickness_y, half_length_z);
+    G4Box* choppingBox = new G4Box("choppingBox", halfLengthX, halfThicknessY, halfLengthZ);
 
-    G4RotationMatrix* rotate_chopping_box = new G4RotationMatrix;
-    G4ThreeVector move_chopping_box ;
+    G4RotationMatrix* rotateChoppingBox = new G4RotationMatrix;
+    G4ThreeVector moveChoppingBox ;
     G4double y0, z0 ;
 
-    y0 =  this->side_BGO_thickness / 2.0 - this->BGO_chopped_tip - 0.5 * sqrt( pow( (2.0 * half_length_z), 2.0 )
-                                                                               + pow( (2.0 * half_thickness_y), 2.0 ) ) * cos( M_PI/2.0 - this->bent_end_angle - atan( half_thickness_y / half_length_z ) ) ;
+    y0 =  fSideBGOThickness / 2.0 - fBGOChoppedTip - 0.5 * sqrt(pow((2.0 * halfLengthZ), 2.0)
+                                                                               + pow((2.0 * halfThicknessY), 2.0)) * cos(M_PI/2.0 - fBentEndAngle - atan(halfThicknessY / halfLengthZ)) ;
 
-    z0 =  length_z / 2.0 - 0.5 * sqrt( pow( (2.0 * half_length_z), 2.0 ) + pow( (2.0 * half_thickness_y), 2.0) )
-            * sin(M_PI/2.0 - this->bent_end_angle - atan( half_thickness_y / half_length_z ) ) ;
+    z0 =  lengthZ / 2.0 - 0.5 * sqrt(pow((2.0 * halfLengthZ), 2.0) + pow((2.0 * halfThicknessY), 2.0))
+            * sin(M_PI/2.0 - fBentEndAngle - atan(halfThicknessY / halfLengthZ)) ;
 
-    if( sidePosition == "left" )
-    {
-        rotate_chopping_box->rotateX( this->bent_end_angle ) ;
-        move_chopping_box = G4ThreeVector( 0, y0, z0 ) ;
-    }
-    else if( sidePosition == "right" )
-    {
-        rotate_chopping_box->rotateX( -this->bent_end_angle ) ;
-        move_chopping_box = G4ThreeVector( 0, y0, -z0 ) ;
+    if(sidePosition == "left") {
+        rotateChoppingBox->rotateX(fBentEndAngle) ;
+        moveChoppingBox = G4ThreeVector(0, y0, z0) ;
+    } else if(sidePosition == "right") {
+        rotateChoppingBox->rotateX(-fBentEndAngle) ;
+        moveChoppingBox = G4ThreeVector(0, y0, -z0) ;
     }
     
-    G4SubtractionSolid* side_suppressor = new G4SubtractionSolid("side_suppressor",
-                                                                 suppressor, chopping_box, rotate_chopping_box, move_chopping_box);
+    G4SubtractionSolid* sideSuppressor = new G4SubtractionSolid("sideSuppressor",
+                                                                 suppressor, choppingBox, rotateChoppingBox, moveChoppingBox);
 
-    return side_suppressor;
+    return sideSuppressor;
 
 }// end ::frontSlantSuppressor
 
 
-G4SubtractionSolid* DetectionSystemGriffin::sideSuppressorExtension(G4String sidePosition, G4bool choppingSuppressor) 
-{
+G4SubtractionSolid* DetectionSystemGriffin::SideSuppressorExtension(G4String sidePosition, G4bool choppingSuppressor) {
 
-    G4double thickness_z      =   this->suppressor_extension_thickness ;
-    G4double length_y         =   this->suppressor_extension_length ;
+    G4double thicknessZ      =   fSuppressorExtensionThickness ;
+    G4double lengthY         =   fSuppressorExtensionLength ;
 
-    G4double longer_length_x  =   (( this->suppressor_back_radius + this->bent_end_length
-                                    + (this->BGO_can_seperation
-                                       + this->side_BGO_thickness) / tan(this->bent_end_angle)
-                                    - this->suppressor_extension_thickness
-                                    * sin(this->bent_end_angle)) * tan(this->bent_end_angle) - this->BGO_can_seperation * 2.0) ;  // - this->BGO_can_seperation
+    G4double longerLengthX  =   ((fSuppressorBackRadius + fBentEndLength
+                                    + (fBGOCanSeperation
+                                       + fSideBGOThickness) / tan(fBentEndAngle)
+                                    - fSuppressorExtensionThickness
+                                    * sin(fBentEndAngle)) * tan(fBentEndAngle) - fBGOCanSeperation * 2.0) ;  // - fBGOCanSeperation
 
-    G4double shorter_length_x =   (( this->suppressor_forward_radius + this->hevimet_tip_thickness)
-            * sin(this->bent_end_angle) - this->BGO_can_seperation * 2.0) ; // - this->BGO_can_seperation
+    G4double shorterLengthX =   ((fSuppressorForwardRadius + fHevimetTipThickness)
+            * sin(fBentEndAngle) - fBGOCanSeperation * 2.0) ; // - fBGOCanSeperation
 
-    if( choppingSuppressor ) {
-        thickness_z += 0.1*mm;
-        length_y += 0.1*mm;
+    if(choppingSuppressor) {
+        thicknessZ += 0.1*mm;
+        lengthY += 0.1*mm;
     }
 
-    G4Trap* uncut_extension   = new G4Trap("uncut_extension", thickness_z, length_y, longer_length_x, shorter_length_x);
+    G4Trap* uncutExtension   = new G4Trap("uncutExtension", thicknessZ, lengthY, longerLengthX, shorterLengthX);
 
     // because these pieces are rotated in two planes, there are multiple angles that need to be calculated to make sure
     // all of the extensions join up
-    G4double beta = atan( ( longer_length_x - shorter_length_x ) / ( length_y ) ) ;
-    G4double phi  = atan( 1 / cos( this->bent_end_angle ) ) ;
+    G4double beta = atan((longerLengthX - shorterLengthX) / (lengthY)) ;
+    G4double phi  = atan(1 / cos(fBentEndAngle)) ;
 
-    G4double chopping_half_length_x = thickness_z / ( 2.0 * sin( phi ) ) ;
-    G4double chopping_half_length_y = length_y / ( 2.0 * cos( beta ) ) ;
-    G4double chopping_half_length_z = chopping_half_length_x ;
+    G4double choppingHalfLengthX = thicknessZ / (2.0 * sin(phi)) ;
+    G4double choppingHalfLengthY = lengthY / (2.0 * cos(beta)) ;
+    G4double choppingHalfLengthZ = choppingHalfLengthX ;
 
-    G4double x_angle = 0.0 ;
-    G4double y_angle = -beta ;
-    G4double z_angle = phi - M_PI/2.0 ;
+    G4double xAngle = 0.0 ;
+    G4double yAngle = -beta ;
+    G4double zAngle = phi - M_PI/2.0 ;
 
-    if( sidePosition == "left" )
-        z_angle *= -1 ;
+    if(sidePosition == "left")
+        zAngle *= -1 ;
 
-    G4Para* chopping_para = new G4Para("chopping_para", chopping_half_length_x,
-                                       chopping_half_length_y, chopping_half_length_z,
-                                       y_angle, z_angle, x_angle);
+    G4Para* choppingPara = new G4Para("choppingPara", choppingHalfLengthX,
+                                       choppingHalfLengthY, choppingHalfLengthZ,
+                                       yAngle, zAngle, xAngle);
 
-    G4ThreeVector move_para(((longer_length_x - shorter_length_x ) / 2.0
-                             + shorter_length_x ) / 2.0 + chopping_half_length_x
-                            - chopping_half_length_x * cos( phi ), 0.0, 0.0);
+    G4ThreeVector movePara(((longerLengthX - shorterLengthX) / 2.0
+                             + shorterLengthX) / 2.0 + choppingHalfLengthX
+                            - choppingHalfLengthX * cos(phi), 0.0, 0.0);
 
-    G4SubtractionSolid* right_extension = new G4SubtractionSolid( "right_extension", uncut_extension, chopping_para, 0, move_para );
+    G4SubtractionSolid* rightExtension = new G4SubtractionSolid("rightExtension", uncutExtension, choppingPara, 0, movePara);
 
-    return right_extension;
+    return rightExtension;
 
 }// end ::sideSuppressorExtension()
 
 
-G4Trap* DetectionSystemGriffin::sideSuppressorExtensionUncut()
-{
+G4Trap* DetectionSystemGriffin::SideSuppressorExtensionUncut() {
 
-    G4double thickness_z      =   this->suppressor_extension_thickness ;
-    G4double length_y         =   this->suppressor_extension_length ;
+    G4double thicknessZ      =   fSuppressorExtensionThickness ;
+    G4double lengthY         =   fSuppressorExtensionLength ;
 
-    G4double longer_length_x  =   (( this->suppressor_back_radius + this->bent_end_length
-                                    + (this->BGO_can_seperation
-                                       + this->side_BGO_thickness) / tan(this->bent_end_angle)
-                                    - this->suppressor_extension_thickness
-                                    * sin(this->bent_end_angle)) * tan(this->bent_end_angle) - this->BGO_can_seperation * 2.0) ;  // - this->BGO_can_seperation
+    G4double longerLengthX  =   ((fSuppressorBackRadius + fBentEndLength
+                                    + (fBGOCanSeperation
+                                       + fSideBGOThickness) / tan(fBentEndAngle)
+                                    - fSuppressorExtensionThickness
+                                    * sin(fBentEndAngle)) * tan(fBentEndAngle) - fBGOCanSeperation * 2.0) ;  // - fBGOCanSeperation
 
-    G4double shorter_length_x =   (( this->suppressor_forward_radius + this->hevimet_tip_thickness)
-            * sin(this->bent_end_angle) - this->BGO_can_seperation * 2.0) ; // - this->BGO_can_seperation
+    G4double shorterLengthX =   ((fSuppressorForwardRadius + fHevimetTipThickness)
+            * sin(fBentEndAngle) - fBGOCanSeperation * 2.0) ; // - fBGOCanSeperation
 
     // Similar to the "true" choppingSuppressor, add a bit on the z and y lengths to give a bit of a gap.
-    thickness_z += 0.1*mm;
-    length_y += 0.1*mm;
+    thicknessZ += 0.1*mm;
+    lengthY += 0.1*mm;
 
-    G4Trap* uncut_extension   = new G4Trap("uncut_extension", thickness_z, length_y, longer_length_x, shorter_length_x);
+    G4Trap* uncutExtension   = new G4Trap("uncutExtension", thicknessZ, lengthY, longerLengthX, shorterLengthX);
 
-    return uncut_extension;
-
+    return uncutExtension;
 }// end ::sideSuppressorExtensionUncut()
 
 
 ///////////////////////////////////////////////////////////////////////
 // methods used in ConstructNewHeavyMet
 ///////////////////////////////////////////////////////////////////////
-G4SubtractionSolid* DetectionSystemGriffin::newHeavyMet()
-{
+G4SubtractionSolid* DetectionSystemGriffin::NewHeavyMet() {
 
-    G4double half_thickness_z = ((this->hevimet_tip_thickness/cos(this->hevimet_tip_angle))
-                                 * cos(this->bent_end_angle -this->hevimet_tip_angle)
-                                 + this->suppressor_forward_radius * tan(this->hevimet_tip_angle)
-                                 * sin(this->bent_end_angle))/2.0;
+    G4double halfThicknessZ = ((fHevimetTipThickness/cos(fHevimetTipAngle))
+                                 * cos(fBentEndAngle -fHevimetTipAngle)
+                                 + fSuppressorForwardRadius * tan(fHevimetTipAngle)
+                                 * sin(fBentEndAngle))/2.0;
 
 
-    G4double half_length_shorter_x  = this->suppressor_forward_radius * sin(this->bent_end_angle);
-    G4double half_length_longer_x 	= half_length_shorter_x +2.0*half_thickness_z*tan(this->bent_end_angle);
-    G4double  half_length_shorter_y = half_length_shorter_x;
-    G4double half_length_longer_y 	= half_length_longer_x;
+    G4double halfLengthShorterX  = fSuppressorForwardRadius * sin(fBentEndAngle);
+    G4double halfLengthLongerX 	= halfLengthShorterX +2.0*halfThicknessZ*tan(fBentEndAngle);
+    G4double  halfLengthShorterY = halfLengthShorterX;
+    G4double halfLengthLongerY 	= halfLengthLongerX;
 
-    G4Trd* uncut_hevimet = new G4Trd("uncut_hevimet", half_length_longer_x,
-                                     half_length_shorter_x, half_length_longer_y, half_length_shorter_y, half_thickness_z);
+    G4Trd* uncutHevimet = new G4Trd("uncutHevimet", halfLengthLongerX,
+                                     halfLengthShorterX, halfLengthLongerY, halfLengthShorterY, halfThicknessZ);
 
-    G4double half_shorter_length_x = half_length_shorter_x
-            - this->suppressor_forward_radius * tan( this->hevimet_tip_angle ) * cos(this->bent_end_angle);
+    G4double halfShorterLengthX = halfLengthShorterX
+            - fSuppressorForwardRadius * tan(fHevimetTipAngle) * cos(fBentEndAngle);
 
-    G4double half_height_z =  ( 2.0 * half_thickness_z + ( half_length_longer_x
-                                                           - ( ( this->suppressor_forward_radius + this->hevimet_tip_thickness )
-                                                               * tan( this->hevimet_tip_angle ) ) / cos( this->bent_end_angle )
-                                                           - half_shorter_length_x)*tan( this->bent_end_angle )) / 2.0;
+    G4double halfHeightZ =  (2.0 * halfThicknessZ + (halfLengthLongerX
+                                                           - ((fSuppressorForwardRadius + fHevimetTipThickness)
+                                                               * tan(fHevimetTipAngle)) / cos(fBentEndAngle)
+                                                           - halfShorterLengthX)*tan(fBentEndAngle)) / 2.0;
 
-    G4double half_longer_length_x 	= half_shorter_length_x + 2.0 * half_height_z/tan( this->bent_end_angle ) ;
-    G4double half_shorter_length_y 	= half_shorter_length_x;
-    G4double half_longer_length_y 	= half_longer_length_x;
+    G4double halfLongerLengthX 	= halfShorterLengthX + 2.0 * halfHeightZ/tan(fBentEndAngle) ;
+    G4double halfShorterLengthY 	= halfShorterLengthX;
+    G4double halfLongerLengthY 	= halfLongerLengthX;
 
-    G4Trd* intersector = new G4Trd( "intersector", half_shorter_length_x,
-                                    half_longer_length_x, half_shorter_length_y, half_longer_length_y, half_height_z );
+    G4Trd* intersector = new G4Trd("intersector", halfShorterLengthX,
+                                    halfLongerLengthX, halfShorterLengthY, halfLongerLengthY, halfHeightZ);
 
-    G4Trd* chopper = new G4Trd( "chopper", half_shorter_length_x, half_longer_length_x,
-                                half_shorter_length_y, half_longer_length_y, half_height_z );
+    G4Trd* chopper = new G4Trd("chopper", halfShorterLengthX, halfLongerLengthX,
+                                halfShorterLengthY, halfLongerLengthY, halfHeightZ);
 
-    G4ThreeVector move_chopper(0.0, 0.0, half_height_z + half_thickness_z
-                               - this->suppressor_forward_radius * tan(this->hevimet_tip_angle)
-                               * sin(this->bent_end_angle) ) ;
+    G4ThreeVector moveChopper(0.0, 0.0, halfHeightZ + halfThicknessZ
+                               - fSuppressorForwardRadius * tan(fHevimetTipAngle)
+                               * sin(fBentEndAngle)) ;
 
-    G4SubtractionSolid* chopped_hevimet = new G4SubtractionSolid("chopped_hevimet",
-                                                                 uncut_hevimet, chopper, 0, move_chopper);
+    G4SubtractionSolid* choppedHevimet = new G4SubtractionSolid("choppedHevimet",
+                                                                 uncutHevimet, chopper, 0, moveChopper);
 
-    G4ThreeVector move_intersector(0.0, 0.0, -half_height_z + half_thickness_z);
+    G4ThreeVector moveIntersector(0.0, 0.0, -halfHeightZ + halfThicknessZ);
 
-    G4IntersectionSolid* intersected_hevimet = new G4IntersectionSolid("intersected_hevimet",
-                                                                       chopped_hevimet, intersector, 0, move_intersector);
+    G4IntersectionSolid* intersectedHevimet = new G4IntersectionSolid("intersectedHevimet",
+                                                                       choppedHevimet, intersector, 0, moveIntersector);
 
-    G4double longer_half_length = half_length_longer_x -((this->suppressor_forward_radius
-                                                          + this->hevimet_tip_thickness)*tan(this->hevimet_tip_angle)) / cos(this->bent_end_angle) ;
+    G4double longerHalfLength = halfLengthLongerX -((fSuppressorForwardRadius
+                                                          + fHevimetTipThickness)*tan(fHevimetTipAngle)) / cos(fBentEndAngle) ;
 
-    G4double shorter_half_length = longer_half_length -2.0*(half_thickness_z +0.1*mm)
-            * tan(this->bent_end_angle -this->hevimet_tip_angle);
+    G4double shorterHalfLength = longerHalfLength -2.0*(halfThicknessZ +0.1*mm)
+            * tan(fBentEndAngle -fHevimetTipAngle);
 
-    G4Trd* middle_chopper = new G4Trd("middle_chopper", longer_half_length, shorter_half_length,
-                                      longer_half_length, shorter_half_length, half_thickness_z +0.1*mm);
+    G4Trd* middleChopper = new G4Trd("middleChopper", longerHalfLength, shorterHalfLength,
+                                      longerHalfLength, shorterHalfLength, halfThicknessZ +0.1*mm);
 
-    G4SubtractionSolid* hevimet = new G4SubtractionSolid("hevimet", intersected_hevimet, middle_chopper);
+    G4SubtractionSolid* hevimet = new G4SubtractionSolid("hevimet", intersectedHevimet, middleChopper);
 
     return hevimet;
-
 }//end ::newHeavyMet
 
 

@@ -48,36 +48,36 @@ public:
     ~DetectionSystemTestcan();
 
     G4int Build();
-    G4int PlaceDetector(G4LogicalVolume* exp_hall_log);
+    G4int PlaceDetector(G4LogicalVolume* expHallLog);
 
 private:
     // Logical volumes
-    G4LogicalVolume* testcan_alum_casing_log;
-    G4LogicalVolume* testcan_scintillator_log;   
-    G4LogicalVolume* testcan_quartz_window_log;
+    G4LogicalVolume* fTestcanAlumCasingLog;
+    G4LogicalVolume* fTestcanScintillatorLog;   
+    G4LogicalVolume* fTestcanQuartzWindowLog;
 
     // Assembly volumes
-    G4AssemblyVolume* assemblyTestcan;                 // Contains all non-sensitive materials
+    G4AssemblyVolume* fAssemblyTestcan;                 // Contains all non-sensitive materials
 
-    G4double scintillator_length;
-    G4double scintillator_inner_radius;
-    G4double scintillator_outer_radius;
+    G4double fScintillatorLength;
+    G4double fScintillatorInnerRadius;
+    G4double fScintillatorOuterRadius;
 
-    G4double alum_can_thickness;
-    G4double quartz_thickness;
-    G4double quartz_radius;
+    G4double fAlumCanThickness;
+    G4double fQuartzThickness;
+    G4double fQuartzRadius;
 
-    G4double start_phi;
-    G4double end_phi;
+    G4double fStartPhi;
+    G4double fEndPhi;
 
-    G4String can_material;
-    G4String liquid_material;
-    G4String quartz_material;
+    G4String fCanMaterial;
+    G4String fLiquidMaterial;
+    G4String fQuartzMaterial;
 
     // The colours of the detectors
-    G4Colour liquid_colour; // Scintillator colour
-    G4Colour grey_colour;   // can colour
-    G4Colour quartz_colour;
+    G4Colour fLiquidColour; // Scintillator colour
+    G4Colour fGreyColour;   // can colour
+    G4Colour fQuartzColour;
 
     G4int BuildTestcan();
 

@@ -90,7 +90,7 @@ private:
     G4ProductionCuts* fDetectorCuts;
     G4ProductionCuts* fTargetCuts;
 
-    G4Scintillation * scintProcess;
+    G4Scintillation* fScintProcess;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
