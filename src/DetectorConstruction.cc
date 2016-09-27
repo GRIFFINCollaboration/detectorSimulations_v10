@@ -118,7 +118,7 @@ DetectorConstruction::DetectorConstruction() :
     // ensure the global field is initialized
     //  (void)GlobalField::getObject();
 
-    fMatWorldName = "G4AIR";
+    fMatWorldName = "G4_AIR";
 
     // Generic Target Apparatus
     fSetGenericTargetMaterial   = false;
