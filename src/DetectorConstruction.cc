@@ -100,12 +100,12 @@ DetectorConstruction::DetectorConstruction() :
 {
     fWorldSizeX  = fWorldSizeY = fWorldSizeZ = 10.0*m;
 
-    fBoxMat = "G4WATER";
+    fBoxMat = "G4_WATER";
     fBoxThickness = 0.0*mm;
     fBoxInnerDimensions = G4ThreeVector(0.0*mm,0.0*mm,0.0*mm);
     fBoxColour = G4ThreeVector(0.0,0.0,1.0);
 
-    fGridMat = "G4WATER";
+    fGridMat = "G4_WATER";
     fGridSize = 0.0*mm;
     fGridDimensions = G4ThreeVector(0.0*mm,0.0*mm,0.0*mm);
     fGridColour = G4ThreeVector(1.0,0.0,0.0);
@@ -118,7 +118,7 @@ DetectorConstruction::DetectorConstruction() :
     // ensure the global field is initialized
     //  (void)GlobalField::getObject();
 
-    fMatWorldName = "G4AIR";
+    fMatWorldName = "G4_AIR";
 
     // Generic Target Apparatus
     fSetGenericTargetMaterial   = false;
