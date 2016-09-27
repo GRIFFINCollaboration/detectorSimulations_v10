@@ -67,11 +67,11 @@ DetectionSystemSodiumIodide::DetectionSystemSodiumIodide() :
 
 
     fDetailViewEndAngle	 	= 360.0*deg;
-    fCrystalMaterial          = "G4SODIUMIODIDE";
-    fCanMaterial              = "G4Al";
-    fSealMaterial             = "G4RUBBERNEOPRENE";
-    fDiscMaterial             = "G4POLYETHYLENE";
-    fPackingMaterial          = "G4ALUMINUMOXIDE";
+    fCrystalMaterial          = "G4_SODIUM_IODIDE";
+    fCanMaterial              = "G4_Al";
+    fSealMaterial             = "G4_RUBBER_NEOPRENE";
+    fDiscMaterial             = "G4_POLYETHYLENE";
+    fPackingMaterial          = "G4_ALUMINUM_OXIDE";
 
     fCrystalLengthZ           = 3.0*inch2cm*cm;
     fCrystalInnerRadius 		= 0.0*cm;

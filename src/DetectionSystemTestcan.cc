@@ -39,9 +39,9 @@ DetectionSystemTestcan::DetectionSystemTestcan(G4double length, G4double radius)
     fScintillatorOuterRadius   = radius;
     fQuartzThickness           = 6.35*mm;
     fQuartzRadius              = radius + fAlumCanThickness;
-    fCanMaterial               = "G4Al";
+    fCanMaterial               = "G4_Al";
     fLiquidMaterial            = "Deuterated Scintillator";
-    fQuartzMaterial            = "G4SILICONDIOXIDE";
+    fQuartzMaterial            = "G4_SILICON_DIOXIDE";
 
     fStartPhi               = 0.0*deg;
     fEndPhi                 = 360.0*deg;

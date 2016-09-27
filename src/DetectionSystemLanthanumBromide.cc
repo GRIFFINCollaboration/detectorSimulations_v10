@@ -70,10 +70,10 @@ DetectionSystemLanthanumBromide::DetectionSystemLanthanumBromide() :
     fDetailViewEndAngle	      = 360.0*deg;
     fCrystalMaterial            = "CeriumDopedLanthanumBromide";
 
-    fCanMaterial                = "G4Al";
-    fSealMaterial               = "G4RUBBERNEOPRENE";
-    fDiscMaterial               = "G4POLYETHYLENE";
-    fPackingMaterial            = "G4ALUMINUMOXIDE";
+    fCanMaterial                = "G4_Al";
+    fSealMaterial               = "G4_RUBBER_NEOPRENE";
+    fDiscMaterial               = "G4_POLYETHYLENE";
+    fPackingMaterial            = "G4_ALUMINUM_OXIDE";
 
     fCrystalLengthZ            = 2.0*inchtocm*cm;
     fCrystalInnerRadius 		  = 0.0*cm;

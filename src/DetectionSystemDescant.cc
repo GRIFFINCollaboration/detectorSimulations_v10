@@ -51,9 +51,9 @@ DetectionSystemDescant::DetectionSystemDescant(G4bool leadShield) :
     // can properties
     fCanLength              = 150.0*mm;
     fCanThickness           = 1.5*mm;
-    fCanMaterial            = "G4Al";
+    fCanMaterial            = "G4_Al";
     fLiquidMaterial         = "Deuterated Scintillator";
-    fLeadMaterial           = "G4Pb";
+    fLeadMaterial           = "G4_Pb";
     fLeadShieldThickness   = 6.35*mm;
     fCanBackThickness      = 12.7*mm;   
    
@@ -74,7 +74,7 @@ DetectionSystemDescant::DetectionSystemDescant(G4bool leadShield) :
     fYellowGreenPMTOffsetX   = 10.0*mm; 
     fYellowGreenPMTOffsetY   = 5.0*mm;
 
-    fQuartzMaterial                 = "G4SILICONDIOXIDE";
+    fQuartzMaterial                 = "G4_SILICON_DIOXIDE";
     fOpticalWindowHalfThickness   = (9.0*mm)/2.0;
 
     // The face of the detector is 50 cm from the origin, this does NOT include the lead shield.
