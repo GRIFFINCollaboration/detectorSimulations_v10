@@ -4,12 +4,12 @@ detectorSimulations_v10
 The detectorSimulations_v10 package contains the Geant4 simulations for GRIFFIN, TIGRESS, and all of their auxiliary detectors.  Please note that in order to respect our non-disclosure agreements, all source containing third party IP have been omitted from this repo, and can be obtained from your colleagues directly at the lab.
 
 
-#Setup
+# Setup
 
-###Requirements
+### Requirements
 detectorSimulations is confirmed to run on geant4.10.01 and ROOT 6.04.00.
 
-###Getting the code
+### Getting the code
 
 To setup the simulation package on a computer with GEANT4 already present, just copy the code to your machine:
 
@@ -17,7 +17,7 @@ To setup the simulation package on a computer with GEANT4 already present, just 
     
 Then you'll need to get the files containing our NDA-protected parameters. To do this register on gitlab.com, have your account added to the GRIFFINCollaboration, and register your ssh-keys with gitlab. Then you can run the script SetupSuppressed.sh (in the detectorSimulation_v10 folder). This script can either be run as is, which will install the suppressed files in a sub-folder "suppressed" and create symbolic links in the src directory, or you can give it the path of the directory where you want the suppressed files installed (this directory has to be empty!).
 
-###Building
+### Building
 
 The build process is pretty standard for a geant simulation; in a build directory (ie any clean new directory that isn't the source directory), do 
 
@@ -29,18 +29,18 @@ make
 
 Keep in mind that cmake does not regenerate all the files it uses every time it runs!  So if something changes and this build process suddenly fails, try deleting the build directory and starting over.
 
-###Setup FAQ
+### Setup FAQ
 
 - Yes, you need both the secret suppressed files AND their unsuppressed equivalents, not just either / or.
 
 
-#Usage
+# Usage
 
 The following might be out of date with the change to geant4.10, we haven't had time yet to verify the information below.
 
-###Particle Emission
+### Particle Emission
 
-####General
+#### General
 | Command | Brief Description | Default |
 | :------ | :---------------- | :------ |
 | ``` /DetSys/gun/energy double unit ``` | Set energy of particle | 1000 keV |
@@ -51,7 +51,7 @@ The following might be out of date with the change to geant4.10, we haven't had 
 | ``` /DetSys/gun/radius r unit``` | Set source radius | 0.0 mm |
 | ``` /DetSys/gun/energyrange min max step ``` | Set energy (keV) of particle, loops from min to max | |
 
-####Decay Schemes
+#### Decay Schemes
 | Command | Brief Description | Default |
 | :------ | :---------------- | :------ |
 | ``` /DetSys/gun/betaPlusEmission filename ``` | Simulate beta plus decay with energy distribution input file | |
@@ -66,7 +66,7 @@ The following might be out of date with the change to geant4.10, we haven't had 
 | ``` /DetSys/gun/numberOfRadioactiveNuclei int ``` | Set the number of radioactive nuclei | |
 | ``` /DetSys/gun/radioactiveSourceDecay filename ``` | Simulate source decay with a file containing the decay data | |
 
-####Kinematics
+#### Kinematics
 Whenever an electron or positron is emitted, you can choose to simulate kinematic effects (i.e. shifting of energy due to relativistic speeds of ions).  You must specify the ion with ``` /DetSys/gun/ion Z A E ``` first.
 
 | Command | Brief Description | Default |
@@ -77,9 +77,9 @@ Whenever an electron or positron is emitted, you can choose to simulate kinemati
 
 *Only one of these should be specified
 
-###Detector Specific
+### Detector Specific
 
-####GRIFFIN
+#### GRIFFIN
 | Command | Brief Description | Default |
 | :------ | :---------------- | :------ |
 | ``` /DetSys/det/addGriffinForward int ``` | Add Detection System GriffinForward |  |
@@ -96,7 +96,7 @@ Whenever an electron or positron is emitted, you can choose to simulate kinemati
 | ``` /DetSys/det/includeGriffinHevimet 0/1 ``` | Includes the Hevimet for a Griffin detector | False |
 | ``` /DetSys/det/addGriffinCustom int ``` | Adds a detection system using the paramaters specified |  |
 
-####SPICE
+#### SPICE
 | Command | Brief Description | Default |
 | :------ | :---------------- | :------ |
 | ``` /DetSys/app/addSpiceTargetChamber ``` | Add SPICE target chamber |  |
@@ -104,7 +104,7 @@ Whenever an electron or positron is emitted, you can choose to simulate kinemati
 | ``` /DetSys/det/addSpice int``` | Add Si(Li) detector |  |
 | ``` /DetSys/det/addS3 ``` | Add SPICE S3 detector |  |
 
-####8PI
+#### 8PI
 | Command | Brief Description | Default |
 | :------ | :---------------- | :------ |
 | ``` /DetSys/det/add8pi int ``` | Add Detection System 8pi |  |
@@ -112,7 +112,7 @@ Whenever an electron or positron is emitted, you can choose to simulate kinemati
 | ``` /DetSys/app/add8piVacuumChamber ``` | Add 8pi vacuum chamber |  |
 | ``` /DetSys/app/add8piVacuumChamberAuxMatShell double unit ``` | Add AuxMat shell around 8pi vacuum chamber with specified thickness |  |
 
-####Other
+#### Other
 | Command | Brief Description | Default |
 | :------ | :---------------- | :------ |
 | ``` /DetSys/det/addGammaTracking int ``` | Add Detection System GammaTracking |  |
@@ -121,19 +121,19 @@ Whenever an electron or positron is emitted, you can choose to simulate kinemati
 | ``` /DetSys/det/addSceptar int ``` | Add Detection System Sceptar |  |
 | ``` /DetSys/det/addPaces int ``` | Add Detection System Paces |  |
 
-###Detector General
+### Detector General
 
 ``` /DetSys/det/update ``` must be called before using ``` beamOn ``` if the geometrical values
 have been altered.
 
-####World Volume (i.e. experimental hall)
+#### World Volume (i.e. experimental hall)
 | Command | Brief Description | Default |
 | :------ | :---------------- | :------ |
 | ``` /DetSys/world/material string ``` | Select material for the world | G4_AIR |
 | ``` /DetSys/world/dimensions x y z unit ``` | Set world dimensions | 10m x 10m x 10m |
 | ``` /DetSys/world/vis 0/1``` | Set world visibility (depreciated) | False |
 
-####Generic Target
+#### Generic Target
 | Command | Brief Description | Default |
 | :------ | :---------------- | :------ |
 | ``` /DetSys/app/genericTarget string ``` | Create a target with specified material |  |
@@ -141,7 +141,7 @@ have been altered.
 | ``` /DetSys/app/genericTargetPosition x y z unit ``` | Set target position |  |
 Requires all three commands to build
 
-####Field Box
+#### Field Box
 | Command | Brief Description | Default |
 | :------ | :---------------- | :------ |
 | ``` /DetSys/app/fieldBoxMaterial string ``` | Create a field box with specified material |  |
@@ -150,7 +150,7 @@ Requires all three commands to build
 | ``` /DetSys/app/fieldBoxMagneticField x y z unit ``` | Set field box magnetic field |  |
 Requires all four commands to build
 
-####Box
+#### Box
 | Command | Brief Description | Default |
 | :------ | :---------------- | :------ |
 | ``` /DetSys/det/boxMat string ``` | Set box material | G4_WATER |
@@ -159,7 +159,7 @@ Requires all four commands to build
 | ``` /DetSys/det/boxColour r g b``` | Set box colour | 0.0 0.0 1.0 |
 | ``` /DetSys/det/addBox ``` | Build/add box (if thickness is not 0) |  |
 
-####Grid
+#### Grid
 | Command | Brief Description | Default |
 | :------ | :---------------- | :------ |
 | ``` /DetSys/det/gridMat string ``` | Set grid material | G4_WATER |
@@ -168,7 +168,7 @@ Requires all four commands to build
 | ``` /DetSys/det/gridColour r g b ``` | Set grid colour | 1.0 0.0 0.0 |
 | ``` /DetSys/det/addGrid ``` | Build/add grid (if grid size is not 0) |  |
 
-####Magnetic Fields
+#### Magnetic Fields
 | Command | Brief Description | Default |
 | :------ | :---------------- | :------ |
 | ``` /DetSys/world/magneticField x y z unit``` | Set world magnetic field (depreciated) | 0, 0, 0 |
