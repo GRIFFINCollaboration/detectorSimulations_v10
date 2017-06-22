@@ -47,6 +47,8 @@
 #include "G4UIparameter.hh"
 #include "G4UIcmdWithADouble.hh"
 
+
+#include <string>
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
@@ -117,6 +119,10 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     fFieldBoxMagneticFieldCmd->SetGuidance("Set magnetic field - x y z unit.");
     fFieldBoxMagneticFieldCmd->SetUnitCategory("Magnetic flux density");
     fFieldBoxMagneticFieldCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	fTabMagneticFieldCmd = new G4UIcmdWithAString("/DetSys/world/TabMagneticField",this); ///19/7
+	fTabMagneticFieldCmd->SetGuidance("Set tabulated magnetic field.");
+	fTabMagneticFieldCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
     // Box Stuff
     fAddBoxMatCmd = new G4UIcmdWithAString("/DetSys/det/boxMat",this);
@@ -303,13 +309,9 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     fAddDetectionSystemSceptarCmd->SetGuidance("Add Detection System Sceptar");
     fAddDetectionSystemSceptarCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 	 
-    fAddDetectionSystemSpiceCmd = new G4UIcmdWithAnInteger("/DetSys/det/addSpice",this);
-    fAddDetectionSystemSpiceCmd->SetGuidance("Add Detection System Spice");
-    fAddDetectionSystemSpiceCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-	 
-    fAddDetectionSystemSpiceV02Cmd = new G4UIcmdWithAnInteger("/DetSys/det/addSpiceV02",this);
-    fAddDetectionSystemSpiceV02Cmd->SetGuidance("Add Detection System SpiceV02");
-    fAddDetectionSystemSpiceV02Cmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+   fAddDetectionSystemSpiceCmd = new G4UIcmdWithAnInteger("/DetSys/det/addSpice",this);
+   fAddDetectionSystemSpiceCmd->SetGuidance("Add Detection System Spice");
+   fAddDetectionSystemSpiceCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 	 
     fAddDetectionSystemPacesCmd = new G4UIcmdWithAnInteger("/DetSys/det/addPaces",this);
     fAddDetectionSystemPacesCmd->SetGuidance("Add Detection System Paces");
@@ -341,6 +343,7 @@ DetectorMessenger::~DetectorMessenger()
     delete fFieldBoxDimensionsCmd;
     delete fFieldBoxPositionCmd;
     delete fFieldBoxMagneticFieldCmd;
+	delete fTabMagneticFieldCmd;
     delete fAddBoxMatCmd;
     delete fAddBoxThicknessCmd;
     delete fAddBoxInnerDimensionsCmd;
@@ -380,7 +383,6 @@ DetectorMessenger::~DetectorMessenger()
 
     delete fAddDetectionSystemSceptarCmd;
     delete fAddDetectionSystemSpiceCmd;
-    delete fAddDetectionSystemSpiceV02Cmd;
     delete fAddDetectionSystemPacesCmd;
 
     delete fAddDetectionSystemGriffinForwardCmd;
@@ -457,6 +459,15 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     //  if(command == fAddBoxCmd ) {
     //    fDetector->AddBox();
     //  }
+
+  if( command == fTabMagneticFieldCmd ) {
+    G4String PathAndTableName;
+    G4double z_offset, z_rotation;
+    const char* s = newValue;///string
+    std::istringstream is ((char*)s);///string
+    is>>PathAndTableName>>z_offset>>z_rotation;
+    fDetector->SetTabMagneticField(PathAndTableName, z_offset, z_rotation ); // z in mm, angle in degree  
+  }
     if(command == fAddGridMatCmd ) {
         fDetector->SetGridMat(newValue);
     }
@@ -475,9 +486,9 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     if(command == fAddGridCmd ) {
         fDetector->AddGrid();
     }
-    //  if(command == fAddApparatusSpiceTargetChamberCmd ) {
-    //    fDetector->fAddApparatusSpiceTargetChamber();
-    //  }
+    if(command == fAddApparatusSpiceTargetChamberCmd ) {
+        fDetector->AddApparatusSpiceTargetChamber(); //removed f
+    }
     if(command == fAddApparatus8piVacuumChamberCmd ) {
         fDetector->AddApparatus8piVacuumChamber();
     }
@@ -574,12 +585,9 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
         fDetector->AddDetectionSystemGriffinSetDeadLayer(fAddDetectionSystemGriffinSetDeadLayerCmd->GetNew3VectorValue(newValue ) ) ;
     }
     
-    //  if(command == fAddDetectionSystemSpiceCmd ) {
-    //    fDetector->AddDetectionSystemSpice(fAddDetectionSystemSpiceCmd->GetNewIntValue(newValue));
-    //  }
-    //  if(command == fAddDetectionSystemSpiceV02Cmd ) {
-    //    fDetector->AddDetectionSystemSpiceV02(fAddDetectionSystemSpiceV02Cmd->GetNewIntValue(newValue));
-    //  }
+     if(command == fAddDetectionSystemSpiceCmd ) {
+		fDetector->AddDetectionSystemSpice(fAddDetectionSystemSpiceCmd->GetNewIntValue(newValue)); 
+     }
     
     if(command == fAddDetectionSystemPacesCmd ) {
         fDetector->AddDetectionSystemPaces(fAddDetectionSystemPacesCmd->GetNewIntValue(newValue));

@@ -24,56 +24,50 @@
 // ********************************************************************
 //
 //
-// $Id: PrimaryGeneratorMessenger.hh,v 1.1 2010-10-18 15:56:17 maire Exp $
-// GEANT4 tag $Name: geant4-09-04-patch-02 $
 //
 //
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-#ifndef PrimaryGeneratorMessenger_h
-#define PrimaryGeneratorMessenger_h 1
+#ifndef FieldMessenger_h
+#define FieldMessenger_h 1
 
-#include "G4UImessenger.hh"
 #include "globals.hh"
+#include "G4UImessenger.hh"
 
-class PrimaryGeneratorAction;
+class GlobalField;
 class G4UIdirectory;
-class G4UIcmdWithADouble;
-class G4UIcmdWithADoubleAndUnit;
-class G4UIcmdWith3Vector;
-class G4UIcmdWith3VectorAndUnit;
 class G4UIcmdWithAString;
-class G4UIcommand;
 class G4UIcmdWithAnInteger;
-class G4UIcmdWithABool;
+class G4UIcmdWithADoubleAndUnit;
+class G4UIcmdWithoutParameter;
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-class PrimaryGeneratorMessenger: public G4UImessenger
+class FieldMessenger: public G4UImessenger
 {
-public:
-    PrimaryGeneratorMessenger(PrimaryGeneratorAction*);
-    virtual ~PrimaryGeneratorMessenger();
-
-public:
+  public:
+    FieldMessenger(GlobalField* );
+   ~FieldMessenger();
+    
     void SetNewValue(G4UIcommand*, G4String);
+    void SetNewValue(G4UIcommand*, G4int);
+    
+  private:
 
-private:
-    PrimaryGeneratorAction*        fAction;
+    GlobalField*               fGlobalField;
+    
+    G4UIdirectory*             detDir;
 
-    G4UIcmdWithAnInteger*          fNumberOfDecayingLaBrDetectorsCmd;
-    G4UIcmdWithADoubleAndUnit*     fEfficiencyEnergyCmd;
-    G4UIcmdWith3Vector*            fEfficiencyDirectionCmd;
-    G4UIcmdWith3VectorAndUnit*     fEfficiencyPositionCmd;
-    G4UIcmdWithAString*            fEfficiencyParticleCmd;
-    G4UIcmdWith3Vector*            fEfficiencyPolarizationCmd;
-    G4UIcmdWithADoubleAndUnit*     fEfficiencyBeamRadiusCmd;
-	G4UIcmdWithADoubleAndUnit*     fenergyCmd;
+    G4UIcmdWithAnInteger*      fStepperCMD;
+    G4UIcmdWithADoubleAndUnit* fMinStepCMD;
+    G4UIcmdWithADoubleAndUnit* fDeltaChordCMD;
+    G4UIcmdWithADoubleAndUnit* fDeltaOneStepCMD;
+    G4UIcmdWithADoubleAndUnit* fDeltaIntersectionCMD;
+    G4UIcmdWithADoubleAndUnit* fEpsMinCMD;
+    G4UIcmdWithADoubleAndUnit* fEpsMaxCMD;
+    G4UIcmdWithoutParameter*   fUpdateCMD;
+
 };
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
 

@@ -9,6 +9,7 @@
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4SubtractionSolid.hh"
+#include "G4UnionSolid.hh"
 
 #include "G4GeometryManager.hh"
 #include "G4PhysicalVolumeStore.hh"
@@ -19,250 +20,392 @@
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
 
-#include "Randomize.hh"
-
 #include "DetectionSystemSpice.hh"
 
-#include "G4SystemOfUnits.hh" // new version geant4.10 requires units
-
-double DetectionSystemSpice::fSpiceResolution[2];
+using namespace CLHEP;
 
 DetectionSystemSpice::DetectionSystemSpice() :
-    // LogicalVolumes
-    fSiInnerGuardRingLog(0),
-    fSiOuterGuardRingLog(0)
+  // LogicalVolumes
+  siInnerGuardRing_log(0),
+  siOuterGuardRing_log(0)
 {
     /////////////////////////////////////////////////////////////////////
     // SPICE Physical Properties
     /////////////////////////////////////////////////////////////////////
+	//-----------------------------//
+    // Materials     			   //
+    //-----------------------------//
+    this->wafer_material          = "Silicon";
+  	this->detector_mount_material = "Aluminum"; // CHECK ?
+  	this->annular_clamp_material  = "Peek"; // CHECK ?
+  
+	// ----------------------------
+	// Dimensions of Detector Mount
+	// ----------------------------
+	this->detector_mount_length = 148*mm;
+	this->detector_mount_width = 130*mm;
+	this->detector_mount_thickness = 8*mm;
+	this->detector_mount_inner_radius = 52.8*mm;
+	this->detector_mount_lip_radius = 48.3*mm;
+	this->detector_mount_lip_thickness = 1*mm;
+	this->detector_mount_angular_offset = 0*deg;
+	this->detector_to_target_distance = 115*mm;
+	this->detector_thickness = 6*mm;
 
-    fWaferMaterial             = "Silicon";
+	// ---------------------------
+	// Dimensions of Annular Clamp
+	// ---------------------------
+	this->annular_clamp_thickness = 2*mm;
+	this->annular_clamp_length = 19.2*mm;
+	this->annular_clamp_width = 20*mm;
+	this->annular_clamp_plane_offset = 47.8*mm; //from beam line to first edge  
 
     //-----------------------------//
     // parameters for the annular  //
     // planar detector crystal     //
     //-----------------------------//
-    fSiDetCrystalOuterDiameter = 94.*mm;
-    fSiDetCrystalInnerDiameter = 16.*mm;
-    fSiDetCrystalThickness = 6.15*mm;
-    fSiDetRadialSegments = 10.;
-    fSiDetPhiSegments = 12.;
+    this->siDetCrystalOuterDiameter = 94.*mm;
+    this->siDetCrystalInnerDiameter = 16.*mm;
+    this->siDetCrystalThickness = 6.15*mm;
+    this->siDetRadialSegments = 10.;
+    this->siDetPhiSegments = 12.;
 
     //-----------------------------//
     // parameters for guard ring   //
     //-----------------------------//
-    fSiDetGuardRingOuterDiameter = 102*mm;
-    fSiDetGuardRingInnerDiameter = 10*mm;
+    this->siDetGuardRingOuterDiameter = 102*mm;
+    this->siDetGuardRingInnerDiameter = 10*mm;
     
 }
 
-DetectionSystemSpice::~DetectionSystemSpice() {    // LogicalVolumes in ConstructSPICEDetectionSystem
-  for(int i = 0; i < 10; ++i) {
-    if(fSiDetSpiceRingLog[i] != NULL) {
-      delete fSiDetSpiceRingLog[i];
-    }
-  }
-
-    delete fSiInnerGuardRingLog;
-    delete fSiOuterGuardRingLog;
-
+DetectionSystemSpice::~DetectionSystemSpice()
+{   
+	// LogicalVolumes in ConstructSPICEDetectionSystem
+	delete detector_mount_log;
+	delete annular_clamp_log;
+	delete [] siDetSpiceRing_log;
+	delete siInnerGuardRing_log;
+	delete siOuterGuardRing_log;
+	
+	//Physical volumes 
+	delete detector_mount_phys;
+	delete annular_clamp_phys;
 }
 
 //---------------------------------------------------------//
 // main build function called in DetectorConstruction      //
 // when detector is constructed                            //
 //---------------------------------------------------------//
-G4int DetectionSystemSpice::Build() {
-
-    fAssembly = new G4AssemblyVolume();
-
-    // Loop through each ring ...
-    for(int ringID=0; ringID<10; ringID++) {
-
-        // Build assembly volumes
-        fAssemblySiRing[ringID] = new G4AssemblyVolume();
-        // Build the logical segment of the Silicon Ring
-        BuildSiliconWafer(ringID);
-
-    } // end for(int ringID)
-
-    BuildInnerGuardRing();
-    BuildOuterGuardRing();
-
-    return 1;
+G4int DetectionSystemSpice::Build()
+{
+	
+    this->assembly = new G4AssemblyVolume();
+   
+	// Loop through each ring ...
+	for(int ringID=0; ringID<10; ringID++) {
+				
+		// Build assembly volumes
+	  	this->assemblySiRing[ringID] = new G4AssemblyVolume();
+		// Build the logical segment of the Silicon Ring
+	  	BuildSiliconWafer(ringID);  
+	  	
+  } // end for(int ringID)
+  
+  BuildInnerGuardRing();
+  BuildOuterGuardRing();
+  BuildDetectorMount();
+  BuildAnnularClamps();
+  
+  
+  return 1;
 } // end Build
 
 //---------------------------------------------------------//
 // "place" function called in DetectorMessenger            //
 // if detector is added                                    //
 //---------------------------------------------------------//
-G4int DetectionSystemSpice::PlaceDetector(G4LogicalVolume* expHallLog, G4ThreeVector move, G4int ringNumber, G4int Seg, G4int SegmentNumber) {
+G4int DetectionSystemSpice::PlaceDetector(G4LogicalVolume* exp_hall_log, G4ThreeVector move, G4int ringNumber, G4int Seg, G4int SegmentNumber)
+{
 
-    //G4cout << "DetectionSystemSpice :: Ring number : "<< ringNumber <<  " SegNumber in ring : "<< Seg << " SegmentNumber in detector : " <<SegmentNumber << G4endl;
-    //G4cin.get();
-    G4int NumberSeg = (G4int)fSiDetPhiSegments; // total number of segments = 12
-    G4double angle = (360.*deg/NumberSeg)*(Seg); // Seg = {0, ...,11}
-    G4RotationMatrix* rotate = new G4RotationMatrix;
-    rotate->rotateZ(-210*deg-angle); // the axis are inverted, this operation will correct for it  [MHD : 03 April 2014]
-
-    fAssemblySiRing[ringNumber]->MakeImprint(expHallLog, move, rotate, SegmentNumber);
-
-    return 1;
+  //G4cout << "DetectionSystemSpice :: Ring number : "<< ringNumber <<  " SegNumber in ring : "<< Seg << " SegmentNumber in detector : " <<SegmentNumber << G4endl;
+  //G4cin.get();
+  G4int NumberSeg = (G4int)this->siDetPhiSegments; // total number of segments = 12
+  G4double angle = (360.*deg/NumberSeg)*(Seg); // Seg = {0, ...,11} 
+  G4RotationMatrix* rotate = new G4RotationMatrix;
+  rotate->rotateZ(-210*deg-angle); // the axis are inverted, this operation will correct for it  [MHD : 03 April 2014]
+  
+  assemblySiRing[ringNumber]->MakeImprint(exp_hall_log, move, rotate, SegmentNumber);
+ 
+  return 1;
 }
 
-G4int DetectionSystemSpice::PlaceGuardRing(G4LogicalVolume* expHallLog, G4ThreeVector move) {
-    G4RotationMatrix* rotate = new G4RotationMatrix;
-    rotate->rotateZ(0*deg);
-    fAssembly->MakeImprint(expHallLog, move, rotate, 0);
+G4int DetectionSystemSpice::PlaceGuardRing(G4LogicalVolume* exp_hall_log, G4ThreeVector move)
+{
+  G4RotationMatrix* rotate = new G4RotationMatrix;
+  rotate->rotateZ(0*deg);
+  assembly->MakeImprint(exp_hall_log, move, rotate, 0);
 
-    return 1;
+  return 1;
 }
+
+void DetectionSystemSpice::PlaceDetectorMount(G4LogicalVolume* exp_hall_log, G4ThreeVector move)
+{
+
+	G4double detector_mount_gap = this->detector_mount_thickness 
+	  - this->detector_mount_lip_thickness - this->detector_thickness;
+	 
+	G4double z_offset = - this->detector_mount_thickness/2. + detector_mount_gap ;
+	G4ThreeVector offset(0, 0, z_offset);
+	
+	move = move + offset ; 
+	G4RotationMatrix* rotate = new G4RotationMatrix(this->detector_mount_angular_offset, 0, 0);
+	detector_mount_phys = new G4PVPlacement(rotate, move, detector_mount_log,
+						"detector_mount", exp_hall_log, 
+						false, 0);
+
+} // end::PlaceDetectorMount()
+
+void DetectionSystemSpice::PlaceAnnularClamps(G4LogicalVolume* exp_hall_log, G4ThreeVector move) {
+  
+  G4double z_offset = this->annular_clamp_thickness/2. ;
+  G4double x_offset = (this->annular_clamp_plane_offset
+		       + this->annular_clamp_length/2.) 
+    * cos(this->detector_mount_angular_offset + 45*deg);
+  G4double y_offset = (this->annular_clamp_plane_offset
+		       + this->annular_clamp_length/2.)
+    * sin(this->detector_mount_angular_offset + 45*deg);
+  G4ThreeVector offset(-x_offset, -y_offset, z_offset);
+ 
+  move = move + offset ; 	 
+  G4RotationMatrix* rotate = new G4RotationMatrix(this->detector_mount_angular_offset + 45*deg, 0, 0);
+  annular_clamp_phys = new G4PVPlacement(rotate, move, annular_clamp_log,"annular_clamp", exp_hall_log,
+					 false,0);
+  
+} // end::PlaceAnnularClamps()
 
 //---------------------------------------------------------//
 // build functions for different parts                     //
 // called in main build function                           //
 //---------------------------------------------------------//
-G4int DetectionSystemSpice::BuildSiliconWafer(G4int RingID)  {// RingID = { 0, 9 }
-    // Define the material, return error if not found
-    G4Material* material = G4Material::GetMaterial(fWaferMaterial);
-    if( !material ) {
-        G4cout << " ----> Material " << fWaferMaterial
-               << " not found, cannot build the detector shell! " << G4endl;
-        return 0;
-    }
+G4int DetectionSystemSpice::BuildSiliconWafer(G4int RingID)  // RingID = { 0, 9 }
+{
+	// Define the material, return error if not found
+  G4Material* material = G4Material::GetMaterial(this->wafer_material);
+  if( !material ) {
+  	G4cout << " ----> Material " << this->wafer_material 
+  				 << " not found, cannot build the detector shell! " << G4endl;
+    return 0;
+  }
 
-    // Set visualization attributes
-    G4VisAttributes* visAtt = new G4VisAttributes(G4Colour(0.0,1.0,1.0));
-    visAtt->SetVisibility(true);
+  // Set visualization attributes
+  G4VisAttributes* vis_att = new G4VisAttributes(G4Colour(0.0,1.0,1.0));
+  vis_att->SetVisibility(true);
 
-    // Define rotation and movement objects
-    G4ThreeVector direction 	= G4ThreeVector(0,0,1);
-    G4double zPosition		= -(fSiDetCrystalThickness/2.);
-    G4ThreeVector move 		= zPosition * direction;
-    G4RotationMatrix* rotate = new G4RotationMatrix;
-    rotate->rotateZ(0*deg);
+  // Define rotation and movement objects
+  G4ThreeVector direction 	= G4ThreeVector(0,0,1);
+  G4double z_position		= -(this->siDetCrystalThickness/2.);
+  G4ThreeVector move 		= z_position * direction;
+  G4RotationMatrix* rotate = new G4RotationMatrix;
+  rotate->rotateZ(0*deg);
 
-    // construct solid
-    G4Tubs* siDetSpiceRingSec = BuildCrystal(RingID);
-    // construct logical volume
-    if(!fSiDetSpiceRingLog[RingID]) {
-        G4String ringName = "siDetSpiceRing_";
-        G4String ringID = G4UIcommand::ConvertToString(RingID);
-        ringName += ringID;
-        ringName += "_Log";
+  // construct solid
+  G4Tubs* siDetSpiceRingSec = BuildCrystal(RingID);
+  // construct logical volume
+  if( !siDetSpiceRing_log[RingID] ) {
+		G4String ringName = "siDetSpiceRing_";
+		G4String ringID = G4UIcommand::ConvertToString(RingID);
+		ringName += ringID;
+		ringName += "_Log";
+		
+		//G4cout << "DetectionSystemSpice : ringName "<< ringName <<" RingID" <<  RingID<< G4endl ; 
+		//G4cin.get();
+		
+		siDetSpiceRing_log[RingID] = new G4LogicalVolume(siDetSpiceRingSec, material, ringName, 0, 0, 0);
+		siDetSpiceRing_log[RingID]->SetVisAttributes(vis_att);
+	}
+	
+	this->assemblySiRing[RingID]->AddPlacedVolume(siDetSpiceRing_log[RingID], move, rotate);
 
-        //G4cout << "DetectionSystemSpice : ringName "<< ringName <<" RingID" <<  RingID<< G4endl ;
-        //G4cin.get();
-
-        fSiDetSpiceRingLog[RingID] = new G4LogicalVolume(siDetSpiceRingSec, material, ringName, 0, 0, 0);
-        fSiDetSpiceRingLog[RingID]->SetVisAttributes(visAtt);
-    }
-
-    fAssemblySiRing[RingID]->AddPlacedVolume(fSiDetSpiceRingLog[RingID], move, rotate);
-
-    return 1;
+  return 1;
 }
 
-G4int DetectionSystemSpice::BuildInnerGuardRing() {
-    G4Material* material = G4Material::GetMaterial(fWaferMaterial);
-    if( !material ) {
-        G4cout << " ----> Material " << fWaferMaterial << " not found, cannot build the inner guard ring of Spice! " << G4endl;
-        return 0;
-    }
+G4int DetectionSystemSpice::BuildInnerGuardRing()
+{
+  G4Material* material = G4Material::GetMaterial(this->wafer_material);
+  if( !material ) {
+    G4cout << " ----> Material " << this->wafer_material << " not found, cannot build the inner guard ring of Spice! " << G4endl;
+    return 0;
+  }
 
-    // Set visualization attributes
-    G4VisAttributes* visAtt = new G4VisAttributes(G4Colour(0.0,1.0,1.0));
-    visAtt->SetVisibility(true);
+  // Set visualization attributes
+  G4VisAttributes* vis_att = new G4VisAttributes(G4Colour(0.0,1.0,1.0));
+  vis_att->SetVisibility(true);
 
-    G4Tubs* innerGuardRing = new G4Tubs("innerGuardRing",
-                                        fSiDetGuardRingInnerDiameter/2.,
-                                        fSiDetCrystalInnerDiameter/2.,
-                                        fSiDetCrystalThickness/2.,0,360);
+  G4Tubs* innerGuardRing = new G4Tubs("innerGuardRing",
+					 this->siDetGuardRingInnerDiameter/2.,
+					 this->siDetCrystalInnerDiameter/2.,
+					 this->siDetCrystalThickness/2.,0,360);
 
-    // Define rotation and movement objects
-    G4ThreeVector direction 	= G4ThreeVector(0,0,1);
-    G4double zPosition		= -(fSiDetCrystalThickness/2.);
-    G4ThreeVector move 		= zPosition * direction;
-    G4RotationMatrix* rotate = new G4RotationMatrix;
-    rotate->rotateZ(0*deg);
+  // Define rotation and movement objects
+  G4ThreeVector direction 	= G4ThreeVector(0,0,1);
+  G4double z_position		= -(this->siDetCrystalThickness/2.);
+  G4ThreeVector move 		= z_position * direction;
+  G4RotationMatrix* rotate = new G4RotationMatrix;
+  rotate->rotateZ(0*deg);
 
-    //logical volume
-    if(fSiInnerGuardRingLog == NULL) {
-        fSiInnerGuardRingLog = new G4LogicalVolume(innerGuardRing, material, "innerGuardRing", 0,0,0);
-        fSiInnerGuardRingLog->SetVisAttributes(visAtt);
-    }
+  //logical volume
+  if( siInnerGuardRing_log == NULL )
+  {
+    siInnerGuardRing_log = new G4LogicalVolume(innerGuardRing, material, "innerGuardRing", 0,0,0);
+    siInnerGuardRing_log->SetVisAttributes(vis_att);
+  }
 
-    fAssembly->AddPlacedVolume(fSiInnerGuardRingLog, move, rotate);
+  this->assembly->AddPlacedVolume(siInnerGuardRing_log, move, rotate);
 
-    return 1;
+  return 1;
 }
 
-G4int DetectionSystemSpice::BuildOuterGuardRing() {
-    G4Material* material = G4Material::GetMaterial(fWaferMaterial);
-    if( !material ) {
-        G4cout << " ----> Material " << fWaferMaterial << " not found, cannot build the outer guard ring of Spice! " << G4endl;
-        return 0;
-    }
+G4int DetectionSystemSpice::BuildOuterGuardRing()
+{
+  G4Material* material = G4Material::GetMaterial(this->wafer_material);
+  if( !material ) {
+    G4cout << " ----> Material " << this->wafer_material << " not found, cannot build the outer guard ring of Spice! " << G4endl;
+    return 0;
+  }
 
-    // Set visualization attributes
-    G4VisAttributes* visAtt = new G4VisAttributes(G4Colour(0.0,1.0,1.0));
-    visAtt->SetVisibility(true);
+  // Set visualization attributes
+  G4VisAttributes* vis_att = new G4VisAttributes(G4Colour(0.0,1.0,1.0));
+  vis_att->SetVisibility(true);
 
-    G4Tubs* outerGuardRing = new G4Tubs("outerGuardRing",
-                                        fSiDetCrystalOuterDiameter/2.,
-                                        fSiDetGuardRingOuterDiameter/2.,
-                                        fSiDetCrystalThickness/2.,0,360);
+  G4Tubs* outerGuardRing = new G4Tubs("outerGuardRing",
+					 this->siDetCrystalOuterDiameter/2.,
+					 this->siDetGuardRingOuterDiameter/2.,
+					 this->siDetCrystalThickness/2.,0,360);
 
-    // Define rotation and movement objects
-    G4ThreeVector direction 	= G4ThreeVector(0,0,1);
-    G4double zPosition		= -(fSiDetCrystalThickness/2.);
-    G4ThreeVector move 		= zPosition * direction;
-    G4RotationMatrix* rotate = new G4RotationMatrix;
-    rotate->rotateZ(0*deg);
+  // Define rotation and movement objects
+  G4ThreeVector direction 	= G4ThreeVector(0,0,1);
+  G4double z_position		= -(this->siDetCrystalThickness/2.);
+  G4ThreeVector move 		= z_position * direction;
+  G4RotationMatrix* rotate = new G4RotationMatrix;
+  rotate->rotateZ(0*deg);
 
-    //logical volume
-    if(fSiOuterGuardRingLog == NULL) {
-        fSiOuterGuardRingLog = new G4LogicalVolume(outerGuardRing, material, "outerGuardRing", 0,0,0);
-        fSiOuterGuardRingLog->SetVisAttributes(visAtt);
-    }
+  //logical volume
+  if( siOuterGuardRing_log == NULL )
+  {
+    siOuterGuardRing_log = new G4LogicalVolume(outerGuardRing, material, "outerGuardRing", 0,0,0);
+    siOuterGuardRing_log->SetVisAttributes(vis_att);
+  }
 
-    fAssembly->AddPlacedVolume(fSiOuterGuardRingLog, move, rotate);
+  this->assembly->AddPlacedVolume(siOuterGuardRing_log, move, rotate);
 
-    return 1;
+  return 1;
 }
+
+
+void DetectionSystemSpice::BuildDetectorMount() {
+
+  // ** Visualisation
+  G4VisAttributes* vis_att = new G4VisAttributes(G4Colour(AL_COL));
+  vis_att->SetVisibility(true);
+  
+  // ** Dimensions
+  // Box
+  G4double box_half_width = this->detector_mount_width/2.;
+  G4double box_half_length = this->detector_mount_length/2.;
+  G4double box_half_thickness = this->detector_mount_thickness/2.;
+  // Inner Radius
+  G4double lip_radius = this->detector_mount_lip_radius;
+  //G4double lip_half_thickness = this->detector_mount_lip_thickness/2.;
+  G4double box_cut_radius = this->detector_mount_inner_radius;
+  // Annular Clamp
+  G4double clamp_half_thickness = this->annular_clamp_thickness;
+  G4double clamp_half_width = this->annular_clamp_width/2.;
+  G4double clamp_half_length = this->annular_clamp_length/2.;
+  
+  // ** Shapes
+  G4Box* mount_box = new G4Box("mount_box", box_half_width, box_half_length, box_half_thickness);
+  G4Tubs* inner_radius_cut = new G4Tubs("inner_radius_cut", 0, lip_radius, 2*box_half_thickness, 0, 360*deg);
+  G4Tubs* lip_cut = new G4Tubs("lip_cut", 0, box_cut_radius, box_half_thickness, 0, 360*deg);
+  G4Box* annular_clamp = new G4Box("annular_clamp", clamp_half_width, clamp_half_length, clamp_half_thickness);
+  
+  G4SubtractionSolid* detector_mount_pre = new G4SubtractionSolid("detector_mount_pre", mount_box, inner_radius_cut);
+  G4ThreeVector trans(0, 0, this->detector_mount_lip_thickness);
+  G4SubtractionSolid* detector_mount = new G4SubtractionSolid("detector_mount", detector_mount_pre, lip_cut, 0, trans);
+  
+  G4double plane_offset = (this->annular_clamp_plane_offset + clamp_half_length) / sqrt(2.);
+  G4double z_offset = box_half_thickness;
+  G4ThreeVector move(plane_offset, plane_offset, z_offset);
+  G4RotationMatrix* rotate = new G4RotationMatrix(45*deg, 0, 0);
+  G4SubtractionSolid* detector_mount2 = new G4SubtractionSolid("detector_mount2", detector_mount, annular_clamp, rotate, move);
+  move.setX(-plane_offset);
+  rotate->rotateZ(90*deg);
+  G4SubtractionSolid* detector_mount3 = new G4SubtractionSolid("detector_mount3", detector_mount2, annular_clamp, rotate, move);
+  move.setY(-plane_offset);
+  rotate->rotateZ(90*deg);
+  G4SubtractionSolid* detector_mount4 = new G4SubtractionSolid("detector_mount4", detector_mount3, annular_clamp, rotate, move);
+  move.setX(plane_offset);
+  rotate->rotateZ(90*deg);
+  G4SubtractionSolid* detector_mount5 = new G4SubtractionSolid("detector_mount5", detector_mount4, annular_clamp, rotate, move);
+  
+  // ** Logical
+  G4Material* detector_mount_material = G4Material::GetMaterial(this->detector_mount_material);
+  detector_mount_log = new G4LogicalVolume(detector_mount5, detector_mount_material, "detector_mount_log", 0, 0, 0);
+  detector_mount_log->SetVisAttributes(vis_att);
+  
+    //this->assembly->AddPlacedVolume(detector_mount_log, move, rotate); CHECK!!
+    
+} // end::BuildDetectorMount()
+
+void DetectionSystemSpice::BuildAnnularClamps() {
+
+	// ** Visualisation
+  G4VisAttributes* vis_att = new G4VisAttributes(G4Colour(PEEK_COL));
+  vis_att->SetVisibility(true);
+  
+  // ** Dimensions
+  G4double clamp_half_length = this->annular_clamp_length/2.;
+  G4double clamp_half_width = this->annular_clamp_width/2.;
+  G4double clamp_half_thickness = this->annular_clamp_thickness/2.;
+  // Distance
+  G4double beam_clamp_distance = this->annular_clamp_plane_offset + clamp_half_length;
+  
+  // ** Shapes
+  G4Box* annular_clamp = new G4Box("annular_clamp", clamp_half_width, clamp_half_length, clamp_half_thickness);
+  
+  G4ThreeVector move(2*beam_clamp_distance, 0, 0);
+  G4UnionSolid* double_clamps = new G4UnionSolid("double_clamps", annular_clamp, annular_clamp, 0, move);
+  
+  G4Box* annular_clamp2 = new G4Box("annular_clamp2", clamp_half_length, clamp_half_width, clamp_half_thickness);
+  G4ThreeVector trans(0, 2*beam_clamp_distance, 0);
+  G4UnionSolid* double_clamps2 = new G4UnionSolid("double_clamps2", annular_clamp2, annular_clamp2, 0, trans);
+  
+  G4ThreeVector trans2(beam_clamp_distance, -beam_clamp_distance, 0);
+  G4UnionSolid* four_clamps = new G4UnionSolid("four_clamps", double_clamps, double_clamps2, 0, trans2);
+  
+  // ** Logical
+  G4Material* annular_clamp_material = G4Material::GetMaterial(this->annular_clamp_material);
+  annular_clamp_log = new G4LogicalVolume(four_clamps, annular_clamp_material, "annular_clamp_log", 0, 0, 0);
+  annular_clamp_log->SetVisAttributes(vis_att);
+  
+} // end::BuildAnnularClamps()  
+
 
 ///////////////////////////////////////////////////////
 // Build one segment of Spice, 
 // the geometry depends on the distance from the center
 ///////////////////////////////////////////////////////
-G4Tubs* DetectionSystemSpice::BuildCrystal(G4int RingID) {
-    // define angle, length, thickness, and inner and outer diameter
-    // of silicon detector segment
-    G4double tubeElementLength = (fSiDetCrystalOuterDiameter - fSiDetCrystalInnerDiameter)/(2*(fSiDetRadialSegments));
-    G4double tubeElementAngularWidth = (360./fSiDetPhiSegments)*deg;
-    G4double tubeElementInnerRadius = (fSiDetCrystalInnerDiameter)/2.0 + tubeElementLength*(RingID);
-    G4double tubeElementOuterRadius = ((G4double)fSiDetCrystalInnerDiameter)/2.0 + tubeElementLength*(RingID+1);
-    G4double tubeElementHalfThickness = (fSiDetCrystalThickness)/2.0;
+G4Tubs* DetectionSystemSpice::BuildCrystal(G4int RingID)
+{
+  // define angle, length, thickness, and inner and outer diameter
+  // of silicon detector segment
+  G4double tube_element_length = (this->siDetCrystalOuterDiameter - this->siDetCrystalInnerDiameter)/(2*(this->siDetRadialSegments));
+  G4double tube_element_angular_width = (360./this->siDetPhiSegments)*deg;
+  G4double tube_element_inner_radius = (this->siDetCrystalInnerDiameter)/2.0 + tube_element_length*(RingID);
+  G4double tube_element_outer_radius = ((G4double)this->siDetCrystalInnerDiameter)/2.0 + tube_element_length*(RingID+1);
+  G4double tube_element_half_thickness = (this->siDetCrystalThickness)/2.0;
 
-    // establish solid
-    G4Tubs* crystalBlock = new G4Tubs("crystalBlock",tubeElementInnerRadius,tubeElementOuterRadius,tubeElementHalfThickness,0,tubeElementAngularWidth);
+  // establish solid
+  G4Tubs* crystal_block = new G4Tubs("crystal_block",tube_element_inner_radius,tube_element_outer_radius,tube_element_half_thickness,0,tube_element_angular_width);
 
-    return crystalBlock;
+  return crystal_block;
 }//end ::BuildCrystal
-
-G4int DetectionSystemSpice::AssignSpiceResolution(G4double intercept, G4double gradient) {
-    fSpiceResolution[0] = intercept;
-    fSpiceResolution[1] = gradient;
-
-    return 1;
-} //end ::SetResolution
-
-G4double DetectionSystemSpice::ApplySpiceResolution(G4double energy) {
-    G4double rand01 = G4UniformRand();
-    G4double rand02 = G4UniformRand();
-    G4double randStdNormal = sqrt(-2.0 * log(rand01)) * sin(2.0 * M_PI * rand02); //random normal(0,1)
-    energy += ((fSpiceResolution[1] * energy) + fSpiceResolution[0]) * randStdNormal;
-
-    return energy;
-} //end ::ApplySpiceResolution
-

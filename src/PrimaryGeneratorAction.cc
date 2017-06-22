@@ -55,22 +55,21 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* DC)
       fDetector(DC)
 {
     G4int nParticle = 1;
-    fParticleGun  = new G4ParticleGun(nParticle);
+    fParticleGun  = new G4ParticleGun(nParticle); //In our code, the gun is called fParticleGun
     //create a messenger for this class
     fGunMessenger = new PrimaryGeneratorMessenger(this);
 
     fParticleGun->SetParticleEnergy(0*eV);
-    fParticleGun->SetParticlePosition(G4ThreeVector(0.,0.,0.));
+    fParticleGun->SetParticlePosition(G4ThreeVector(0.,0.,0.));//these 3 lines initialise the Gun, basic values
     fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
 
     // defaults
     fNumberOfDecayingLaBrDetectors = 0;
     fEffEnergy = 0.0;
     fEffDirectionBool = false;
-    fEffPositionBool = false;
+    fEffPositionBool = false;//more defaults - effective?
     fEffParticleBool = false;
     fEffDirection = G4ThreeVector(0.0*mm,0.0*mm,0.0*mm);
-
     fEffPolarization = false;
     fEffBeam = false;
 
@@ -214,14 +213,16 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         fParticleGun->SetParticleMomentumDirection(thisDirection);
         fParticleGun->SetParticleEnergy(thisEnergy);
     }
+	
     else if(fEffEnergy != 0.0) {
         G4ParticleDefinition* effPart;
-        if(fEffParticleBool) {
+        if(fEffParticleBool) {//std::cout<<fEffEnergy<<" energy "<<fEffParticleBool<<std::endl;
+	      //std::cout<<"Real particle loop"<<std::endl; //am now in loop, with energy command in macro
 
-            if(fEffParticle == "electron" || fEffParticle == "e-") {
+            if(fEffParticle == "electron" || fEffParticle == "e-") { //creates full electrons now
                 effPart = G4ParticleTable::GetParticleTable()->FindParticle("e-");
             }
-            if(fEffParticle == "positron" || fEffParticle == "e+") {
+            else if(fEffParticle == "positron" || fEffParticle == "e+") {
                 effPart = G4ParticleTable::GetParticleTable()->FindParticle("e+");
             }
             else if (fEffParticle == "gamma" || fEffParticle == "photon"){
@@ -235,6 +236,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
             }
         }
         else {
+	  //std::cout<<fEffEnergy<<" energy "<<fEffParticleBool<<std::endl;
 
             effPart = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
         }
@@ -247,7 +249,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
             effdirection = fEffDirection;
             // If we want to simulate a realistic beam spot, instead of perfect pencil beam.
             if(fEffBeam) {
-                G4double xMonte = 10000.0*m;
+                G4double xMonte = 10000.0*m; //monte for monte-carlo, effective errors toa central beam, vreates a distribution
                 G4double yMonte = 10000.0*m;
                 G4double zMonte = 0.0*m;
                 G4ThreeVector vecMonte;
@@ -275,14 +277,15 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
             effRandPhi      = (360.*deg)*G4UniformRand();
             effdirection = G4ThreeVector(effRandSinTheta*cos(effRandPhi), effRandSinTheta*sin(effRandPhi), effRandCosTheta);
         }
-
+		//std::cout<<thisEffPosition<<effPart<<effdirection<<fEffEnergy<<std::endl; //gives beam starting pos as expected
+		//effpart is mem location, but all the same indicating just the electron //effdirection is random as expected
         fParticleGun->SetParticleDefinition(effPart);
         fParticleGun->SetParticlePosition(thisEffPosition);
         fParticleGun->SetParticleMomentumDirection(effdirection);
         fParticleGun->SetParticleEnergy(fEffEnergy);
     }
-    else if (fParticleGun->GetParticleDefinition() == G4Geantino::Geantino()) {
-    }
+    else if (fParticleGun->GetParticleDefinition() == G4Geantino::Geantino()) { std::cout<<"Geantino loop"<<std::endl;
+    } /////no output now, is not entering which is good
 
     // Set Optional Polarization
     if(fEffPolarization) {

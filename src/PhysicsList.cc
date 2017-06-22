@@ -79,7 +79,7 @@
 
 PhysicsList::PhysicsList() :
     G4VModularPhysicsList(),
-    fCutForGamma(1.*mm), fCutForElectron(1.*mm),
+    fCutForGamma(1.*mm), fCutForElectron(0.01*mm),
     fCutForPositron(1.*mm),
     fEmPhysicsList(0),
     fRaddecayList(0),
@@ -99,7 +99,7 @@ PhysicsList::PhysicsList() :
     //default physics
     fParticleList = new G4DecayPhysics();
 
-    //default physics
+    //default radioactive physics
     fRaddecayList = new G4RadioactiveDecayPhysics();
 
     // EM physics
@@ -193,7 +193,7 @@ void PhysicsList::SelectPhysicsList(const G4String& name)
         delete fEmPhysicsList;
         fEmPhysicsList = new G4EmStandardPhysics_option4(verboseLevel);
     } else {
-        G4cout << "PhysicsList WARNING wrong or unkonwn <"
+        G4cout << "PhysicsList WARNING wrong or unknown <"
                << name << "> Physics " << G4endl;
     }
 }

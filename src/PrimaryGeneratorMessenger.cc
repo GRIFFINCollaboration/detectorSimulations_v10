@@ -81,6 +81,11 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun
     fEfficiencyBeamRadiusCmd->SetGuidance("Set beam radius");
     fEfficiencyBeamRadiusCmd->SetUnitCategory("Length");
     fEfficiencyBeamRadiusCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  fenergyCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/energy",this);
+  fenergyCmd->SetGuidance("Sets energy of the photons.");
+  fenergyCmd->SetUnitCategory("Energy");
+  fenergyCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -91,6 +96,7 @@ PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger() {
     delete fEfficiencyDirectionCmd;
     delete fEfficiencyPolarizationCmd;
     delete fEfficiencyBeamRadiusCmd;
+	delete fenergyCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

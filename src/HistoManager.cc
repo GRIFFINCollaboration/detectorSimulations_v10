@@ -35,7 +35,7 @@
 #include "HistoManager.hh"
 #include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"
-
+//#include "G4RootAnalysisManager.hh" //wasn't here originally - unecessarily complex
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 HistoManager::HistoManager() {
@@ -116,10 +116,10 @@ void HistoManager::Book() {
 
     // Create directories
     analysisManager->SetHistoDirectoryName("histo");
-    //analysisManager->SetNtupleDirectoryName("ntuple");
+    //analysisManager->SetNtupleDirectoryName("ntuple"); ///21/7 brought back in, but fine uncommented 
 
     // Open an output file
-    G4bool fileOpen = analysisManager->OpenFile(fFileName[0]);
+    G4bool fileOpen = analysisManager->OpenFile(fFileName[0]); //surely should be file 1?? as quoted below
     if (!fileOpen) {
         G4cout << "\n---> HistoManager::book(): cannot open " << fFileName[1]
                << G4endl;
@@ -222,7 +222,7 @@ void HistoManager::Book() {
         xmax      = EDEPXMAX;
         title     = "Edep in crystal (keV)";
 
-		  if(fGriffin) {
+		  /*if(fGriffin) {
 			 // Griffin Suppressors
 			 name  = "griffin_crystal_sup_edep";
 			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
@@ -356,20 +356,20 @@ void HistoManager::Book() {
             name  = "Eightpi_crystal_edep_det" + detString;
             MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 			 }
-		  }//if(fEightPi)
+		  }//if(fEightPi)*/
 
 		  if(fSpice) {
 			 // spice detector
-			 name  = "spice_crystal_edep";
+			 name  = "spice_edep"; //edep = energy deposition
 			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-			 name  = "spice_crystal_edep_sum";
+			 name  = "spice_edep_sum";// summed
 			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-			 for (G4int i=0; i < MAXNUMDET; i++) {
+			 for (G4int i=0; i <= MAXNUMDET; i++) {//MAXNUMDET to 10
             detString = G4intToG4String(i);
 
-            name  = "spice_crystal_edep_det" + detString;
+            name  = "spice_edep_det" + detString;
             MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 			 }
 		  }//if(fSpice)
@@ -511,7 +511,6 @@ void HistoManager::Normalize(G4int ih, G4double fac) {
 //        analysisManager->AddNtupleRow();
 //    }
 //}
-
 
 void HistoManager::FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ) {
     if(fHitTrackerBool) {

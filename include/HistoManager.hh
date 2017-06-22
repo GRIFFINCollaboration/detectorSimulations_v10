@@ -36,8 +36,8 @@
 #define HistoManager_h 1
 
 #include "globals.hh"
-
 #include "g4root.hh"
+//#include "G4RootAnalysisManager.hh" //from g4root.hh
 ////#include "g4xml.hh"
 ////#include "g4hbook.hh"
 
@@ -49,7 +49,7 @@ const G4bool WRITETRACKLHISTOS  = true;
 
 const G4int MAXHISTO            = 500;
 const G4int MAXNTCOL            = 15;
-const G4int MAXNUMDET           = 20;
+const G4int MAXNUMDET           = 10; //10 rings in SPICE
 const G4int MAXNUMDETGRIFFIN    = 16;
 const G4int MAXNUMCRYGRIFFIN    = 4;
 const G4int NUMPARTICLETYPES    = 20;
@@ -565,28 +565,28 @@ enum HISTONAME
     kEightpiCrystalEdepDet17,
     kEightpiCrystalEdepDet18,
     kEightpiCrystalEdepDet19,
-    kSpiceCrystalEdep,
-    kSpiceCrystalEdepSum,
-    kSpiceCrystalEdepDet0,
-    kSpiceCrystalEdepDet1,
-    kSpiceCrystalEdepDet2,
-    kSpiceCrystalEdepDet3,
-    kSpiceCrystalEdepDet4,
-    kSpiceCrystalEdepDet5,
-    kSpiceCrystalEdepDet6,
-    kSpiceCrystalEdepDet7,
-    kSpiceCrystalEdepDet8,
-    kSpiceCrystalEdepDet9,
-    kSpiceCrystalEdepDet10,
-    kSpiceCrystalEdepDet11,
-    kSpiceCrystalEdepDet12,
-    kSpiceCrystalEdepDet13,
-    kSpiceCrystalEdepDet14,
-    kSpiceCrystalEdepDet15,
-    kSpiceCrystalEdepDet16,
-    kSpiceCrystalEdepDet17,
-    kSpiceCrystalEdepDet18,
-    kSpiceCrystalEdepDet19,
+    kSpiceEdep,
+    kSpiceEdepSum,
+    kSpiceEdepDet0,
+    kSpiceEdepDet1,
+    kSpiceEdepDet2,
+    kSpiceEdepDet3,
+    kSpiceEdepDet4,
+    kSpiceEdepDet5,
+    kSpiceEdepDet6,
+    kSpiceEdepDet7,
+    kSpiceEdepDet8,
+    kSpiceEdepDet9,
+    kSpiceEdepDet10,
+    kSpiceEdepDet11,
+    kSpiceEdepDet12,
+    kSpiceEdepDet13,
+    kSpiceEdepDet14,
+    kSpiceEdepDet15,
+    kSpiceEdepDet16,
+    kSpiceEdepDet17,
+    kSpiceEdepDet18,
+    kSpiceEdepDet19,
     kPacesCrystalEdep,		// This is probably the wrong number of detectors for paces.
     kPacesCrystalEdepSum,
     kPacesCrystalEdepDet0,
@@ -595,7 +595,7 @@ enum HISTONAME
     kPacesCrystalEdepDet3,
     kPacesCrystalEdepDet4,
     kPacesCrystalEdepDet5,
-    kPacesCrystalEdepDet6,
+ /*   kPacesCrystalEdepDet6,
     kPacesCrystalEdepDet7,
     kPacesCrystalEdepDet8,
     kPacesCrystalEdepDet9,
@@ -608,8 +608,7 @@ enum HISTONAME
     kPacesCrystalEdepDet16,
     kPacesCrystalEdepDet17,
     kPacesCrystalEdepDet18,
-    kPacesCrystalEdepDet19
-
+    kPacesCrystalEdepDet19*/ // reduced to 5 as number of detectors 22/6
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
