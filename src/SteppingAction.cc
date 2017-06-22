@@ -51,7 +51,7 @@ SteppingAction::SteppingAction(DetectorConstruction* detcon,
       fDetector(detcon), fEventAction(evt)
 {
     fGriffinDetectorMapSet = false;
-    fNumberOfAssemblyVols = 13; // giving spice det errors?? was 13 //no fix // was for griffin
+    fNumberOfAssemblyVols = 13; 
     fStepNumber = 0;
 }
 
@@ -528,56 +528,40 @@ void SteppingAction::SetDetAndCryNumberForDeadLayerSpecificGriffinCrystal(G4Stri
 
     //G4cout << "Found Edep in " << volname <<  " fCry = " << fCry << " fDet = " << fDet << " av = " << av << G4endl;
 }
-/////////////bypassing for now - no change 
-void SteppingAction::SetDetNumberForGenericDetector(G4String volname) { //possibly giving errors for the number of spice detectors //produces fDet, so yes!
+
+void SteppingAction::SetDetNumberForGenericDetector(G4String volname) {
     const char *cstr = volname.c_str();//attempts a string to char conversion - to fill mnemonic
-    G4cout << "volname is " << volname << " " << cstr << " * " << *cstr << " [4] " <<  cstr[4]-'0' << " [5] " <<cstr[5] << G4endl;
-    G4cout << " cstr[10] " << cstr[10] - '0' << " cstr[11] "  << cstr[11]-'0' << " [12] " <<cstr[12]-'0' << G4endl;
     
-    G4int volNameOver9;//as in over 9 chars?
+ G4int volNameOver9;
     G4int avOver9 = cstr[4]-'0';
     G4int avOver99 = cstr[5]-'0';
-    //if(volname = "siDetSpiceRing") {
-    //  fDet = 10;//this didn't work, set all (even paces) to 10
-   // }
-   // else{
     if(avOver9 == 47) { // under 10
         volNameOver9 = cstr[11]-'0';
         if(volNameOver9 == 47) {
-            fDet = cstr[10]-'0'; 
-            G4cout << "under 10" << G4endl;
+            fDet = cstr[10]-'0';
         }
         else {
-            fDet = ((cstr[10]-'0')*10)+volNameOver9 ; 
-	    G4cout << "under 10 not 47  "<<  volNameOver9 << " " << ((cstr[10]-'0')*10) << G4endl;
+            fDet = ((cstr[10]-'0')*10)+volNameOver9 ;
         }
     }
-    else if(avOver99 == 47) { // under 100 (detectors??)
+    else if(avOver99 == 47) { // under 100
         volNameOver9 = cstr[12]-'0';
         if(volNameOver9 == 47) {
             fDet = cstr[11]-'0';
-            G4cout << "under 10o" << G4endl;
         }
         else {
-            fDet = ((cstr[11]-'0')*10)+volNameOver9 ;//////////////////////////this one is broken, leads to detnum >12 - the start of the problems as has detnum = 9 for example then next one is 12
-	    G4cout << "under 100 not 47" << volNameOver9 << " " << ((cstr[11]-'0')*10) << G4endl;
+            fDet = ((cstr[11]-'0')*10)+volNameOver9 ;
         }
     }
     else { // OVER 100
         volNameOver9 = cstr[13]-'0';
         if(volNameOver9 == 47) {
             fDet = cstr[12]-'0';
-            G4cout << "over 100" << G4endl;
         }
         else {
             fDet = ((cstr[12]-'0')*10)+volNameOver9 ;
-	    G4cout << "over 100 not 47" << G4endl;
         }
     }
-    G4cout << "volNameOver9 " << volNameOver9 << G4endl;
-    G4cout << fDet << " for detector number" << G4endl;
-    G4cout << G4endl;
-   // }
     //G4cout << "Stepping Action :: Found electron ekin in " << volname << " fDet = " << fDet << G4endl;
 }
 

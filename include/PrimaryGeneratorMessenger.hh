@@ -70,7 +70,6 @@ private:
     G4UIcmdWithAString*            fEfficiencyParticleCmd;
     G4UIcmdWith3Vector*            fEfficiencyPolarizationCmd;
     G4UIcmdWithADoubleAndUnit*     fEfficiencyBeamRadiusCmd;
-	G4UIcmdWithADoubleAndUnit*     fenergyCmd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

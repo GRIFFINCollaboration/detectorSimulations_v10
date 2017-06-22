@@ -35,7 +35,6 @@
 #include "HistoManager.hh"
 #include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"
-//#include "G4RootAnalysisManager.hh" //wasn't here originally - unecessarily complex
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 HistoManager::HistoManager() {
@@ -116,10 +115,10 @@ void HistoManager::Book() {
 
     // Create directories
     analysisManager->SetHistoDirectoryName("histo");
-    //analysisManager->SetNtupleDirectoryName("ntuple"); ///21/7 brought back in, but fine uncommented 
+    //analysisManager->SetNtupleDirectoryName("ntuple"); 
 
     // Open an output file
-    G4bool fileOpen = analysisManager->OpenFile(fFileName[0]); //surely should be file 1?? as quoted below
+    G4bool fileOpen = analysisManager->OpenFile(fFileName[0]); 
     if (!fileOpen) {
         G4cout << "\n---> HistoManager::book(): cannot open " << fFileName[1]
                << G4endl;
@@ -222,7 +221,7 @@ void HistoManager::Book() {
         xmax      = EDEPXMAX;
         title     = "Edep in crystal (keV)";
 
-		  /*if(fGriffin) {
+		  if(fGriffin) {
 			 // Griffin Suppressors
 			 name  = "griffin_crystal_sup_edep";
 			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
@@ -356,7 +355,7 @@ void HistoManager::Book() {
             name  = "Eightpi_crystal_edep_det" + detString;
             MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 			 }
-		  }//if(fEightPi)*/
+		  }//if(fEightPi)
 
 		  if(fSpice) {
 			 // spice detector
@@ -366,7 +365,7 @@ void HistoManager::Book() {
 			 name  = "spice_edep_sum";// summed
 			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-			 for (G4int i=0; i <= MAXNUMDET; i++) {//MAXNUMDET to 10
+			 for (G4int i=0; i < MAXNUMDET; i++) {
             detString = G4intToG4String(i);
 
             name  = "spice_edep_det" + detString;

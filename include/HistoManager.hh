@@ -49,7 +49,7 @@ const G4bool WRITETRACKLHISTOS  = true;
 
 const G4int MAXHISTO            = 500;
 const G4int MAXNTCOL            = 15;
-const G4int MAXNUMDET           = 10; //10 rings in SPICE
+const G4int MAXNUMDET           = 20; 
 const G4int MAXNUMDETGRIFFIN    = 16;
 const G4int MAXNUMCRYGRIFFIN    = 4;
 const G4int NUMPARTICLETYPES    = 20;

@@ -216,10 +216,9 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	
     else if(fEffEnergy != 0.0) {
         G4ParticleDefinition* effPart;
-        if(fEffParticleBool) {//std::cout<<fEffEnergy<<" energy "<<fEffParticleBool<<std::endl;
-	      //std::cout<<"Real particle loop"<<std::endl; //am now in loop, with energy command in macro
+        if(fEffParticleBool) {
 
-            if(fEffParticle == "electron" || fEffParticle == "e-") { //creates full electrons now
+            if(fEffParticle == "electron" || fEffParticle == "e-") {
                 effPart = G4ParticleTable::GetParticleTable()->FindParticle("e-");
             }
             else if(fEffParticle == "positron" || fEffParticle == "e+") {
@@ -236,7 +235,6 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
             }
         }
         else {
-	  //std::cout<<fEffEnergy<<" energy "<<fEffParticleBool<<std::endl;
 
             effPart = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
         }
@@ -249,7 +247,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
             effdirection = fEffDirection;
             // If we want to simulate a realistic beam spot, instead of perfect pencil beam.
             if(fEffBeam) {
-                G4double xMonte = 10000.0*m; //monte for monte-carlo, effective errors toa central beam, vreates a distribution
+                G4double xMonte = 10000.0*m; //monte for monte-carlo, effective errors to a central beam, creates a distribution
                 G4double yMonte = 10000.0*m;
                 G4double zMonte = 0.0*m;
                 G4ThreeVector vecMonte;
@@ -284,8 +282,8 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         fParticleGun->SetParticleMomentumDirection(effdirection);
         fParticleGun->SetParticleEnergy(fEffEnergy);
     }
-    else if (fParticleGun->GetParticleDefinition() == G4Geantino::Geantino()) { std::cout<<"Geantino loop"<<std::endl;
-    } /////no output now, is not entering which is good
+    else if (fParticleGun->GetParticleDefinition() == G4Geantino::Geantino()) {
+    } 
 
     // Set Optional Polarization
     if(fEffPolarization) {
