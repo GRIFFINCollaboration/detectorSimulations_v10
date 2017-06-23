@@ -59,7 +59,6 @@ class DetectionSystemDescant;
 
 class DetectionSystemSceptar;
 class DetectionSystemSpice;
-class DetectionSystemSpiceV02;
 class DetectionSystemPaces;
 class DetectionSystemSodiumIodide;
 class DetectionSystemLanthanumBromide;
@@ -100,6 +99,7 @@ public:
     //        void SetBoxColour( G4ThreeVector input )           {boxColour = input;};
     //        void AddBox();
 
+	void SetTabMagneticField(G4String, G4double, G4double);
     // Grid Functions
     void SetGridMat( G4String input )                  {fGridMat = input;};
     void SetGridSize( G4double input )                 {fGridSize = input;};
@@ -108,7 +108,7 @@ public:
     void SetGridPosOffset( G4ThreeVector input )          {fGridOffset = input;};
     void AddGrid();
 
-    //    void AddApparatusSpiceTargetChamber();
+       void AddApparatusSpiceTargetChamber();
     void AddApparatus8piVacuumChamber();
     void AddApparatus8piVacuumChamberAuxMatShell(G4double thickness);
     void AddApparatusGriffinStructure(G4int selector);
@@ -116,6 +116,7 @@ public:
     G4double GetWorldSizeX()           {return fWorldSizeX;};
     G4double GetWorldSizeY()           {return fWorldSizeY;};
     G4double GetWorldSizeZ()           {return fWorldSizeZ;};
+
 
     const G4VPhysicalVolume* GetphysiWorld() {return fPhysiWorld;};
 
@@ -160,7 +161,6 @@ public:
     void AddDetectionSystemSceptar(G4int ndet);
     void AddDetectionSystemPaces(G4int ndet);
     void AddDetectionSystemSpice(G4int ndet);
-    void AddDetectionSystemSpiceV02(G4int ndet);
 
     G4double GetLanthanumBromideCrystalRadius();
     G4double GetLanthanumBromideCrystalLength();

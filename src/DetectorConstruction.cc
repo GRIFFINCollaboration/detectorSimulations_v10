@@ -66,15 +66,22 @@
 
 #include "DetectionSystemTestcan.hh"
 
+#include "G4FieldManager.hh"
+#include "G4UniformMagField.hh"
+//#include "MagneticField.hh"
+//#include "Field.hh"     ///for the implementation of the non-uniform magnetic field
+#include "GlobalField.hh"
+#include "G4TransportationManager.hh"
+#include "nonUniformMagneticField.hh"
+
 #include "DetectionSystemGriffin.hh"
 #include "DetectionSystemSceptar.hh"
 #include "DetectionSystemSpice.hh"
-#include "DetectionSystemSpiceV02.hh"
 #include "DetectionSystemPaces.hh"
 #include "DetectionSystemSodiumIodide.hh"
 #include "DetectionSystemLanthanumBromide.hh"
 //#include "ApparatusGenericTarget.hh"
-//#include "ApparatusSpiceTargetChamber.hh"
+#include "ApparatusSpiceTargetChamber.hh"
 #include "Apparatus8piVacuumChamber.hh"
 #include "Apparatus8piVacuumChamberAuxMatShell.hh"
 #include "ApparatusGriffinStructure.hh"
@@ -245,6 +252,14 @@ void DetectorConstruction::SetWorldVis( G4bool vis ) {
 //    //expHallMagField->SetFieldValue(G4ThreeVector(vec.x(),vec.y(),vec.z()));
 //}
 
+void DetectorConstruction::SetTabMagneticField(G4String PathAndTableName, G4double z_offset, G4double z_rotation)
+{
+
+//const char * c = PathAndTableName.c_str();///conversion attempt using .c_str() (a string member function)
+
+  nonUniformMagneticField* tabulatedField = new nonUniformMagneticField(PathAndTableName,z_offset,z_rotation);///19/7 - now need to implement non-uniform field
+}
+
 void DetectorConstruction::UpdateGeometry() {
   G4RunManager::GetRunManager()->DefineWorldVolume(Construct());
 }
@@ -368,13 +383,13 @@ void DetectorConstruction::AddGrid() {
     }
 }
 
-//void DetectorConstruction::AddApparatusSpiceTargetChamber()
-//{
-//   //Create Target Chamber
-//   ApparatusSpiceTargetChamber* pApparatusSpiceTargetChamber = new ApparatusSpiceTargetChamber();
-//   pApparatusSpiceTargetChamber->Build( fLogicWorld );
+void DetectorConstruction::AddApparatusSpiceTargetChamber()
+{
+   //Create Target Chamber
+   ApparatusSpiceTargetChamber* pApparatusSpiceTargetChamber = new ApparatusSpiceTargetChamber();
+   pApparatusSpiceTargetChamber->Build( fLogicWorld );
 
-//}
+}
 
 void DetectorConstruction::AddApparatus8piVacuumChamber() {
   //Create Vacuum Chamber
@@ -941,36 +956,32 @@ void DetectorConstruction::AddDetectionSystemTestcan(G4ThreeVector input) {
   HistoManager::Instance().Testcan(true);
 }
 
-//void DetectorConstruction::AddDetectionSystemSpice(G4int ndet)
-//{
-//    DetectionSystemSpice* pSpice = new DetectionSystemSpice() ;
-//    pSpice->Build() ;
 
-//  pSpice->PlaceDetector( fLogicWorld, ndet ) ;
-//}
 
-//void DetectorConstruction::AddDetectionSystemSpiceV02(G4int ndet)
-//{
+void DetectorConstruction::AddDetectionSystemSpice(G4int nRings)
+{
 
-//    DetectionSystemSpiceV02* pSpiceV02 = new DetectionSystemSpiceV02() ;
-//    pSpiceV02->Build() ;
+	DetectionSystemSpice* pSpice = new DetectionSystemSpice() ;
+	pSpice->Build(); 
+	
+  G4int NumberSeg = 12; // Segments in Phi
+  G4int segmentID=0;
+  G4double annularDetectorDistance = 115*mm /*+ 150*mm*/;
+  G4ThreeVector pos(0,0,-annularDetectorDistance); 
 
-//  // Place in world !
-//  G4double phi = 0.0*deg;
-//  G4double theta = 0.0*deg;
+  pSpice->PlaceDetectorMount(fLogicWorld,pos);
+  pSpice->PlaceAnnularClamps(fLogicWorld,pos);   
+  pSpice->PlaceGuardRing(fLogicWorld, pos);
 
-//  G4ThreeVector direction = G4ThreeVector( sin(theta)*cos(phi) , sin(theta)*sin(phi) , cos(theta) ) ;
-//  G4double position = 0.0*mm;
-//  G4ThreeVector move = position * direction;
-
-//  G4RotationMatrix* rotate = new G4RotationMatrix; 		//rotation matrix corresponding to direction vector
-//  rotate->rotateX(0);
-//  rotate->rotateY(0);
-//  rotate->rotateZ(0);
-
-//  pSpiceV02->PlaceDetector( fLogicWorld, move, rotate, ndet ) ;
-
-//}
+  for(int ring = 0; ring<nRings; ring++)
+    {
+      for(int Seg=0; Seg<NumberSeg; Seg++)
+		{
+		  pSpice->PlaceDetector(fLogicWorld, pos, ring, Seg, segmentID);
+		  segmentID++;
+		} // end for(int Seg=0; Seg<NumberSeg; Seg++)
+    } // end for(int ring = 0; ring<nRings; ring++)
+}
 
 void DetectorConstruction::AddDetectionSystemPaces(G4int ndet) {
   if(fLogicWorld == NULL) {

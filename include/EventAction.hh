@@ -78,6 +78,10 @@ public:
 
     void AncillaryBgoDet(G4double de, G4double dl, G4int det) { fAncillaryBgoEnergyDet[det] += de; fAncillaryBgoTrackDet[det] += dl;} ;
 
+	void SpiceDet(G4double de, G4double dl, G4int det) { fSpiceEnergyDet[det] += de; fSpiceTrackDet[det] += dl;} ;///19/7
+
+	void AddPacesCrystDet(G4double de, G4double dl, G4int det) { fPacesCrystEnergyDet[det] += de; fPacesCrystTrackDet[det] += dl;} ;//20/7
+
     void SceptarDet(G4double de, G4double dl, G4int det) { fSceptarEnergyDet[det] += de; fSceptarTrackDet[det] += dl;} ;
 
     void AddGridCellElectron(G4double de, G4double dl, G4int det) { fGridCellElectronEKinDet[det] += de; fGridCellElectronTrackDet[det] += dl;} ;
@@ -101,7 +105,9 @@ private:
     void FillLaBrCryst() ;
     void FillAncillaryBgo() ;
     void FillSceptar() ;
+	void FillSpice() ; ///19/7
     void FillGridCell() ;
+	void FillPacesCryst();//20/7
 
     // Tracking info
     G4int    fHitTrackerI[NUMSTEPVARS][MAXHITS];
@@ -146,7 +152,13 @@ private:
 				 
     G4double fAncillaryBgoEnergyDet[MAXNUMDET] ;
     G4double fAncillaryBgoTrackDet[MAXNUMDET] ;
-				 
+
+	G4double fSpiceEnergyDet[MAXNUMDET] ; ///19/6
+	G4double fSpiceTrackDet[MAXNUMDET] ; 
+
+	G4double fPacesCrystEnergyDet[MAXNUMDET];//20/6
+    G4double fPacesCrystTrackDet[MAXNUMDET];
+		  
     G4double fSceptarEnergyDet[MAXNUMDET] ;
     G4double fSceptarTrackDet[MAXNUMDET] ;
 				 

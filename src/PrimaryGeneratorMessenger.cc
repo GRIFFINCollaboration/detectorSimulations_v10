@@ -81,6 +81,7 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun
     fEfficiencyBeamRadiusCmd->SetGuidance("Set beam radius");
     fEfficiencyBeamRadiusCmd->SetUnitCategory("Length");
     fEfficiencyBeamRadiusCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

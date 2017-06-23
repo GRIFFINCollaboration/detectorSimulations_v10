@@ -79,6 +79,8 @@ void EventAction::EndOfEventAction(const G4Event*) {
     FillAncillaryBgo() ;
     FillSceptar() ;
     FillGridCell() ;
+	FillSpice() ; ///19/6
+	FillPacesCryst() ; ///20/6
 
     //G4cout << "fNumberOfHits = " << fNumberOfHits << G4endl;
     for (G4int i = 0 ; i < fNumberOfHits; i++) {
@@ -132,7 +134,13 @@ void EventAction::ClearVariables() {
 		  
         fAncillaryBgoEnergyDet[i]  = 0 ;
         fAncillaryBgoTrackDet[i]   = 0 ;
-		  
+		
+		fSpiceEnergyDet[i]	= 0 ; ///19/6
+  		fSpiceTrackDet[i]	= 0 ; ///19/6
+
+  	    fPacesCrystEnergyDet[i]	= 0 ;///20/6
+      	fPacesCrystTrackDet[i]	= 0 ;//20/6
+
         fSceptarEnergyDet[i]  = 0 ;
         fSceptarTrackDet[i]   = 0 ;
 		  
@@ -317,6 +325,35 @@ void EventAction::FillGridCell() {
         if(WRITEEKINHISTOS && fGridCellNeutronEKinDet[j] > MINENERGYTHRES)   HistoManager::Instance().FillHisto(kGridcellNeutronEkinDet0+j, fGridCellNeutronEKinDet[j]);
     }
 }
+
+void EventAction::FillSpice() {
+	G4double energySumDet = 0;
+	for (G4int j=0; j < MAXNUMDET; j++) {
+        if(fSpiceEnergyDet[j] > MINENERGYTHRES) {
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(kSpiceEdep, fSpiceEnergyDet[j]);
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(kSpiceEdepDet0+j, fSpiceEnergyDet[j]);
+            energySumDet += fSpiceEnergyDet[j];
+        }
+    }
+    if(energySumDet > MINENERGYTHRES) {
+        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(kSpiceEdepSum, energySumDet);
+    }
+} ///////////////////////////////////////19/6
+
+
+void EventAction::FillPacesCryst() {
+    G4double energySumDet = 0;
+    for (G4int j=0; j < MAXNUMDET; j++) {
+        if(fPacesCrystEnergyDet[j] > MINENERGYTHRES) {
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(kPacesCrystalEdep, fPacesCrystEnergyDet[j]);
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(kPacesCrystalEdepDet0+j, fPacesCrystEnergyDet[j]);
+            energySumDet += fPacesCrystEnergyDet[j];
+        }
+    }
+    if(energySumDet > MINENERGYTHRES) {
+        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(kPacesCrystalEdepSum, energySumDet);
+    }
+}////////////////////////////////////////////20/6
 
 void EventAction::AddHitTracker(G4String mnemonic, G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ) {
     G4bool newhit = true;

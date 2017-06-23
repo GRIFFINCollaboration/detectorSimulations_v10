@@ -51,7 +51,7 @@ SteppingAction::SteppingAction(DetectorConstruction* detcon,
       fDetector(detcon), fEventAction(evt)
 {
     fGriffinDetectorMapSet = false;
-    fNumberOfAssemblyVols = 13;
+    fNumberOfAssemblyVols = 13; 
     fStepNumber = 0;
 }
 
@@ -271,6 +271,33 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
         fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
+  //SPICE energy ///19/7 deposits/////////////////////////////////////////////////////////////////////////////////
+    found = volname.find("siDetSpiceRing");
+  if (edep != 0 && found!=G4String::npos) {
+      SetDetAndCryNumberForSpiceDetector(volname);//should produce 10
+      //G4cout << "fDet = " << fDet << G4endl; //ranges 1 -12!!!!!!!
+      fEventAction->SpiceDet(edep,stepl,fDet-1); // histos fDet-1 to 10
+      mnemonic.replace(0,3,"SPI");
+      mnemonic.replace(3,2,G4intToG4String(fDet));//fDet to 10
+      mnemonic.replace(5,1,GetCrystalColour(fCry));
+      systemID = 10; ///is this arbitrary???
+	// ntuple
+      fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+  }
+
+
+  found = volname.find("pacesSiliconBlockLog");\
+  if (edep != 0 && found!=G4String::npos) {
+      SetDetNumberForGenericDetector(volname);//works fine
+      fEventAction->AddPacesCrystDet(edep,stepl,fDet-1);
+      mnemonic.replace(0,3,"PCS");
+      mnemonic.replace(3,2,G4intToG4String(fDet));
+      mnemonic.replace(5,1,GetCrystalColour(fCry));
+      systemID = 9000;
+      fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+  }
+	
+
     // Sceptar energy deposits ////////////////////////////////////////////////////////////////////////////////
     found = volname.find("sceptarSquareScintillatorLog");
     if (edep != 0 && found!=G4String::npos) {
@@ -432,17 +459,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
         fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
-    found = volname.find("pacesSiliconBlockLog");
-    if (edep != 0 && found!=G4String::npos) {
-        SetDetNumberForGenericDetector(volname);
-        fEventAction->Add8piCrystDet(edep,stepl,fDet-1);
-        mnemonic.replace(0,3,"PCS");
-        mnemonic.replace(3,2,G4intToG4String(fDet));
-        mnemonic.replace(5,1,GetCrystalColour(fCry));
-        systemID = 9000;
-        fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
-    }
-
     found = volname.find("testcanScintillatorLog");
     if (edep != 0 && found!=G4String::npos) {
         SetDetNumberForGenericDetector(volname);
@@ -514,8 +530,9 @@ void SteppingAction::SetDetAndCryNumberForDeadLayerSpecificGriffinCrystal(G4Stri
 }
 
 void SteppingAction::SetDetNumberForGenericDetector(G4String volname) {
-    const char *cstr = volname.c_str();
-    G4int volNameOver9;
+    const char *cstr = volname.c_str();//attempts a string to char conversion - to fill mnemonic
+    
+ G4int volNameOver9;
     G4int avOver9 = cstr[4]-'0';
     G4int avOver99 = cstr[5]-'0';
     if(avOver9 == 47) { // under 10
@@ -548,6 +565,27 @@ void SteppingAction::SetDetNumberForGenericDetector(G4String volname) {
     //G4cout << "Stepping Action :: Found electron ekin in " << volname << " fDet = " << fDet << G4endl;
 }
 
+void SteppingAction::SetDetAndCryNumberForSpiceDetector(G4String volname)
+{
+    // the volume name contains five underscrores : av_xxx_impr_SegmentID_siDetSpiceRing_RingID_etc...
+    G4String dummy="";                          
+    size_t UnderScoreIndex[6];
+    size_t old = -1 ;  //was -1
+    for (int i = 0 ; i < 6 ; i++ ){
+    UnderScoreIndex[i] = volname.find_first_of("_",old+1);
+    old = UnderScoreIndex[i] ;
+    }
+
+   dummy = volname.substr (UnderScoreIndex[2]+1,UnderScoreIndex[3]-UnderScoreIndex[2]-1); // select the substring between the underscores 
+   fCry = atoi(dummy.c_str()) -1 ; // subtract one : In spice we start counting ring or sectors from zero 
+   
+   dummy = volname.substr (UnderScoreIndex[4]+1,UnderScoreIndex[5]-UnderScoreIndex[4]-1);
+   fDet = atoi(dummy.c_str()); // ring 
+
+    //G4cout << " (Stepping action) in " << volname <<  " segment = " << cry << " ring = " << det << G4endl;
+    //G4cout << " in " << volname <<  " segment = " << cry << " ring = " << det << G4endl;
+    //G4cin.get();
+}
 
 void SteppingAction::SetDetNumberForAncillaryBGODetector(G4String volname) {
     const char *cstr = volname.c_str();
@@ -602,18 +640,19 @@ G4String SteppingAction::G4intToG4String(G4int value) {
     std::stringstream out;
     out << value;
     theString = out.str();
-
-    if(value < 10) {
+    //G4cout<<"thestring = "<<theString<<G4endl; //for paces, alternates randomly between 1 and 5 - indicating the detectors measuring the output(paces)
+    if(value <= 10) {				//also doesn't read for every particle, indicating the efficiency //SPICE has rogue values
         output.replace(1,1,theString);
+	 // rogue values have no corresponding output
     }
     else {
         output = theString;
     }
-
+  //G4cout<<"output = "<<output<<G4endl;
     return output;
 }
 
-G4String SteppingAction::GetCrystalColour(G4int value) {
+G4String SteppingAction::GetCrystalColour(G4int value) {//for mnemonic
     G4String output = "X";
     if(value == 1) {
         output = "B";
