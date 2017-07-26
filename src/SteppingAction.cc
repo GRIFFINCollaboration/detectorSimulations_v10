@@ -67,7 +67,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
     G4int processType   = 0;
     G4int systemID      = 9999;
     G4int evntNb;
-
+    //G4cout << "Step Number?? " << aStep << G4endl;//0x7fff85b53430 always = 140735436633136 in decimal
     fDet = 0;
     fCry = 0;
 
@@ -271,38 +271,40 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
         fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
-  //SPICE energy ///19/7 deposits/////////////////////////////////////////////////////////////////////////////////
+  //SPICE energy ///19/6 deposits/////////////////////////////////////////////////////////////////////////////////
     found = volname.find("siDetSpiceRing");
   if (edep != 0 && found!=G4String::npos) {
-      SetDetAndCryNumberForSpiceDetector(volname);//should produce 10
-      //G4cout << "fDet = " << fDet << G4endl; //ranges 1 -12!!!!!!!
-      fEventAction->SpiceDet(edep,stepl,fDet-1); // histos fDet-1 to 10
+      SetDetAndCryNumberForSpiceDetector(volname);
+      fEventAction->SpiceDet(edep,stepl,fDet, fCry);//bringing in fCry as well, watch for fDet-1/fCry-1 input like others if necessary
       mnemonic.replace(0,3,"SPI");
-      mnemonic.replace(3,2,G4intToG4String(fDet));//fDet to 10
+      mnemonic.replace(3,2,G4intToG4String(fDet));
       mnemonic.replace(5,1,GetCrystalColour(fCry));
-      systemID = 10; ///is this arbitrary???
+      systemID = 10;
 	// ntuple
-      fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+      fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry, fDet, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);//-1 on cry/det
+      //fEventAction->AddStepTracker(evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry, fDet, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+
+    
   }
 
-
-  found = volname.find("pacesSiliconBlockLog");\
+ //PACES energy ///20/6 deposits/////////////////////////////////////////////////////////////////////////////////
+  found = volname.find("pacesSiliconBlockLog");
   if (edep != 0 && found!=G4String::npos) {
-      SetDetNumberForGenericDetector(volname);//works fine
-      fEventAction->AddPacesCrystDet(edep,stepl,fDet-1);
+      SetDetNumberForGenericDetector(volname);
+      fEventAction->AddPacesCrystDet(edep,stepl,fDet-1);//following spice, worth removing this?
       mnemonic.replace(0,3,"PCS");
       mnemonic.replace(3,2,G4intToG4String(fDet));
       mnemonic.replace(5,1,GetCrystalColour(fCry));
-      systemID = 9000;
+      systemID = 50;
       fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
   }
 	
-
     // Sceptar energy deposits ////////////////////////////////////////////////////////////////////////////////
     found = volname.find("sceptarSquareScintillatorLog");
     if (edep != 0 && found!=G4String::npos) {
         SetDetNumberForGenericDetector(volname);
-        //if(fDet >= 6) fDet = fDet + 5; // to number SCPETAR paddles correctly
+	
+        //if(fDet >= 6) fDet = fDet + 5; // to number SCEPTAR paddles correctly
 
         if(fDet == 1) fDet = 6;
         else if(fDet == 2) fDet = 10;
@@ -567,7 +569,7 @@ void SteppingAction::SetDetNumberForGenericDetector(G4String volname) {
 
 void SteppingAction::SetDetAndCryNumberForSpiceDetector(G4String volname)
 {
-    // the volume name contains five underscrores : av_xxx_impr_SegmentID_siDetSpiceRing_RingID_etc...
+    // the volume name contains five underscores : av_xxx_impr_SegmentID_siDetSpiceRing_RingID_etc...
     G4String dummy="";                          
     size_t UnderScoreIndex[6];
     size_t old = -1 ;  //was -1
@@ -582,8 +584,8 @@ void SteppingAction::SetDetAndCryNumberForSpiceDetector(G4String volname)
    dummy = volname.substr (UnderScoreIndex[4]+1,UnderScoreIndex[5]-UnderScoreIndex[4]-1);
    fDet = atoi(dummy.c_str()); // ring 
 
-    //G4cout << " (Stepping action) in " << volname <<  " segment = " << cry << " ring = " << det << G4endl;
-    //G4cout << " in " << volname <<  " segment = " << cry << " ring = " << det << G4endl;
+   // G4cout << " (Stepping action) in " << volname <<  " segment = " << fCry << " ring = " << fDet << G4endl;
+   // G4cout << " in " << volname <<  " segment = " << fCry << " ring = " << fDet << G4endl;
     //G4cin.get();
 }
 

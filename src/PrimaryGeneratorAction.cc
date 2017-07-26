@@ -34,10 +34,10 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "PrimaryGeneratorAction.hh"
-#include "PrimaryGeneratorMessenger.hh"
+#include "PrimaryGeneratorMessenger.hh" // for command-based data input
 
 #include "Global.hh"
-#include "DetectorConstruction.hh"
+#include "DetectorConstruction.hh" //for detector based information
 
 #include "G4Event.hh"
 #include "G4ParticleGun.hh"
@@ -53,17 +53,19 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* DC)
     : G4VUserPrimaryGeneratorAction(),
       fParticleGun(0),
       fDetector(DC)
+
 {
     G4int nParticle = 1;
     fParticleGun  = new G4ParticleGun(nParticle); //In our code, the gun is called fParticleGun
     //create a messenger for this class
     fGunMessenger = new PrimaryGeneratorMessenger(this);
-
+    
+    //these 3 lines initialise the Gun, basic values
     fParticleGun->SetParticleEnergy(0*eV);
-    fParticleGun->SetParticlePosition(G4ThreeVector(0.,0.,0.));//these 3 lines initialise the Gun, basic values
+    fParticleGun->SetParticlePosition(G4ThreeVector(0.,0.,0.));
     fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
 
-    // defaults
+    //defaults for gun properties
     fNumberOfDecayingLaBrDetectors = 0;
     fEffEnergy = 0.0;
     fEffDirectionBool = false;
@@ -71,9 +73,9 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* DC)
     fEffParticleBool = false;
     fEffDirection = G4ThreeVector(0.0*mm,0.0*mm,0.0*mm);
     fEffPolarization = false;
-    fEffBeam = false;
+    fEffBeam = false;//initialises bools, if command entered will go to true and loops below entered
 
-    // LaBr properties
+    //default LaBr properties
     G4double triangleThetaAngle = 54.735610317245360*deg;
     // theta
     fDetectorAnglesLaBr3[0][0] 	= triangleThetaAngle;
@@ -150,7 +152,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         G4int detnumber = 0;
 
         // Choose random detector
-		  // this is done in a weird way, why not just use numberOfDecayingLaBrDetectors*G4UniformRand() and cast it to a integer?
+	// this is done in a weird way, why not just use numberOfDecayingLaBrDetectors*G4UniformRand() and cast it to a integer?
         prob = 1.0/((G4double)(fNumberOfDecayingLaBrDetectors));
         sumProb = 0.0;
         G4double randomDet = G4UniformRand();
@@ -230,60 +232,65 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
             else if (fEffParticle == "neutron"){
                 effPart = G4ParticleTable::GetParticleTable()->FindParticle("neutron");
             }
-            else {
-                effPart = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
-            }
         }
         else {
 
             effPart = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
         }
-        G4ThreeVector thisEffPosition = G4ThreeVector(0.0*mm,0.0*mm,0.0*mm);
+        
+        G4ThreeVector thisEffPosition = G4ThreeVector(0.0*mm,0.0*mm,0.0*mm);//in constructor?? //19/7
         if(fEffPositionBool) thisEffPosition = fEffPosition;
 
+	//DIRECTION CONTROLS (directly forced, beam, or cone)
         G4double effRandCosTheta, effRandSinTheta, effRandPhi;
         G4ThreeVector effdirection;
-        if(fEffDirectionBool) {
+        if(fEffDirectionBool) { 
             effdirection = fEffDirection;
             // If we want to simulate a realistic beam spot, instead of perfect pencil beam.
-            if(fEffBeam) {
+            if(fEffBeam) {// following SetEfficiencyBeamRadius command
                 G4double xMonte = 10000.0*m; //monte for monte-carlo, effective errors to a central beam, creates a distribution
-                G4double yMonte = 10000.0*m;
-                G4double zMonte = 0.0*m;
+                G4double yMonte = 10000.0*m;// why these values?
+                G4double zMonte = 0.0*m;//SPICE should have z/y errors?? as x along beam axis
                 G4ThreeVector vecMonte;
 
                 G4double directionTheta = fEffDirection.theta();
                 G4double directionPhi = fEffDirection.phi();
 
-                while( pow(xMonte,2) + pow(yMonte,2) > pow(fEffBeamRadius,2) ) {
+                while( pow(xMonte,2) + pow(yMonte,2) > pow(fEffBeamRadius,2) ) {//xmonte^2 + ymonte^2 > BeamRadius^2
                     xMonte = (2.*G4UniformRand()-1.0)*fEffBeamRadius;
                     yMonte = (2.*G4UniformRand()-1.0)*fEffBeamRadius;
                 }
 
-                vecMonte = G4ThreeVector(xMonte,yMonte,zMonte);
+                vecMonte = G4ThreeVector(xMonte,yMonte,zMonte); //rotate# funcs are CLHEP functions
                 vecMonte.rotateY(directionTheta);
                 vecMonte.rotateZ(directionPhi);
 
                 thisEffPosition = thisEffPosition + vecMonte;
             }
         }
-
+	else if(fConeRadiusBool) {
+	    G4cout << "Conal " << G4endl;
+	    
+	    effdirection = G4ThreeVector(0.1,0.1, 0.5);
+	}
         else {
-            // random direction
+	    //G4cout << "Rando " << G4endl; //may offer the solution, an altered 2pi rando. Using 4pi for efficiency
+            // random direction if no preference provided
             effRandCosTheta = 2.*G4UniformRand()-1.0;
             effRandSinTheta = sqrt( 1. - effRandCosTheta*effRandCosTheta );
             effRandPhi      = (360.*deg)*G4UniformRand();
             effdirection = G4ThreeVector(effRandSinTheta*cos(effRandPhi), effRandSinTheta*sin(effRandPhi), effRandCosTheta);
         }
-		//std::cout<<thisEffPosition<<effPart<<effdirection<<fEffEnergy<<std::endl; //gives beam starting pos as expected
-		//effpart is mem location, but all the same indicating just the electron //effdirection is random as expected
+	//std::cout<<thisEffPosition<<effPart<<effdirection<<fEffEnergy<<std::endl; //gives beam starting pos as expected
+	//effpart is mem location, but all the same indicating just the electron //effdirection is random as expected
+		
+	//after running through if-statements above we now have particle type definition, position, mom. direction, and the energy (or their initialised values)
         fParticleGun->SetParticleDefinition(effPart);
         fParticleGun->SetParticlePosition(thisEffPosition);
         fParticleGun->SetParticleMomentumDirection(effdirection);
         fParticleGun->SetParticleEnergy(fEffEnergy);
     }
-    else if (fParticleGun->GetParticleDefinition() == G4Geantino::Geantino()) {
-    } 
+
 
     // Set Optional Polarization
     if(fEffPolarization) {

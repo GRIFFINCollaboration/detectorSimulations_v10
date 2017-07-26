@@ -197,10 +197,14 @@ G4int DetectionSystemPaces::PlaceDetector(G4LogicalVolume* expHallLog, G4int nde
     //place detectors
     G4int dI;
     G4double* ptrPd = fPacesPlacementDistance;
-    G4double* ptrPt = fPacesPlacementPhi;
+    G4double* ptrPt = fPacesPlacementPhi;//t=phi, but p=theta???????
     G4double* ptrPp = fPacesPlacementTheta;
     G4double* ptrOt = fPacesOrientationPhi;
     G4double* ptrOp = fPacesOrientationTheta;
+    /*G4double* ptrPp = fPacesPlacementPhi;//changed code, rotated by 90 degrees
+    G4double* ptrPt = fPacesPlacementTheta;
+    G4double* ptrOp = fPacesOrientationPhi;
+    G4double* ptrOt = fPacesOrientationTheta;*/
     if (ndet > 5 || ndet < 0) ndet = 5;
     G4double dDist, dPhi, dTheta, oriPhi, oriTheta;
     G4RotationMatrix* Ra;

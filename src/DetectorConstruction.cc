@@ -69,8 +69,8 @@
 #include "G4FieldManager.hh"
 #include "G4UniformMagField.hh"
 //#include "MagneticField.hh"
-//#include "Field.hh"     ///for the implementation of the non-uniform magnetic field
-#include "GlobalField.hh"
+//#include "Field.hh"
+//#include "GlobalField.hh"
 #include "G4TransportationManager.hh"
 #include "nonUniformMagneticField.hh"
 
@@ -255,9 +255,9 @@ void DetectorConstruction::SetWorldVis( G4bool vis ) {
 void DetectorConstruction::SetTabMagneticField(G4String PathAndTableName, G4double z_offset, G4double z_rotation)
 {
 
-//const char * c = PathAndTableName.c_str();///conversion attempt using .c_str() (a string member function)
+  //const char * c = PathAndTableName.c_str();///conversion attempt using .c_str() (a string member function)
 
-  nonUniformMagneticField* tabulatedField = new nonUniformMagneticField(PathAndTableName,z_offset,z_rotation);///19/7 - now need to implement non-uniform field
+ nonUniformMagneticField* tabulatedField = new nonUniformMagneticField(PathAndTableName,z_offset,z_rotation);///addition of field for SPICE
 }
 
 void DetectorConstruction::UpdateGeometry() {
@@ -383,12 +383,11 @@ void DetectorConstruction::AddGrid() {
     }
 }
 
-void DetectorConstruction::AddApparatusSpiceTargetChamber()
+void DetectorConstruction::AddApparatusSpiceTargetChamber(G4String MedLo)//parameter sets lens, thus field for SPICE
 {
    //Create Target Chamber
-   ApparatusSpiceTargetChamber* pApparatusSpiceTargetChamber = new ApparatusSpiceTargetChamber();
-   pApparatusSpiceTargetChamber->Build( fLogicWorld );
-
+   ApparatusSpiceTargetChamber* pApparatusSpiceTargetChamber = new ApparatusSpiceTargetChamber(MedLo);
+   pApparatusSpiceTargetChamber->Build( fLogicWorld );	
 }
 
 void DetectorConstruction::AddApparatus8piVacuumChamber() {
@@ -956,31 +955,18 @@ void DetectorConstruction::AddDetectionSystemTestcan(G4ThreeVector input) {
   HistoManager::Instance().Testcan(true);
 }
 
-
-
-void DetectorConstruction::AddDetectionSystemSpice(G4int nRings)
-{
-
-	DetectionSystemSpice* pSpice = new DetectionSystemSpice() ;
-	pSpice->Build(); 
-	
-  G4int NumberSeg = 12; // Segments in Phi
-  G4int segmentID=0;
-  G4double annularDetectorDistance = 115*mm /*+ 150*mm*/;
-  G4ThreeVector pos(0,0,-annularDetectorDistance); 
-
-  pSpice->PlaceDetectorMount(fLogicWorld,pos);
-  pSpice->PlaceAnnularClamps(fLogicWorld,pos);   
-  pSpice->PlaceGuardRing(fLogicWorld, pos);
-
-  for(int ring = 0; ring<nRings; ring++)
-    {
-      for(int Seg=0; Seg<NumberSeg; Seg++)
-		{
-		  pSpice->PlaceDetector(fLogicWorld, pos, ring, Seg, segmentID);
-		  segmentID++;
-		} // end for(int Seg=0; Seg<NumberSeg; Seg++)
-    } // end for(int ring = 0; ring<nRings; ring++)
+void DetectorConstruction::AddDetectionSystemSpice(G4int nRings) {
+  if(fLogicWorld == NULL) {
+	Construct();
+  }
+  DetectionSystemSpice* pSpice = new DetectionSystemSpice() ;
+  pSpice->Build(); 
+  pSpice->PlaceDetectorMount(fLogicWorld);
+  pSpice->PlaceAnnularClamps(fLogicWorld);   
+  pSpice->PlaceGuardRing(fLogicWorld);
+  pSpice->PlaceDetector(fLogicWorld, nRings); //adds the detector rings/segments
+  
+  HistoManager::Instance().Spice(true);//boolean needed to make histos
 }
 
 void DetectorConstruction::AddDetectionSystemPaces(G4int ndet) {

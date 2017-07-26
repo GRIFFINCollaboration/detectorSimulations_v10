@@ -79,8 +79,8 @@
 
 PhysicsList::PhysicsList() :
     G4VModularPhysicsList(),
-    fCutForGamma(1.*mm), fCutForElectron(0.01*mm),
-    fCutForPositron(1.*mm),
+    fCutForGamma(1.*mm), fCutForElectron(0.01*mm),//e- cut to follow old code
+    fCutForPositron(1.*mm),//just sets defaults, can be altered through commands in a macro
     fEmPhysicsList(0),
     fRaddecayList(0),
     fParticleList(0),

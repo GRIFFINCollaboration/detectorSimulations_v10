@@ -25,10 +25,10 @@
 //
 //
 //
+/*
+//#include "FieldMessenger.hh"
 
-#include "FieldMessenger.hh"
-
-#include "GlobalField.hh"
+//#include "GlobalField.hh"
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithAnInteger.hh"
@@ -141,3 +141,4 @@ void FieldMessenger::SetNewValue( G4UIcommand* command, G4String newValue)
     fGlobalField->SetEpsMax(fEpsMaxCMD->GetNewDoubleValue(newValue));
   }
 }
+*/

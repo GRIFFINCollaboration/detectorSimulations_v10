@@ -25,12 +25,12 @@
 //
 //
 //
-
+/*
 #include "G4GeometryManager.hh"
 
-#include "ElementField.hh"
+//#include "ElementField.hh"
 
-#include "GlobalField.hh"
+//#include "GlobalField.hh"
 
 using namespace CLHEP;
 
@@ -39,7 +39,6 @@ G4Navigator* ElementField::aNavigator;
 ElementField::ElementField(G4ThreeVector c, G4LogicalVolume* lv)
 { 
   center = c;
-
   minX = minY = minZ = -DBL_MAX;
   maxX = maxY = maxZ =  DBL_MAX;
 
@@ -138,3 +137,4 @@ G4VisAttributes* ElementField::getVisAttribute(G4String color)
 
    return p;
 }
+*/

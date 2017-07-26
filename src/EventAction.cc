@@ -51,6 +51,7 @@ EventAction::EventAction(RunAction* run)
     fNumberOfHits = 0;
     fNumberOfSteps = 0;
     fPrintModulo = 1000;
+    
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -63,7 +64,7 @@ void EventAction::BeginOfEventAction(const G4Event* evt) {
     fEvtNb = evt->GetEventID();
     if (fEvtNb%fPrintModulo == 0)
         //    G4cout << "\n---> Begin of event: " << fEvtNb << G4endl;
-        printf( " ---> Ev.# %5d\r", fEvtNb);
+        printf( " ---> Ev.# %5d\r", fEvtNb); //lists up-to-date event number //% offers formatted output following printf
     G4cout.flush();
 
     ClearVariables();
@@ -72,16 +73,15 @@ void EventAction::BeginOfEventAction(const G4Event* evt) {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void EventAction::EndOfEventAction(const G4Event*) {
-    //    FillParticleType() ;
+    FillParticleType() ; // was uncommented - otherwise not filled
     FillGriffinCryst() ;
     Fill8piCryst() ;
     FillLaBrCryst() ;
     FillAncillaryBgo() ;
     FillSceptar() ;
     FillGridCell() ;
-	FillSpice() ; ///19/6
-	FillPacesCryst() ; ///20/6
-
+    FillSpice() ; ///19/6
+    FillPacesCryst() ; ///20/6	
     //G4cout << "fNumberOfHits = " << fNumberOfHits << G4endl;
     for (G4int i = 0 ; i < fNumberOfHits; i++) {
 		HistoManager::Instance().FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i]);
@@ -123,8 +123,17 @@ void EventAction::ClearVariables() {
     }
 
     for (G4int i = 0 ; i < NUMPARTICLETYPES; i++) {
-        fParticleTypes[i]                  = 0;
+        fParticleTypes[i]   = 0;
     }
+    for (G4int iii = 0; iii < MAXNUMDETPACES; iii++){		//4/7[MAXNUMDETPACES]
+	fPacesCrystEnergyDet[iii]	= 0 ;///20/6
+	fPacesCrystTrackDet[iii]	= 0 ;//20/6
+    }
+    for (G4int i = 0; i < MAXNUMDETSPICE; i++){//30/6 //above number needed, doubly sure of cleared variables
+      for (G4int j=0; j<12; j++){
+	fSpiceEnergyDet[i][j]	= 0 ; ///19/6
+  	fSpiceTrackDet[i][j]	= 0 ; ///19/6
+    }}
     for (G4int i = 0 ; i < MAXNUMDET; i++) {
         fEightPiCrystEnergyDet[i]  = 0 ;
         fEightPiCrystTrackDet[i]   = 0 ;
@@ -134,13 +143,7 @@ void EventAction::ClearVariables() {
 		  
         fAncillaryBgoEnergyDet[i]  = 0 ;
         fAncillaryBgoTrackDet[i]   = 0 ;
-		
-		fSpiceEnergyDet[i]	= 0 ; ///19/6
-  		fSpiceTrackDet[i]	= 0 ; ///19/6
-
-  	    fPacesCrystEnergyDet[i]	= 0 ;///20/6
-      	fPacesCrystTrackDet[i]	= 0 ;//20/6
-
+	
         fSceptarEnergyDet[i]  = 0 ;
         fSceptarTrackDet[i]   = 0 ;
 		  
@@ -151,6 +154,7 @@ void EventAction::ClearVariables() {
         fGridCellNeutronEKinDet[i]  = 0 ;
         fGridCellNeutronTrackDet[i]   = 0 ;
     }
+	
     for (G4int i = 0 ; i < MAXNUMDETGRIFFIN; i++) {
         for (G4int j = 0 ; j < MAXNUMCRYGRIFFIN; j++) {
             fGriffinCrystEnergyDet[i][j]                 = 0;
@@ -166,17 +170,16 @@ void EventAction::ClearVariables() {
             fGriffinSuppressorRightSideEnergyDet[i][j]        = 0;
             fGriffinSuppressorRightSideTrackDet[i][j]         = 0;
         }
-    }
-    // NOTE: Clear the variables from the new Fill___Cryst functions.
+    }  // NOTE: Clear the variables from the new Fill___Cryst functions as last EndofEvent action
 }
 
 
-void EventAction::FillParticleType() {
+void EventAction::FillParticleType() {///this works
     G4int numParticleTypes = 0;
     for(G4int i = 0 ; i < NUMPARTICLETYPES; i++) {
         if(fParticleTypes[i] != 0) { // if particle type 'i' has non-zero counts
             for (G4int j = 0 ; j< fParticleTypes[i]; j++) { // loop over the number of time we saw it
-                G4cout << "fParticleTypes[" << i << "] = " << fParticleTypes[i] << G4endl;
+                //G4cout << "fParticleTypes[" << i << "] = " << fParticleTypes[i] << G4endl; //super annoying, not optimised
                 HistoManager::Instance().FillHisto(kAstatsParticleTypeInEachStep, i);
             }
         }
@@ -327,31 +330,36 @@ void EventAction::FillGridCell() {
 }
 
 void EventAction::FillSpice() {
+	//G4cout << "size of histo array: " << sizeof(HistoManager::Instance().SpiceHistNumbers) << G4endl;
 	G4double energySumDet = 0;
-	for (G4int j=0; j < MAXNUMDET; j++) {
-        if(fSpiceEnergyDet[j] > MINENERGYTHRES) {
-            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(kSpiceEdep, fSpiceEnergyDet[j]);
-            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(kSpiceEdepDet0+j, fSpiceEnergyDet[j]);
-            energySumDet += fSpiceEnergyDet[j];
-        }
-    }
+	for (G4int ring=0; ring < MAXNUMDETSPICE; ring++) {
+	  for (G4int seg=0; seg < 12; seg++) {
+        if(fSpiceEnergyDet[ring][seg] > MINENERGYTHRES) {
+	    //fill energies in each detector
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[0], fSpiceEnergyDet[ring][seg]);
+	    //fill standard energy spectra
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[MAXNUMDETSPICE*ring+seg+2], fSpiceEnergyDet[ring][seg]);//any changed must be reflected  in histomanager.hh
+	    //add sum energies
+            energySumDet += fSpiceEnergyDet[ring][seg];
+    }}
     if(energySumDet > MINENERGYTHRES) {
-        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(kSpiceEdepSum, energySumDet);
+	//fill sum energies
+        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[1], energySumDet);
     }
-} ///////////////////////////////////////19/6
-
+}} ///////////////////////////////////////19/6
 
 void EventAction::FillPacesCryst() {
     G4double energySumDet = 0;
-    for (G4int j=0; j < MAXNUMDET; j++) {
+    for (G4int j=0; j < MAXNUMDETPACES; j++) {
         if(fPacesCrystEnergyDet[j] > MINENERGYTHRES) {
-            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(kPacesCrystalEdep, fPacesCrystEnergyDet[j]);
-            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(kPacesCrystalEdepDet0+j, fPacesCrystEnergyDet[j]);
+	  
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().PacesHistNumbers[0], fPacesCrystEnergyDet[j]);
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().PacesHistNumbers[j+2], fPacesCrystEnergyDet[j]);
             energySumDet += fPacesCrystEnergyDet[j];
         }
     }
     if(energySumDet > MINENERGYTHRES) {
-        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(kPacesCrystalEdepSum, energySumDet);
+        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().PacesHistNumbers[1], energySumDet);
     }
 }////////////////////////////////////////////20/6
 
@@ -421,6 +429,3 @@ void EventAction::AddStepTracker(G4int eventNumber, G4int trackID, G4int parentI
         }
     }
 }
-
-
-

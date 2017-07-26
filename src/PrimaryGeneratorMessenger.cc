@@ -81,6 +81,11 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun
     fEfficiencyBeamRadiusCmd->SetGuidance("Set beam radius");
     fEfficiencyBeamRadiusCmd->SetUnitCategory("Length");
     fEfficiencyBeamRadiusCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    
+    fConeRadiusCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/coneRadius",this);//SPICE cone
+    fConeRadiusCmd->SetGuidance("Set cone radius");
+    fConeRadiusCmd->SetUnitCategory("Length");
+    fConeRadiusCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 }
 
@@ -92,6 +97,7 @@ PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger() {
     delete fEfficiencyDirectionCmd;
     delete fEfficiencyPolarizationCmd;
     delete fEfficiencyBeamRadiusCmd;
+    delete fConeRadiusCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -123,6 +129,10 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
     }
     if( command == fEfficiencyBeamRadiusCmd ) {
         fAction->SetEfficiencyBeamRadius(fEfficiencyBeamRadiusCmd->GetNewDoubleValue(newValue));
+		  return;
+    }
+    if( command == fConeRadiusCmd ) {
+        fAction->SetConeRadius(fConeRadiusCmd->GetNewDoubleValue(newValue));
 		  return;
     }
 }

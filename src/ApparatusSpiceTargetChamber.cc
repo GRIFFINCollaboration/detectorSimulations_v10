@@ -43,36 +43,36 @@ using namespace CLHEP;
 // define physical properties of ApparatusSpiceTargetChamber //
 //////////////////////////////////////////////////////
 
-ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber()
+ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo)//parameter chooses which lens is in place.
 {
 
   this->NUMBER_OF_MAGNETS = 4;
   this->fNumberOfFrames = 3;
 
   // Materials
-  this->magnet_material = "NdFeB"; //
-  this->target_chamber_material = "Delrin";//
-  this->downstream_cone_material = "Aluminum"; //
-  this->photon_shield_layer_one_material = "WTa"; //
-  this->photon_shield_layer_two_material = "Tin"; //
-  this->photon_shield_layer_three_material = "G4_Cu";//
-  this->ps_clamp_material = "Aluminum";//
-  this->magnet_clamp_material = "Aluminum";//
-  this->target_wheel_material = "Aluminum"; //   to Aluminum from peek
-  this->gear_stick_material = "Peek"; //
-  this->bias_plate_material = "Aluminum"; //
-  this->target_wheel_gear_material_a = "Delrin";//
-  this->target_wheel_gear_material_b = "Aluminum";//
-  this->gear_plate_material = "Aluminum";//
-  this->target_mount_plate_material = "Peek"; //
-  this->electro_box_material = "Aluminum"; //
-  this->small_bolt_material = "Brass"; //
-  this->large_bolt_material = "Titanium";// line 500ish for collimator also
-  this->shield_cover_material = "Kapton";//
-  this->magnet_cover_material = "Peek";//
-  this->cold_finger_material = "G4_Cu";//
-  this->s3_cable_case_material = "Delrin";//
-  this->beam_pipe_material = "G4_Cu";//
+  this->magnet_material = "NdFeB"; 
+  this->magnet_clamp_material = "Aluminum";
+  this->target_chamber_material = "Delrin"; 
+  this->photon_shield_layer_one_material = "WTa"; 
+  this->photon_shield_layer_two_material = "Tin"; 
+  this->photon_shield_layer_three_material = "Copper";
+  this->downstream_cone_material = "Aluminum"; 
+  this->ps_clamp_material = "Aluminum";
+  this->target_wheel_material = "Peek"; 
+  this->target_wheel_gear_material_a = "Delrin";
+  this->target_wheel_gear_material_b = "Aluminum";
+  this->gear_plate_material = "Aluminum";
+  this->target_mount_plate_material = "Peek"; 
+  this->bias_plate_material = "Aluminum"; 
+  this->gear_stick_material = "Peek"; 
+  this->electro_box_material = "Aluminum"; 
+  this->small_bolt_material = "Brass"; 
+  this->large_bolt_material = "Titanium";
+  this->shield_cover_material = "Kapton";
+  this->magnet_cover_material = "Peek";
+  this->cold_finger_material = "Copper";
+  this->s3_cable_case_material = "Delrin";
+  this->beam_pipe_material = "Copper";
    
   //-----------------------------
   // Dimensions of Target Chamber
@@ -150,8 +150,8 @@ ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber()
   
   // Target Frame
   this->fDimTargetFrameOutZ = 0.5*mm;
-	this->fDimTargetFrameOutY = 12.*mm;
-	this->fDimTargetFrameCutY = 8.*mm;
+  this->fDimTargetFrameOutY = 12.*mm;
+  this->fDimTargetFrameCutY = 8.*mm;
 
   //----------------------------
   // Dimensions of Photon Shield
@@ -196,14 +196,19 @@ ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber()
   this->plate_one_length = 75*mm; 
   this->plate_one_height = 50*mm; // z-component
   this->plate_one_lower_height = 20*mm;
-  
-  this->plate_two_thickness = 5.0*mm; // LEL is 5.0, MEL is 3.4
-  this->plate_two_length = 30.0*mm; // LEL is 30.0, MEL is 55.0
+  if (MedLo = "Med")  {//this works - seen output on terminal via simpel G4cout command
+	this->plate_two_thickness = 3.4*mm; // LEL is 5.0, MEL is 3.4
+    	this->plate_two_length = 55.0*mm; // LEL is 30.0, MEL is 55.0
+  }
+  else if (MedLo = "Lo") {
+	this->plate_two_thickness = 5.0*mm; // LEL is 5.0, MEL is 3.4
+    	this->plate_two_length = 30.0*mm; // LEL is 30.0, MEL is 55.0
+  }
   this->plate_two_height = 50*mm;
   
   this->cutting_box_angle = 60*deg;
   this->distance_from_target = 4*mm; // in z-direction
-  
+ 
   this->plate_one_edge_x = (92*mm - this->plate_one_length); // 92mm is radius of chamber
   
   // ------------------------------------
@@ -347,7 +352,8 @@ ApparatusSpiceTargetChamber::~ApparatusSpiceTargetChamber()
 void ApparatusSpiceTargetChamber::Build(G4LogicalVolume* exp_hall_log)
 {
   this->expHallLog = exp_hall_log; // why? should be defined at start?
-
+				    //segmentation fault otherwise - mike
+				    
   BuildTargetChamberFrontRing();
   BuildTargetChamberSphere();
   BuildTargetChamberCylinderDownstream();
@@ -387,7 +393,7 @@ void ApparatusSpiceTargetChamber::Build(G4LogicalVolume* exp_hall_log)
   PlaceTargetWheelGearPlates(); 
   PlaceGearStick(); 
   PlaceTargetMountPlate(); 
-  //PlaceBiasPlate(); 
+  PlaceBiasPlate(); //commented out originally
 
 
   PlacePhotonShield(); 
@@ -398,7 +404,7 @@ void ApparatusSpiceTargetChamber::Build(G4LogicalVolume* exp_hall_log)
 
   PlaceS3CableHolder();
 
-  //PlaceBeamPipe();
+  PlaceBeamPipe(); //commented out originally
 
   G4double fFrameDegrees[2] = {0*deg, -110*deg};
   for(G4int i=0; i<2; i++)
@@ -538,7 +544,7 @@ void ApparatusSpiceTargetChamber::BuildCollimator() {
   G4SubtractionSolid *sSub2 = new G4SubtractionSolid("sSub2", sSub, sTubs5, 0, sTrans);
 	
 	// Logical
-	G4Material* CollimatorMaterial = G4Material::GetMaterial("Titanium"); // moved *, changed this->large_bolt_material from "Titanium"
+	G4Material *CollimatorMaterial = G4Material::GetMaterial("Titanium"); 
 	fCollimLogical = new G4LogicalVolume(sSub2, CollimatorMaterial, "collimator", 0, 0, 0);
 	fCollimLogical->SetVisAttributes(sVisAtt);
 
@@ -2003,3 +2009,5 @@ G4ThreeVector ApparatusSpiceTargetChamber::TranslateMagnets(G4int copyID, G4doub
   }
   return G4ThreeVector(x_position, y_position, z_position);
 }
+
+

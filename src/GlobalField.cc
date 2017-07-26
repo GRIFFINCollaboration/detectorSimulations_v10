@@ -23,9 +23,9 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
+//USES GLOBALFIELD from example field04 (non-uniform)
 //
-//
-
+/*
 #include <time.h>
 
 #include "Randomize.hh"
@@ -38,7 +38,7 @@
 #include "G4ClassicalRK4.hh"
 #include "G4CashKarpRKF45.hh"
 
-#include "GlobalField.hh"
+//#include "GlobalField.hh"
 
 using namespace CLHEP;
 
@@ -60,7 +60,7 @@ GlobalField::GlobalField() : G4ElectroMagneticField(),
   fFieldMessenger = new FieldMessenger(this);
 
   fields = new FieldList();
-
+//G4cout << "\n\n\n\n\n\nYou shouldn't see this for spice \n\n\n\n\n\n\n" << G4endl; //and we don't
   fStepperType = 4 ;       // ClassicalRK4 is default stepper
 
   //  set object
@@ -116,10 +116,10 @@ void GlobalField::updateField()
   //  Set the field
   fFieldManager->SetDetectorField(this);
 
-  //  Choose a stepper for integration of the equation of motion
+  //  Choose a stepper method for integration of the equation of motion
   SetStepper();
 
-  //  Create a cord finder providing the (global field, min step length,
+  //  Create a chord finder providing the (global field, min step length,
   //  a pointer to the stepper)
   fChordFinder = new G4ChordFinder((G4MagneticField*)this,minStep,fStepper);
 
@@ -283,3 +283,4 @@ void GlobalField::setupArray()
   fp = new const ElementField* [nfp+1]; // add 1 so it's never 0
   for (int i=0; i<nfp; ++i) fp[i] = (*fields)[i];
 }
+*/

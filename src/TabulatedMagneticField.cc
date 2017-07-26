@@ -3,7 +3,9 @@
 #include "G4PhysicalConstants.hh"
 #include "G4ThreeVector.hh"
 
-TabulatedMagneticField::TabulatedMagneticField( const char* filename, G4double zOffset, G4double zRotation ) 
+#include <algorithm> //for max_element
+
+TabulatedMagneticField::TabulatedMagneticField( const char* filename, G4double zOffset, G4double zRotation ) //called in 'nonuniformfield'
   :fZoffset(zOffset),fZrotation(zRotation),invertX(false),invertY(false),invertZ(false)
 {    
  
@@ -15,8 +17,8 @@ TabulatedMagneticField::TabulatedMagneticField( const char* filename, G4double z
     
   G4cout << "\n ---> " "Reading the field grid from " << filename << " ... " << endl; 
 
-  //G4cout << "\n ----> Read ? "<< endl;  G4cin.get();
-	 	   
+  //G4cout << "\n ----> Read ? "<< endl;  G4cin.get(); //what does this do?
+ 
   ifstream file( filename ); // Open the file for reading.
   
   // Ignore first blank line
@@ -27,20 +29,20 @@ TabulatedMagneticField::TabulatedMagneticField( const char* filename, G4double z
 	  G4cout <<"\n\ncannot open file : " << filename <<"\n\n" ;
 	  G4cin.get();
 	  }
-	  
+
 
   // Read table dimensions 
-  file >> nx >> ny >> nz; // Note dodgy order
+  file >> nx >> ny >> nz; // Note dodgy order //20/7 what? xyz looks fine!
 
   G4cout << "  [ Number of values x,y,z: " 
-	 << nx << " " << ny << " " << nz << " ] "
+	 << nx << " " << ny << " " << nz << " ] "//111*111*106 gives 1306026 rows
 	 << endl;
 
-  // Set up storage space for table
+  // Set up storage space for table using values from above- does not initialise values
   xField.resize( nx );
   yField.resize( nx );
   zField.resize( nx );
-  int ix, iy, iz;
+  int ix, iy, iz; //iterators for below
   for (ix=0; ix<nx; ix++) {
     xField[ix].resize(ny);
     yField[ix].resize(ny);
@@ -50,18 +52,18 @@ TabulatedMagneticField::TabulatedMagneticField( const char* filename, G4double z
       yField[ix][iy].resize(nz);
       zField[ix][iy].resize(nz);
     }
-  }
+  }//three field values per point, hence three arrays needed
   
-  // Ignore other header information    
+  // Ignores other header information    
   // The first line whose second character is '0' is considered to
   // be the last line of the header.
   do {
     file.getline(buffer,256);
   } while ( buffer[1]!='0');
   
-  // Read in the data
+  // Read in the data and fill arrays
   double xval,yval,zval,bx,by,bz;
-  double permeability; // Not used in this example.
+  double permeability; // Not used in this example. (is 0 for spice)
   for (iz=0; iz<nz; iz++) {
     for (iy=0; iy<ny; iy++) {
       for (ix=0; ix<nx; ix++) {
@@ -69,7 +71,7 @@ TabulatedMagneticField::TabulatedMagneticField( const char* filename, G4double z
 	bx =bx/1000.;
 	by =by/1000.;
 	bz =bz/1000.;
-        if ( ix==0 && iy==0 && iz==0 ) {
+        if ( ix==0 && iy==0 && iz==0 ) {//min is first value?? theres no sort/search 
           minx = xval * lenUnit;
           miny = yval * lenUnit;
           minz = zval * lenUnit;
@@ -77,13 +79,21 @@ TabulatedMagneticField::TabulatedMagneticField( const char* filename, G4double z
         xField[ix][iy][iz] = bx * fieldUnit;
         yField[ix][iy][iz] = by * fieldUnit;
         zField[ix][iy][iz] = bz * fieldUnit;
+	
+	if(bx > maxbx) maxbx = bx; // no unit as read-out in terminal
+	if(by > maxby) maxby = by;
+	if(bz > maxbz) maxbz = bz;
       }
     }
   }
-  file.close();
+  file.close(); //internally stored values, so can close file
+  
+  //my attempts - max field value in each column
+  G4cout << "\t\t\tMax Bx value = "<< maxbx << " Tesla." << G4endl;
+  G4cout << "\t\t\tMax By value = "<< maxby << " Tesla." << G4endl;
+  G4cout << "\t\t\tMax Bz value = "<< maxbz << " Tesla." << G4endl;
 
-
-  maxx = xval * lenUnit;
+  maxx = xval * lenUnit; //now max dimension values are the last values - i.e. post-loop values
   maxy = yval * lenUnit;
   maxz = zval * lenUnit;
 
@@ -138,7 +148,7 @@ void TabulatedMagneticField::GetFieldValue(const double point[4],
 	R.rotateZ(-fZrotation*deg); // rotation made in the opposite direction of the lens
 	x = R.getX();
 	y = R.getY();
-    z = R.getZ();
+	z = R.getZ();
          
 
   // Check that the point is within the defined region 
@@ -218,7 +228,7 @@ void TabulatedMagneticField::GetFieldValue(const double point[4],
 	B.rotateZ(fZrotation*deg); // rotation made in the same direction of the lens
 	Bfield[0] = B.getX();
 	Bfield[1] = B.getY();
-    Bfield[2] = B.getZ();
+	Bfield[2] = B.getZ();
 
   } else {
     Bfield[0] = 0.0;

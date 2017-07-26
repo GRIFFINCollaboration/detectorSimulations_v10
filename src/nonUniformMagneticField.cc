@@ -1,6 +1,6 @@
 #include "nonUniformMagneticField.hh"
 
-#include "TabulatedMagneticField.hh"
+#include "TabulatedMagneticField.hh" //called in constructor
 
 #include "G4MagneticField.hh"
 #include "G4FieldManager.hh"
@@ -19,25 +19,20 @@
 #include "G4HelixSimpleRunge.hh"
 #include "G4CashKarpRKF45.hh"
 #include "G4RKG3_Stepper.hh"
+using namespace CLHEP; //used for units, as other geant classes not brought in
 
 
-using namespace CLHEP;
-//////////////////////////////////////////////////////////////////////////
-//
-//  Constructors:
-
-nonUniformMagneticField::nonUniformMagneticField(const char* fieldName="./", G4double zOffset=0., G4double zRotation=0.)
+nonUniformMagneticField::nonUniformMagneticField(const char* fieldName="./", G4double zOffset=0., G4double zRotation=0.) //hard code here? as no changes made??
   :  fChordFinder(0), fStepper(0)
 {
-  fMagneticField = new TabulatedMagneticField(fieldName, zOffset, zRotation);
+  fMagneticField = new TabulatedMagneticField(fieldName, zOffset, zRotation);//sets field to that read in from the table
   GetGlobalFieldManager()->CreateChordFinder(fMagneticField);
 
-//  fFieldMessenger = new F03FieldMessenger(this) ;  
+//  fFieldMessenger = new F03FieldMessenger(this) ;  //field messenger unused (old code)
  
   fEquation = new G4Mag_UsualEqRhs(fMagneticField); 
  
-  //  fMinStep     = 0.25*mm ; // minimal step of 1 mm is default
-  fMinStep     = 0.001*mm ; // minimal step of 1 mm is default
+  fMinStep     = 0.001*mm ; // minimal step of 1 mm is default //0.25 potentially but seems too high //chosen is neither
   fStepperType = 4 ;      // ClassicalRK4 is default stepper
 
   fFieldManager = GetGlobalFieldManager();
@@ -45,18 +40,13 @@ nonUniformMagneticField::nonUniformMagneticField(const char* fieldName="./", G4d
   UpdateField();
 }
 
-////////////////////////////////////////////////////////////////////////////////
+
 nonUniformMagneticField::~nonUniformMagneticField()
 {
   if(fMagneticField) delete fMagneticField;
   if(fChordFinder)   delete fChordFinder;
   if(fStepper)       delete fStepper;
 }
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Update field
-//
 
 void nonUniformMagneticField::UpdateField()
 {
@@ -65,7 +55,7 @@ void nonUniformMagneticField::UpdateField()
 
   fFieldManager->SetDetectorField(fMagneticField );
 
-  if(fChordFinder) delete fChordFinder;
+  if(fChordFinder) delete fChordFinder; //why delete here and remake below? - allows for new steppers/minimum steps/or field, but this is never invoked may allow for greater optimisation
 
   fChordFinder = new G4ChordFinder( fMagneticField, fMinStep,fStepper);
 
