@@ -43,13 +43,16 @@
 
 #include "G4SystemOfUnits.hh" // new version geant4.10 requires units
 
-const G4bool WRITEEKINHISTOS    = true;
+const G4bool WRITEEKINHISTOS    = true;//bools needed to write histos
 const G4bool WRITEEDEPHISTOS    = true;
 const G4bool WRITETRACKLHISTOS  = true;
 
-const G4int MAXHISTO            = 500;
+const G4int MAXHISTO            = 500;//max number of histos in root file
 const G4int MAXNTCOL            = 15;
-const G4int MAXNUMDET           = 20; 
+const G4int MAXNUMDET           = 20;
+const G4int MAXNUMDETSPICE	= 10;
+//const G4int MAXNUMSEGSPICE	= 12;
+const G4int MAXNUMDETPACES	= 5;
 const G4int MAXNUMDETGRIFFIN    = 16;
 const G4int MAXNUMCRYGRIFFIN    = 4;
 const G4int NUMPARTICLETYPES    = 20;
@@ -58,19 +61,27 @@ const G4int NUMPARTICLETYPES    = 20;
 const G4int     EKINNBINS  = 10000;
 const G4double  EKINXMIN   = 0.5*keV;
 const G4double  EKINXMAX   = 10000.5*keV;
+const G4int     EKINNBINSSPICE  = 10000;//spice histos range different
+const G4double  EKINXMINSPICE   = 0.5*keV;
+const G4double  EKINXMAXSPICE   = 10000.5*keV;
 
 // edep histo properties    ///////////////////////
-const G4int     EDEPNBINS  = 10000;
+const G4int     EDEPNBINS  = 10000;//was 10000
 const G4double  EDEPXMIN   = 0.5*keV;
-const G4double  EDEPXMAX   = 10000.5*keV;
+const G4double  EDEPXMAX   = 10000.5*keV;//was 10000.5
+const G4int     EDEPNBINSSPICE  = 10000;//was 10000	//spice histos range different
+const G4double  EDEPXMINSPICE   = 0.5*keV;
+const G4double  EDEPXMAXSPICE   = 2500.5*keV;//was 10000.5
 
 // trackl histo properties  ///////////////////////
 const G4int     TRACKLNBINS = 5000;
 const G4double  TRACKLXMIN  = 0.5*mm;
 const G4double  TRACKLXMAX  = 5000.5*mm;
+const G4int     TRACKLNBINSSPICE = 5000;//spice histos range different
+const G4double  TRACKLXMINSPICE  = 0.5*mm;
+const G4double  TRACKLXMAXSPICE  = 5000.5*mm;
 
 ///////////////////////////////////////////////////
-
 const G4double MINENERGYTHRES   = 0.001*keV;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -79,13 +90,20 @@ const G4double MINENERGYTHRES   = 0.001*keV;
 
 class HistoManager {
 public:
-    static HistoManager& Instance() {
+    static HistoManager& Instance() { // static so only ever one instance
 		static HistoManager histManager;
 		return histManager;
 	 }
 
     void Book();
     void Save();
+    
+    
+    //	sizeof() arrays appear double the elements, due to 2 bits per element
+    short PacesHistNumbers[MAXNUMDETPACES+2]; //+2 for edep and sum histos 
+    short SpiceHistNumbers[MAXNUMDETSPICE*12+2]; //+2 for edep and sum histos 
+    
+    
 
     void MakeHisto(G4AnalysisManager* analysisManager, G4String filename,  G4String title, G4double xmin, G4double xmax, G4int nbins);
     void FillHisto(G4int ih, G4double e, G4double weight = 1.0);
@@ -112,18 +130,19 @@ public:
 	 void Paces   (G4bool val) { fPaces    = val; }  
 	 void Descant (G4bool val) { fDescant  = val; }  
 	 void Testcan (G4bool val) { fTestcan  = val; }  
-    // getter
+	 // getter
 	 G4bool GridCell() { return fGridCell; }
- 	 G4bool Griffin () { return fGriffin;  }
-	 G4bool LaBr 	 () { return fLaBr;     }
+	 G4bool Griffin () { return fGriffin;  }
+	 G4bool LaBr    () { return fLaBr;     }
 	 G4bool AncBgo  () { return fAncBgo;   }
-	 G4bool NaI 	 () { return fNaI;      }
+	 G4bool NaI 	() { return fNaI;      }
 	 G4bool Sceptar () { return fSceptar;  }
 	 G4bool EightPi () { return fEightPi;  }
-	 G4bool Spice 	 () { return fSpice;    }
+	 G4bool Spice 	() { return fSpice;    }
 	 G4bool Paces   () { return fPaces;    }  
 	 G4bool Descant () { return fDescant;  }  
-	 G4bool Testcan () { return fTestcan;  }  
+	 G4bool Testcan () { return fTestcan;  } 
+	 short segmenthisto[120];//this array will hold segment IDs to be transferred to reference for histos
 
 private:
     HistoManager();
@@ -158,10 +177,10 @@ private:
 	 G4bool fNaI;
 	 G4bool fSceptar;
 	 G4bool fEightPi;
+	 G4bool fDescant;
+	 G4bool fTestcan;	 
 	 G4bool fSpice;
 	 G4bool fPaces;
-	 G4bool fDescant;
-	 G4bool fTestcan;
 };
 
 enum HISTONAME
@@ -169,6 +188,50 @@ enum HISTONAME
     kNullName = 0,
     kAstatsParticleTypeInEachStep,
     kAstatsParticleTypeInEachEvent,
+   /* kSpiceEdep,
+    kSpiceEdepSum,
+    kSpiceEdepDet0,
+    kSpiceEdepDet01,
+    kSpiceEdepDet02,
+    kSpiceEdepDet03,
+    kSpiceEdepDet04,
+    kSpiceEdepDet05,
+    kSpiceEdepDet06,
+    kSpiceEdepDet07,
+    kSpiceEdepDet08,
+    kSpiceEdepDet09, //max number to be reached
+    kSpiceEdepDet10,
+    kSpiceEdepDet11,
+    kSpiceEdepDet12,
+    kSpiceEdepDet13,
+    kSpiceEdepDet14,//these are no longer used
+    kSpiceEdepDet15,
+    kSpiceEdepDet16,
+    kSpiceEdepDet17,
+    kSpiceEdepDet18,
+    kSpiceEdepDet19,
+    kPacesCrystalEdep,		// This is probably the wrong number of detectors for paces.
+    kPacesCrystalEdepSum,
+    kPacesCrystalEdepDet0,
+    kPacesCrystalEdepDet1,
+    kPacesCrystalEdepDet2,
+    kPacesCrystalEdepDet3,
+    kPacesCrystalEdepDet4, // reduced to 5 total (zero-indexed) as number of detectors 22/6
+    kPacesCrystalEdepDet5,
+    kPacesCrystalEdepDet6,
+    kPacesCrystalEdepDet7,
+    kPacesCrystalEdepDet8,
+    kPacesCrystalEdepDet9,
+    kPacesCrystalEdepDet10,
+    kPacesCrystalEdepDet11,
+    kPacesCrystalEdepDet12,
+    kPacesCrystalEdepDet13,
+    kPacesCrystalEdepDet14,
+    kPacesCrystalEdepDet15,
+    kPacesCrystalEdepDet16,
+    kPacesCrystalEdepDet17,
+    kPacesCrystalEdepDet18,
+    kPacesCrystalEdepDet19, */
     kGridcellElectronEkinDet0,
     kGridcellElectronEkinDet1,
     kGridcellElectronEkinDet2,
@@ -564,51 +627,7 @@ enum HISTONAME
     kEightpiCrystalEdepDet16,
     kEightpiCrystalEdepDet17,
     kEightpiCrystalEdepDet18,
-    kEightpiCrystalEdepDet19,
-    kSpiceEdep,
-    kSpiceEdepSum,
-    kSpiceEdepDet0,
-    kSpiceEdepDet1,
-    kSpiceEdepDet2,
-    kSpiceEdepDet3,
-    kSpiceEdepDet4,
-    kSpiceEdepDet5,
-    kSpiceEdepDet6,
-    kSpiceEdepDet7,
-    kSpiceEdepDet8,
-    kSpiceEdepDet9,
-    kSpiceEdepDet10,
-    kSpiceEdepDet11,
-    kSpiceEdepDet12,
-    kSpiceEdepDet13,
-    kSpiceEdepDet14,
-    kSpiceEdepDet15,
-    kSpiceEdepDet16,
-    kSpiceEdepDet17,
-    kSpiceEdepDet18,
-    kSpiceEdepDet19,
-    kPacesCrystalEdep,		// This is probably the wrong number of detectors for paces.
-    kPacesCrystalEdepSum,
-    kPacesCrystalEdepDet0,
-    kPacesCrystalEdepDet1,
-    kPacesCrystalEdepDet2,
-    kPacesCrystalEdepDet3,
-    kPacesCrystalEdepDet4,
-    kPacesCrystalEdepDet5,
- /*   kPacesCrystalEdepDet6,
-    kPacesCrystalEdepDet7,
-    kPacesCrystalEdepDet8,
-    kPacesCrystalEdepDet9,
-    kPacesCrystalEdepDet10,
-    kPacesCrystalEdepDet11,
-    kPacesCrystalEdepDet12,
-    kPacesCrystalEdepDet13,
-    kPacesCrystalEdepDet14,
-    kPacesCrystalEdepDet15,
-    kPacesCrystalEdepDet16,
-    kPacesCrystalEdepDet17,
-    kPacesCrystalEdepDet18,
-    kPacesCrystalEdepDet19*/ // reduced to 5 as number of detectors 22/6
+    kEightpiCrystalEdepDet19
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -26,7 +26,7 @@
 //
 //
 //
-
+/*
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
@@ -49,8 +49,8 @@
 #include "G4EqMagElectricField.hh"
 #include "G4EqEMFieldWithSpin.hh"
 
-#include "FieldMessenger.hh"
-#include "ElementField.hh"
+//#include "FieldMessenger.hh"
+//#include "ElementField.hh"
 
 //  GlobalField - handles the global ElectroMagnetic field
 //
@@ -174,3 +174,4 @@ private:
 };
 
 #endif
+*/

@@ -26,7 +26,7 @@
 //
 //
 //
-
+/*
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
@@ -71,3 +71,4 @@ class FieldMessenger: public G4UImessenger
 
 #endif
 
+*/

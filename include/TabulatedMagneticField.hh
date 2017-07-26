@@ -36,6 +36,8 @@ class TabulatedMagneticField
   int nx,ny,nz; 
   // The physical limits of the defined region
   double minx, maxx, miny, maxy, minz, maxz;
+  //The physical limits of the defined region
+  double maxbx=0, maxby=0, maxbz=0;
   // The physical extent of the defined region
   double dx, dy, dz;
   double fZoffset;

@@ -99,7 +99,7 @@ public:
     //        void SetBoxColour( G4ThreeVector input )           {boxColour = input;};
     //        void AddBox();
 
-	void SetTabMagneticField(G4String, G4double, G4double);
+    void SetTabMagneticField(G4String, G4double, G4double);
     // Grid Functions
     void SetGridMat( G4String input )                  {fGridMat = input;};
     void SetGridSize( G4double input )                 {fGridSize = input;};
@@ -108,7 +108,7 @@ public:
     void SetGridPosOffset( G4ThreeVector input )          {fGridOffset = input;};
     void AddGrid();
 
-       void AddApparatusSpiceTargetChamber();
+    void AddApparatusSpiceTargetChamber(G4String);
     void AddApparatus8piVacuumChamber();
     void AddApparatus8piVacuumChamberAuxMatShell(G4double thickness);
     void AddApparatusGriffinStructure(G4int selector);
@@ -160,7 +160,7 @@ public:
 
     void AddDetectionSystemSceptar(G4int ndet);
     void AddDetectionSystemPaces(G4int ndet);
-    void AddDetectionSystemSpice(G4int ndet);
+    void AddDetectionSystemSpice(G4int nRings);
 
     G4double GetLanthanumBromideCrystalRadius();
     G4double GetLanthanumBromideCrystalLength();
