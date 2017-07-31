@@ -133,6 +133,7 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
     }
     if( command == fConeRadiusCmd ) {
         fAction->SetConeRadius(fConeRadiusCmd->GetNewDoubleValue(newValue));
+	G4cout << "Cone Beam selected" << G4endl;
 		  return;
     }
 }

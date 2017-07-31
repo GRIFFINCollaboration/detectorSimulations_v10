@@ -265,7 +265,7 @@ ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo)//parame
   // -----------------------
   // Dimensions of Beam Pipe
   // -----------------------
-  this->pipe_inner_radius = 0.0*mm; // 5
+  this->pipe_inner_radius = 5.0*mm; // 5
   this->pipe_outer_radius = 16.0*mm;
   this->pipe_z_length = 30.0*mm;
 
@@ -404,7 +404,7 @@ void ApparatusSpiceTargetChamber::Build(G4LogicalVolume* exp_hall_log)
 
   PlaceS3CableHolder();
 
-  PlaceBeamPipe(); //commented out originally
+  PlaceBeamPipe(); //commented out originally (blocked beam) as inner radius was 0
 
   G4double fFrameDegrees[2] = {0*deg, -110*deg};
   for(G4int i=0; i<2; i++)

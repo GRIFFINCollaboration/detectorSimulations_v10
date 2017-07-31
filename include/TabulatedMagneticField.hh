@@ -29,24 +29,24 @@ class TabulatedMagneticField
 {
   
   // Storage space for the table
-  vector< vector< vector< double > > > xField;
-  vector< vector< vector< double > > > yField;
-  vector< vector< vector< double > > > zField;
+  vector< vector< vector< G4double > > > xField;
+  vector< vector< vector< G4double > > > yField;
+  vector< vector< vector< G4double > > > zField;
   // The dimensions of the table
-  int nx,ny,nz; 
+  G4int nx,ny,nz; 
   // The physical limits of the defined region
-  double minx, maxx, miny, maxy, minz, maxz;
+  G4double minx, maxx, miny, maxy, minz, maxz;
   //The physical limits of the defined region
-  double maxbx=0, maxby=0, maxbz=0;
+  G4double maxbx=0, maxby=0, maxbz=0;
   // The physical extent of the defined region
-  double dx, dy, dz;
-  double fZoffset;
-  double fZrotation;
-  bool invertX, invertY, invertZ;
+  G4double dx, dy, dz;
+  G4double fZoffset;
+  G4double fZrotation;
+  G4bool invertX, invertY, invertZ;
 
 public:
   TabulatedMagneticField(const char* filename, G4double zOffset, G4double zRotation  );
-  void  GetFieldValue( const  double Point[4],
-		       double *Bfield          ) const;
+  void  GetFieldValue( const  G4double Point[4],
+		       G4double *Bfield          ) const;
 };
 
