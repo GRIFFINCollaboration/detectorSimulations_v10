@@ -62,7 +62,8 @@ private:
     void SetDetAndCryNumberForDeadLayerSpecificGriffinCrystal(G4String);
     void SetDetNumberForGenericDetector( G4String );
     void SetDetNumberForAncillaryBGODetector( G4String );
-	void SetDetAndCryNumberForSpiceDetector( G4String );
+    void SetDetAndCryNumberForSpiceDetector( G4String ); //to get 10 total detectors
+
     G4int FindTrueGriffinDetector(G4int);
 
     G4int fStepNumber;

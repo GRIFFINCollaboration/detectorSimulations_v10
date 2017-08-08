@@ -82,7 +82,7 @@ private:
     G4UIcmdWith3VectorAndUnit* fFieldBoxMagneticFieldCmd;
 	G4UIcmdWithAString*        fTabMagneticFieldCmd; ///19/7
 
-    G4UIcmdWithoutParameter*   fAddApparatusSpiceTargetChamberCmd;
+    G4UIcmdWithAString*   fAddApparatusSpiceTargetChamberCmd;
     G4UIcmdWithoutParameter*   fAddApparatus8piVacuumChamberCmd;
     G4UIcmdWithADoubleAndUnit* fAddApparatus8piVacuumChamberAuxMatShellCmd;
     G4UIcmdWithAnInteger*      fAddApparatusGriffinStructureCmd;
@@ -128,6 +128,7 @@ private:
     G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinBackDetectorCmd;
     //G4UIcmdWith3Vector*       fAddDetectionSystemGriffinPositionConfigCmd;
     G4UIcmdWithAnInteger*       fAddDetectionSystemSpiceCmd;
+	G4UIcmdWithAString*         fAddMagnetSystemSpiceCmd;
     G4UIcmdWithAnInteger*       fAddDetectionSystemPacesCmd;
     G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinHevimetCmd ;
 

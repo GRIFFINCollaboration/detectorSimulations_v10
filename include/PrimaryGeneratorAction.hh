@@ -43,6 +43,7 @@
 
 #include "G4SystemOfUnits.hh"
 
+
 class G4ParticleGun;
 class G4Event;
 class DetectorConstruction;
@@ -65,6 +66,9 @@ public:
     void SetEfficiencyParticle( G4String val ) {fEffParticle = val; fEffParticleBool = true;} ;
     void SetEfficiencyPolarization( G4ThreeVector num ) {fEffPolarizationVector = num; fEffPolarization = true;} ;
     void SetEfficiencyBeamRadius( G4double num ) {fEffBeamRadius = num; fEffBeam = true;} ;
+    void SetConeRadius( G4double num ) {fConeRadius = num; fConeRadiusBool = true; fEffDirectionBool = true;} ;//Direction needed, should not require explicit initialisation command
+    //booleans above true if a command has been entered (initially false) for the loops in source file to be entered
+    
 
 private:
     G4ParticleGun*                fParticleGun;  //pointer a to G4 class
@@ -84,6 +88,11 @@ private:
     G4ThreeVector fEffPolarizationVector;
     G4bool fEffBeam;
     G4double fEffBeamRadius;
+    G4double fConeRadius;
+    G4bool fConeRadiusBool;
+    G4ThreeVector SetCone(G4double fConeRadius);
+    G4double disttoSiliFromParticleCreation = 107.50685;
+    void LaBrinit();
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

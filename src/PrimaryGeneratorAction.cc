@@ -34,10 +34,10 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "PrimaryGeneratorAction.hh"
-#include "PrimaryGeneratorMessenger.hh"
+#include "PrimaryGeneratorMessenger.hh" // for command-based data input
 
 #include "Global.hh"
-#include "DetectorConstruction.hh"
+#include "DetectorConstruction.hh" //for detector based information
 
 #include "G4Event.hh"
 #include "G4ParticleGun.hh"
@@ -47,79 +47,37 @@
 #include "G4Geantino.hh"
 #include "Randomize.hh"
 
+//#include <stdlib.h> //for abs
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* DC)
     : G4VUserPrimaryGeneratorAction(),
       fParticleGun(0),
       fDetector(DC)
+
 {
     G4int nParticle = 1;
     fParticleGun  = new G4ParticleGun(nParticle); //In our code, the gun is called fParticleGun
     //create a messenger for this class
     fGunMessenger = new PrimaryGeneratorMessenger(this);
-
+    
+    //these 3 lines initialise the Gun, basic values
     fParticleGun->SetParticleEnergy(0*eV);
-    fParticleGun->SetParticlePosition(G4ThreeVector(0.,0.,0.));//these 3 lines initialise the Gun, basic values
+    fParticleGun->SetParticlePosition(G4ThreeVector(0.,0.,0.));
     fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
 
-    // defaults
+    //defaults for gun properties
     fNumberOfDecayingLaBrDetectors = 0;
     fEffEnergy = 0.0;
-    fEffDirectionBool = false;
-    fEffPositionBool = false;//more defaults - effective?
-    fEffParticleBool = false;
     fEffDirection = G4ThreeVector(0.0*mm,0.0*mm,0.0*mm);
+    fEffDirectionBool = false;//initialises bools, if command entered will go to true and loops below entered
+    fEffPositionBool = false;
+    fEffParticleBool = false;
     fEffPolarization = false;
     fEffBeam = false;
-
-    // LaBr properties
-    G4double triangleThetaAngle = 54.735610317245360*deg;
-    // theta
-    fDetectorAnglesLaBr3[0][0] 	= triangleThetaAngle;
-    fDetectorAnglesLaBr3[1][0] 	= triangleThetaAngle;
-    fDetectorAnglesLaBr3[2][0] 	= triangleThetaAngle;
-    fDetectorAnglesLaBr3[3][0] 	= triangleThetaAngle;
-    fDetectorAnglesLaBr3[4][0] 	= 180.0*deg - triangleThetaAngle;
-    fDetectorAnglesLaBr3[5][0] 	= 180.0*deg - triangleThetaAngle;
-    fDetectorAnglesLaBr3[6][0] 	= 180.0*deg - triangleThetaAngle;
-    fDetectorAnglesLaBr3[7][0] 	= 180.0*deg - triangleThetaAngle;
-    // phi
-    fDetectorAnglesLaBr3[0][1] 	= 22.5*deg;
-    fDetectorAnglesLaBr3[1][1] 	= 112.5*deg;
-    fDetectorAnglesLaBr3[2][1] 	= 202.5*deg;
-    fDetectorAnglesLaBr3[3][1] 	= 292.5*deg;
-    fDetectorAnglesLaBr3[4][1] 	= 22.5*deg;
-    fDetectorAnglesLaBr3[5][1] 	= 112.5*deg;
-    fDetectorAnglesLaBr3[6][1] 	= 202.5*deg;
-    fDetectorAnglesLaBr3[7][1] 	= 292.5*deg;
-    // yaw (alpha)
-    fDetectorAnglesLaBr3[0][2] 	= 0.0*deg;
-    fDetectorAnglesLaBr3[1][2] 	= 0.0*deg;
-    fDetectorAnglesLaBr3[2][2] 	= 0.0*deg;
-    fDetectorAnglesLaBr3[3][2] 	= 0.0*deg;
-    fDetectorAnglesLaBr3[4][2] 	= 0.0*deg;
-    fDetectorAnglesLaBr3[5][2] 	= 0.0*deg;
-    fDetectorAnglesLaBr3[6][2] 	= 0.0*deg;
-    fDetectorAnglesLaBr3[7][2] 	= 0.0*deg;
-    // pitch (beta)
-    fDetectorAnglesLaBr3[0][3] 	= triangleThetaAngle;
-    fDetectorAnglesLaBr3[1][3] 	= triangleThetaAngle;
-    fDetectorAnglesLaBr3[2][3] 	= triangleThetaAngle;
-    fDetectorAnglesLaBr3[3][3] 	= triangleThetaAngle;
-    fDetectorAnglesLaBr3[4][3] 	= 180.0*deg - triangleThetaAngle;
-    fDetectorAnglesLaBr3[5][3] 	= 180.0*deg - triangleThetaAngle;
-    fDetectorAnglesLaBr3[6][3] 	= 180.0*deg - triangleThetaAngle;
-    fDetectorAnglesLaBr3[7][3] 	= 180.0*deg - triangleThetaAngle;
-    // roll (gamma)
-    fDetectorAnglesLaBr3[0][4] 	= 22.5*deg;
-    fDetectorAnglesLaBr3[1][4] 	= 112.5*deg;
-    fDetectorAnglesLaBr3[2][4] 	= 202.5*deg;
-    fDetectorAnglesLaBr3[3][4] 	= 292.5*deg;
-    fDetectorAnglesLaBr3[4][4] 	= 22.5*deg;
-    fDetectorAnglesLaBr3[5][4] 	= 112.5*deg;
-    fDetectorAnglesLaBr3[6][4] 	= 202.5*deg;
-    fDetectorAnglesLaBr3[7][4] 	= 292.5*deg;
+    
+    LaBrinit(); //sets up default variables - messy having them all declared here
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -150,7 +108,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         G4int detnumber = 0;
 
         // Choose random detector
-		  // this is done in a weird way, why not just use numberOfDecayingLaBrDetectors*G4UniformRand() and cast it to a integer?
+	// this is done in a weird way, why not just use numberOfDecayingLaBrDetectors*G4UniformRand() and cast it to a integer?
         prob = 1.0/((G4double)(fNumberOfDecayingLaBrDetectors));
         sumProb = 0.0;
         G4double randomDet = G4UniformRand();
@@ -230,60 +188,68 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
             else if (fEffParticle == "neutron"){
                 effPart = G4ParticleTable::GetParticleTable()->FindParticle("neutron");
             }
-            else {
-                effPart = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
-            }
         }
         else {
 
             effPart = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
         }
-        G4ThreeVector thisEffPosition = G4ThreeVector(0.0*mm,0.0*mm,0.0*mm);
+        
+        G4ThreeVector thisEffPosition = G4ThreeVector(0.0*mm,0.0*mm,0.0*mm);//in constructor?? //19/7
         if(fEffPositionBool) thisEffPosition = fEffPosition;
 
+	//DIRECTION CONTROLS (directly forced, beam, or cone)
         G4double effRandCosTheta, effRandSinTheta, effRandPhi;
         G4ThreeVector effdirection;
-        if(fEffDirectionBool) {
+        if(fEffDirectionBool) { 
             effdirection = fEffDirection;
             // If we want to simulate a realistic beam spot, instead of perfect pencil beam.
-            if(fEffBeam) {
+            if(fEffBeam) {// following SetEfficiencyBeamRadius command
+	      G4cout << "Rando " << G4endl;
                 G4double xMonte = 10000.0*m; //monte for monte-carlo, effective errors to a central beam, creates a distribution
-                G4double yMonte = 10000.0*m;
-                G4double zMonte = 0.0*m;
+                G4double yMonte = 10000.0*m;// why these values?
+                G4double zMonte = 0.0*m;//SPICE should have z/y errors?? as x along beam axis
                 G4ThreeVector vecMonte;
 
                 G4double directionTheta = fEffDirection.theta();
                 G4double directionPhi = fEffDirection.phi();
 
-                while( pow(xMonte,2) + pow(yMonte,2) > pow(fEffBeamRadius,2) ) {
+                while( pow(xMonte,2) + pow(yMonte,2) > pow(fEffBeamRadius,2) ) {//xmonte^2 + ymonte^2 > BeamRadius^2
                     xMonte = (2.*G4UniformRand()-1.0)*fEffBeamRadius;
                     yMonte = (2.*G4UniformRand()-1.0)*fEffBeamRadius;
                 }
 
-                vecMonte = G4ThreeVector(xMonte,yMonte,zMonte);
+                vecMonte = G4ThreeVector(xMonte,yMonte,zMonte); //rotate# funcs are CLHEP functions
                 vecMonte.rotateY(directionTheta);
                 vecMonte.rotateZ(directionPhi);
 
                 thisEffPosition = thisEffPosition + vecMonte;
             }
-        }
 
+	    if(fConeRadiusBool){// following SetConeRadius command - emits here in 2pi (Not conal as no x-y limits placed
+	   // G4cout << "Conal " << G4endl;
+	    effdirection = SetCone(fConeRadius);//unit direction in -Z due to SPICE's downstream detector
+	  //  G4cout << "Direction " << effdirection << G4endl << " Cone radius " << fConeRadius << "mm"<< G4endl;
+	    }
+	}
         else {
-            // random direction
-            effRandCosTheta = 2.*G4UniformRand()-1.0;
-            effRandSinTheta = sqrt( 1. - effRandCosTheta*effRandCosTheta );
+	    G4cout << "Rando no " << G4endl; //may offer the solution, an altered 2pi rando. Using 4pi for efficiency
+            // random direction if no preference provided
+            effRandCosTheta = 2.*G4UniformRand()-1.0; //cos(theta) = 2cos^2(0.5theta)-1 
+            effRandSinTheta = sqrt( 1. - effRandCosTheta*effRandCosTheta ); //(1 - cos^2(theta))^0.5
             effRandPhi      = (360.*deg)*G4UniformRand();
             effdirection = G4ThreeVector(effRandSinTheta*cos(effRandPhi), effRandSinTheta*sin(effRandPhi), effRandCosTheta);
+	    //converts from Spherical polar(physics def.) to cartesian via (rsin(theta)cos(phi),rsin(theta)cos(phi),rcos(theta)) r=1,unit length
         }
-		//std::cout<<thisEffPosition<<effPart<<effdirection<<fEffEnergy<<std::endl; //gives beam starting pos as expected
-		//effpart is mem location, but all the same indicating just the electron //effdirection is random as expected
+	//std::cout<<thisEffPosition<<effPart<<effdirection<<fEffEnergy<<std::endl; //gives beam starting pos as expected
+	//effpart is mem location, but all the same indicating just the electron //effdirection is random as expected
+		
+	//after running through if-statements above we now have particle type definition, position, mom. direction, and the energy (or their initialised values)
         fParticleGun->SetParticleDefinition(effPart);
         fParticleGun->SetParticlePosition(thisEffPosition);
         fParticleGun->SetParticleMomentumDirection(effdirection);
         fParticleGun->SetParticleEnergy(fEffEnergy);
     }
-    else if (fParticleGun->GetParticleDefinition() == G4Geantino::Geantino()) {
-    } 
+
 
     // Set Optional Polarization
     if(fEffPolarization) {
@@ -293,5 +259,71 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     //create vertex
     //
     fParticleGun->GeneratePrimaryVertex(anEvent);
+}
+G4ThreeVector PrimaryGeneratorAction::SetCone(G4double ConeRadius) {
+  //G4cout << "Set Cone loop " << G4endl;
+  G4double xCone=0.0, yCone=0.0;//107.5mm from particle creation to SiLi, 47mm SiLi radius ->23 deg cone, 23/90 = 0.26237 for angleratio
+  G4ThreeVector coneDirection;
+  G4double xSign, ySign;
+  xSign = G4UniformRand(); ySign = G4UniformRand(); 
+  xCone = G4UniformRand()*(ConeRadius);//Random x up to ConeRadius
+  yCone = G4UniformRand()*(sqrt(pow(ConeRadius,2)-pow(xCone,2)));//Random y from whatever is left
+  xCone=atan(xCone/disttoSiliFromParticleCreation);//a length at this point, need an angle ratio
+  yCone=atan(yCone/disttoSiliFromParticleCreation);
+  if (xSign>0.5) xCone=-xCone;//50/50 chance of +or- (sign set here) direction for cone
+  if (ySign>0.5) yCone=-yCone;
+  coneDirection = G4ThreeVector(xCone,yCone,-1.0);
+
+  return coneDirection;
+}
+
+void PrimaryGeneratorAction::LaBrinit() {
+  //default LaBr properties
+    G4double triangleThetaAngle = 54.735610317245360*deg;
+    // theta
+    fDetectorAnglesLaBr3[0][0] 	= triangleThetaAngle;
+    fDetectorAnglesLaBr3[1][0] 	= triangleThetaAngle;
+    fDetectorAnglesLaBr3[2][0] 	= triangleThetaAngle;
+    fDetectorAnglesLaBr3[3][0] 	= triangleThetaAngle;
+    fDetectorAnglesLaBr3[4][0] 	= 180.0*deg - triangleThetaAngle;
+    fDetectorAnglesLaBr3[5][0] 	= 180.0*deg - triangleThetaAngle;
+    fDetectorAnglesLaBr3[6][0] 	= 180.0*deg - triangleThetaAngle;
+    fDetectorAnglesLaBr3[7][0] 	= 180.0*deg - triangleThetaAngle;
+    // phi
+    fDetectorAnglesLaBr3[0][1] 	= 22.5*deg;
+    fDetectorAnglesLaBr3[1][1] 	= 112.5*deg;
+    fDetectorAnglesLaBr3[2][1] 	= 202.5*deg;
+    fDetectorAnglesLaBr3[3][1] 	= 292.5*deg;
+    fDetectorAnglesLaBr3[4][1] 	= 22.5*deg;
+    fDetectorAnglesLaBr3[5][1] 	= 112.5*deg;
+    fDetectorAnglesLaBr3[6][1] 	= 202.5*deg;
+    fDetectorAnglesLaBr3[7][1] 	= 292.5*deg;
+    // yaw (alpha)
+    fDetectorAnglesLaBr3[0][2] 	= 0.0*deg;
+    fDetectorAnglesLaBr3[1][2] 	= 0.0*deg;
+    fDetectorAnglesLaBr3[2][2] 	= 0.0*deg;
+    fDetectorAnglesLaBr3[3][2] 	= 0.0*deg;
+    fDetectorAnglesLaBr3[4][2] 	= 0.0*deg;
+    fDetectorAnglesLaBr3[5][2] 	= 0.0*deg;
+    fDetectorAnglesLaBr3[6][2] 	= 0.0*deg;
+    fDetectorAnglesLaBr3[7][2] 	= 0.0*deg;
+    // pitch (beta)
+    fDetectorAnglesLaBr3[0][3] 	= triangleThetaAngle;
+    fDetectorAnglesLaBr3[1][3] 	= triangleThetaAngle;
+    fDetectorAnglesLaBr3[2][3] 	= triangleThetaAngle;
+    fDetectorAnglesLaBr3[3][3] 	= triangleThetaAngle;
+    fDetectorAnglesLaBr3[4][3] 	= 180.0*deg - triangleThetaAngle;
+    fDetectorAnglesLaBr3[5][3] 	= 180.0*deg - triangleThetaAngle;
+    fDetectorAnglesLaBr3[6][3] 	= 180.0*deg - triangleThetaAngle;
+    fDetectorAnglesLaBr3[7][3] 	= 180.0*deg - triangleThetaAngle;
+    // roll (gamma)
+    fDetectorAnglesLaBr3[0][4] 	= 22.5*deg;
+    fDetectorAnglesLaBr3[1][4] 	= 112.5*deg;
+    fDetectorAnglesLaBr3[2][4] 	= 202.5*deg;
+    fDetectorAnglesLaBr3[3][4] 	= 292.5*deg;
+    fDetectorAnglesLaBr3[4][4] 	= 22.5*deg;
+    fDetectorAnglesLaBr3[5][4] 	= 112.5*deg;
+    fDetectorAnglesLaBr3[6][4] 	= 202.5*deg;
+    fDetectorAnglesLaBr3[7][4] 	= 292.5*deg;
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

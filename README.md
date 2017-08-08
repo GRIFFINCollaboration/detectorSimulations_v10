@@ -99,7 +99,7 @@ Whenever an electron or positron is emitted, you can choose to simulate kinemati
 #### SPICE
 | Command | Brief Description | Default |
 | :------ | :---------------- | :------ |
-| ``` /DetSys/app/addSpiceTargetChamber ``` | Add SPICE target chamber |  |
+| ``` /DetSys/app/addSpiceTargetChamber string ``` | Add SPICE target chamber* |  |
 | ``` /DetSys/Spice/setResolution double double ``` |Set resolution of SPICE Si(Li)  |  |
 | ``` /DetSys/det/addSpice int``` | Add Si(Li) detector |  |
 | ``` /DetSys/det/addS3 ``` | Add SPICE S3 detector |  |
@@ -172,9 +172,11 @@ Requires all four commands to build
 | Command | Brief Description | Default |
 | :------ | :---------------- | :------ |
 | ``` /DetSys/world/magneticField x y z unit``` | Set world magnetic field (depreciated) | 0, 0, 0 |
-| ``` /DetSys/world/tabMagneticField filename ``` | Set tabulated magnetic field* | Disabled | 
+| ``` /DetSys/world/tabMagneticField filename ``` | Set tabulated magnetic field* | Disabled |
+| ``` /DetSys/gun/coneRadius radius unit ``` | Set cone radius |  |
 
-*Used for SPICE: these files are 50Mb each and are different for each lens so until a better solution comes along they will be kept on the network at TRIUMF (email Mohamad or Lee for precise location)
+
+*Used for SPICE: these files are 50Mb each and are different for each lens so until a better solution comes along they will be kept on the network at TRIUMF (email Mohamad, Lee, or Michael for precise location)
 
 | Command | Brief Description | Default |
 | :------ | :---------------- | :------ |

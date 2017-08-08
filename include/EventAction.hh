@@ -78,9 +78,8 @@ public:
 
     void AncillaryBgoDet(G4double de, G4double dl, G4int det) { fAncillaryBgoEnergyDet[det] += de; fAncillaryBgoTrackDet[det] += dl;} ;
 
-	void SpiceDet(G4double de, G4double dl, G4int det) { fSpiceEnergyDet[det] += de; fSpiceTrackDet[det] += dl;} ;///19/7
-
-	void AddPacesCrystDet(G4double de, G4double dl, G4int det) { fPacesCrystEnergyDet[det] += de; fPacesCrystTrackDet[det] += dl;} ;//20/7
+    void SpiceDet(G4double de, G4double dl, G4int det, G4int seg) { fSpiceEnergyDet[det][seg] += de; fSpiceTrackDet[det][seg] += dl;} ;///19/7
+    void AddPacesCrystDet(G4double de, G4double dl, G4int det) { fPacesCrystEnergyDet[det] += de; fPacesCrystTrackDet[det] += dl;} ;//20/7
 
     void SceptarDet(G4double de, G4double dl, G4int det) { fSceptarEnergyDet[det] += de; fSceptarTrackDet[det] += dl;} ;
 
@@ -94,6 +93,7 @@ public:
 
 private:
     RunAction*    fRunAct;
+	HistoManager* fHistoManager;
 
     G4int     fPrintModulo;
     G4int     fEvtNb;
@@ -105,9 +105,10 @@ private:
     void FillLaBrCryst() ;
     void FillAncillaryBgo() ;
     void FillSceptar() ;
-	void FillSpice() ; ///19/7
+    void FillPacesCryst();//20/7
+    void FillSpice() ; ///19/7
     void FillGridCell() ;
-	void FillPacesCryst();//20/7
+    void FillTest(); ///27/6
 
     // Tracking info
     G4int    fHitTrackerI[NUMSTEPVARS][MAXHITS];
@@ -115,12 +116,12 @@ private:
     G4int    fHitIndex;
     G4int    fNumberOfHits;
     G4String fPHitMnemonic[MAXHITS];
-				 
+
     G4int    fStepTrackerI[NUMSTEPVARS][MAXSTEPS];
     G4double fStepTrackerD[NUMSTEPVARS][MAXSTEPS];
     G4int    fStepIndex;
     G4int    fNumberOfSteps;
-				 
+ 
     G4int    fPTrackID;
     G4int    fPParentID;
 
@@ -133,35 +134,35 @@ private:
     G4double fGriffinCrystTrackDet[MAXNUMDETGRIFFIN][MAXNUMCRYGRIFFIN];
     G4double fGriffinSuppressorBackEnergyDet[MAXNUMDETGRIFFIN][MAXNUMCRYGRIFFIN];
     G4double fGriffinSuppressorBackTrackDet[MAXNUMDETGRIFFIN][MAXNUMCRYGRIFFIN];
-				 
+
     G4double fGriffinSuppressorLeftExtensionEnergyDet[MAXNUMDETGRIFFIN][MAXNUMCRYGRIFFIN];
     G4double fGriffinSuppressorLeftExtensionTrackDet[MAXNUMDETGRIFFIN][MAXNUMCRYGRIFFIN];
     G4double fGriffinSuppressorLeftSideEnergyDet[MAXNUMDETGRIFFIN][MAXNUMCRYGRIFFIN];
     G4double fGriffinSuppressorLeftSideTrackDet[MAXNUMDETGRIFFIN][MAXNUMCRYGRIFFIN];
-				 
+
     G4double fGriffinSuppressorRightExtensionEnergyDet[MAXNUMDETGRIFFIN][MAXNUMCRYGRIFFIN];
     G4double fGriffinSuppressorRightExtensionTrackDet[MAXNUMDETGRIFFIN][MAXNUMCRYGRIFFIN];
     G4double fGriffinSuppressorRightSideEnergyDet[MAXNUMDETGRIFFIN][MAXNUMCRYGRIFFIN];
     G4double fGriffinSuppressorRightSideTrackDet[MAXNUMDETGRIFFIN][MAXNUMCRYGRIFFIN];
-				 
+
     G4double fEightPiCrystEnergyDet[MAXNUMDET] ;
     G4double fEightPiCrystTrackDet[MAXNUMDET] ;
-				 
+
     G4double fLaBrCrystEnergyDet[MAXNUMDET] ;
     G4double fLaBrCrystTrackDet[MAXNUMDET] ;
-				 
+
     G4double fAncillaryBgoEnergyDet[MAXNUMDET] ;
     G4double fAncillaryBgoTrackDet[MAXNUMDET] ;
 
-	G4double fSpiceEnergyDet[MAXNUMDET] ; ///19/6
-	G4double fSpiceTrackDet[MAXNUMDET] ; 
+    G4double fSpiceEnergyDet[MAXNUMDETSPICE][12] ; ///19/6
+    G4double fSpiceTrackDet[MAXNUMDETSPICE][12] ;//should have maxnumsegspice? although const
 
-	G4double fPacesCrystEnergyDet[MAXNUMDET];//20/6
-    G4double fPacesCrystTrackDet[MAXNUMDET];
-		  
+    G4double fPacesCrystEnergyDet[MAXNUMDETPACES];//20/6
+    G4double fPacesCrystTrackDet[MAXNUMDETPACES];
+  
     G4double fSceptarEnergyDet[MAXNUMDET] ;
     G4double fSceptarTrackDet[MAXNUMDET] ;
-				 
+ 
     G4double fGridCellElectronEKinDet[MAXNUMDET] ;
     G4double fGridCellElectronTrackDet[MAXNUMDET] ;
     G4double fGridCellGammaEKinDet[MAXNUMDET] ;

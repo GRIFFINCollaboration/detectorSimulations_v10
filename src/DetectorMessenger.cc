@@ -177,7 +177,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     fAddGridPosOffsetCmd->SetUnitCategory("Length");
     fAddGridPosOffsetCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    fAddApparatusSpiceTargetChamberCmd = new G4UIcmdWithoutParameter("/DetSys/app/addSpiceTargetChamber",this);
+    fAddApparatusSpiceTargetChamberCmd = new G4UIcmdWithAString("/DetSys/app/addSpiceTargetChamber",this);
     fAddApparatusSpiceTargetChamberCmd->SetGuidance("Add SPICE target chamber.");
     fAddApparatusSpiceTargetChamberCmd->AvailableForStates(G4State_Idle);
 
@@ -313,6 +313,10 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
    fAddDetectionSystemSpiceCmd->SetGuidance("Add Detection System Spice");
    fAddDetectionSystemSpiceCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 	 
+	//fAddMagnetSystemSpiceCmd = new G4UIcmdWithAString("/DetSys/det/addMagnet",this);//23/6
+	//fAddMagnetSystemSpiceCmd->SetGuidance("Choose Med, or Low magnet system");
+	//fAddMagnetSystemSpiceCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
     fAddDetectionSystemPacesCmd = new G4UIcmdWithAnInteger("/DetSys/det/addPaces",this);
     fAddDetectionSystemPacesCmd->SetGuidance("Add Detection System Paces");
     fAddDetectionSystemPacesCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
@@ -343,7 +347,7 @@ DetectorMessenger::~DetectorMessenger()
     delete fFieldBoxDimensionsCmd;
     delete fFieldBoxPositionCmd;
     delete fFieldBoxMagneticFieldCmd;
-	delete fTabMagneticFieldCmd;
+    delete fTabMagneticFieldCmd;
     delete fAddBoxMatCmd;
     delete fAddBoxThicknessCmd;
     delete fAddBoxInnerDimensionsCmd;
@@ -376,10 +380,10 @@ DetectorMessenger::~DetectorMessenger()
 
     delete fAddDetectionSystemTestcanCmd;
 
-	 delete fSetDetectionSystemDescantColorCmd;
-	 delete fSetDetectionSystemDescantRotationCmd;	 
-	 delete fAddDetectionSystemDescantCartCmd;
-	 delete fAddDetectionSystemDescantSpherCmd;
+    delete fSetDetectionSystemDescantColorCmd;
+    delete fSetDetectionSystemDescantRotationCmd;	 
+    delete fAddDetectionSystemDescantCartCmd;
+    delete fAddDetectionSystemDescantSpherCmd;
 
     delete fAddDetectionSystemSceptarCmd;
     delete fAddDetectionSystemSpiceCmd;
@@ -487,7 +491,7 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
         fDetector->AddGrid();
     }
     if(command == fAddApparatusSpiceTargetChamberCmd ) {
-        fDetector->AddApparatusSpiceTargetChamber(); //removed f
+        fDetector->AddApparatusSpiceTargetChamber(newValue); //removed f
     }
     if(command == fAddApparatus8piVacuumChamberCmd ) {
         fDetector->AddApparatus8piVacuumChamber();
@@ -528,7 +532,7 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
         fDetector->AddApparatusDescantStructure();
     }
 
-	 if(command == fSetDetectionSystemDescantColorCmd ) {
+    if(command == fSetDetectionSystemDescantColorCmd ) {
 		fDetector->SetDetectionSystemDescantColor(newValue);
 	 }
 	 if(command == fSetDetectionSystemDescantRotationCmd ) {
@@ -584,11 +588,9 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     if(command == fAddDetectionSystemGriffinSetDeadLayerCmd ) {
         fDetector->AddDetectionSystemGriffinSetDeadLayer(fAddDetectionSystemGriffinSetDeadLayerCmd->GetNew3VectorValue(newValue ) ) ;
     }
-    
-     if(command == fAddDetectionSystemSpiceCmd ) {
+    if(command == fAddDetectionSystemSpiceCmd ) {
 		fDetector->AddDetectionSystemSpice(fAddDetectionSystemSpiceCmd->GetNewIntValue(newValue)); 
-     }
-    
+    }
     if(command == fAddDetectionSystemPacesCmd ) {
         fDetector->AddDetectionSystemPaces(fAddDetectionSystemPacesCmd->GetNewIntValue(newValue));
     }

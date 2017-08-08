@@ -57,11 +57,10 @@ private:
   
 public:
   G4int Build();
-  G4int PlaceDetector(G4LogicalVolume* exp_hall_log, G4ThreeVector move,
-		      G4int ringNumber, G4int nRadSeg, G4int detectorNumber);
-  G4int PlaceGuardRing(G4LogicalVolume* exp_hall_log, G4ThreeVector move);
-  void PlaceDetectorMount(G4LogicalVolume* exp_hall_log, G4ThreeVector move); 
-  void PlaceAnnularClamps(G4LogicalVolume* exp_hall_log, G4ThreeVector move);
+  G4int PlaceDetector(G4LogicalVolume* exp_hall_log, G4int nRings);
+  G4int PlaceGuardRing(G4LogicalVolume* exp_hall_log);
+  void PlaceDetectorMount(G4LogicalVolume* exp_hall_log); 
+  void PlaceAnnularClamps(G4LogicalVolume* exp_hall_log);
   
 private:
   G4ThreeVector GetDirectionXYZ(G4double theta, G4double phi);

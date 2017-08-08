@@ -21,6 +21,7 @@
 #include "G4Colour.hh"
 
 #include "DetectionSystemSpice.hh"
+#include "HistoManager.hh" // for spice histogram array when placing detector
 
 using namespace CLHEP;
 
@@ -83,7 +84,7 @@ DetectionSystemSpice::~DetectionSystemSpice()
 	// LogicalVolumes in ConstructSPICEDetectionSystem
 	delete detector_mount_log;
 	delete annular_clamp_log;
-	delete [] siDetSpiceRing_log;
+	delete siDetSpiceRing_log;//[] siDetSpiceRing_log; 12/7
 	delete siInnerGuardRing_log;
 	delete siOuterGuardRing_log;
 	
@@ -124,49 +125,73 @@ G4int DetectionSystemSpice::Build()
 // "place" function called in DetectorMessenger            //
 // if detector is added                                    //
 //---------------------------------------------------------//
-G4int DetectionSystemSpice::PlaceDetector(G4LogicalVolume* exp_hall_log, G4ThreeVector move, G4int ringNumber, G4int Seg, G4int SegmentNumber)
+G4int DetectionSystemSpice::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int nRings)
 {
-
-  //G4cout << "DetectionSystemSpice :: Ring number : "<< ringNumber <<  " SegNumber in ring : "<< Seg << " SegmentNumber in detector : " <<SegmentNumber << G4endl;
-  //G4cin.get();
-  G4int NumberSeg = (G4int)this->siDetPhiSegments; // total number of segments = 12
-  G4double angle = (360.*deg/NumberSeg)*(Seg); // Seg = {0, ...,11} 
-  G4RotationMatrix* rotate = new G4RotationMatrix;
-  rotate->rotateZ(-210*deg-angle); // the axis are inverted, this operation will correct for it  [MHD : 03 April 2014]
+  //To see how the segments fill put 1 detector ring in (via macro) and 1,2,3 segments (changed here) to see how they add.
+  //segments add following JanalysisToolkit convention
+  G4int NumberSeg = 12; // Segments in Phi for loop below - originally 12
+  G4int segmentID=0;
+  G4double annularDetectorDistance = 115*mm /*+ 150*mm*/;
+  G4ThreeVector pos(0,0,-annularDetectorDistance); 
+    for(int ring=0; ring<nRings; ring++)
+    {
+      for(int Seg=0; Seg<NumberSeg; Seg++)
+		{
+		  G4int TotalNumberSeg = (G4int)this->siDetPhiSegments; // total number of segments = 12
+		  G4double angle = (360.*deg/TotalNumberSeg)*(-Seg); // Seg = {0, ...,11} //changed to -seg and fills in correctly
+		  G4RotationMatrix* rotate = new G4RotationMatrix;
+		  rotate->rotateZ(-180*deg-angle); // the axis are inverted, this operation will correct for it  [MHD : 03 April 2014]
+				   //affecting value here (originally 210) may help mapping
+				   //180 deg gave correct start position for 1st ring, needs to now fill opposite direction
+				   //could bring in loops to here as to iterate and allow for staggered start position (add 30 deg for each ring etc)
+				   //as filling in reverse, can establish the histos in reverse then fill in normally 
+		  assemblySiRing[ring]->MakeImprint(exp_hall_log, pos, rotate, Seg);
+		  HistoManager::Instance().segmenthisto[segmentID+2];
+		  G4double anglerad = (-165*deg-angle)*180/pi;//180 to 165 for true mapping
+		  //G4cout << "DetectionSystemSpice :: Ring number : "<< ring <<  " SegNumber in ring : "<< Seg << " SegmentNumber in detector : " <<segmentID<< " at phi angle "<<anglerad<< G4endl;
+		  //above for mapping output
+		  segmentID++;
+		} // end for(int Seg=0; Seg<NumberSeg; Seg++)
+    } // end for(int ring = 0; ring<nRings; ring++)
   
-  assemblySiRing[ringNumber]->MakeImprint(exp_hall_log, move, rotate, SegmentNumber);
+  
+  //G4cin.get();
+
  
   return 1;
 }
 
-G4int DetectionSystemSpice::PlaceGuardRing(G4LogicalVolume* exp_hall_log, G4ThreeVector move)
+G4int DetectionSystemSpice::PlaceGuardRing(G4LogicalVolume* exp_hall_log)
 {
+  G4double annularDetectorDistance = 115*mm /*+ 150*mm*/;
+  G4ThreeVector pos(0,0,-annularDetectorDistance); 
   G4RotationMatrix* rotate = new G4RotationMatrix;
   rotate->rotateZ(0*deg);
-  assembly->MakeImprint(exp_hall_log, move, rotate, 0);
+  assembly->MakeImprint(exp_hall_log, pos, rotate, 0);
 
   return 1;
 }
 
-void DetectionSystemSpice::PlaceDetectorMount(G4LogicalVolume* exp_hall_log, G4ThreeVector move)
+void DetectionSystemSpice::PlaceDetectorMount(G4LogicalVolume* exp_hall_log)
 {
+  G4double annularDetectorDistance = 115*mm /*+ 150*mm*/;
+  G4ThreeVector pos(0,0,-annularDetectorDistance); 
+  G4double detector_mount_gap = this->detector_mount_thickness 
+    - this->detector_mount_lip_thickness - this->detector_thickness;
 
-	G4double detector_mount_gap = this->detector_mount_thickness 
-	  - this->detector_mount_lip_thickness - this->detector_thickness;
-	 
-	G4double z_offset = - this->detector_mount_thickness/2. + detector_mount_gap ;
-	G4ThreeVector offset(0, 0, z_offset);
-	
-	move = move + offset ; 
-	G4RotationMatrix* rotate = new G4RotationMatrix(this->detector_mount_angular_offset, 0, 0);
-	detector_mount_phys = new G4PVPlacement(rotate, move, detector_mount_log,
-						"detector_mount", exp_hall_log, 
-						false, 0);
+  G4double z_offset = - this->detector_mount_thickness/2. + detector_mount_gap ;
+  G4ThreeVector offset(0, 0, z_offset);
+
+  pos = pos + offset ; 
+  G4RotationMatrix* rotate = new G4RotationMatrix(this->detector_mount_angular_offset, 0, 0);
+  detector_mount_phys = new G4PVPlacement(rotate, pos, detector_mount_log,
+	"detector_mount", exp_hall_log, false, 0);
 
 } // end::PlaceDetectorMount()
 
-void DetectionSystemSpice::PlaceAnnularClamps(G4LogicalVolume* exp_hall_log, G4ThreeVector move) {
-  
+void DetectionSystemSpice::PlaceAnnularClamps(G4LogicalVolume* exp_hall_log) {
+    G4double annularDetectorDistance = 115*mm /*+ 150*mm*/;
+  G4ThreeVector pos(0,0,-annularDetectorDistance); 
   G4double z_offset = this->annular_clamp_thickness/2. ;
   G4double x_offset = (this->annular_clamp_plane_offset
 		       + this->annular_clamp_length/2.) 
@@ -176,9 +201,9 @@ void DetectionSystemSpice::PlaceAnnularClamps(G4LogicalVolume* exp_hall_log, G4T
     * sin(this->detector_mount_angular_offset + 45*deg);
   G4ThreeVector offset(-x_offset, -y_offset, z_offset);
  
-  move = move + offset ; 	 
+  pos = pos + offset ; 	 
   G4RotationMatrix* rotate = new G4RotationMatrix(this->detector_mount_angular_offset + 45*deg, 0, 0);
-  annular_clamp_phys = new G4PVPlacement(rotate, move, annular_clamp_log,"annular_clamp", exp_hall_log,
+  annular_clamp_phys = new G4PVPlacement(rotate, pos, annular_clamp_log,"annular_clamp", exp_hall_log,
 					 false,0);
   
 } // end::PlaceAnnularClamps()
@@ -358,7 +383,7 @@ void DetectionSystemSpice::BuildDetectorMount() {
 
 void DetectionSystemSpice::BuildAnnularClamps() {
 
-	// ** Visualisation
+  // ** Visualisation
   G4VisAttributes* vis_att = new G4VisAttributes(G4Colour(PEEK_COL));
   vis_att->SetVisibility(true);
   
@@ -390,10 +415,10 @@ void DetectionSystemSpice::BuildAnnularClamps() {
 } // end::BuildAnnularClamps()  
 
 
-///////////////////////////////////////////////////////
-// Build one segment of Spice, 
-// the geometry depends on the distance from the center
-///////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+// Build one segment of Spice, 			       //
+// the geometry depends on the distance from the center//
+/////////////////////////////////////////////////////////
 G4Tubs* DetectionSystemSpice::BuildCrystal(G4int RingID)
 {
   // define angle, length, thickness, and inner and outer diameter

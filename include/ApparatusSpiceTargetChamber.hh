@@ -58,7 +58,7 @@ class DetectorMessenger;
 class ApparatusSpiceTargetChamber
 {
 public:
-  ApparatusSpiceTargetChamber();
+  ApparatusSpiceTargetChamber(G4String);
   ~ApparatusSpiceTargetChamber();
     
 public:
@@ -304,7 +304,6 @@ private:
   G4double plate_one_lower_height;
   
   G4double plate_one_edge_x;
-  
   G4double plate_two_thickness;
   G4double plate_two_length;
   G4double plate_two_height;
@@ -449,5 +448,4 @@ private:
   G4RotationMatrix* RotateMagnets(G4int);
   G4ThreeVector TranslateMagnets(G4int,G4double,G4double);
 };
-
 #endif
