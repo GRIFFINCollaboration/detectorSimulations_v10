@@ -383,7 +383,7 @@ void DetectorConstruction::AddGrid() {
     }
 }
 
-void DetectorConstruction::AddApparatusSpiceTargetChamber(G4String MedLo)//parameter sets lens, thus field for SPICE
+void DetectorConstruction::AddApparatusSpiceTargetChamber(G4String MedLo)//parameter sets lens for SPICE - should be matched with field
 {
    //Create Target Chamber
    ApparatusSpiceTargetChamber* pApparatusSpiceTargetChamber = new ApparatusSpiceTargetChamber(MedLo);
@@ -961,12 +961,9 @@ void DetectorConstruction::AddDetectionSystemSpice(G4int nRings) {
   }
   DetectionSystemSpice* pSpice = new DetectionSystemSpice() ;
   pSpice->Build(); 
-  pSpice->PlaceDetectorMount(fLogicWorld);
-  pSpice->PlaceAnnularClamps(fLogicWorld);   
-  pSpice->PlaceGuardRing(fLogicWorld);
-  pSpice->PlaceDetector(fLogicWorld, nRings); //adds the detector rings/segments
+  pSpice->PlaceDetector(fLogicWorld, nRings); //adds the detector rings/segments, als oincludes functions for other builds
   
-  HistoManager::Instance().Spice(true);//boolean needed to make histos
+  HistoManager::Instance().Spice(true);//boolean needed to make SPICE histograms
 }
 
 void DetectorConstruction::AddDetectionSystemPaces(G4int ndet) {

@@ -51,7 +51,7 @@ const G4int MAXHISTO            = 500;//max number of histos in root file
 const G4int MAXNTCOL            = 15;
 const G4int MAXNUMDET           = 20;
 const G4int MAXNUMDETSPICE	= 10;
-//const G4int MAXNUMSEGSPICE	= 12;
+const G4int MAXNUMSEGSPICE	= 12;
 const G4int MAXNUMDETPACES	= 5;
 const G4int MAXNUMDETGRIFFIN    = 16;
 const G4int MAXNUMCRYGRIFFIN    = 4;
@@ -101,9 +101,9 @@ public:
     
     //	sizeof() arrays appear double the elements, due to 2 bits per element
     short PacesHistNumbers[MAXNUMDETPACES+2]; //+2 for edep and sum histos 
-    short SpiceHistNumbers[MAXNUMDETSPICE*12+2]; //+2 for edep and sum histos 
-    
-    
+    short SpiceHistNumbers[MAXNUMDETSPICE*MAXNUMSEGSPICE+2]; //+2 for edep and sum histos 
+    short segmenthisto[120];//this array will hold segment IDs to be transferred to reference for histos
+    short angledistro[4]; //this variable will hold the histogran ID for the angular distributions from the cone
 
     void MakeHisto(G4AnalysisManager* analysisManager, G4String filename,  G4String title, G4double xmin, G4double xmax, G4int nbins);
     void FillHisto(G4int ih, G4double e, G4double weight = 1.0);
@@ -142,7 +142,7 @@ public:
 	 G4bool Paces   () { return fPaces;    }  
 	 G4bool Descant () { return fDescant;  }  
 	 G4bool Testcan () { return fTestcan;  } 
-	 short segmenthisto[120];//this array will hold segment IDs to be transferred to reference for histos
+	 
 
 private:
     HistoManager();

@@ -43,6 +43,7 @@
 
 #include "G4SystemOfUnits.hh"
 
+#include "HistoManager.hh"//for angle distro histogram
 
 class G4ParticleGun;
 class G4Event;
@@ -67,7 +68,10 @@ public:
     void SetEfficiencyPolarization( G4ThreeVector num ) {fEffPolarizationVector = num; fEffPolarization = true;} ;
     void SetEfficiencyBeamRadius( G4double num ) {fEffBeamRadius = num; fEffBeam = true;} ;
     void SetConeRadius( G4double num ) {fConeRadius = num; fConeRadiusBool = true; fEffDirectionBool = true;} ;//Direction needed, should not require explicit initialisation command
-    //booleans above true if a command has been entered (initially false) for the loops in source file to be entered
+    void SetConeZValue( G4double num ) {fConeZValue = num; fConeValueBool = true; fEffDirectionBool = true;};
+    void SetConeRValue( G4double num ) {fConeRValue = num; fConeValueBool = true; fEffDirectionBool = true;};
+    void SetConeAngle( G4double num1 ) {fAngleInit = num1; fConeAngleBool = true; fEffDirectionBool = true;};
+    //booleans (initially false), above, true if a command has been entered for the loops in source file to be entered
     
 
 private:
@@ -75,6 +79,7 @@ private:
     DetectorConstruction*         fDetector;     //pointer to the geometry
     PrimaryGeneratorMessenger*    fGunMessenger; //messenger of this class
 
+    //variables
     G4int fNumberOfDecayingLaBrDetectors;
     G4double fEffEnergy;
     G4ThreeVector fEffDirection;
@@ -90,9 +95,15 @@ private:
     G4double fEffBeamRadius;
     G4double fConeRadius;
     G4bool fConeRadiusBool;
-    G4ThreeVector SetCone(G4double fConeRadius);
-    G4double disttoSiliFromParticleCreation = 107.50685;
+    G4double fConeZValue;
+    G4double fConeRValue;
+    G4bool fConeValueBool;
+    G4double fAngleInit;
+    G4bool fConeAngleBool;
+    
+    //functions
     void LaBrinit();
+    G4ThreeVector SetCone(G4double fConeRadius, G4double zVal=107.50685);//value is disttoSiliFromParticleCreation
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

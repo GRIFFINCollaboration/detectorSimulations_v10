@@ -71,6 +71,9 @@ private:
     G4UIcmdWith3Vector*            fEfficiencyPolarizationCmd;
     G4UIcmdWithADoubleAndUnit*     fEfficiencyBeamRadiusCmd;
     G4UIcmdWithADoubleAndUnit*     fConeRadiusCmd;//SPICE cone radius
+    G4UIcmdWithADoubleAndUnit*     fConeZValueCmd;//SPICE cone with values
+    G4UIcmdWithADoubleAndUnit*     fConeRValueCmd;
+    G4UIcmdWithADoubleAndUnit*     fConeAngleCmd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

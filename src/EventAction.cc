@@ -35,7 +35,7 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "EventAction.hh"
-
+#include "Randomize.hh"
 #include "RunAction.hh"
 #include "HistoManager.hh"
 
@@ -330,21 +330,33 @@ void EventAction::FillGridCell() {
 }
 
 void EventAction::FillSpice() {
-	//G4cout << "size of histo array: " << sizeof(HistoManager::Instance().SpiceHistNumbers) << G4endl;
+
+	  
+	  //G4cout << "size of histo array: " << sizeof(HistoManager::Instance().SpiceHistNumbers) << G4endl;
 	G4double energySumDet = 0;
 	for (G4int ring=0; ring < MAXNUMDETSPICE; ring++) {
 	  for (G4int seg=0; seg < 12; seg++) {
-        if(fSpiceEnergyDet[ring][seg] > MINENERGYTHRES) {
+	  if(fSpiceEnergyDet[ring][seg] > MINENERGYTHRES) {
 	    //fill energies in each detector
             if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[0], fSpiceEnergyDet[ring][seg]);
 	    //fill standard energy spectra
             if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[MAXNUMDETSPICE*ring+seg+2], fSpiceEnergyDet[ring][seg]);//any changed must be reflected  in histomanager.hh
 	    //add sum energies
-            energySumDet += fSpiceEnergyDet[ring][seg];
-    }}
-    if(energySumDet > MINENERGYTHRES) {
-	//fill sum energies
-        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[1], energySumDet);
+	   	  // Resolution of parameters of a HPGe detector is implemented here, only for the sum as of 8/8
+	  G4double A1 = 0.95446 ;
+	  G4double B1 = 0.00335 ;
+	  G4double C1 = -7.4117e-7 ;
+	  G4double TX1 = ((energySumDet)/keV);
+	  G4double per_res1 = (sqrt(A1 + (B1*TX1) + (C1*TX1*TX1)))/2.363;
+	  G4double sigma1 = (per_res1/1000);
+	    //energySumDet += fSpiceEnergyDet[ring][seg]; //no smearing
+	
+	    energySumDet += G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],sigma1);
+	
+	  }}
+	if(energySumDet > MINENERGYTHRES) {
+	  //fill sum energies
+	  if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[1], energySumDet);
     }
 }} ///////////////////////////////////////19/6
 

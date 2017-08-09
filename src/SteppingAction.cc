@@ -38,10 +38,14 @@
 #include "DetectorConstruction.hh"
 #include "EventAction.hh"
 
-#include "G4Step.hh"
+#include "G4Step.hh" 
+
+#include "CLHEP/Random/Randomize.h"
+
 #include "G4VProcess.hh"
 #include "G4HadronicProcess.hh"
 #include "G4ProcessType.hh"
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

@@ -47,6 +47,9 @@
 #include "G4Geantino.hh"
 #include "Randomize.hh"
 
+#include "HistoManager.hh"
+using namespace CLHEP; //for pi
+
 //#include <stdlib.h> //for abs
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -76,7 +79,6 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* DC)
     fEffParticleBool = false;
     fEffPolarization = false;
     fEffBeam = false;
-    
     LaBrinit(); //sets up default variables - messy having them all declared here
 }
 
@@ -204,7 +206,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
             effdirection = fEffDirection;
             // If we want to simulate a realistic beam spot, instead of perfect pencil beam.
             if(fEffBeam) {// following SetEfficiencyBeamRadius command
-	      G4cout << "Rando " << G4endl;
+	      G4cout << "Beam " << G4endl;
                 G4double xMonte = 10000.0*m; //monte for monte-carlo, effective errors to a central beam, creates a distribution
                 G4double yMonte = 10000.0*m;// why these values?
                 G4double zMonte = 0.0*m;//SPICE should have z/y errors?? as x along beam axis
@@ -218,7 +220,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
                     yMonte = (2.*G4UniformRand()-1.0)*fEffBeamRadius;
                 }
 
-                vecMonte = G4ThreeVector(xMonte,yMonte,zMonte); //rotate# funcs are CLHEP functions
+                vecMonte = G4ThreeVector(xMonte,yMonte,zMonte); //rotate# funcs are CLHEP
                 vecMonte.rotateY(directionTheta);
                 vecMonte.rotateZ(directionPhi);
 
@@ -227,15 +229,33 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
 	    if(fConeRadiusBool){// following SetConeRadius command - emits here in 2pi (Not conal as no x-y limits placed
 	   // G4cout << "Conal " << G4endl;
-	    effdirection = SetCone(fConeRadius);//unit direction in -Z due to SPICE's downstream detector
+	      effdirection = SetCone(fConeRadius);//unit direction in -Z due to SPICE's downstream detector
 	  //  G4cout << "Direction " << effdirection << G4endl << " Cone radius " << fConeRadius << "mm"<< G4endl;
 	    }
-	}
-        else {
-	    G4cout << "Rando no " << G4endl; //may offer the solution, an altered 2pi rando. Using 4pi for efficiency
+	    if(fConeValueBool){
+	      effdirection = SetCone(fConeRValue, fConeZValue);
+	    }
+	    if(fConeAngleBool){
+	      
+	      //808's and magic //limit theta to input, phi unrestricted
+	      G4double theta = G4UniformRand()*fAngleInit;
+	      G4double CosTheta = cos(theta);
+	      G4double SinTheta = sqrt(1. - pow(CosTheta, 2.0));
+	      G4double Phi      = (2.0*pi)*G4UniformRand();
+	      
+	      effdirection = G4ThreeVector(SinTheta*cos(Phi), SinTheta*sin(Phi), -CosTheta);
+	      
+	   if (fConeAngleBool) HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[1], theta);
+  if (fConeAngleBool) HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[2], sin(theta));      
+  if (fConeAngleBool) HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[0], SinTheta);//tan(phi) if yCone/xCone 	      
+	  if (fConeAngleBool) HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[3], 2*pi*(1.-CosTheta));//tan(phi) if yCone/xCone 	      
+	     // effdirection = SetCone(tan(fAngleInit),1);//read in as degree, GEANT auto-convert to rads
+	    }
+	} else {
+	    //G4cout << "Random " << G4endl; //may offer the solution, an altered 2pi rando. Using 4pi for efficiency
             // random direction if no preference provided
-            effRandCosTheta = 2.*G4UniformRand()-1.0; //cos(theta) = 2cos^2(0.5theta)-1 
-            effRandSinTheta = sqrt( 1. - effRandCosTheta*effRandCosTheta ); //(1 - cos^2(theta))^0.5
+            effRandCosTheta = 2.*G4UniformRand()-1.0; //cos(theta) = 2cos^2(0.5theta)-1 ??
+            effRandSinTheta = sqrt( 1. - effRandCosTheta*effRandCosTheta ); //from sin^2(theta)+cos^2(theta)=1
             effRandPhi      = (360.*deg)*G4UniformRand();
             effdirection = G4ThreeVector(effRandSinTheta*cos(effRandPhi), effRandSinTheta*sin(effRandPhi), effRandCosTheta);
 	    //converts from Spherical polar(physics def.) to cartesian via (rsin(theta)cos(phi),rsin(theta)cos(phi),rcos(theta)) r=1,unit length
@@ -260,19 +280,24 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     //
     fParticleGun->GeneratePrimaryVertex(anEvent);
 }
-G4ThreeVector PrimaryGeneratorAction::SetCone(G4double ConeRadius) {
-  //G4cout << "Set Cone loop " << G4endl;
+G4ThreeVector PrimaryGeneratorAction::SetCone(G4double ConeRadius, G4double zVal) {
   G4double xCone=0.0, yCone=0.0;//107.5mm from particle creation to SiLi, 47mm SiLi radius ->23 deg cone, 23/90 = 0.26237 for angleratio
   G4ThreeVector coneDirection;
-  G4double xSign, ySign;
-  xSign = G4UniformRand(); ySign = G4UniformRand(); 
-  xCone = G4UniformRand()*(ConeRadius);//Random x up to ConeRadius
-  yCone = G4UniformRand()*(sqrt(pow(ConeRadius,2)-pow(xCone,2)));//Random y from whatever is left
-  xCone=atan(xCone/disttoSiliFromParticleCreation);//a length at this point, need an angle ratio
-  yCone=atan(yCone/disttoSiliFromParticleCreation);
-  if (xSign>0.5) xCone=-xCone;//50/50 chance of +or- (sign set here) direction for cone
+  
+  yCone = G4UniformRand()*(ConeRadius);//Random x up to ConeRadius
+  xCone = G4UniformRand()*(sqrt(pow(ConeRadius,2)-pow(yCone,2)));//Random y from whatever is left from the maximum of r
+ 
+  xCone=atan(xCone/zVal);//a length at this point, need an angle ratio
+  yCone=atan(yCone/zVal);
+  
+  G4double xSign = G4UniformRand(), ySign= G4UniformRand(); 
+  if (xSign>0.5) xCone=-xCone;//50/50 chance of + or - (sign set here) direction for cone
   if (ySign>0.5) yCone=-yCone;
-  coneDirection = G4ThreeVector(xCone,yCone,-1.0);
+
+  //G4cout << xCone << "\t" << yCone << "\t" << atan(yCone/xCone) << G4endl;
+  coneDirection = G4ThreeVector(xCone,yCone,-1.0);//(SinTheta*cos(Phi), SinTheta*sin(Phi), CosTheta)
+  //sin(theta)=(SinTheta*cos(Phi)^2 + SinTheta*sin(Phi)^2)^1/2
+  G4double sinthetaoutput=sqrt(pow(xCone,2.0)+pow(yCone,2.0));
 
   return coneDirection;
 }

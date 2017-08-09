@@ -312,10 +312,6 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
    fAddDetectionSystemSpiceCmd = new G4UIcmdWithAnInteger("/DetSys/det/addSpice",this);
    fAddDetectionSystemSpiceCmd->SetGuidance("Add Detection System Spice");
    fAddDetectionSystemSpiceCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-	 
-	//fAddMagnetSystemSpiceCmd = new G4UIcmdWithAString("/DetSys/det/addMagnet",this);//23/6
-	//fAddMagnetSystemSpiceCmd->SetGuidance("Choose Med, or Low magnet system");
-	//fAddMagnetSystemSpiceCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
     fAddDetectionSystemPacesCmd = new G4UIcmdWithAnInteger("/DetSys/det/addPaces",this);
     fAddDetectionSystemPacesCmd->SetGuidance("Add Detection System Paces");

@@ -47,7 +47,7 @@ HistoManager::HistoManager() {
     fStepTrackerBool = false;
 
     fMakeHistoIndex = 0;
-    short segmenthisto[120];//this array will hold segment IDs to be transferred to reference for histos
+    //short segmenthisto[120];//this array will hold segment IDs to be transferred to reference for histos
     
     // histograms
     for (G4int k=0; k<MAXHISTO; k++) {
@@ -146,7 +146,38 @@ void HistoManager::Book() {
     xmax      = 100.;
     MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-
+    name  = "sin_distro";
+    title     = "Angular Distribution";
+    nbins     = 10000;
+    xmin      = 0.;
+    xmax      = 6.;
+    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+    angledistro[0]=fMakeHistoIndex;
+    
+    name  = "cos_distro";
+    title     = "Angular Distribution";
+    nbins     = 10000;
+    xmin      = 0.;
+    xmax      = 6.;
+    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+    angledistro[3]=fMakeHistoIndex;
+    
+    name  = "y_cone";
+    title     = "y Distribution";
+    nbins     = 10000;
+    xmin      = -4.;
+    xmax      = 6.;
+    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+    angledistro[1]=fMakeHistoIndex;
+    
+    name  = "x_cone";
+    title     = "x Distribution";
+    nbins     = 10000;
+    xmin      = -4.;
+    xmax      = 6.;
+    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+    angledistro[2]=fMakeHistoIndex;
+    
     if(fGridCell && WRITEEKINHISTOS) {
         for (G4int i=0; i < MAXNUMDET; i++) {
             detString = G4intToG4String(i);

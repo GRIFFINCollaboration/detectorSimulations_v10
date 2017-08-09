@@ -127,6 +127,11 @@ G4int DetectionSystemSpice::Build()
 //---------------------------------------------------------//
 G4int DetectionSystemSpice::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int nRings)
 {
+    PlaceDetectorMount(exp_hall_log);
+    PlaceAnnularClamps(exp_hall_log);   
+    PlaceGuardRing(exp_hall_log);//clears the code in det construction
+    
+    
   //To see how the segments fill put 1 detector ring in (via macro) and 1,2,3 segments (changed here) to see how they add.
   //segments add following JanalysisToolkit convention
   G4int NumberSeg = 12; // Segments in Phi for loop below - originally 12
@@ -212,7 +217,7 @@ void DetectionSystemSpice::PlaceAnnularClamps(G4LogicalVolume* exp_hall_log) {
 // build functions for different parts                     //
 // called in main build function                           //
 //---------------------------------------------------------//
-G4int DetectionSystemSpice::BuildSiliconWafer(G4int RingID)  // RingID = { 0, 9 }
+G4int DetectionSystemSpice::BuildSiliconWafer(G4int RingID)  // RingID = { 0, 9 } //Splits each in 2???
 {
 	// Define the material, return error if not found
   G4Material* material = G4Material::GetMaterial(this->wafer_material);
@@ -419,7 +424,7 @@ void DetectionSystemSpice::BuildAnnularClamps() {
 // Build one segment of Spice, 			       //
 // the geometry depends on the distance from the center//
 /////////////////////////////////////////////////////////
-G4Tubs* DetectionSystemSpice::BuildCrystal(G4int RingID)
+G4Tubs* DetectionSystemSpice::BuildCrystal(G4int RingID)//called for wafer construction, splits here?? 
 {
   // define angle, length, thickness, and inner and outer diameter
   // of silicon detector segment

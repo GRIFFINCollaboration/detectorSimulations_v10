@@ -86,7 +86,21 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun
     fConeRadiusCmd->SetGuidance("Set cone radius");
     fConeRadiusCmd->SetUnitCategory("Length");
     fConeRadiusCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
+    
+    fConeZValueCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/coneZValue",this);//SPICE cone values
+    fConeZValueCmd->SetGuidance("Set cone z value");
+    fConeZValueCmd->SetUnitCategory("Length");
+    fConeZValueCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    
+    fConeRValueCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/coneRValue",this);//SPICE cone values
+    fConeRValueCmd->SetGuidance("Set cone r value");
+    fConeRValueCmd->SetUnitCategory("Length");
+    fConeRValueCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    
+    fConeAngleCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/coneAngle",this);//SPICE cone angle value
+    fConeAngleCmd->SetGuidance("Set cone values - use deg (0-90)");
+    fConeAngleCmd->SetUnitCategory("Angle");
+    fConeAngleCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -98,6 +112,9 @@ PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger() {
     delete fEfficiencyPolarizationCmd;
     delete fEfficiencyBeamRadiusCmd;
     delete fConeRadiusCmd;
+    delete fConeZValueCmd;
+    delete fConeRValueCmd;
+    delete fConeAngleCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -134,6 +151,21 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
     if( command == fConeRadiusCmd ) {
         fAction->SetConeRadius(fConeRadiusCmd->GetNewDoubleValue(newValue));
 	G4cout << "Cone Beam selected" << G4endl;
+		  return;
+    }
+    if( command == fConeZValueCmd ) {
+        fAction->SetConeZValue(fConeZValueCmd->GetNewDoubleValue(newValue));
+	G4cout << "Cone Beam Z value selected" << G4endl;
+		  return;
+    }
+    if( command == fConeRValueCmd ) {
+        fAction->SetConeRValue(fConeRValueCmd->GetNewDoubleValue(newValue));
+	G4cout << "Cone Beam R value selected" << G4endl;
+		  return;
+    }
+    if( command == fConeAngleCmd ) {
+        fAction->SetConeAngle(fConeAngleCmd->GetNewDoubleValue(newValue));
+	G4cout << "Cone Beam via Angle selected" << G4endl;
 		  return;
     }
 }
