@@ -274,7 +274,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     // Set Optional Polarization
     if(fEffPolarization) {
         fParticleGun->SetParticlePolarization(fEffPolarizationVector);
-    }  
+    }
 
     //create vertex
     //
