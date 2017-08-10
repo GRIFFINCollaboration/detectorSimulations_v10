@@ -69,9 +69,9 @@ const G4double  EKINXMAXSPICE   = 10000.5*keV;
 const G4int     EDEPNBINS  = 10000;//was 10000
 const G4double  EDEPXMIN   = 0.5*keV;
 const G4double  EDEPXMAX   = 10000.5*keV;//was 10000.5
-const G4int     EDEPNBINSSPICE  = 10000;//was 10000	//spice histos range different
+const G4int     EDEPNBINSSPICE  = 10000;//was 10000
 const G4double  EDEPXMINSPICE   = 0.5*keV;
-const G4double  EDEPXMAXSPICE   = 2500.5*keV;//was 10000.5
+const G4double  EDEPXMAXSPICE   = 1500.5*keV;//was 10000.5
 
 // trackl histo properties  ///////////////////////
 const G4int     TRACKLNBINS = 5000;
@@ -106,7 +106,14 @@ public:
     short angledistro[4]; //this variable will hold the histogran ID for the angular distributions from the cone
 
     void MakeHisto(G4AnalysisManager* analysisManager, G4String filename,  G4String title, G4double xmin, G4double xmax, G4int nbins);
+    void MakeHistoWithAxisTitles(G4AnalysisManager* analysisManager, G4String name, 
+					   G4String title, G4double xmin, G4double xmax, 
+					   G4int nbins, const G4String& unitName, const G4String& fcnName);
+    void Make2DHistoWithAxisTitles(G4AnalysisManager* analysisManager, const G4String& name, const G4String& title,
+                 G4int nxbins, G4double xmin, G4double xmax, 
+                 G4int nybins, G4double ymin, G4double ymax);
     void FillHisto(G4int ih, G4double e, G4double weight = 1.0);
+    void Fill2DHisto(G4int ih, G4double xbin, G4double ybin, G4double weight = 1.0);
     void Normalize(G4int id, G4double fac);
 
 //    void FillNtuple(G4double eventNumber, G4double stepNumber, G4double cryNumber, G4double detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time);
@@ -161,6 +168,7 @@ private:
 
     G4int         fHistId[MAXHISTO];
     G4AnaH1*      fHistPt[MAXHISTO];
+    G4AnaH2*      fHistPt2[MAXHISTO];
 
     G4int         fNtColId[MAXNTCOL];
     G4int         fNtColIdHit[MAXNTCOL];

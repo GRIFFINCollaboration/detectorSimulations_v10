@@ -146,38 +146,22 @@ void HistoManager::Book() {
     xmax      = 100.;
     MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-    name  = "sin_distro";
+    name  = "sintheta_distro";
     title     = "Angular Distribution";
     nbins     = 10000;
     xmin      = 0.;
-    xmax      = 6.;
+    xmax      = 1.2;
     MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
     angledistro[0]=fMakeHistoIndex;
     
-    name  = "cos_distro";
-    title     = "Angular Distribution";
-    nbins     = 10000;
-    xmin      = 0.;
-    xmax      = 6.;
-    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-    angledistro[3]=fMakeHistoIndex;
-    
-    name  = "y_cone";
-    title     = "y Distribution";
-    nbins     = 10000;
-    xmin      = -4.;
-    xmax      = 6.;
-    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+    name  = "cone_print";
+    title     = "Cone representation";
+    nbins = 100;
+    xmin      = -1.;
+    xmax      = 1.;
+    Make2DHistoWithAxisTitles(analysisManager, name,  title, nbins, xmin, xmax, nbins, xmin, xmax);
     angledistro[1]=fMakeHistoIndex;
-    
-    name  = "x_cone";
-    title     = "x Distribution";
-    nbins     = 10000;
-    xmin      = -4.;
-    xmax      = 6.;
-    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-    angledistro[2]=fMakeHistoIndex;
-    
+
     if(fGridCell && WRITEEKINHISTOS) {
         for (G4int i=0; i < MAXNUMDET; i++) {
             detString = G4intToG4String(i);
@@ -514,7 +498,7 @@ void HistoManager::Save() {
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
+//fMakeHistoIndex is global in Histomanager so allowed in any scope below unaltered
 void HistoManager::MakeHisto(G4AnalysisManager* analysisManager, G4String name,  G4String title, G4double xmin, G4double xmax, G4int nbins) {
     fMakeHistoIndex++;
     if (fMakeHistoIndex >= MAXHISTO) {
@@ -528,8 +512,35 @@ void HistoManager::MakeHisto(G4AnalysisManager* analysisManager, G4String name, 
 
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void HistoManager::MakeHistoWithAxisTitles(G4AnalysisManager* analysisManager, G4String name, 
+					   G4String title, G4double xmin, G4double xmax, 
+					   G4int nbins, const G4String& unitName, const G4String& fcnName) {
+      fMakeHistoIndex++; 
+      if (fMakeHistoIndex >= MAXHISTO) {
+        G4cout << "---> Exceeded maximum number of histograms. Increase MAXHISTO in HistoManager.hh" << G4endl;
+        exit(1);
+    }
 
+    fHistId[fMakeHistoIndex] = analysisManager->CreateH1(name, title, nbins, xmin, xmax, unitName, fcnName);
+    fHistPt[fMakeHistoIndex] = analysisManager->GetH1(fHistId[fMakeHistoIndex]);
+}
+
+void HistoManager::Make2DHistoWithAxisTitles(G4AnalysisManager* analysisManager, const G4String& name, const G4String& title,
+                 G4int nxbins, G4double xmin, G4double xmax, 
+                 G4int nybins, G4double ymin, G4double ymax) {
+      fMakeHistoIndex++; //global in Histomanager so allowed in this scope unaltered
+      if (fMakeHistoIndex >= MAXHISTO) {
+        G4cout << "---> Exceeded maximum number of histograms. Increase MAXHISTO in HistoManager.hh" << G4endl;
+        exit(1);
+    }
+
+    fHistId[fMakeHistoIndex] = analysisManager->CreateH2(name, title, nxbins, xmin, xmax, 
+                 nybins, ymin, ymax);
+    fHistPt2[fMakeHistoIndex] = analysisManager->GetH2(fHistId[fMakeHistoIndex]);
+}
+
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void HistoManager::FillHisto(G4int ih, G4double xbin, G4double weight) {
     if (ih >= MAXHISTO) {
@@ -538,6 +549,15 @@ void HistoManager::FillHisto(G4int ih, G4double xbin, G4double weight) {
         return;
     }
     if (fHistPt[ih]) fHistPt[ih]->fill(xbin, weight);
+}
+
+void HistoManager::Fill2DHisto(G4int ih, G4double xbin, G4double ybin, G4double weight) {
+    if (ih >= MAXHISTO) {
+        G4cout << "---> warning from HistoManager::FillHisto() : histo " << ih
+               << "does not exist; xbin= " << xbin << " ybin= "<< ybin << " weight= " << weight << G4endl;
+        return;
+    }
+    if (fHistPt2[ih]) fHistPt2[ih]->fill(xbin, ybin, weight);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

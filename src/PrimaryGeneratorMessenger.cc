@@ -97,10 +97,15 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun
     fConeRValueCmd->SetUnitCategory("Length");
     fConeRValueCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
     
-    fConeAngleCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/coneAngle",this);//SPICE cone angle value
-    fConeAngleCmd->SetGuidance("Set cone values - use deg (0-90)");
+    fConeAngleCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/coneMaxAngle",this);//SPICE cone angle value
+    fConeAngleCmd->SetGuidance("Set cone value for outer theta - use deg (0-90)");
     fConeAngleCmd->SetUnitCategory("Angle");
     fConeAngleCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    
+    fConeMinAngleCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/coneMinAngle",this);//SPICE cone angle value
+    fConeMinAngleCmd->SetGuidance("Set cone value for inner theta - use deg (0-90) - default is 0 if none specified");
+    fConeMinAngleCmd->SetUnitCategory("Angle");
+    fConeMinAngleCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -115,6 +120,7 @@ PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger() {
     delete fConeZValueCmd;
     delete fConeRValueCmd;
     delete fConeAngleCmd;
+    delete fConeMinAngleCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -164,8 +170,13 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
 		  return;
     }
     if( command == fConeAngleCmd ) {
-        fAction->SetConeAngle(fConeAngleCmd->GetNewDoubleValue(newValue));
+        fAction->SetConeMaxAngle(fConeAngleCmd->GetNewDoubleValue(newValue));
 	G4cout << "Cone Beam via Angle selected" << G4endl;
+		  return;
+    }
+    if( command == fConeMinAngleCmd ) {
+        fAction->SetConeMinAngle(fConeAngleCmd->GetNewDoubleValue(newValue));
+	G4cout << "Cone Beam minimum angle supplied" << G4endl;
 		  return;
     }
 }

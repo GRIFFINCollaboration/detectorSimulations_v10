@@ -343,15 +343,15 @@ void EventAction::FillSpice() {
             if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[MAXNUMDETSPICE*ring+seg+2], fSpiceEnergyDet[ring][seg]);//any changed must be reflected  in histomanager.hh
 	    //add sum energies
 	   	  // Resolution of parameters of a HPGe detector is implemented here, only for the sum as of 8/8
-	  G4double A1 = 0.95446 ;
+	  /*G4double A1 = 0.95446 ;
 	  G4double B1 = 0.00335 ;
 	  G4double C1 = -7.4117e-7 ;
 	  G4double TX1 = ((energySumDet)/keV);
 	  G4double per_res1 = (sqrt(A1 + (B1*TX1) + (C1*TX1*TX1)))/2.363;
-	  G4double sigma1 = (per_res1/1000);
+	  G4double sigma1 = (per_res1/1000);*/
 	    //energySumDet += fSpiceEnergyDet[ring][seg]; //no smearing
-	
-	    energySumDet += G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],sigma1);
+	//G4cout << "Sigma1 = "<<sigma1<<G4endl;
+	    energySumDet += G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.002);//2keV for spice so far - not energy dependent
 	
 	  }}
 	if(energySumDet > MINENERGYTHRES) {

@@ -74,6 +74,7 @@ private:
     G4UIcmdWithADoubleAndUnit*     fConeZValueCmd;//SPICE cone with values
     G4UIcmdWithADoubleAndUnit*     fConeRValueCmd;
     G4UIcmdWithADoubleAndUnit*     fConeAngleCmd;
+    G4UIcmdWithADoubleAndUnit*     fConeMinAngleCmd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

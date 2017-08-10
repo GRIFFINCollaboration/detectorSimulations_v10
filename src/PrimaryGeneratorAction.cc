@@ -237,18 +237,15 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	    }
 	    if(fConeAngleBool){
 	      
-	      //808's and magic //limit theta to input, phi unrestricted
-	      G4double theta = G4UniformRand()*fAngleInit;
-	      G4double CosTheta = cos(theta);
-	      G4double SinTheta = sqrt(1. - pow(CosTheta, 2.0));
+	      //8/08's and heartbreak //limit theta to input, phi unrestricted
+	      G4double SinTheta = (G4UniformRand()*(sin(fAngleInit)-sin(fAngleMinInit))+sin(fAngleMinInit));
+	      G4double CosTheta = sqrt(1. - pow(SinTheta, 2.0));
 	      G4double Phi      = (2.0*pi)*G4UniformRand();
 	      
 	      effdirection = G4ThreeVector(SinTheta*cos(Phi), SinTheta*sin(Phi), -CosTheta);
-	      
-	   if (fConeAngleBool) HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[1], theta);
-  if (fConeAngleBool) HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[2], sin(theta));      
-  if (fConeAngleBool) HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[0], SinTheta);//tan(phi) if yCone/xCone 	      
-	  if (fConeAngleBool) HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[3], 2*pi*(1.-CosTheta));//tan(phi) if yCone/xCone 	      
+	     // G4cout << effdirection << G4endl;
+	  if (fConeAngleBool) HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[0], SinTheta);//tan(phi) if yCone/xCone 	      
+	  if (fConeAngleBool) HistoManager::Instance().Fill2DHisto(HistoManager::Instance().angledistro[1], asin(SinTheta*cos(Phi)), asin(SinTheta*sin(Phi)));//tan(phi) if yCone/xCone 	      
 	     // effdirection = SetCone(tan(fAngleInit),1);//read in as degree, GEANT auto-convert to rads
 	    }
 	} else {
@@ -280,6 +277,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     //
     fParticleGun->GeneratePrimaryVertex(anEvent);
 }
+
 G4ThreeVector PrimaryGeneratorAction::SetCone(G4double ConeRadius, G4double zVal) {
   G4double xCone=0.0, yCone=0.0;//107.5mm from particle creation to SiLi, 47mm SiLi radius ->23 deg cone, 23/90 = 0.26237 for angleratio
   G4ThreeVector coneDirection;
@@ -296,8 +294,6 @@ G4ThreeVector PrimaryGeneratorAction::SetCone(G4double ConeRadius, G4double zVal
 
   //G4cout << xCone << "\t" << yCone << "\t" << atan(yCone/xCone) << G4endl;
   coneDirection = G4ThreeVector(xCone,yCone,-1.0);//(SinTheta*cos(Phi), SinTheta*sin(Phi), CosTheta)
-  //sin(theta)=(SinTheta*cos(Phi)^2 + SinTheta*sin(Phi)^2)^1/2
-  G4double sinthetaoutput=sqrt(pow(xCone,2.0)+pow(yCone,2.0));
 
   return coneDirection;
 }

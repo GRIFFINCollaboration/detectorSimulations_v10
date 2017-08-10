@@ -70,7 +70,8 @@ public:
     void SetConeRadius( G4double num ) {fConeRadius = num; fConeRadiusBool = true; fEffDirectionBool = true;} ;//Direction needed, should not require explicit initialisation command
     void SetConeZValue( G4double num ) {fConeZValue = num; fConeValueBool = true; fEffDirectionBool = true;};
     void SetConeRValue( G4double num ) {fConeRValue = num; fConeValueBool = true; fEffDirectionBool = true;};
-    void SetConeAngle( G4double num1 ) {fAngleInit = num1; fConeAngleBool = true; fEffDirectionBool = true;};
+    void SetConeMaxAngle( G4double num1 ) {fAngleInit = num1; fConeAngleBool = true; fEffDirectionBool = true;};
+    void SetConeMinAngle( G4double num1 ) {fAngleMinInit = num1;};
     //booleans (initially false), above, true if a command has been entered for the loops in source file to be entered
     
 
@@ -100,6 +101,7 @@ private:
     G4bool fConeValueBool;
     G4double fAngleInit;
     G4bool fConeAngleBool;
+    G4double fAngleMinInit;
     
     //functions
     void LaBrinit();
