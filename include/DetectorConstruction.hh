@@ -150,13 +150,13 @@ public:
     void AddDetectionSystemGriffinBack(G4int ndet);
     void AddDetectionSystemGriffinBackDetector(G4int ndet);
     //void AddDetectionSystemGriffinPositionConfig(G4ThreeVector input);
-    void AddDetectionSystemGriffinHevimet( G4int input ) ;
-    void AddDetectionSystemGriffinCustom( G4int ndet ) ;
-    void AddDetectionSystemGriffinCustomDetector( G4int ndet ) ;
-    void AddDetectionSystemGriffinShieldSelect( G4int ShieldSelect ) ;
-    void AddDetectionSystemGriffinSetRadialDistance( G4double detectorDist ) ;
-    void AddDetectionSystemGriffinSetExtensionSuppLocation( G4int detectorPos ) ;
-    void AddDetectionSystemGriffinSetDeadLayer( G4ThreeVector params ) ;
+    void AddDetectionSystemGriffinHevimet(G4int input);
+    void AddDetectionSystemGriffinCustom(G4int ndet);
+    void AddDetectionSystemGriffinCustomDetector(G4int ndet  = 0);
+    void AddDetectionSystemGriffinShieldSelect(G4int ShieldSelect );
+    void AddDetectionSystemGriffinSetRadialDistance(G4double detectorDist);
+    void AddDetectionSystemGriffinSetExtensionSuppLocation(G4int detectorPos);
+    void AddDetectionSystemGriffinSetDeadLayer(G4ThreeVector params);
 
     void AddDetectionSystemSceptar(G4int ndet);
     void AddDetectionSystemPaces(G4int ndet);

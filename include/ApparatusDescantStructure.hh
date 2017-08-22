@@ -51,7 +51,7 @@ public:
 
     G4int Build();
 
-    G4int PlaceDescantStructure(G4LogicalVolume* exp_hall_log);
+    G4int PlaceDescantStructure(G4LogicalVolume* expHallLog);
 
 private:
     // Logical volumes

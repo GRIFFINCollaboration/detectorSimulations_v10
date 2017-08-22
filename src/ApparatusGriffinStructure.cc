@@ -235,8 +235,6 @@ G4int ApparatusGriffinStructure::Place(G4LogicalVolume* expHallLog, G4int select
     G4ThreeVector move = G4ThreeVector(0.0*mm, 0.0*mm, 0.0*mm);
     G4RotationMatrix* rotate = new G4RotationMatrix;
 
-    G4double theta;
-    G4double phi;
     G4double alpha;
     G4double beta;
     G4double gamma;
@@ -269,8 +267,6 @@ G4int ApparatusGriffinStructure::Place(G4LogicalVolume* expHallLog, G4int select
     }
 
     for(G4int i=iSquare1; i<=iSquare2; i++) { // loop over all square pieces
-        theta  = fGriffinCoords[i][0];
-        phi    = fGriffinCoords[i][1];
         alpha  = fGriffinCoords[i][2]; // yaw
         beta   = fGriffinCoords[i][3]; // pitch
         gamma  = fGriffinCoords[i][4]; // roll
@@ -286,8 +282,6 @@ G4int ApparatusGriffinStructure::Place(G4LogicalVolume* expHallLog, G4int select
     }
 
     for(G4int i=iSquare1; i<=iSquare2; i++) { // loop over all rods
-        theta  = fGriffinCoords[i][0];
-        phi    = fGriffinCoords[i][1];
         alpha  = fGriffinCoords[i][2]; // yaw
         beta   = fGriffinCoords[i][3]; // pitch
         gamma  = fGriffinCoords[i][4]; // roll
@@ -303,15 +297,12 @@ G4int ApparatusGriffinStructure::Place(G4LogicalVolume* expHallLog, G4int select
     }
 
     for(G4int i=iTriangle1; i<=iTriangle2; i++){ // loop over all triangle pieces
-        theta  = fAncillaryCoords[i][0];
-        phi    = fAncillaryCoords[i][1];
         alpha  = fAncillaryCoords[i][2]; // yaw
         beta   = fAncillaryCoords[i][3]; // pitch
         gamma  = fAncillaryCoords[i][4]; // roll
 
         rotate = new G4RotationMatrix;
-        if(i>=4)
-            rotate->rotateZ(60.0*deg);
+        if(i>=4) rotate->rotateZ(60.0*deg);
         rotate->rotateY(M_PI);
         rotate->rotateY(M_PI+beta);
         rotate->rotateZ(gamma);

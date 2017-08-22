@@ -47,7 +47,6 @@ HistoManager::HistoManager() {
     fStepTrackerBool = false;
 
     fMakeHistoIndex = 0;
-    short segmenthisto[120];//this array will hold segment IDs to be transferred to reference for histos
     
     // histograms
     for (G4int k=0; k<MAXHISTO; k++) {
