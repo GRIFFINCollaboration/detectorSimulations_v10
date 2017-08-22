@@ -424,15 +424,15 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     if(command == fUpdateCmd ) {
         fDetector->UpdateGeometry();
     }
-    //  if(command == fGenericTargetCmd ) {
-    //    fDetector->SetGenericTargetMaterial(newValue);
-    //  }
-    //  if(command == fGenericTargetDimensionsCmd ) {
-    //    fDetector->SetGenericTargetDimensions(fGenericTargetDimensionsCmd->GetNew3VectorValue(newValue));
-    //  }
-    //  if(command == fGenericTargetPositionCmd ) {
-    //    fDetector->SetGenericTargetPosition(fGenericTargetPositionCmd->GetNew3VectorValue(newValue));
-    //  }
+    if(command == fGenericTargetCmd ) {
+	fDetector->SetGenericTargetMaterial(newValue);
+    }
+    if(command == fGenericTargetDimensionsCmd ) {
+	fDetector->SetGenericTargetDimensions(fGenericTargetDimensionsCmd->GetNew3VectorValue(newValue));
+    }
+    if(command == fGenericTargetPositionCmd ) {
+	fDetector->SetGenericTargetPosition(fGenericTargetPositionCmd->GetNew3VectorValue(newValue));
+    }
     //  if(command == fFieldBoxMaterialCmd ) {
     //    fDetector->SetFieldBoxMaterial(newValue);
     //  }

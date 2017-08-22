@@ -83,10 +83,10 @@ public:
     void SetWorldVis( G4bool );
     //    void SetWorldMagneticField( G4ThreeVector );
 
-    //    void SetGenericTargetMaterial( G4String );
-    //    void SetGenericTargetDimensions( G4ThreeVector );
-    //    void SetGenericTargetPosition( G4ThreeVector );
-    //    void SetGenericTarget( );
+    void SetGenericTargetMaterial( G4String );
+    void SetGenericTargetDimensions( G4ThreeVector );
+    void SetGenericTargetPosition( G4ThreeVector );
+    void SetGenericTarget( );
     //    void SetFieldBoxMaterial( G4String );
     //    void SetFieldBoxDimensions( G4ThreeVector );
     //    void SetFieldBoxPosition( G4ThreeVector );

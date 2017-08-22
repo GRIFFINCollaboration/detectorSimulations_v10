@@ -77,7 +77,7 @@
 #include "DetectionSystemPaces.hh"
 #include "DetectionSystemSodiumIodide.hh"
 #include "DetectionSystemLanthanumBromide.hh"
-//#include "ApparatusGenericTarget.hh"
+#include "ApparatusGenericTarget.hh"
 #include "ApparatusSpiceTargetChamber.hh"
 #include "Apparatus8piVacuumChamber.hh"
 #include "Apparatus8piVacuumChamberAuxMatShell.hh"
@@ -254,47 +254,45 @@ void DetectorConstruction::UpdateGeometry() {
   G4RunManager::GetRunManager()->DefineWorldVolume(Construct());
 }
 
-//void DetectorConstruction::SetGenericTargetMaterial( G4String name )
-//{
-//  fSetGenericTargetMaterial = true;
-//  genericTargetMaterial = name;
-//  SetGenericTarget();
-//}
+void DetectorConstruction::SetGenericTargetMaterial( G4String name )
+{
+  DetectorConstruction::fSetGenericTargetMaterial = true;
+  DetectorConstruction::fGenericTargetMaterial = name;
+  DetectorConstruction::SetGenericTarget();
+}
 
-//void DetectorConstruction::SetGenericTargetDimensions( G4ThreeVector vec )
-//{
-//  fSetGenericTargetDimensions = true;
-//  genericTargetDimensions = vec;
-//  SetGenericTarget();
-//}
+void DetectorConstruction::SetGenericTargetDimensions( G4ThreeVector vec )
+{
+  DetectorConstruction::fSetGenericTargetDimensions = true;
+  DetectorConstruction::fGenericTargetDimensions = vec;
+  DetectorConstruction::SetGenericTarget();
+}
 
-//void DetectorConstruction::SetGenericTargetPosition( G4ThreeVector vec )
-//{
-//  fSetGenericTargetPosition = true;
-//  genericTargetPosition = vec;
-//  SetGenericTarget();
-//}
+void DetectorConstruction::SetGenericTargetPosition( G4ThreeVector vec )
+{
+  DetectorConstruction::fSetGenericTargetPosition = true;
+  DetectorConstruction::fGenericTargetPosition = vec;
+  DetectorConstruction::SetGenericTarget();
+}
 
-//void DetectorConstruction::SetGenericTarget()
-//{
-//  if( fSetGenericTargetMaterial )
-//  {
-//    if( fSetGenericTargetDimensions )
-//    {
-//      if( fSetGenericTargetPosition )
-//      {
-//        G4String name = genericTargetMaterial;
-//        G4double vecX = genericTargetDimensions.x()/mm;
-//        G4double vecY = genericTargetDimensions.y()/mm;
-//        G4double vecZ = genericTargetDimensions.z()/mm;
-//        ApparatusGenericTarget* pApparatusGenericTarget = new ApparatusGenericTarget();
-//        pApparatusGenericTarget->Build(name, vecX, vecY, vecZ);
-//        G4RotationMatrix* rotate = new G4RotationMatrix;
-//        pApparatusGenericTarget->PlaceApparatus(fLogicWorld, genericTargetPosition, rotate);
-//      }
-//        }
-//    }
-//}
+void DetectorConstruction::SetGenericTarget()
+{
+  if( fSetGenericTargetMaterial ) {
+    if( fSetGenericTargetDimensions ) {
+	if( fSetGenericTargetPosition ) {
+	  G4String name = fGenericTargetMaterial;
+	  G4double vecX = fGenericTargetDimensions.x()/mm;
+	  G4double vecY = fGenericTargetDimensions.y()/mm;
+	  G4double vecZ = fGenericTargetDimensions.z()/mm;
+	  
+	  ApparatusGenericTarget* pApparatusGenericTarget = new ApparatusGenericTarget();
+	  pApparatusGenericTarget->Build(name, vecX, vecY, vecZ);
+	  G4RotationMatrix* rotate = new G4RotationMatrix;
+	  pApparatusGenericTarget->PlaceApparatus(fLogicWorld, fGenericTargetPosition, rotate);
+	}
+    }
+  }
+}
 //void DetectorConstruction::SetFieldBoxMaterial( G4String name )
 //{
 //  fSetFieldBoxMaterial = true;
