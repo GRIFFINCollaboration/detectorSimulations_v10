@@ -57,16 +57,15 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 public:
     PrimaryGeneratorAction(DetectorConstruction*);
     virtual ~PrimaryGeneratorAction();
-
     virtual void GeneratePrimaries(G4Event*);
-
+  
     void SetNumberOfDecayingLaBrDetectors( G4int num ) {fNumberOfDecayingLaBrDetectors = num;} ;
     void SetEfficiencyEnergy( G4double num ) {fEffEnergy = num;} ;
     void SetEfficiencyDirection( G4ThreeVector num ) {fEffDirection = num; fEffDirectionBool = true;} ;
     void SetEfficiencyPosition( G4ThreeVector num ) {fEffPosition = num; fEffPositionBool = true;} ;
     void SetEfficiencyParticle( G4String val ) {fEffParticle = val; fEffParticleBool = true;} ;
     void SetEfficiencyPolarization( G4ThreeVector num ) {fEffPolarizationVector = num; fEffPolarization = true;} ;
-    void SetEfficiencyBeamRadius( G4double num ) {fEffBeamRadius = num; fEffBeam = true;} ;
+    void SetEfficiencyBeamRadius( G4double num ) {fEffBeamRadius = num; fEffBeam = true; } ;
     void SetConeRadius( G4double num ) {fConeRadius = num; fConeRadiusBool = true; fEffDirectionBool = true;} ;//Direction needed, should not require explicit initialisation command
     void SetConeZValue( G4double num ) {fConeZValue = num; fConeValueBool = true; fEffDirectionBool = true;};
     void SetConeRValue( G4double num ) {fConeRValue = num; fConeValueBool = true; fEffDirectionBool = true;};
@@ -74,7 +73,9 @@ public:
     void SetConeMinAngle( G4double num1 ) {fAngleMinInit = num1;};
     //booleans (initially false), above, true if a command has been entered for the loops in source file to be entered
     
-
+    
+      
+      
 private:
     G4ParticleGun*                fParticleGun;  //pointer a to G4 class
     DetectorConstruction*         fDetector;     //pointer to the geometry
@@ -106,6 +107,8 @@ private:
     //functions
     void LaBrinit();
     G4ThreeVector SetCone(G4double fConeRadius, G4double zVal=107.50685);//value is disttoSiliFromParticleCreation
+    
+    
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -37,7 +37,8 @@
 #include "PrimaryGeneratorMessenger.hh" // for command-based data input
 
 #include "Global.hh"
-#include "DetectorConstruction.hh" //for detector based information
+#include "globals.hh"
+#include "G4ThreeVector.hh"
 
 #include "G4Event.hh"
 #include "G4ParticleGun.hh"
@@ -47,10 +48,9 @@
 #include "G4Geantino.hh"
 #include "Randomize.hh"
 
+#include "DetectorConstruction.hh" //for detector based information
 #include "HistoManager.hh"
 using namespace CLHEP; //for pi
-
-//#include <stdlib.h> //for abs
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -238,14 +238,16 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	    if(fConeAngleBool){
 	      
 	      //8/08's and heartbreak //limit theta to input, phi unrestricted
-	      G4double SinTheta = (G4UniformRand()*(sin(fAngleInit)-sin(fAngleMinInit))+sin(fAngleMinInit));
+	      //G4cout << fAngleInit << fAngleMinInit << G4endl;
+	      G4double SinTheta = (G4UniformRand()*(sin(fAngleInit)-sin(fAngleMinInit)))+sin(fAngleMinInit);
+	      G4cout << asin(SinTheta) << G4endl;
 	      G4double CosTheta = sqrt(1. - pow(SinTheta, 2.0));
 	      G4double Phi      = (2.0*pi)*G4UniformRand();
 	      
 	      effdirection = G4ThreeVector(SinTheta*cos(Phi), SinTheta*sin(Phi), -CosTheta);
 	     // G4cout << effdirection << G4endl;
 	  if (fConeAngleBool) HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[0], SinTheta);//tan(phi) if yCone/xCone 	      
-	  if (fConeAngleBool) HistoManager::Instance().Fill2DHisto(HistoManager::Instance().angledistro[1], asin(SinTheta*cos(Phi)), asin(SinTheta*sin(Phi)));//tan(phi) if yCone/xCone 	      
+	  if (fConeAngleBool) HistoManager::Instance().Fill2DHisto(HistoManager::Instance().angledistro[1], asin(SinTheta), asin(sin(Phi)));//tan(phi) if yCone/xCone 	      
 	     // effdirection = SetCone(tan(fAngleInit),1);//read in as degree, GEANT auto-convert to rads
 	    }
 	} else {
@@ -265,8 +267,8 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         fParticleGun->SetParticlePosition(thisEffPosition);
         fParticleGun->SetParticleMomentumDirection(effdirection);
         fParticleGun->SetParticleEnergy(fEffEnergy);
+	
     }
-
 
     // Set Optional Polarization
     if(fEffPolarization) {
@@ -294,10 +296,10 @@ G4ThreeVector PrimaryGeneratorAction::SetCone(G4double ConeRadius, G4double zVal
 
   //G4cout << xCone << "\t" << yCone << "\t" << atan(yCone/xCone) << G4endl;
   coneDirection = G4ThreeVector(xCone,yCone,-1.0);//(SinTheta*cos(Phi), SinTheta*sin(Phi), CosTheta)
-
   return coneDirection;
 }
 
+  
 void PrimaryGeneratorAction::LaBrinit() {
   //default LaBr properties
     G4double triangleThetaAngle = 54.735610317245360*deg;

@@ -107,8 +107,7 @@ public:
     void SetGridColour( G4ThreeVector input )          {fGridColour = input;};
     void SetGridPosOffset( G4ThreeVector input )          {fGridOffset = input;};
     void AddGrid();
-
-    void AddApparatusSpiceTargetChamber(G4String);
+    void AddApparatusSpiceTargetChamber(G4String, G4bool);
     void AddApparatus8piVacuumChamber();
     void AddApparatus8piVacuumChamberAuxMatShell(G4double thickness);
     void AddApparatusGriffinStructure(G4int selector);
@@ -174,6 +173,7 @@ public:
 
 
     void UseTIGRESSPositions( G4bool input )                  {fUseTigressPositions = input;};
+   
 private:
 
     //    MagneticField* worldMagField;

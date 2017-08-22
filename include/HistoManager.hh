@@ -43,6 +43,7 @@
 
 #include "G4SystemOfUnits.hh" // new version geant4.10 requires units
 
+
 const G4bool WRITEEKINHISTOS    = true;//bools needed to write histos
 const G4bool WRITEEDEPHISTOS    = true;
 const G4bool WRITETRACKLHISTOS  = true;
@@ -67,11 +68,11 @@ const G4double  EKINXMAXSPICE   = 10000.5*keV;
 
 // edep histo properties    ///////////////////////
 const G4int     EDEPNBINS  = 10000;//was 10000
-const G4double  EDEPXMIN   = 0.5*keV;
-const G4double  EDEPXMAX   = 10000.5*keV;//was 10000.5
+const G4double  EDEPXMIN   = 0.0*keV;
+const G4double  EDEPXMAX   = 10000.0*keV;//was 10000.5
 const G4int     EDEPNBINSSPICE  = 10000;//was 10000
-const G4double  EDEPXMINSPICE   = 0.5*keV;
-const G4double  EDEPXMAXSPICE   = 1500.5*keV;//was 10000.5
+const G4double  EDEPXMINSPICE   = 0.0*keV;
+const G4double  EDEPXMAXSPICE   = 2100.0*keV;//was 10000.5
 
 // trackl histo properties  ///////////////////////
 const G4int     TRACKLNBINS = 5000;

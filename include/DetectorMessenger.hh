@@ -39,6 +39,7 @@
 #include "G4UImessenger.hh"
 
 class DetectorConstruction;
+
 class G4UIdirectory;
 class G4UIcmdWithAString;
 class G4UIcmdWithADoubleAndUnit;
@@ -58,6 +59,7 @@ public:
 
     void SetNewValue(G4UIcommand*, G4String);
 
+    G4double pgm(G4ThreeVector);
 private:
     DetectorConstruction* fDetector;
 
@@ -80,8 +82,9 @@ private:
     G4UIcmdWith3VectorAndUnit* fFieldBoxDimensionsCmd;
     G4UIcmdWith3VectorAndUnit* fFieldBoxPositionCmd;
     G4UIcmdWith3VectorAndUnit* fFieldBoxMagneticFieldCmd;
-	G4UIcmdWithAString*        fTabMagneticFieldCmd; ///19/7
-
+    G4UIcmdWithAString*        fTabMagneticFieldCmd; ///19/7
+    
+    G4UIcmdWithABool*		fSpicePedestalCmd;
     G4UIcmdWithAString*   fAddApparatusSpiceTargetChamberCmd;
     G4UIcmdWithoutParameter*   fAddApparatus8piVacuumChamberCmd;
     G4UIcmdWithADoubleAndUnit* fAddApparatus8piVacuumChamberAuxMatShellCmd;
@@ -128,17 +131,18 @@ private:
     G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinBackDetectorCmd;
     //G4UIcmdWith3Vector*       fAddDetectionSystemGriffinPositionConfigCmd;
     G4UIcmdWithAnInteger*       fAddDetectionSystemSpiceCmd;
-	G4UIcmdWithAString*         fAddMagnetSystemSpiceCmd;
+    G4UIcmdWithAString*         fAddMagnetSystemSpiceCmd;
     G4UIcmdWithAnInteger*       fAddDetectionSystemPacesCmd;
     G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinHevimetCmd ;
 
     G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinCustomDetectorCmd ;
-    G4UIcmdWithAnInteger*	     fAddDetectionSystemGriffinCustomCmd ;
+    G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinCustomCmd ;
     G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinShieldSelectCmd ;
     G4UIcmdWithADoubleAndUnit*  fAddDetectionSystemGriffinSetRadialDistanceCmd ;
     G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinSetExtensionSuppLocationCmd ;
     G4UIcmdWith3Vector*         fAddDetectionSystemGriffinSetDeadLayerCmd ;
     G4UIcmdWithABool*           fUseTIGRESSPositionsCmd;
+    
 
 };
 

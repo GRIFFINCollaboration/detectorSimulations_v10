@@ -56,7 +56,10 @@ EventAction::EventAction(RunAction* run)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-EventAction::~EventAction() { }
+EventAction::~EventAction() { 
+  G4cout << "1 dep: " << MultiplicityArray[0] << "| 2 dep: " << MultiplicityArray[1] << "| 3 dep: " << MultiplicityArray[2] << 
+  "| 4 dep: " << MultiplicityArray[3] << "| 5 dep: " << MultiplicityArray[4] << G4endl;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -330,35 +333,60 @@ void EventAction::FillGridCell() {
 }
 
 void EventAction::FillSpice() {
-
-	  
-	  //G4cout << "size of histo array: " << sizeof(HistoManager::Instance().SpiceHistNumbers) << G4endl;
+ 
+	//G4cout << "size of histo array: " << sizeof(HistoManager::Instance().SpiceHistNumbers) << G4endl;
 	G4double energySumDet = 0;
+	fSpiceMultiplicity = 0;
+	G4double Multiplicityenergy = 0.0;
 	for (G4int ring=0; ring < MAXNUMDETSPICE; ring++) {
 	  for (G4int seg=0; seg < 12; seg++) {
-	  if(fSpiceEnergyDet[ring][seg] > MINENERGYTHRES) {
-	    //fill energies in each detector
-            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[0], fSpiceEnergyDet[ring][seg]);
-	    //fill standard energy spectra
-            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[MAXNUMDETSPICE*ring+seg+2], fSpiceEnergyDet[ring][seg]);//any changed must be reflected  in histomanager.hh
-	    //add sum energies
-	   	  // Resolution of parameters of a HPGe detector is implemented here, only for the sum as of 8/8
-	  /*G4double A1 = 0.95446 ;
+	    if(fSpiceEnergyDet[ring][seg] > MINENERGYTHRES) {
+	      //fill energies in each detector
+	      if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[0], G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.002));
+	      //fill standard energy spectra
+	      if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[MAXNUMDETSPICE*ring+seg+2], G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.002));
+	      fSpiceMultiplicity += 1;
+	      Multiplicityenergy += fSpiceEnergyDet[ring][seg];
+	      //add sum energies
+	      /*Resolution of parameters of a HPGe detector is implemented here, only for the sum as of 8/8
+	  G4double A1 = 0.95446 ;
 	  G4double B1 = 0.00335 ;
 	  G4double C1 = -7.4117e-7 ;
 	  G4double TX1 = ((energySumDet)/keV);
 	  G4double per_res1 = (sqrt(A1 + (B1*TX1) + (C1*TX1*TX1)))/2.363;
-	  G4double sigma1 = (per_res1/1000);*/
-	    //energySumDet += fSpiceEnergyDet[ring][seg]; //no smearing
-	//G4cout << "Sigma1 = "<<sigma1<<G4endl;
-	    energySumDet += G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.002);//2keV for spice so far - not energy dependent
-	
-	  }}
-	if(energySumDet > MINENERGYTHRES) {
+	  G4double sigma1 = (per_res1/1000);
+	  energySumDet += fSpiceEnergyDet[ring][seg]; //no smearing
+	  G4cout << "Sigma1 = "<<sigma1<<G4endl;*/
+	      energySumDet += G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.002);//2keV resolution for spice so far - not energy dependent
+	      //summing enery deposits per event for add-back method
+	    }
+	  }
+	}
+	if(energySumDet > MINENERGYTHRES) {//after exiting loops for all rings/segs, will input energy if > threshold
 	  //fill sum energies
 	  if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[1], energySumDet);
-    }
-}} ///////////////////////////////////////19/6
+	  }
+	  
+	    
+	  if(fSpiceMultiplicity>0) HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[0], fSpiceMultiplicity);
+	  switch(fSpiceMultiplicity) {
+	  case 1 : MultiplicityArray[0] += 1;
+             break;       
+	  case 2 : MultiplicityArray[1] += 1;
+	     break;
+	  case 3 : MultiplicityArray[2] += 1; 
+             break;       
+	  case 4 : MultiplicityArray[3] += 1;
+             break;
+	  case 5 : MultiplicityArray[4] += 1;
+             break;       
+  
+	  }
+	    
+	  //G4cout << "1 dep: " << MultiplicityArray[0] << "| 2 dep: " << MultiplicityArray[1] << "| 3 dep: " << MultiplicityArray[2] << 
+ // "| 4 dep: " << MultiplicityArray[3] << "| 5 dep: " << MultiplicityArray[4] << G4endl;
+}
+//if(WRITEEDEPHISTOS && (energySumDet > MINENERGYTHRES))     G4cout << "energysumDet " <<  energySumDet << G4endl;} ///////////////////////////////////////19/6
 
 void EventAction::FillPacesCryst() {
     G4double energySumDet = 0;
@@ -371,7 +399,8 @@ void EventAction::FillPacesCryst() {
         }
     }
     if(energySumDet > MINENERGYTHRES) {
-        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().PacesHistNumbers[1], energySumDet);
+        if(WRITEEDEPHISTOS && (energySumDet > MINENERGYTHRES))     HistoManager::Instance().FillHisto(HistoManager::Instance().PacesHistNumbers[1], energySumDet);
+	
     }
 }////////////////////////////////////////////20/6
 

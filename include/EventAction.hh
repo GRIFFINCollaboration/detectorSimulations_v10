@@ -93,7 +93,7 @@ public:
 
 private:
     RunAction*    fRunAct;
-	HistoManager* fHistoManager;
+    HistoManager* fHistoManager;
 
     G4int     fPrintModulo;
     G4int     fEvtNb;
@@ -124,6 +124,9 @@ private:
  
     G4int    fPTrackID;
     G4int    fPParentID;
+    
+    G4int    fSpiceMultiplicity=0;
+    G4int    MultiplicityArray[5];
 
 
     // Particle types in simulation

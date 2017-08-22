@@ -68,9 +68,6 @@
 
 #include "G4FieldManager.hh"
 #include "G4UniformMagField.hh"
-//#include "MagneticField.hh"
-//#include "Field.hh"
-//#include "GlobalField.hh"
 #include "G4TransportationManager.hh"
 #include "nonUniformMagneticField.hh"
 
@@ -86,8 +83,6 @@
 #include "Apparatus8piVacuumChamberAuxMatShell.hh"
 #include "ApparatusGriffinStructure.hh"
 
-//#include "ApparatusFieldBox.hh"
-
 #include "DetectionSystemBox.hh" // New file
 #include "DetectionSystemGrid.hh"
 
@@ -98,9 +93,6 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 DetectorConstruction::DetectorConstruction() :
-  // Fields
-  //    expHallMagField( 0 ),
-  //    defaultMaterial( 0 ),
   fSolidWorld(NULL),
   fLogicWorld(NULL),
   fPhysiWorld(NULL)
@@ -122,8 +114,6 @@ DetectorConstruction::DetectorConstruction() :
 
   //  builtDetectors = false;
 
-  // ensure the global field is initialized
-  //  (void)GlobalField::getObject();
 
   fMatWorldName = "G4_AIR";
 
@@ -133,7 +123,7 @@ DetectorConstruction::DetectorConstruction() :
   fSetGenericTargetPosition   = false;
 
   // Field Box
-  fSetFieldBoxMaterial= false;
+  fSetFieldBoxMaterial= false;//think this has been removed 17/8
   fSetFieldBoxDimensions= false;
   fSetFieldBoxPosition= false;
   fSetFieldBoxMagneticField= false;
@@ -383,10 +373,10 @@ void DetectorConstruction::AddGrid() {
     }
 }
 
-void DetectorConstruction::AddApparatusSpiceTargetChamber(G4String MedLo)//parameter sets lens for SPICE - should be matched with field
+void DetectorConstruction::AddApparatusSpiceTargetChamber(G4String MedLo, G4bool TargetPedestal)//parameter sets lens for SPICE - should be matched with field
 {
    //Create Target Chamber
-   ApparatusSpiceTargetChamber* pApparatusSpiceTargetChamber = new ApparatusSpiceTargetChamber(MedLo);
+   ApparatusSpiceTargetChamber* pApparatusSpiceTargetChamber = new ApparatusSpiceTargetChamber(MedLo, TargetPedestal);
    pApparatusSpiceTargetChamber->Build( fLogicWorld );	
 }
 

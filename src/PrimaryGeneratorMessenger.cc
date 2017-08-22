@@ -45,7 +45,6 @@
 #include "G4UIparameter.hh"
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithABool.hh"
-
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun)
@@ -140,6 +139,9 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
     }
     if( command == fEfficiencyPositionCmd ) {
         fAction->SetEfficiencyPosition(fEfficiencyPositionCmd->GetNew3VectorValue(newValue));
+	BeamPos3 = fEfficiencyPositionCmd->GetNew3VectorValue(newValue);//Private to public variable so accessible
+	G4cout << G4endl <<  G4endl <<  G4endl <<"BeamPos = " << BeamPos << G4endl << G4endl << G4endl ;
+	G4cout << G4endl <<  G4endl <<  G4endl <<"BeamPos Three-Vector = " << BeamPos3 << G4endl << G4endl << G4endl ; //fine here i.e. explicitly initialised
 		  return;
     }
     if( command == fEfficiencyParticleCmd ) {
@@ -180,6 +182,14 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
 		  return;
     }
 }
+/*G4double pgm(){
+  PrimaryGeneratorAction* Gun;
+  PrimaryGeneratorMessenger* PGM2 = new PrimaryGeneratorMessenger(Gun);
+  G4ThreeVector threevec = PGM2->BeamPos3;
+  G4double BeamPos = threevec.z();
+  return BeamPos;
+}*/
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

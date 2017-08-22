@@ -47,7 +47,6 @@
 #include "G4UIparameter.hh"
 #include "G4UIcmdWithADouble.hh"
 
-
 #include <string>
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -120,9 +119,9 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     fFieldBoxMagneticFieldCmd->SetUnitCategory("Magnetic flux density");
     fFieldBoxMagneticFieldCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-	fTabMagneticFieldCmd = new G4UIcmdWithAString("/DetSys/world/TabMagneticField",this); ///19/7
-	fTabMagneticFieldCmd->SetGuidance("Set tabulated magnetic field.");
-	fTabMagneticFieldCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    fTabMagneticFieldCmd = new G4UIcmdWithAString("/DetSys/world/TabMagneticField",this); ///19/7
+    fTabMagneticFieldCmd->SetGuidance("Set tabulated magnetic field.");
+    fTabMagneticFieldCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
     // Box Stuff
     fAddBoxMatCmd = new G4UIcmdWithAString("/DetSys/det/boxMat",this);
@@ -176,7 +175,11 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     fAddGridPosOffsetCmd->SetGuidance("Set grid offset.");
     fAddGridPosOffsetCmd->SetUnitCategory("Length");
     fAddGridPosOffsetCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
+    
+    fSpicePedestalCmd = new G4UIcmdWithABool("/DetSys/app/addSpiceTargetPedestal",this);
+    fSpicePedestalCmd->SetGuidance("Add Spice Target pedestals");
+    fSpicePedestalCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    
     fAddApparatusSpiceTargetChamberCmd = new G4UIcmdWithAString("/DetSys/app/addSpiceTargetChamber",this);
     fAddApparatusSpiceTargetChamberCmd->SetGuidance("Add SPICE target chamber.");
     fAddApparatusSpiceTargetChamberCmd->AvailableForStates(G4State_Idle);
@@ -320,7 +323,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     fUseTIGRESSPositionsCmd = new G4UIcmdWithABool("/DetSys/det/UseTIGRESSPositions",this);
     fUseTIGRESSPositionsCmd->SetGuidance("Use TIGRESS detector positions rather than GRIFFIN");
     fUseTIGRESSPositionsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
+    
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -355,6 +358,7 @@ DetectorMessenger::~DetectorMessenger()
     delete fAddGridColourCmd;
     delete fAddGridPosOffsetCmd;
     delete fAddGridCmd;
+    delete fSpicePedestalCmd;
     delete fAddApparatusSpiceTargetChamberCmd;
     delete fAddDetectionSystemGammaTrackingCmd;
     delete fAddApparatus8piVacuumChamberCmd;
@@ -400,13 +404,13 @@ DetectorMessenger::~DetectorMessenger()
 
     delete fUseTIGRESSPositionsCmd;
 
-
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 {
+    G4bool SpiceTargetPedestal = false;
     if(command == fWorldMaterialCmd ) {
         fDetector->SetWorldMaterial(newValue);
 		  return;
@@ -417,9 +421,6 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     if(command == fWorldVisCmd ) {
         fDetector->SetWorldVis(fWorldVisCmd->GetNewBoolValue(newValue));
     }
-    //  if(command == fWorldMagneticFieldCmd ) {
-    //    fDetector->SetWorldMagneticField(fWorldMagneticFieldCmd->GetNew3VectorValue(newValue));
-    //  }
     if(command == fUpdateCmd ) {
         fDetector->UpdateGeometry();
     }
@@ -486,8 +487,11 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     if(command == fAddGridCmd ) {
         fDetector->AddGrid();
     }
-    if(command == fAddApparatusSpiceTargetChamberCmd ) {
-        fDetector->AddApparatusSpiceTargetChamber(newValue); //removed f
+    if(command == fSpicePedestalCmd ){
+      SpiceTargetPedestal = true;
+    }
+    if(command == fAddApparatusSpiceTargetChamberCmd) {
+        fDetector->AddApparatusSpiceTargetChamber(newValue, SpiceTargetPedestal); //removed f
     }
     if(command == fAddApparatus8piVacuumChamberCmd ) {
         fDetector->AddApparatus8piVacuumChamber();

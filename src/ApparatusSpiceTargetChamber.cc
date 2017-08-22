@@ -1,5 +1,7 @@
 #include "DetectorConstruction.hh"
 #include "DetectorMessenger.hh"
+#include "PrimaryGeneratorMessenger.hh"//PGM
+#include "PrimaryGeneratorAction.hh"//PGA, for PGM object
 
 #include "G4Material.hh"
 
@@ -25,9 +27,10 @@
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
 
-#include "ApparatusSpiceTargetChamber.hh"
 #include <math.h>
 
+#include "HistoManager.hh"
+#include "ApparatusSpiceTargetChamber.hh"
 using namespace CLHEP;
 
 ////////////////////////////////////////////////
@@ -43,9 +46,9 @@ using namespace CLHEP;
 // define physical properties of ApparatusSpiceTargetChamber //
 //////////////////////////////////////////////////////
 
-ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo)//parameter chooses which lens is in place.
+ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo, G4bool TargetPedestal)//parameter chooses which lens is in place.
 {
-
+  
   this->NUMBER_OF_MAGNETS = 4;
   this->fNumberOfFrames = 3;
 
@@ -73,10 +76,12 @@ ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo)//parame
   this->cold_finger_material = "Copper";
   this->s3_cable_case_material = "Delrin";
   this->beam_pipe_material = "Copper";
+  this->conical_collimator_material = "WTa";//11/8
+  this->xray_insert_material="Aluminum";
    
-  //-----------------------------
-  // Dimensions of Target Chamber
-  //-----------------------------
+  //-------------------------------//
+  // Dimensions of Target Chamber  //
+  //-------------------------------//
   this->target_chamber_cylinder_inner_radius = 94.6*mm;
   this->target_chamber_cylinder_outer_radius = 102*mm;
   this->target_chamber_cylinder_length = 89*mm;
@@ -196,7 +201,7 @@ ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo)//parame
   this->plate_one_length = 75*mm; 
   this->plate_one_height = 50*mm; // z-component
   this->plate_one_lower_height = 20*mm;
-  if (MedLo = "Med")  {//this works - seen output on terminal via simpel G4cout command
+  if (MedLo = "Med")  {//this works - seen output on terminal via simple G4cout command
 	this->plate_two_thickness = 3.4*mm; // LEL is 5.0, MEL is 3.4
     	this->plate_two_length = 55.0*mm; // LEL is 30.0, MEL is 55.0
   }
@@ -268,7 +273,24 @@ ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo)//parame
   this->pipe_inner_radius = 5.0*mm; // 5
   this->pipe_outer_radius = 16.0*mm;
   this->pipe_z_length = 30.0*mm;
-
+  
+  // --------------------------------
+  // Dimensions of Conical Collimator
+  // --------------------------------
+  
+  this->mid_inner_radius=3.15*mm;
+  this->mid_outer_radius=4.5*mm;
+  this->mid_z_length=20.25*mm;
+  this->innercyl_outer_radius=2.9*mm;
+  this->innercyl_inner_radius=3.15*mm;
+  this->innercyl_z_length=7.75*mm;
+  this->outercyl_outer_radius=4.5*mm;
+  this->outercyl_inner_radius=4.9*mm;
+  this->outercyl_z_length=14.25*mm;
+  this->edge_inner_radius=4.9*mm;
+  this->edge_outer_radius=6.9*mm;
+  this->edge_z_length=1.0*mm;
+  
   
 } // end ApparatusSpiceTargetChamber
 
@@ -310,7 +332,9 @@ ApparatusSpiceTargetChamber::~ApparatusSpiceTargetChamber()
   delete magnet_cover_log;
   delete cold_finger_log;
   delete beam_pipe_log;
- 
+  delete conical_collimator_log;
+  delete xray_insert_log;
+  
   // physical volumes in ApparatusSpiceTargetChamber
   delete target_chamber_front_ring_phys;
   delete target_chamber_front_cone_phys;
@@ -342,7 +366,9 @@ ApparatusSpiceTargetChamber::~ApparatusSpiceTargetChamber()
   delete magnet_cover_phys;
   delete cold_finger_phys;
   delete beam_pipe_phys;
-
+  delete conical_collimator_phys;
+  delete xray_insert_phys;
+  
 } // end ~ApparatusSpiceTargetChamber
 
 ///////////////////////////////////////
@@ -360,8 +386,8 @@ void ApparatusSpiceTargetChamber::Build(G4LogicalVolume* exp_hall_log)
   BuildTargetWheel();
   BuildTargetWheelExtension();
   BuildTargetWheelRods();
-  BuildTargetFrame();
-  BuildCollimator();
+  
+  
   BuildTargetWheelGears();
   BuildTargetWheelGearPlates();
   BuildGearStick();
@@ -379,7 +405,9 @@ void ApparatusSpiceTargetChamber::Build(G4LogicalVolume* exp_hall_log)
   BuildColdFinger();  
   BuildS3CableHolder();
   BuildBeamPipe();
-
+  BuildConicalCollimator();
+  BuildXrayInsert();
+  
   PlaceTargetChamberFrontRing();
   PlaceTargetChamberSphere();
 
@@ -387,7 +415,7 @@ void ApparatusSpiceTargetChamber::Build(G4LogicalVolume* exp_hall_log)
 
   PlaceTargetWheel(); 
   PlaceTargetWheelExtension(); 
-  PlaceCollimator();  
+   
   
   PlaceTargetWheelGears(); 
   PlaceTargetWheelGearPlates(); 
@@ -405,16 +433,30 @@ void ApparatusSpiceTargetChamber::Build(G4LogicalVolume* exp_hall_log)
   PlaceS3CableHolder();
 
   PlaceBeamPipe(); //commented out originally (blocked beam) as inner radius was 0
-
+  PlaceConicalCollimator();
+  PlaceXrayInsert();
+  
+  /*PrimaryGeneratorAction* PGA;
+  PrimaryGeneratorMessenger* PGM = new PrimaryGeneratorMessenger(PGA);//to make pointer to PrimaryGeneratorMessenger//instance needed
+  BeamZ = PGM->pgm();
+  
+  G4cout << G4endl <<  G4endl <<  G4endl << "BeamZ = " << BeamZ << G4endl << G4endl << G4endl ;
+  //G4cout << G4endl <<  G4endl <<  G4endl << "BeamPos3 = " << Beam << G4endl << G4endl << G4endl ;*/
+  G4cout << ApparatusSpiceTargetChamber::TargetPedestal << " <- This should be false" << G4endl;
+  if(ApparatusSpiceTargetChamber::TargetPedestal == 1){G4cout << ApparatusSpiceTargetChamber::TargetPedestal << " <- This should be false" << G4endl;
+    BuildCollimator();
+    PlaceCollimator(); 
+    
+    BuildTargetFrame();//First draft of target bool
   G4double fFrameDegrees[2] = {0*deg, -110*deg};
   for(G4int i=0; i<2; i++)
     PlaceTargetFrame(fFrameDegrees[i]);
-    
+ 
   G4double fRodDegrees[7] = {40*deg, -40*deg, -70*deg, -150*deg, 91.2*deg, 125.*deg, 158.8*deg};
   G4double fRodRadius[7] = {10.624, 10.624, 10.624, 10.624, 18.166, 8.4, 18.166 };
   for(G4int i=0; i<7; i++)
     PlaceTargetWheelRods(fRodDegrees[i], fRodRadius[i]);
-  
+  }
   for(G4int copyID=0; copyID<this->NUMBER_OF_MAGNETS; copyID++)    {
       PlaceCollectorMagnet(copyID);
       PlaceMagnetClampChamber(copyID);
@@ -426,9 +468,9 @@ void ApparatusSpiceTargetChamber::Build(G4LogicalVolume* exp_hall_log)
   
 } // end Build
 
-////////////////////////////////////////////////////
-// methods used to build and place the components:
-////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+// methods used to build and place the components:  //
+//////////////////////////////////////////////////////
 
 void ApparatusSpiceTargetChamber::BuildTargetWheelRods() {
 
@@ -473,7 +515,7 @@ void ApparatusSpiceTargetChamber::BuildBeamPipe() {
 
 }
 
-void ApparatusSpiceTargetChamber::BuildTargetFrame() {
+void ApparatusSpiceTargetChamber::BuildTargetFrame() {//need to adjust for target efficiencies 17/8 
 
   // Visualisation
 	G4VisAttributes* sVisAtt = new G4VisAttributes(G4Colour(0.0, 0.9, 0.1));
@@ -1528,8 +1570,73 @@ void ApparatusSpiceTargetChamber::BuildS3CableHolder() {
 
 }
 
+void ApparatusSpiceTargetChamber::BuildConicalCollimator() {
 
+  // ** Dimensions
+  
+  
+  // ** shapes
+  G4Tubs* solid_mid_cyl = new G4Tubs("mid_cyl", 3.15*mm, 4.5*mm, 20.25*mm, 0, 360*deg);
+  G4Tubs* solid_inner_cyl = new G4Tubs("inner_cyl", 2.9*mm, 3.15*mm, 7.75*mm, 0, 360*deg);
+  G4Tubs* solid_outer_cyl = new G4Tubs("outer_cyl", 4.5*mm, 4.9*mm, 14.25*mm, 0, 360*deg);
+  G4Tubs* edge1 = new G4Tubs("edges", 4.9*mm, 6.9*mm, 1.0*mm, -20.*deg, 40.*deg);
+  G4Tubs* edge2 = new G4Tubs("edges", 4.9*mm, 6.9*mm, 1.0*mm, 70.*deg, 40.*deg);
+  G4Tubs* edge3 = new G4Tubs("edges", 4.9*mm, 6.9*mm, 1.0*mm, 160.*deg, 40.*deg);
+  G4Tubs* edge4 = new G4Tubs("edges", 4.9*mm, 6.9*mm, 1.0*mm, 250.*deg, 40.*deg);
+  
+  G4ThreeVector sTrans1(0., 0., -12.5*mm);
+  G4ThreeVector sTrans2(0., 0., -6.*mm);
+  G4ThreeVector sTrans3(0, 0, -19.25*mm);
+  
+  G4RotationMatrix* sRotate = new G4RotationMatrix;
+  G4UnionSolid* midandinner = new G4UnionSolid("Mid+Outer", solid_mid_cyl, solid_inner_cyl, sRotate, sTrans1);
+  G4UnionSolid* threecyl = new G4UnionSolid("ThreeCyl", midandinner, solid_outer_cyl, sRotate, sTrans2);
+  G4UnionSolid* threecyl1edge = new G4UnionSolid("threecyl1edge", threecyl, edge1, sRotate, sTrans3);
+  G4UnionSolid* threecyl2 = new G4UnionSolid("Threecyl2", threecyl1edge, edge2, sRotate, sTrans3);
+  G4UnionSolid* threecyl3 = new G4UnionSolid("ThreeCyl3", threecyl2, edge3, sRotate, sTrans3);
+  G4UnionSolid* threecyl4edge = new G4UnionSolid("ThreeCyl4edge", threecyl3, edge4, sRotate, sTrans3);
+ 
+  // ** Logical
+  G4Material* sMaterial = G4Material::GetMaterial(this->conical_collimator_material);
+  conical_collimator_log = new G4LogicalVolume(threecyl4edge,         //its solid
+                        sMaterial,          //its material
+                        "threecyl4edge");           //its name
+  
+}
 
+void ApparatusSpiceTargetChamber::BuildXrayInsert(){
+  
+  // ** shapes
+  G4Tubs* solid_insert_cyl = new G4Tubs("insert_cyl", 3.68*mm, 8.5*mm, 1.5*mm, 0, 360*deg);
+  G4Tubs* solid_insert_edges = new G4Tubs("insert_edge", 4.55*mm, 8.5*mm, 1.8*mm, 25.*deg, 40.*deg);
+  G4Tubs* solid_insert_holes = new G4Tubs("insert_hole", 0.*mm, 2.*mm, 5.*mm, 0, 360*deg);
+  
+  G4RotationMatrix* sRotate1 = new G4RotationMatrix;
+  G4ThreeVector sTrans4(0., 0., -3.3*mm);
+  G4UnionSolid* cyland1 = new G4UnionSolid("cyl+edge1", solid_insert_cyl, solid_insert_edges, sRotate1, sTrans4);
+  sRotate1->rotateZ(90.*deg);
+  G4UnionSolid* cyland2 = new G4UnionSolid("cyl+edge2", cyland1, solid_insert_edges, sRotate1, sTrans4);
+  sRotate1->rotateZ(90.*deg);
+  G4UnionSolid* cyland3 = new G4UnionSolid("cyl+edge3", cyland2, solid_insert_edges, sRotate1, sTrans4);
+  sRotate1->rotateZ(90.*deg);
+  G4UnionSolid* cyland4 = new G4UnionSolid("cyl+edge4", cyland3, solid_insert_edges, sRotate1, sTrans4);
+  
+  sRotate1->rotateZ(45.*deg);
+  G4ThreeVector sTrans5(0., 8.5*mm, 3.3*mm);
+  G4SubtractionSolid* c4hole4edge1 = new G4SubtractionSolid("c4hole4", cyland4, solid_insert_holes, sRotate1, sTrans5);
+  sTrans5 = G4ThreeVector(0., -8.5*mm, 3.3*mm);
+  G4SubtractionSolid* c4hole4edge2 = new G4SubtractionSolid("c4hole4", c4hole4edge1, solid_insert_holes, sRotate1, sTrans5);
+  sTrans5 = G4ThreeVector(8.5*mm, 0., 3.3*mm);
+  G4SubtractionSolid* c4hole4edge3 = new G4SubtractionSolid("c4hole4", c4hole4edge2, solid_insert_holes, sRotate1, sTrans5);
+  sTrans5 = G4ThreeVector(-8.5*mm, 0., 3.3*mm);
+  G4SubtractionSolid* c4hole4complete = new G4SubtractionSolid("c4hole4", c4hole4edge3, solid_insert_holes, sRotate1, sTrans5);
+  
+  // ** Logical  
+    G4Material* sMaterial = G4Material::GetMaterial(this->xray_insert_material);
+  xray_insert_log = new G4LogicalVolume(c4hole4complete,         //its solid
+                        sMaterial,          //its material
+                        "c4hole4");           //its name
+}
 
 // **************************************************************************************************
 // **************************************************************************************************
@@ -1772,6 +1879,7 @@ void ApparatusSpiceTargetChamber::PlacePhotonShield()
     + this->middleRingOffset;
   
   G4ThreeVector move(0,0,z_position);
+  G4cout << "photon_shield" << z_position << G4endl;
   photon_shield_layer_one_phys = new G4PVPlacement(rotate,move,photon_shield_layer_one_log, "photon_shield_layer_one",expHallLog,
 						   false,0);
   
@@ -1830,6 +1938,7 @@ void ApparatusSpiceTargetChamber::PlacePhotonShieldClamps()
   ps_target_clamp_phys = new G4PVPlacement(rotate, move, ps_target_clamp_log,
 					   "photon_shield_target_clamp",expHallLog,
 					   false,0);
+  G4cout << "PS TARGET " << move << G4endl;
   
 } // end::PlacePhotonShieldClamps()
 
@@ -1978,7 +2087,34 @@ void ApparatusSpiceTargetChamber::PlaceS3CableHolder() {
 
 }
 
+void ApparatusSpiceTargetChamber::PlaceConicalCollimator() {
+    G4ThreeVector pos1 = G4ThreeVector(0, 0, -44.*mm);//addition to the phon shield
+    G4RotationMatrix* sRotate = new G4RotationMatrix;
+    sRotate->rotateY(180*deg);
+    conical_collimator_phys = new G4PVPlacement(sRotate,                       //no rotation
+                    pos1,                    //at position
+                    conical_collimator_log,             //its logical volume
+                    "threecyl4edge",                //its name
+                    expHallLog,                //its mother  volume
+                    false,                   //no boolean operation
+                    false,                       //copy number
+                    0);          //overlaps checking
+    
+}
 
+void ApparatusSpiceTargetChamber::PlaceXrayInsert(){
+    G4ThreeVector pos2 = G4ThreeVector(0, 0, (-44-18.75)*mm);
+    G4RotationMatrix* sRotate = new G4RotationMatrix;
+    sRotate->rotateY(180*deg);
+    xray_insert_phys = new G4PVPlacement(sRotate,                       //no rotation
+                    pos2,                    //at position
+                    xray_insert_log,             //its logical volume
+                    "insert",                //its name
+                    expHallLog,                //its mother  volume
+                    false,                   //no boolean operation
+                    false,                       //copy number
+                    0);          //overlaps checking
+}
 ////////////////////////////////////////////////////////////////////
 //Translations and Rotations of Magnets (same for all parts)      //
 ////////////////////////////////////////////////////////////////////
@@ -2009,5 +2145,3 @@ G4ThreeVector ApparatusSpiceTargetChamber::TranslateMagnets(G4int copyID, G4doub
   }
   return G4ThreeVector(x_position, y_position, z_position);
 }
-
-

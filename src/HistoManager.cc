@@ -146,18 +146,18 @@ void HistoManager::Book() {
     xmax      = 100.;
     MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
-    name  = "sintheta_distro";
-    title     = "Angular Distribution";
+    name  = "Multiplicity of depositions";
+    title     = "Deposition multiplicity";
     nbins     = 10000;
     xmin      = 0.;
-    xmax      = 1.2;
+    xmax      = 4.;
     MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
     angledistro[0]=fMakeHistoIndex;
     
     name  = "cone_print";
     title     = "Cone representation";
     nbins = 100;
-    xmin      = -1.;
+    xmin      = 0.;
     xmax      = 1.;
     Make2DHistoWithAxisTitles(analysisManager, name,  title, nbins, xmin, xmax, nbins, xmin, xmax);
     angledistro[1]=fMakeHistoIndex;

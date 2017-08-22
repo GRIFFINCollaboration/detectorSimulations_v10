@@ -39,7 +39,7 @@ class G4LogicalVolume;
 class G4VPhysicalVolume;
 class G4Material;
 class DetectorMessenger;
-//class MagneticField;
+
 
 #define SN_COL 1.0, 1.0, 1.0
 #define CU_COL 1.0, 1.0, 0.0
@@ -55,15 +55,16 @@ class DetectorMessenger;
 #define TARGET_CHAMBER_COL 0.15,0.15,0.15
 #define ELECTROBOX_COL 0.15,0.15,0.15
 
+
 class ApparatusSpiceTargetChamber
 {
 public:
-  ApparatusSpiceTargetChamber(G4String);
+  ApparatusSpiceTargetChamber(G4String, G4bool);
   ~ApparatusSpiceTargetChamber();
-    
+
 public:
   void Build(G4LogicalVolume*);
-
+  
 private:
   G4LogicalVolume* expHallLog;
 
@@ -104,6 +105,9 @@ private:
   G4LogicalVolume* cold_finger_log;
   G4LogicalVolume* fS3CaseLogical;
   G4LogicalVolume* beam_pipe_log;
+  G4LogicalVolume* conical_collimator_log;//11/8
+  G4LogicalVolume* xray_insert_log;
+  
   
 private:
   ////////////////////////////////////////////
@@ -142,6 +146,8 @@ private:
   G4VPhysicalVolume* cold_finger_phys;
   G4VPhysicalVolume* fS3CasePhysical;
   G4VPhysicalVolume* beam_pipe_phys;
+  G4VPhysicalVolume* conical_collimator_phys;//11/8
+  G4VPhysicalVolume* xray_insert_phys;
   
 private:
   ////////////////////////////////////////////
@@ -182,7 +188,9 @@ private:
   G4String cold_finger_material;//
   G4String s3_cable_case_material;//
   G4String beam_pipe_material;//
-
+  G4String conical_collimator_material;//11/8
+  G4String xray_insert_material;//
+  
   //-------------------------
   // Dimensions:
   //-------------------------
@@ -366,7 +374,35 @@ private:
   G4double pipe_outer_radius;
   G4double pipe_z_length;
   G4double pipe_z_offset;
-
+  
+  // --------------------------------
+  // Dimensions of Conical Collimator
+  // --------------------------------
+  G4double mid_inner_radius;
+  G4double mid_outer_radius;
+  G4double mid_z_length;
+  G4double outercyl_outer_radius;
+  G4double outercyl_inner_radius;
+  G4double outercyl_z_length;
+  G4double innercyl_outer_radius;
+  G4double innercyl_inner_radius;
+  G4double innercyl_z_length;
+  G4double edge_inner_radius;
+  G4double edge_outer_radius;
+  G4double edge_z_length;
+  
+  // --------------------------
+  // Dimensions of X-ray Insert
+  // --------------------------
+  G4double insert_cyl_outer_radius;
+  G4double insert_cyl_inner_radius;
+  G4double insert_cyl_z_length;
+  G4double insert_edge_inner_radius;
+  G4double insert_edge_outer_radius;
+  G4double insert_edge_z_length;
+  G4double insert_hole_radius;
+  G4double insert_hole_length;
+  
   //-----------------------------
   // copy numbers
   //-----------------------------
@@ -417,6 +453,8 @@ private:
   void BuildColdFinger();
   void BuildS3CableHolder();
   void BuildBeamPipe();
+  void BuildConicalCollimator();
+  void BuildXrayInsert();
   
   void PlaceTargetChamberFrontRing();
   void PlaceTargetChamberSphere();
@@ -443,7 +481,13 @@ private:
   void PlaceColdFinger();
   void PlaceS3CableHolder();
   void PlaceBeamPipe();
-      
+  void PlaceConicalCollimator();
+  void PlaceXrayInsert();
+  
+  G4double BeamZ = 0.0;
+  G4ThreeVector Beam = G4ThreeVector(0,0,-7.49315*mm);
+  G4bool TargetPedestal;
+  
   // functions
   G4RotationMatrix* RotateMagnets(G4int);
   G4ThreeVector TranslateMagnets(G4int,G4double,G4double);

@@ -48,7 +48,7 @@ class G4UIcmdWithAString;
 class G4UIcommand;
 class G4UIcmdWithAnInteger;
 class G4UIcmdWithABool;
-
+#include "G4SystemOfUnits.hh"
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class PrimaryGeneratorMessenger: public G4UImessenger
@@ -56,7 +56,9 @@ class PrimaryGeneratorMessenger: public G4UImessenger
 public:
     PrimaryGeneratorMessenger(PrimaryGeneratorAction*);
     virtual ~PrimaryGeneratorMessenger();
-
+    G4double BeamPos = -7.49315; //initialise BeamPos
+    G4ThreeVector BeamPos3 = G4ThreeVector(0,0,-7.49315);
+    G4double pgm();
 public:
     void SetNewValue(G4UIcommand*, G4String);
 
