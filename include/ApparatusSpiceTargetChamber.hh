@@ -32,8 +32,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef ApparatusSpiceTargetChamberH
-#define ApparatusSpiceTargetChamberH 1
+#ifndef APPARATUSSPICETARGETCHAMBER_HH
+#define APPARATUSSPICETARGETCHAMBER_HH
 
 class G4LogicalVolume;
 class G4VPhysicalVolume;

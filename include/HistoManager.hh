@@ -32,14 +32,11 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...... 
 
-#ifndef HistoManager_h
-#define HistoManager_h 1
+#ifndef HISTOMANAGER_HH
+#define HISTOMANAGER_HH
 
 #include "globals.hh"
 #include "g4root.hh"
-//#include "G4RootAnalysisManager.hh" //from g4root.hh
-////#include "g4xml.hh"
-////#include "g4hbook.hh"
 
 #include "G4SystemOfUnits.hh" // new version geant4.10 requires units
 

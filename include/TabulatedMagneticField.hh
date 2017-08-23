@@ -12,6 +12,9 @@
 // GEANT4 tag $Name: geant4-09-04-patch-01 $
 //
 
+#ifndef TABULATEDMAGNETICFIELD_HH
+#define TABULATEDMAGNETICFIELD_HH
+
 #include "globals.hh"
 #include "G4MagneticField.hh"
 #include "G4ios.hh"
@@ -59,4 +62,4 @@ private:
   G4bool   fInvertY;
   G4bool   fInvertZ;
 };
-
+#endif

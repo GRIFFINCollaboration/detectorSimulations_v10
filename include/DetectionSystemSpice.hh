@@ -32,8 +32,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef DetectionSystemSpiceH
-#define DetectionSystemSpiceH 1
+#ifndef DETECTIONSYSTEMSPICE_HH
+#define DETECTIONSYSTEMSPICE_HH
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"

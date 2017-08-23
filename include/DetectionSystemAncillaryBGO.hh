@@ -32,8 +32,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef DetectionSystemAncillaryBGO_h
-#define DetectionSystemAncillaryBGO_h 1
+#ifndef DETECTIONSYSTEMANCILLARYBGO_HH
+#define DETECTIONSYSTEMANCILLARYBGO_HH
 
 #include "G4SystemOfUnits.hh" // new version geant4.10 requires units
 #include "G4IntersectionSolid.hh"

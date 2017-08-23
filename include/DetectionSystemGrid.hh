@@ -32,8 +32,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef DetectionSystemGrid_h
-#define DetectionSystemGrid_h 1
+#ifndef DETECTIONSYSTEMGRID_HH
+#define DETECTIONSYSTEMGRID_HH
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"

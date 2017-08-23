@@ -32,8 +32,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef Apparatus8piVacuumChamberAuxMatShell_h
-#define Apparatus8piVacuumChamberAuxMatShell_h 1
+#ifndef APPARATUS8PIVACUUMCHAMBERAUXMATSHELL_HH
+#define APPARATUS8PIVACUUMCHAMBERAUXMATSHELL_HH
 
 class G4LogicalVolume;
 class G4VPhysicalVolume;
