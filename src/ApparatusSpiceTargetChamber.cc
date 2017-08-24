@@ -46,9 +46,10 @@ using namespace CLHEP;
 // define physical properties of ApparatusSpiceTargetChamber //
 //////////////////////////////////////////////////////
 
-ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo, G4bool TargetPedestal)//parameter chooses which lens is in place.
+ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo, G4double TargetPedestal)//parameter chooses which lens is in place.
 {
-  
+  targetz = TargetPedestal;
+  G4cout << TargetPedestal << " <- In constructor" << G4endl;
   this->NUMBER_OF_MAGNETS = 4;
   this->fNumberOfFrames = 3;
 
@@ -435,15 +436,9 @@ void ApparatusSpiceTargetChamber::Build(G4LogicalVolume* exp_hall_log)
   PlaceBeamPipe(); //commented out originally (blocked beam) as inner radius was 0
   PlaceConicalCollimator();
   PlaceXrayInsert();
-  
-  /*PrimaryGeneratorAction* PGA;
-  PrimaryGeneratorMessenger* PGM = new PrimaryGeneratorMessenger(PGA);//to make pointer to PrimaryGeneratorMessenger//instance needed
-  BeamZ = PGM->pgm();
-  
-  G4cout << G4endl <<  G4endl <<  G4endl << "BeamZ = " << BeamZ << G4endl << G4endl << G4endl ;
-  //G4cout << G4endl <<  G4endl <<  G4endl << "BeamPos3 = " << Beam << G4endl << G4endl << G4endl ;*/
-  G4cout << ApparatusSpiceTargetChamber::TargetPedestal << " <- This should be false" << G4endl;
-  if(ApparatusSpiceTargetChamber::TargetPedestal == 1){G4cout << ApparatusSpiceTargetChamber::TargetPedestal << " <- This should be false" << G4endl;
+
+  G4cout << ApparatusSpiceTargetChamber::targetz << " <- This should be the macro value" << G4endl;
+  if(ApparatusSpiceTargetChamber::targetz < -4.00){G4cout << "Building target pedestals" << G4endl;
     BuildCollimator();
     PlaceCollimator(); 
     
@@ -456,7 +451,8 @@ void ApparatusSpiceTargetChamber::Build(G4LogicalVolume* exp_hall_log)
   G4double fRodRadius[7] = {10.624, 10.624, 10.624, 10.624, 18.166, 8.4, 18.166 };
   for(G4int i=0; i<7; i++)
     PlaceTargetWheelRods(fRodDegrees[i], fRodRadius[i]);
-  }
+  } else G4cout << "Target Pedestals not built due to beam position" << G4endl;
+  
   for(G4int copyID=0; copyID<this->NUMBER_OF_MAGNETS; copyID++)    {
       PlaceCollectorMagnet(copyID);
       PlaceMagnetClampChamber(copyID);

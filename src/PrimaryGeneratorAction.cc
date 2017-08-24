@@ -80,6 +80,8 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* DC)
     fEffPolarization = false;
     fEffBeam = false;
     LaBrinit(); //sets up default variables - messy having them all declared here
+    
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -299,7 +301,6 @@ G4ThreeVector PrimaryGeneratorAction::SetCone(G4double ConeRadius, G4double zVal
   return coneDirection;
 }
 
-  
 void PrimaryGeneratorAction::LaBrinit() {
   //default LaBr properties
     G4double triangleThetaAngle = 54.735610317245360*deg;

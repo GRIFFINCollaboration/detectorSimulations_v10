@@ -151,6 +151,7 @@ public:
 	 G4bool Descant () { return fDescant;  }  
 	 G4bool Testcan () { return fTestcan;  } 
 	 
+	 G4double BeamEnergy;
 
 private:
     HistoManager();

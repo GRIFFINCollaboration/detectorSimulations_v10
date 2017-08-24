@@ -40,7 +40,7 @@
 HistoManager::HistoManager() {
     fFileName[0] = "g4out";
     fFactoryOn = false;
-
+   
     // Only fill one NTuple at a time. If fStepTrackerBool is true, then fHitTrackerBool should be false, or vise-versa.
     // There is no need to have the hit NTuple and the step NTuple.
     fHitTrackerBool = true;
@@ -82,6 +82,7 @@ HistoManager::~HistoManager()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void HistoManager::Book() {
+   G4cout << BeamEnergy << " <- Input beam energy ot histomanager" << G4endl;
     G4String name;
     G4String title;
     G4String detString;

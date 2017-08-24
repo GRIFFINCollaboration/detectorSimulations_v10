@@ -59,6 +59,15 @@ EventAction::EventAction(RunAction* run)
 EventAction::~EventAction() { 
   G4cout << "1 dep: " << MultiplicityArray[0] << "| 2 dep: " << MultiplicityArray[1] << "| 3 dep: " << MultiplicityArray[2] << 
   "| 4 dep: " << MultiplicityArray[3] << "| 5 dep: " << MultiplicityArray[4] << G4endl;
+  
+  G4double TE = MultiplicityArray[0] + MultiplicityArray[1]*2 + MultiplicityArray[2]*3 +MultiplicityArray[3]*4 +MultiplicityArray[4]*5;
+  G4double ME = MultiplicityArray[1] + MultiplicityArray[2] + MultiplicityArray[3] + MultiplicityArray[4];
+  
+  G4cout << "Total edep: " << TE <<G4endl;
+  G4double OS = ME/(MultiplicityArray[0] + ME);
+  G4double NS = ME/TE;
+  G4cout << "Old style multiplicity: " << OS*100.0 << G4endl;
+  G4cout << "New style multiplicity: " << NS*100.0 << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -76,6 +85,7 @@ void EventAction::BeginOfEventAction(const G4Event* evt) {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void EventAction::EndOfEventAction(const G4Event*) {
+    BeamInputEnergy = HistoManager::Instance().BeamEnergy;
     FillParticleType() ; // was uncommented - otherwise not filled
     FillGriffinCryst() ;
     Fill8piCryst() ;
@@ -333,7 +343,7 @@ void EventAction::FillGridCell() {
 }
 
 void EventAction::FillSpice() {
- 
+	
 	//G4cout << "size of histo array: " << sizeof(HistoManager::Instance().SpiceHistNumbers) << G4endl;
 	G4double energySumDet = 0;
 	fSpiceMultiplicity = 0;
@@ -367,7 +377,7 @@ void EventAction::FillSpice() {
 	  if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[1], energySumDet);
 	  }
 	  
-	    
+	  //if(Multiplicityenergy > 0 && BeamInputEnergy > 0) G4cout << Multiplicityenergy << " " << BeamInputEnergy << "Energies should be comparable" << G4endl; 
 	  if(fSpiceMultiplicity>0) HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[0], fSpiceMultiplicity);
 	  switch(fSpiceMultiplicity) {
 	  case 1 : MultiplicityArray[0] += 1;
@@ -382,9 +392,11 @@ void EventAction::FillSpice() {
              break;       
   
 	  }
-	    
-	  //G4cout << "1 dep: " << MultiplicityArray[0] << "| 2 dep: " << MultiplicityArray[1] << "| 3 dep: " << MultiplicityArray[2] << 
+	  
+	//  G4cout << "1 dep: " << MultiplicityArray[0] << "| 2 dep: " << MultiplicityArray[1] << "| 3 dep: " << MultiplicityArray[2] << 
  // "| 4 dep: " << MultiplicityArray[3] << "| 5 dep: " << MultiplicityArray[4] << G4endl;
+	//  G4cout << "Total edep: " << MultiplicityArray[0] + MultiplicityArray[1]*2 + MultiplicityArray[2]*3 +MultiplicityArray[3]*4 +MultiplicityArray[4]*5 <<G4endl;
+  
 }
 //if(WRITEEDEPHISTOS && (energySumDet > MINENERGYTHRES))     G4cout << "energysumDet " <<  energySumDet << G4endl;} ///////////////////////////////////////19/6
 

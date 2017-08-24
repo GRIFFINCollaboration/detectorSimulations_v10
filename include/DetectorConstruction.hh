@@ -72,9 +72,13 @@ class DetectionSystemAncillaryBGO;
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
+    
+  
     DetectorConstruction();
     ~DetectorConstruction();
-
+    
+    
+    G4double targetz = 0.0; //for tunnelled z-value of beam position used for target frame decision
     G4int fGriffinDetectorsMapIndex;
     G4int fGriffinDetectorsMap[16];
 
@@ -107,7 +111,7 @@ public:
     void SetGridColour( G4ThreeVector input )          {fGridColour = input;};
     void SetGridPosOffset( G4ThreeVector input )          {fGridOffset = input;};
     void AddGrid();
-    void AddApparatusSpiceTargetChamber(G4String, G4bool);
+    void AddApparatusSpiceTargetChamber(G4String, G4double);
     void AddApparatus8piVacuumChamber();
     void AddApparatus8piVacuumChamberAuxMatShell(G4double thickness);
     void AddApparatusGriffinStructure(G4int selector);

@@ -59,7 +59,6 @@ public:
 
     void SetNewValue(G4UIcommand*, G4String);
 
-    G4double pgm(G4ThreeVector);
 private:
     DetectorConstruction* fDetector;
 
@@ -84,7 +83,6 @@ private:
     G4UIcmdWith3VectorAndUnit* fFieldBoxMagneticFieldCmd;
     G4UIcmdWithAString*        fTabMagneticFieldCmd; ///19/7
     
-    G4UIcmdWithABool*		fSpicePedestalCmd;
     G4UIcmdWithAString*   fAddApparatusSpiceTargetChamberCmd;
     G4UIcmdWithoutParameter*   fAddApparatus8piVacuumChamberCmd;
     G4UIcmdWithADoubleAndUnit* fAddApparatus8piVacuumChamberAuxMatShellCmd;

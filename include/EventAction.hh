@@ -97,7 +97,8 @@ private:
 
     G4int     fPrintModulo;
     G4int     fEvtNb;
-
+    G4double BeamInputEnergy;
+    
     void ClearVariables();
     void FillParticleType();
     void FillGriffinCryst();

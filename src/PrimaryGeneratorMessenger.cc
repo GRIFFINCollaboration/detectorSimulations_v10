@@ -35,6 +35,9 @@
 #include "PrimaryGeneratorMessenger.hh"
 
 #include "PrimaryGeneratorAction.hh"
+#include "DetectorConstruction.hh"//for SPICE target pedestal tunnelling
+#include "HistoManager.hh"//Beam energy tunnelling
+
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithADouble.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
@@ -50,6 +53,7 @@
 PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun)
     :fAction(Gun)
 {
+  
     fNumberOfDecayingLaBrDetectorsCmd = new G4UIcmdWithAnInteger("/DetSys/gun/numberOfDecayingLaBrDetectors",this);
     fNumberOfDecayingLaBrDetectorsCmd->SetGuidance("Set the number of radioactive LaBr detectors");
     fNumberOfDecayingLaBrDetectorsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
@@ -131,6 +135,8 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
     }
     if(command == fEfficiencyEnergyCmd ) {
         fAction->SetEfficiencyEnergy(fEfficiencyEnergyCmd->GetNewDoubleValue(newValue));
+	G4cout << fEfficiencyEnergyCmd->GetNewDoubleValue(newValue) << " <- Input beam energy to PGM" << G4endl;
+	fAction->sendbeamenergytohist(fEfficiencyEnergyCmd->GetNewDoubleValue(newValue));
 		  return;
     }
     if( command == fEfficiencyDirectionCmd ) {
@@ -140,8 +146,13 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
     if( command == fEfficiencyPositionCmd ) {
         fAction->SetEfficiencyPosition(fEfficiencyPositionCmd->GetNew3VectorValue(newValue));
 	BeamPos3 = fEfficiencyPositionCmd->GetNew3VectorValue(newValue);//Private to public variable so accessible
-	G4cout << G4endl <<  G4endl <<  G4endl <<"BeamPos = " << BeamPos << G4endl << G4endl << G4endl ;
-	G4cout << G4endl <<  G4endl <<  G4endl <<"BeamPos Three-Vector = " << BeamPos3 << G4endl << G4endl << G4endl ; //fine here i.e. explicitly initialised
+	//PrimaryGeneratorAction* Gun;
+	//Gun->DC->targetz = BeamPos3.z();
+	G4cout << G4endl <<  G4endl <<  G4endl <<"Before = " << fAction->fDetector->targetz << G4endl << G4endl << G4endl ;
+	fAction->fDetector->targetz = BeamPos3.z(); //Get through with this, providing fDetector in PGA is turned public. 
+		  //Then have forward declaration and incomplete type def. problems
+	
+	G4cout << G4endl <<  G4endl <<  G4endl <<"After = " << fAction->fDetector->targetz<< G4endl << G4endl << G4endl ; //fine here i.e. explicitly initialised
 		  return;
     }
     if( command == fEfficiencyParticleCmd ) {

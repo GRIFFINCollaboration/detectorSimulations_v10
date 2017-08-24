@@ -371,7 +371,7 @@ void DetectorConstruction::AddGrid() {
     }
 }
 
-void DetectorConstruction::AddApparatusSpiceTargetChamber(G4String MedLo, G4bool TargetPedestal)//parameter sets lens for SPICE - should be matched with field
+void DetectorConstruction::AddApparatusSpiceTargetChamber(G4String MedLo, G4double TargetPedestal)//parameter sets lens for SPICE - should be matched with field
 {
    //Create Target Chamber
    ApparatusSpiceTargetChamber* pApparatusSpiceTargetChamber = new ApparatusSpiceTargetChamber(MedLo, TargetPedestal);

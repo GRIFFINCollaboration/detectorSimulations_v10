@@ -59,7 +59,7 @@ class DetectorMessenger;
 class ApparatusSpiceTargetChamber
 {
 public:
-  ApparatusSpiceTargetChamber(G4String, G4bool);
+  ApparatusSpiceTargetChamber(G4String, G4double);
   ~ApparatusSpiceTargetChamber();
 
 public:
@@ -484,10 +484,7 @@ private:
   void PlaceConicalCollimator();
   void PlaceXrayInsert();
   
-  G4double BeamZ = 0.0;
-  G4ThreeVector Beam = G4ThreeVector(0,0,-7.49315*mm);
-  G4bool TargetPedestal;
-  
+  G4double targetz;
   // functions
   G4RotationMatrix* RotateMagnets(G4int);
   G4ThreeVector TranslateMagnets(G4int,G4double,G4double);

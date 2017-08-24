@@ -176,10 +176,6 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     fAddGridPosOffsetCmd->SetUnitCategory("Length");
     fAddGridPosOffsetCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
     
-    fSpicePedestalCmd = new G4UIcmdWithABool("/DetSys/app/addSpiceTargetPedestal",this);
-    fSpicePedestalCmd->SetGuidance("Add Spice Target pedestals");
-    fSpicePedestalCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-    
     fAddApparatusSpiceTargetChamberCmd = new G4UIcmdWithAString("/DetSys/app/addSpiceTargetChamber",this);
     fAddApparatusSpiceTargetChamberCmd->SetGuidance("Add SPICE target chamber.");
     fAddApparatusSpiceTargetChamberCmd->AvailableForStates(G4State_Idle);
@@ -358,7 +354,6 @@ DetectorMessenger::~DetectorMessenger()
     delete fAddGridColourCmd;
     delete fAddGridPosOffsetCmd;
     delete fAddGridCmd;
-    delete fSpicePedestalCmd;
     delete fAddApparatusSpiceTargetChamberCmd;
     delete fAddDetectionSystemGammaTrackingCmd;
     delete fAddApparatus8piVacuumChamberCmd;
@@ -410,7 +405,6 @@ DetectorMessenger::~DetectorMessenger()
 
 void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 {
-    G4bool SpiceTargetPedestal = false;
     if(command == fWorldMaterialCmd ) {
         fDetector->SetWorldMaterial(newValue);
 		  return;
@@ -487,11 +481,8 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     if(command == fAddGridCmd ) {
         fDetector->AddGrid();
     }
-    if(command == fSpicePedestalCmd ){
-      SpiceTargetPedestal = true;
-    }
     if(command == fAddApparatusSpiceTargetChamberCmd) {
-        fDetector->AddApparatusSpiceTargetChamber(newValue, SpiceTargetPedestal); //removed f
+        fDetector->AddApparatusSpiceTargetChamber(newValue, fDetector->targetz); //removed f
     }
     if(command == fAddApparatus8piVacuumChamberCmd ) {
         fDetector->AddApparatus8piVacuumChamber();
