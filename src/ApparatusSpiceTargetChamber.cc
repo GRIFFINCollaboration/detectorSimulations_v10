@@ -49,7 +49,7 @@ using namespace CLHEP;
 ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo, G4double TargetPedestal)//parameter chooses which lens is in place.
 {
   targetz = TargetPedestal;
-  G4cout << TargetPedestal << " <- In constructor" << G4endl;
+  G4cout << TargetPedestal << " <- Value in constructor" << G4endl;
   this->NUMBER_OF_MAGNETS = 4;
   this->fNumberOfFrames = 3;
 
@@ -511,7 +511,7 @@ void ApparatusSpiceTargetChamber::BuildBeamPipe() {
 
 }
 
-void ApparatusSpiceTargetChamber::BuildTargetFrame() {//need to adjust for target efficiencies 17/8 
+void ApparatusSpiceTargetChamber::BuildTargetFrame() {
 
   // Visualisation
 	G4VisAttributes* sVisAtt = new G4VisAttributes(G4Colour(0.0, 0.9, 0.1));
@@ -2084,7 +2084,7 @@ void ApparatusSpiceTargetChamber::PlaceS3CableHolder() {
 }
 
 void ApparatusSpiceTargetChamber::PlaceConicalCollimator() {
-    G4ThreeVector pos1 = G4ThreeVector(0, 0, -44.*mm);//addition to the phon shield
+    G4ThreeVector pos1 = G4ThreeVector(0, 0, -44.*mm);//addition to the photon shield
     G4RotationMatrix* sRotate = new G4RotationMatrix;
     sRotate->rotateY(180*deg);
     conical_collimator_phys = new G4PVPlacement(sRotate,                       //no rotation

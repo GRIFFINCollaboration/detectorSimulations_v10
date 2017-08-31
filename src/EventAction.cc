@@ -60,14 +60,12 @@ EventAction::~EventAction() {
   G4cout << "1 dep: " << MultiplicityArray[0] << "| 2 dep: " << MultiplicityArray[1] << "| 3 dep: " << MultiplicityArray[2] << 
   "| 4 dep: " << MultiplicityArray[3] << "| 5 dep: " << MultiplicityArray[4] << G4endl;
   
-  G4double TE = MultiplicityArray[0] + MultiplicityArray[1]*2 + MultiplicityArray[2]*3 +MultiplicityArray[3]*4 +MultiplicityArray[4]*5;
-  G4double ME = MultiplicityArray[1] + MultiplicityArray[2] + MultiplicityArray[3] + MultiplicityArray[4];
+  G4double ME = MultiplicityArray[1] + MultiplicityArray[2] + MultiplicityArray[3] + MultiplicityArray[4]; //multiple events
   
-  G4cout << "Total edep: " << TE <<G4endl;
-  G4double OS = ME/(MultiplicityArray[0] + ME);
-  G4double NS = ME/TE;
-  G4cout << "Old style multiplicity: " << OS*100.0 << G4endl;
-  G4cout << "New style multiplicity: " << NS*100.0 << G4endl;
+  G4double OS = ME/(MultiplicityArray[0] + ME); //multiple/all events
+  
+  G4cout << "Old style multiplicity: " << OS*100.0 << G4endl;//% figure for multiplicity
+  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -356,7 +354,7 @@ void EventAction::FillSpice() {
 	      //fill standard energy spectra
 	      if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[MAXNUMDETSPICE*ring+seg+2], G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.002));
 	      fSpiceMultiplicity += 1;
-	      Multiplicityenergy += fSpiceEnergyDet[ring][seg];
+	      Multiplicityenergy += fSpiceEnergyDet[ring][seg];//dont need smeared energies
 	      //add sum energies
 	      /*Resolution of parameters of a HPGe detector is implemented here, only for the sum as of 8/8
 	  G4double A1 = 0.95446 ;
@@ -377,7 +375,7 @@ void EventAction::FillSpice() {
 	  if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[1], energySumDet);
 	  }
 	  
-	  //if(Multiplicityenergy > 0 && BeamInputEnergy > 0) G4cout << Multiplicityenergy << " " << BeamInputEnergy << "Energies should be comparable" << G4endl; 
+	  if(energySumDet > (BeamInputEnergy-0.015)){//0.6 = 3 sigma 
 	  if(fSpiceMultiplicity>0) HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[0], fSpiceMultiplicity);
 	  switch(fSpiceMultiplicity) {
 	  case 1 : MultiplicityArray[0] += 1;
@@ -391,7 +389,7 @@ void EventAction::FillSpice() {
 	  case 5 : MultiplicityArray[4] += 1;
              break;       
   
-	  }
+	  }}
 	  
 	//  G4cout << "1 dep: " << MultiplicityArray[0] << "| 2 dep: " << MultiplicityArray[1] << "| 3 dep: " << MultiplicityArray[2] << 
  // "| 4 dep: " << MultiplicityArray[3] << "| 5 dep: " << MultiplicityArray[4] << G4endl;

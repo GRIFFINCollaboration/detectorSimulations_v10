@@ -98,7 +98,52 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     fGenericTargetPositionCmd->SetGuidance("Set target position - x y z unit.");
     fGenericTargetPositionCmd->SetUnitCategory("Length");
     fGenericTargetPositionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    
+    fSpiceTargetCmd = new G4UIcmdWithAString("/DetSys/app/spiceTarget",this);
+    fSpiceTargetCmd->SetGuidance("Select material of the spice target.");
+    fSpiceTargetCmd->SetParameterName("choice",false);
+    fSpiceTargetCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 	 
+    fSpiceTargetThicknessCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/app/SpiceTargetThickness",this);
+    fSpiceTargetThicknessCmd->SetGuidance("Set spice target thickness - mg/cm^2 unit.");
+    fSpiceTargetThicknessCmd->SetUnitCategory("Mass/Surface");
+    fSpiceTargetThicknessCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	 
+    fSpiceTargetDensityCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/app/spiceTargetDensity",this);
+    fSpiceTargetDensityCmd->SetGuidance("Set spice target density - g/cm^3.");
+    fSpiceTargetDensityCmd->SetUnitCategory("Volumic Mass");
+    fSpiceTargetDensityCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+    fSpiceTargetBackerCmd = new G4UIcmdWithAString("/DetSys/app/spiceTargetBacker",this);
+    fSpiceTargetBackerCmd->SetGuidance("Select material of the spice target backer.");
+    fSpiceTargetBackerCmd->SetParameterName("choice",false);
+    fSpiceTargetBackerCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	 
+    fSpiceTargetBackerThicknessCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/app/SpiceTargetBackerThickness",this);
+    fSpiceTargetBackerThicknessCmd->SetGuidance("Set spice target backer thickness - mg/cm^2 unit.");
+    fSpiceTargetBackerThicknessCmd->SetUnitCategory("Mass/Surface");
+    fSpiceTargetBackerThicknessCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	 
+    fSpiceTargetBackerDensityCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/app/spiceTargetBackerDensity",this);
+    fSpiceTargetBackerDensityCmd->SetGuidance("Set spice target backer density - g/cm^3.");
+    fSpiceTargetBackerDensityCmd->SetUnitCategory("Volumic Mass");
+    fSpiceTargetBackerDensityCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    
+    fSpiceTargetProtectorCmd = new G4UIcmdWithAString("/DetSys/app/spiceTargetProtector",this);
+    fSpiceTargetProtectorCmd->SetGuidance("Select material of the spice target protector.");
+    fSpiceTargetProtectorCmd->SetParameterName("choice",false);
+    fSpiceTargetProtectorCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	 
+    fSpiceTargetProtectorThicknessCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/app/SpiceTargetProtectorThickness",this);
+    fSpiceTargetProtectorThicknessCmd->SetGuidance("Set spice target protector thickness - mg/cm^2 unit.");
+    fSpiceTargetProtectorThicknessCmd->SetUnitCategory("Mass/Surface");
+    fSpiceTargetProtectorThicknessCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	 
+    fSpiceTargetProtectorDensityCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/app/spiceTargetProtectorDensity",this);
+    fSpiceTargetProtectorDensityCmd->SetGuidance("Set spice target protector density - g/cm^3.");
+    fSpiceTargetProtectorDensityCmd->SetUnitCategory("Volumic Mass");
+    fSpiceTargetProtectorDensityCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    
     fFieldBoxMaterialCmd = new G4UIcmdWithAString("/DetSys/app/fieldBoxMaterial",this);
     fFieldBoxMaterialCmd->SetGuidance("Select material of the target.");
     fFieldBoxMaterialCmd->SetParameterName("choice",false);
@@ -338,6 +383,15 @@ DetectorMessenger::~DetectorMessenger()
     delete fGenericTargetCmd;
     delete fGenericTargetDimensionsCmd;
     delete fGenericTargetPositionCmd;
+    delete fSpiceTargetCmd;
+    delete fSpiceTargetDensityCmd;
+    delete fSpiceTargetThicknessCmd;
+    delete fSpiceTargetBackerCmd;
+    delete fSpiceTargetBackerDensityCmd;
+    delete fSpiceTargetBackerThicknessCmd;
+    delete fSpiceTargetProtectorCmd;
+    delete fSpiceTargetProtectorDensityCmd;
+    delete fSpiceTargetProtectorThicknessCmd;
     delete fFieldBoxMaterialCmd;
     delete fFieldBoxDimensionsCmd;
     delete fFieldBoxPositionCmd;
@@ -426,6 +480,33 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     }
     if(command == fGenericTargetPositionCmd ) {
 	fDetector->SetGenericTargetPosition(fGenericTargetPositionCmd->GetNew3VectorValue(newValue));
+    }
+    if(command == fSpiceTargetCmd ) {
+	fDetector->SetSpiceTargetMaterial(newValue);// can piggyback targetz value here too (fDetector->targetz)
+    }
+    if(command == fSpiceTargetDensityCmd ) {
+	fDetector->SetSpiceTargetDensity(fSpiceTargetDensityCmd->GetNewDoubleValue(newValue));
+    }
+    if(command == fSpiceTargetThicknessCmd ) {
+	fDetector->SetSpiceTargetThickness(fSpiceTargetThicknessCmd->GetNewDoubleValue(newValue));
+    }
+    if(command == fSpiceTargetBackerCmd ) {
+	fDetector->SetSpiceTargetBackerMaterial(newValue);
+    }
+    if(command == fSpiceTargetBackerDensityCmd ) {
+	fDetector->SetSpiceTargetBackerDensity(fSpiceTargetDensityCmd->GetNewDoubleValue(newValue));
+    }
+    if(command == fSpiceTargetBackerThicknessCmd ) {
+	fDetector->SetSpiceTargetBackerThickness(fSpiceTargetThicknessCmd->GetNewDoubleValue(newValue));
+    }
+    if(command == fSpiceTargetProtectorCmd ) {
+	fDetector->SetSpiceTargetProtectorMaterial(newValue);
+    }
+    if(command == fSpiceTargetProtectorDensityCmd ) {
+	fDetector->SetSpiceTargetProtectorDensity(fSpiceTargetDensityCmd->GetNewDoubleValue(newValue));
+    }
+    if(command == fSpiceTargetProtectorThicknessCmd ) {
+	fDetector->SetSpiceTargetProtectorThickness(fSpiceTargetThicknessCmd->GetNewDoubleValue(newValue));
     }
     //  if(command == fFieldBoxMaterialCmd ) {
     //    fDetector->SetFieldBoxMaterial(newValue);

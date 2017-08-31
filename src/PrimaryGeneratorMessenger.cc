@@ -35,6 +35,7 @@
 #include "PrimaryGeneratorMessenger.hh"
 
 #include "PrimaryGeneratorAction.hh"
+#include "ApparatusSpiceTarget.hh"//for BeamPos
 #include "DetectorConstruction.hh"//for SPICE target pedestal tunnelling
 #include "HistoManager.hh"//Beam energy tunnelling
 
@@ -109,6 +110,10 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun
     fConeMinAngleCmd->SetGuidance("Set cone value for inner theta - use deg (0-90) - default is 0 if none specified");
     fConeMinAngleCmd->SetUnitCategory("Angle");
     fConeMinAngleCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    
+    fBeamDistroCmd = new G4UIcmdWithABool("/Detsys/gun/BeamDistro",this);//with target, can apply a distribution
+    fBeamDistroCmd->SetGuidance("Set beam ditribution wihtin a target");
+    fBeamDistroCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -124,6 +129,7 @@ PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger() {
     delete fConeRValueCmd;
     delete fConeAngleCmd;
     delete fConeMinAngleCmd;
+    delete fBeamDistroCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -146,13 +152,7 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
     if( command == fEfficiencyPositionCmd ) {
         fAction->SetEfficiencyPosition(fEfficiencyPositionCmd->GetNew3VectorValue(newValue));
 	BeamPos3 = fEfficiencyPositionCmd->GetNew3VectorValue(newValue);//Private to public variable so accessible
-	//PrimaryGeneratorAction* Gun;
-	//Gun->DC->targetz = BeamPos3.z();
-	G4cout << G4endl <<  G4endl <<  G4endl <<"Before = " << fAction->fDetector->targetz << G4endl << G4endl << G4endl ;
-	fAction->fDetector->targetz = BeamPos3.z(); //Get through with this, providing fDetector in PGA is turned public. 
-		  //Then have forward declaration and incomplete type def. problems
-	
-	G4cout << G4endl <<  G4endl <<  G4endl <<"After = " << fAction->fDetector->targetz<< G4endl << G4endl << G4endl ; //fine here i.e. explicitly initialised
+	fAction->PassTarget(BeamPos3.z()); 
 		  return;
     }
     if( command == fEfficiencyParticleCmd ) {
@@ -188,19 +188,14 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
 		  return;
     }
     if( command == fConeMinAngleCmd ) {
-        fAction->SetConeMinAngle(fConeAngleCmd->GetNewDoubleValue(newValue));
+        fAction->SetConeMinAngle(fConeMinAngleCmd->GetNewDoubleValue(newValue));
 	G4cout << "Cone Beam minimum angle supplied" << G4endl;
 		  return;
     }
+    if( command == fBeamDistroCmd ) {
+	fAction->NeedBeamDistro = fBeamDistroCmd->GetNewBoolValue(newValue);
+	G4cout << "Beam Distribution within SPICE target selected" << G4endl;
+    }
 }
-/*G4double pgm(){
-  PrimaryGeneratorAction* Gun;
-  PrimaryGeneratorMessenger* PGM2 = new PrimaryGeneratorMessenger(Gun);
-  G4ThreeVector threevec = PGM2->BeamPos3;
-  G4double BeamPos = threevec.z();
-  return BeamPos;
-}*/
-
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-

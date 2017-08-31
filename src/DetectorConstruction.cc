@@ -78,6 +78,7 @@
 #include "DetectionSystemSodiumIodide.hh"
 #include "DetectionSystemLanthanumBromide.hh"
 #include "ApparatusGenericTarget.hh"
+#include "ApparatusSpiceTarget.hh"
 #include "ApparatusSpiceTargetChamber.hh"
 #include "Apparatus8piVacuumChamber.hh"
 #include "Apparatus8piVacuumChamberAuxMatShell.hh"
@@ -148,7 +149,7 @@ DetectorConstruction::DetectorConstruction() :
   // create commands for interactive definition
 
   fDetectorMessenger = new DetectorMessenger(this);
-
+ 
   // ensure the global field is initialized
   //(void)GlobalField::getObject();
 
@@ -293,6 +294,113 @@ void DetectorConstruction::SetGenericTarget()
     }
   }
 }
+//*******************
+//** SPICE targets **
+//*******************
+void DetectorConstruction::SetSpiceTargetMaterial( G4String name)
+{
+  DetectorConstruction::fSetSpiceTargetMaterial = true;
+  DetectorConstruction::fSpiceTargetMaterial = name;
+}
+
+void DetectorConstruction::SetSpiceTargetThickness( G4double surface_density )
+{
+  DetectorConstruction::fSetSpiceTargetThickness = true;
+  DetectorConstruction::fSpiceTargetThickness = surface_density;
+}
+
+void DetectorConstruction::SetSpiceTargetDensity( G4double density)
+{
+  DetectorConstruction::fSetSpiceTargetDensity = true;
+  DetectorConstruction::fSpiceTargetDensity = density;
+  DetectorConstruction::SetSpiceTarget();
+}
+
+void DetectorConstruction::SetSpiceTarget()
+{
+  if( fSetSpiceTargetMaterial ) {
+    if( fSetSpiceTargetThickness ) {
+	if( fSetSpiceTargetDensity ) {
+	  G4String name = fSpiceTargetMaterial;
+	  G4double surface_density = fSpiceTargetThickness/(mg/cm2);
+	  G4double density = fSpiceTargetDensity/(g/cm3);
+	  
+	  pApparatusSpiceTarget->BuildTarget(name, surface_density, density);
+	  pApparatusSpiceTarget->PlaceTarget(fLogicWorld);
+	}
+    }
+  }
+}
+
+void DetectorConstruction::SetSpiceTargetBackerMaterial( G4String name )
+{
+  DetectorConstruction::fSetSpiceTargetBackerMaterial = true;
+  DetectorConstruction::fSpiceTargetBackerMaterial = name;
+}
+
+void DetectorConstruction::SetSpiceTargetBackerThickness( G4double surface_density )
+{
+  DetectorConstruction::fSetSpiceTargetBackerThickness = true;
+  DetectorConstruction::fSpiceTargetBackerThickness = surface_density;
+}
+
+void DetectorConstruction::SetSpiceTargetBackerDensity( G4double density )
+{
+  DetectorConstruction::fSetSpiceTargetBackerDensity = true;
+  DetectorConstruction::fSpiceTargetBackerDensity = density;
+  DetectorConstruction::SetSpiceBackerTarget();//should be last one given, may add to all to allow for any ordered commands
+}
+
+void DetectorConstruction::SetSpiceBackerTarget( )
+{
+  if( fSetSpiceTargetBackerMaterial ) {
+    if( fSetSpiceTargetBackerThickness ) {
+	if( fSetSpiceTargetBackerDensity ) {
+	  G4String name = fSpiceTargetBackerMaterial;
+	  G4double surface_density = fSpiceTargetBackerThickness/(mg/cm2);
+	  G4double density = fSpiceTargetBackerDensity/(g/cm3);
+	  
+	  pApparatusSpiceTarget->BuildBacker(name, surface_density, density);
+	  pApparatusSpiceTarget->PlaceTargetBacker(fLogicWorld);
+	}
+    }
+  }
+}
+void DetectorConstruction::SetSpiceTargetProtectorMaterial( G4String name )
+{
+  DetectorConstruction::fSetSpiceTargetProtectorMaterial = true;
+  DetectorConstruction::fSpiceTargetProtectorMaterial = name;
+}
+
+void DetectorConstruction::SetSpiceTargetProtectorThickness( G4double surface_density )
+{
+  DetectorConstruction::fSetSpiceTargetProtectorThickness = true;
+  DetectorConstruction::fSpiceTargetProtectorThickness = surface_density;
+}
+
+void DetectorConstruction::SetSpiceTargetProtectorDensity( G4double density )
+{
+  DetectorConstruction::fSetSpiceTargetProtectorDensity = true;
+  DetectorConstruction::fSpiceTargetProtectorDensity = density;
+  DetectorConstruction::SetSpiceProtectorTarget();
+}
+
+void DetectorConstruction::SetSpiceProtectorTarget()
+{
+  if( fSetSpiceTargetProtectorMaterial ) {
+    if( fSetSpiceTargetProtectorThickness ) {
+	if( fSetSpiceTargetProtectorDensity ) {
+	  G4String name = fSpiceTargetProtectorMaterial;
+	  G4double surface_density = fSpiceTargetProtectorThickness/(mg/cm2);
+	  G4double density = fSpiceTargetProtectorDensity/(g/cm3);
+	  
+	  pApparatusSpiceTarget->BuildProtector(name, surface_density, density);
+	  pApparatusSpiceTarget->PlaceTargetProtector(fLogicWorld);
+	}
+    }
+  }
+}
+
 //void DetectorConstruction::SetFieldBoxMaterial( G4String name )
 //{
 //  fSetFieldBoxMaterial = true;
@@ -375,7 +483,8 @@ void DetectorConstruction::AddApparatusSpiceTargetChamber(G4String MedLo, G4doub
 {
    //Create Target Chamber
    ApparatusSpiceTargetChamber* pApparatusSpiceTargetChamber = new ApparatusSpiceTargetChamber(MedLo, TargetPedestal);
-   pApparatusSpiceTargetChamber->Build( fLogicWorld );	
+   pApparatusSpiceTargetChamber->Build( fLogicWorld );
+   pApparatusSpiceTarget = new ApparatusSpiceTarget(targetz);//prepares target instance after the intro of the chamber
 }
 
 void DetectorConstruction::AddApparatus8piVacuumChamber() {

@@ -77,13 +77,28 @@ private:
     G4UIcmdWith3VectorAndUnit* fGenericTargetDimensionsCmd;
     G4UIcmdWith3VectorAndUnit* fGenericTargetPositionCmd;
 
+    // Spice Target Apparatus
+    G4UIcmdWithAString*        fSpiceTargetCmd;
+    G4UIcmdWithADoubleAndUnit* fSpiceTargetDensityCmd;
+    G4UIcmdWithADoubleAndUnit* fSpiceTargetThicknessCmd;
+    G4UIcmdWithAString*        fSpiceTargetBackerCmd;
+    G4UIcmdWithADoubleAndUnit* fSpiceTargetBackerDensityCmd;
+    G4UIcmdWithADoubleAndUnit* fSpiceTargetBackerThicknessCmd;
+    G4UIcmdWithAString*        fSpiceTargetProtectorCmd;
+    G4UIcmdWithADoubleAndUnit* fSpiceTargetProtectorDensityCmd;
+    G4UIcmdWithADoubleAndUnit* fSpiceTargetProtectorThicknessCmd;
+    
+    //field box
     G4UIcmdWithAString*        fFieldBoxMaterialCmd;
     G4UIcmdWith3VectorAndUnit* fFieldBoxDimensionsCmd;
     G4UIcmdWith3VectorAndUnit* fFieldBoxPositionCmd;
     G4UIcmdWith3VectorAndUnit* fFieldBoxMagneticFieldCmd;
+    
+    
+   //field for SPICE
     G4UIcmdWithAString*        fTabMagneticFieldCmd; ///19/7
     
-    G4UIcmdWithAString*   fAddApparatusSpiceTargetChamberCmd;
+    G4UIcmdWithAString*        fAddApparatusSpiceTargetChamberCmd;
     G4UIcmdWithoutParameter*   fAddApparatus8piVacuumChamberCmd;
     G4UIcmdWithADoubleAndUnit* fAddApparatus8piVacuumChamberAuxMatShellCmd;
     G4UIcmdWithAnInteger*      fAddApparatusGriffinStructureCmd;

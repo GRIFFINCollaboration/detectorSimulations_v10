@@ -58,7 +58,7 @@ public:
     virtual ~PrimaryGeneratorMessenger();
     G4double BeamPos = -7.49315; //initialise BeamPos
     G4ThreeVector BeamPos3 = G4ThreeVector(0,0,-7.49315);
-    G4double pgm();
+
 public:
     void SetNewValue(G4UIcommand*, G4String);
 
@@ -77,6 +77,7 @@ private:
     G4UIcmdWithADoubleAndUnit*     fConeRValueCmd;
     G4UIcmdWithADoubleAndUnit*     fConeAngleCmd;
     G4UIcmdWithADoubleAndUnit*     fConeMinAngleCmd;
+    G4UIcmdWithABool* fBeamDistroCmd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

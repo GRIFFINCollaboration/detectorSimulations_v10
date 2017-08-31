@@ -157,9 +157,9 @@ void HistoManager::Book() {
     
     name  = "cone_print";
     title     = "Cone representation";
-    nbins = 100;
-    xmin      = 0.;
-    xmax      = 1.;
+    nbins = 10000;
+    xmin      = -6.;
+    xmax      = 6.;
     Make2DHistoWithAxisTitles(analysisManager, name,  title, nbins, xmin, xmax, nbins, xmin, xmax);
     angledistro[1]=fMakeHistoIndex;
 

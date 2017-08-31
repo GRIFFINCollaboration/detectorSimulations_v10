@@ -42,7 +42,7 @@
 #include "G4ThreeVector.hh"
 
 #include "G4SystemOfUnits.hh"
-#include "HistoManager.hh"
+
 
 class G4ParticleGun;
 class G4Event;
@@ -54,12 +54,17 @@ class HistoManager;
 
 class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
+private:    
+    G4ParticleGun*                fParticleGun;  //pointer a to G4 class
+    DetectorConstruction*         fDetector;     //pointer to the geometry
+    PrimaryGeneratorMessenger*    fGunMessenger; //messenger of this class
+
 public:
     PrimaryGeneratorAction(DetectorConstruction*);
     virtual ~PrimaryGeneratorAction();
     virtual void GeneratePrimaries(G4Event*);
-    void sendbeamenergytohist(G4double input){ HistoManager::Instance().BeamEnergy = input;};
     
+
     void SetNumberOfDecayingLaBrDetectors( G4int num ) {fNumberOfDecayingLaBrDetectors = num;} ;
     void SetEfficiencyEnergy( G4double num ) {fEffEnergy = num;} ;
     void SetEfficiencyDirection( G4ThreeVector num ) {fEffDirection = num; fEffDirectionBool = true;} ;
@@ -73,11 +78,9 @@ public:
     void SetConeMaxAngle( G4double num1 ) {fAngleInit = num1; fConeAngleBool = true; fEffDirectionBool = true;};
     void SetConeMinAngle( G4double num1 ) {fAngleMinInit = num1;};
     //booleans (initially false), above, true if a command has been entered for the loops in source file to be entered
-    
-    
-    G4ParticleGun*                fParticleGun;  //pointer a to G4 class
-    DetectorConstruction*         fDetector;     //pointer to the geometry
-    PrimaryGeneratorMessenger*    fGunMessenger; //messenger of this class
+    void sendbeamenergytohist(G4double);
+    void PassTarget(G4double);
+    G4bool NeedBeamDistro = false;
 private:
     //variables
     G4int fNumberOfDecayingLaBrDetectors;
@@ -104,6 +107,7 @@ private:
     
     //functions
     void LaBrinit();
+    
     G4ThreeVector SetCone(G4double fConeRadius, G4double zVal=107.50685);//value is disttoSiliFromParticleCreation
     
     
