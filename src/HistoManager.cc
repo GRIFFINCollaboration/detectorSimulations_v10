@@ -155,14 +155,38 @@ void HistoManager::Book() {
     MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
     angledistro[0]=fMakeHistoIndex;
     
-    name  = "cone_print";
-    title     = "Cone representation";
-    nbins = 10000;
+    name  = "x-y";
+    title     = "X-Y 2D distribution";
+    nbins = 100;
     xmin      = -6.;
     xmax      = 6.;
     Make2DHistoWithAxisTitles(analysisManager, name,  title, nbins, xmin, xmax, nbins, xmin, xmax);
     angledistro[1]=fMakeHistoIndex;
 
+    name  = "z-distribution";
+    title     = "z-distro";
+    nbins     = 10000;
+    xmin      = -12.;
+    xmax      = 5.;
+    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+    angledistro[2]=fMakeHistoIndex;
+    
+    name  = "x-distribution";
+    title     = "x-distro";
+    nbins     = 10000;
+    xmin      = -10.;
+    xmax      = 10.;
+    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+    angledistro[3]=fMakeHistoIndex;
+    
+    name  = "y-distribution";
+    title     = "y-distro";
+    nbins     = 10000;
+    xmin      = -10.;
+    xmax      = 10.;
+    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+    angledistro[4]=fMakeHistoIndex;
+    
     if(fGridCell && WRITEEKINHISTOS) {
         for (G4int i=0; i < MAXNUMDET; i++) {
             detString = G4intToG4String(i);

@@ -57,6 +57,9 @@ class ApparatusSpiceTarget
     G4VPhysicalVolume* target_phys;
     G4VPhysicalVolume* target_Backer_phys;
     G4VPhysicalVolume* target_Protector_phys;
+    
+    //Material manager
+//     G4NistManager* man = G4NistManager::Instance();
   private://variables for build, set in the class as read in
     G4String target_material;
     G4double target_material_density;
@@ -77,9 +80,9 @@ class ApparatusSpiceTarget
     G4int BuildTarget(G4String target_material, G4double target_thickness, G4double target_material_density);
     G4int BuildBacker(G4String target_Backer_material, G4double target_Backer_thickness, G4double target_Backer_material_density);
     G4int BuildProtector(G4String target_Protector_material, G4double target_Protector_thickness, G4double target_Protector_material_density);
-    void PlaceTarget(G4LogicalVolume* expHallLog);
-    void PlaceTargetBacker(G4LogicalVolume* expHallLog);
-    void PlaceTargetProtector(G4LogicalVolume* expHallLog);
+    void PlaceTarget(G4LogicalVolume* );
+    void PlaceTargetBacker(G4LogicalVolume* );
+    void PlaceTargetProtector(G4LogicalVolume* );
     
     G4double beampos;
              

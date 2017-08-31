@@ -256,11 +256,11 @@ private:
     G4String      fSpiceTargetProtectorMaterial;
 
 public://accessed by PGA
-    G4double      fSpiceTargetThickness;
+    G4double      fSpiceTargetThickness=0.0;
     G4double 	  fSpiceTargetDensity;
-    G4double      fSpiceTargetBackerThickness;
+    G4double      fSpiceTargetBackerThickness=0.0;
     G4double 	  fSpiceTargetBackerDensity;
-    G4double      fSpiceTargetProtectorThickness;
+    G4double      fSpiceTargetProtectorThickness=0.0;
     G4double 	  fSpiceTargetProtectorDensity;
     
 private: 

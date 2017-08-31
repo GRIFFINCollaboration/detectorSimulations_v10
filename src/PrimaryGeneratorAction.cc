@@ -267,16 +267,20 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	//effpart is mem location, but all the same indicating just the electron //effdirection is random as expected
 	if(NeedBeamDistro){
 	  
-	  G4double x = G4RandGauss::shoot(0.,2.)*mm;//9mm = target radius for now
-	  G4double y = G4RandGauss::shoot(0.,2.)*mm;
-	  G4double z = -(G4UniformRand() * (fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity))
-		    - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity)/2. + fDetector->targetz;// divide by two as equally placed around beampos
-	  G4cout << "x-value for beam distro: " << x << G4endl;
-// 	  G4cout << "y-value for beam distro: " << y << G4endl;
-	  G4cout << "z-value for beam distro: " << z << G4endl;
-	  G4cout << "POS OF TAR: " << - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) + fDetector->targetz << G4endl;
+	  G4double x = G4RandGauss::shoot(0.,1.)*mm;//9mm = target radius for now
+	  G4double y = G4RandGauss::shoot(0.,1.)*mm;
+	  G4double z = -(G4UniformRand()*(fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity)) 
+		    - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) + fDetector->targetz;// divide by two as equally placed around beampos
+	  if(fDetector->targetz < -3.9*mm) z -=  0.5*mm;
+// 	  G4cout << "rand downstream stuff 0->thick: " << -G4UniformRand()*fDetector->fSpiceTargetThickness/(fDetector->fSpiceTargetDensity) << G4endl;
+//  	  G4cout << "hALF TARG THICK: (0.5)" << (fDetector->fSpiceTargetThickness/(fDetector->fSpiceTargetDensity*2.)) << G4endl;
+//  	  G4cout << "z-value for beam distro (0.5 to -0.5): " << z << " Beampos: " << fDetector->targetz << G4endl;
+//   	  G4cout << "EXTRA???: " << - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) << G4endl;
 	  thisEffPosition = G4ThreeVector(x,y,z);
 	HistoManager::Instance().Fill2DHisto(HistoManager::Instance().angledistro[1], x, y);
+	HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[2],z);
+	HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[3],x);
+	HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[4],y);
 	}
 	//after running through if-statements above we now have particle type definition, position, mom. direction, and the energy (or their initialised values)
         fParticleGun->SetParticleDefinition(effPart);

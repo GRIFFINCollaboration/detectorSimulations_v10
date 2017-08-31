@@ -104,7 +104,7 @@ public:
     short PacesHistNumbers[MAXNUMDETPACES+2]; //+2 for edep and sum histos 
     short SpiceHistNumbers[MAXNUMDETSPICE*MAXNUMSEGSPICE+2]; //+2 for edep and sum histos 
     short segmenthisto[120];//this array will hold segment IDs to be transferred to reference for histos
-    short angledistro[4]; //this variable will hold the histogran ID for the angular distributions from the cone
+    short angledistro[10]; //this variable will hold the histogran ID for the angular distributions from the cone
 
     void MakeHisto(G4AnalysisManager* analysisManager, G4String filename,  G4String title, G4double xmin, G4double xmax, G4int nbins);
     void MakeHistoWithAxisTitles(G4AnalysisManager* analysisManager, G4String name, 
