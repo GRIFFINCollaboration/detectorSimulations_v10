@@ -32,8 +32,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef DetectionSystemSodiumIodide_h
-#define DetectionSystemSodiumIodide_h 1
+#ifndef DETECTIONSYSTEMSODIUMIODIDE_HH
+#define DETECTIONSYSTEMSODIUMIODIDE_HH
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"

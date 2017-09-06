@@ -32,12 +32,12 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef PrimaryGeneratorMessenger_h
-#define PrimaryGeneratorMessenger_h 1
+#ifndef PRIMARYGENERATORMESSENGER_HH
+#define PRIMARYGENERATORMESSENGER_HH
 
 #include "G4UImessenger.hh"
 #include "globals.hh"
-
+#include "G4SystemOfUnits.hh"
 class PrimaryGeneratorAction;
 class G4UIdirectory;
 class G4UIcmdWithADouble;
@@ -48,7 +48,7 @@ class G4UIcmdWithAString;
 class G4UIcommand;
 class G4UIcmdWithAnInteger;
 class G4UIcmdWithABool;
-#include "G4SystemOfUnits.hh"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class PrimaryGeneratorMessenger: public G4UImessenger

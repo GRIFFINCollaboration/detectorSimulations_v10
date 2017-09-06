@@ -285,23 +285,23 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     fAddDetectionSystemTestcanCmd = new G4UIcmdWith3Vector("/DetSys/det/addTestcan",this);
     fAddDetectionSystemTestcanCmd->SetGuidance("Add Testcan Detection System");
     fAddDetectionSystemTestcanCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-	 
-	 fSetDetectionSystemDescantColorCmd = new G4UIcmdWithAString("/DetSys/det/setDescantColor", this);
-	 fSetDetectionSystemDescantColorCmd->SetGuidance("Set color of next descant detector to be added via addDescantCart or addDescantSpher");
-	 fSetDetectionSystemDescantColorCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-	 fSetDetectionSystemDescantColorCmd->SetCandidates("white blue red green yellow");
-	 
-	 fSetDetectionSystemDescantRotationCmd = new G4UIcmdWith3Vector("/DetSys/det/setDescantRotation", this);
-	 fSetDetectionSystemDescantRotationCmd->SetGuidance("Set rotation of next descant detector to be added via addDescantCart or addDescantSpher (alhpa beta gamma)");
-	 fSetDetectionSystemDescantRotationCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-	 
-	 fAddDetectionSystemDescantCartCmd = new G4UIcmdWith3VectorAndUnit("/DetSys/det/addDescantCart", this);
-	 fAddDetectionSystemDescantCartCmd->SetGuidance("Add single DESCANT detector at provided cartesian coordinates");
-	 fAddDetectionSystemDescantCartCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
-	 
-	 fAddDetectionSystemDescantSpherCmd = new G4UIcmdWith3VectorAndUnit("/DetSys/det/addDescantSpher", this);
-	 fAddDetectionSystemDescantSpherCmd->SetGuidance("Add single DESCANT detector at provided spherical coordinates");
-	 fAddDetectionSystemDescantSpherCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+    
+    fSetDetectionSystemDescantColorCmd = new G4UIcmdWithAString("/DetSys/det/setDescantColor", this);
+    fSetDetectionSystemDescantColorCmd->SetGuidance("Set color of next descant detector to be added via addDescantCart or addDescantSpher");
+    fSetDetectionSystemDescantColorCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    fSetDetectionSystemDescantColorCmd->SetCandidates("white blue red green yellow");
+    
+    fSetDetectionSystemDescantRotationCmd = new G4UIcmdWith3Vector("/DetSys/det/setDescantRotation", this);
+    fSetDetectionSystemDescantRotationCmd->SetGuidance("Set rotation of next descant detector to be added via addDescantCart or addDescantSpher (alhpa beta gamma)");
+    fSetDetectionSystemDescantRotationCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    
+    fAddDetectionSystemDescantCartCmd = new G4UIcmdWith3VectorAndUnit("/DetSys/det/addDescantCart", this);
+    fAddDetectionSystemDescantCartCmd->SetGuidance("Add single DESCANT detector at provided cartesian coordinates");
+    fAddDetectionSystemDescantCartCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+    
+    fAddDetectionSystemDescantSpherCmd = new G4UIcmdWith3VectorAndUnit("/DetSys/det/addDescantSpher", this);
+    fAddDetectionSystemDescantSpherCmd->SetGuidance("Add single DESCANT detector at provided spherical coordinates");
+    fAddDetectionSystemDescantSpherCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 	 
     fAddDetectionSystemGriffinForwardCmd = new G4UIcmdWithAnInteger("/DetSys/det/addGriffinForward",this);
     fAddDetectionSystemGriffinForwardCmd->SetGuidance("Add Detection System GriffinForward");
@@ -353,9 +353,9 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     fAddDetectionSystemSceptarCmd->SetGuidance("Add Detection System Sceptar");
     fAddDetectionSystemSceptarCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 	 
-   fAddDetectionSystemSpiceCmd = new G4UIcmdWithAnInteger("/DetSys/det/addSpice",this);
-   fAddDetectionSystemSpiceCmd->SetGuidance("Add Detection System Spice");
-   fAddDetectionSystemSpiceCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    fAddDetectionSystemSpiceCmd = new G4UIcmdWithAnInteger("/DetSys/det/addSpice",this);
+    fAddDetectionSystemSpiceCmd->SetGuidance("Add Detection System Spice");
+    fAddDetectionSystemSpiceCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
     fAddDetectionSystemPacesCmd = new G4UIcmdWithAnInteger("/DetSys/det/addPaces",this);
     fAddDetectionSystemPacesCmd->SetGuidance("Add Detection System Paces");

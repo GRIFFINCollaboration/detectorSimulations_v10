@@ -34,8 +34,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef EventAction_h
-#define EventAction_h 1
+#ifndef EVENTACTION_HH
+#define EVENTACTION_HH
 
 #include "G4UserEventAction.hh"
 #include "globals.hh"
@@ -93,12 +93,12 @@ public:
 
 private:
     RunAction*    fRunAct;
-    HistoManager* fHistoManager;
+	HistoManager* fHistoManager;
 
     G4int     fPrintModulo;
     G4int     fEvtNb;
+
     G4double BeamInputEnergy;
-    
     void ClearVariables();
     void FillParticleType();
     void FillGriffinCryst();
@@ -125,11 +125,10 @@ private:
  
     G4int    fPTrackID;
     G4int    fPParentID;
-    
+
     G4int    fSpiceMultiplicity=0;
     G4int    MultiplicityArray[5];
-
-
+    
     // Particle types in simulation
     G4int fParticleTypes[NUMPARTICLETYPES];
 

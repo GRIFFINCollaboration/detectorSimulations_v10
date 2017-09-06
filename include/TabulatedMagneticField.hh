@@ -12,6 +12,9 @@
 // GEANT4 tag $Name: geant4-09-04-patch-01 $
 //
 
+#ifndef TABULATEDMAGNETICFIELD_HH
+#define TABULATEDMAGNETICFIELD_HH
+
 #include "globals.hh"
 #include "G4MagneticField.hh"
 #include "G4ios.hh"
@@ -20,33 +23,43 @@
 #include <vector>
 #include <cmath>
 
-using namespace std;
-
 class TabulatedMagneticField
 #ifndef STANDALONE
 : public G4MagneticField
 #endif
 {
+public:
+  TabulatedMagneticField(const char* filename, G4double zOffset, G4double zRotation);
+  void  GetFieldValue(const G4double Point[4], G4double* Bfield) const;
   
+private:
   // Storage space for the table
-  vector< vector< vector< G4double > > > xField;
-  vector< vector< vector< G4double > > > yField;
-  vector< vector< vector< G4double > > > zField;
+  std::vector<std::vector<std::vector<G4double> > > fXField;
+  std::vector<std::vector<std::vector<G4double> > > fYField;
+  std::vector<std::vector<std::vector<G4double> > > fZField;
   // The dimensions of the table
-  G4int nx,ny,nz; 
+  G4int fNx;
+  G4int fNy;
+  G4int fNz; 
   // The physical limits of the defined region
-  G4double minx, maxx, miny, maxy, minz, maxz;
+  G4double fMinx;
+  G4double fMaxx;
+  G4double fMiny;
+  G4double fMaxy;
+  G4double fMinz;
+  G4double fMaxz;
   //The physical limits of the defined region
-  G4double maxbx=0, maxby=0, maxbz=0;
+  G4double fMaxbx;
+  G4double fMaxby;
+  G4double fMaxbz;
   // The physical extent of the defined region
-  G4double dx, dy, dz;
+  G4double fDx;
+  G4double fDy;
+  G4double fDz;
   G4double fZoffset;
   G4double fZrotation;
-  G4bool invertX, invertY, invertZ;
-
-public:
-  TabulatedMagneticField(const char* filename, G4double zOffset, G4double zRotation  );
-  void  GetFieldValue( const  G4double Point[4],
-		       G4double *Bfield          ) const;
+  G4bool   fInvertX;
+  G4bool   fInvertY;
+  G4bool   fInvertZ;
 };
-
+#endif

@@ -38,14 +38,10 @@
 #include "DetectorConstruction.hh"
 #include "EventAction.hh"
 
-#include "G4Step.hh" 
-
-#include "CLHEP/Random/Randomize.h"
-
+#include "G4Step.hh"
 #include "G4VProcess.hh"
 #include "G4HadronicProcess.hh"
 #include "G4ProcessType.hh"
-
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -511,20 +507,16 @@ void SteppingAction::SetDetAndCryNumberForGriffinComponent(G4String volname) {
 void SteppingAction::SetDetAndCryNumberForDeadLayerSpecificGriffinCrystal(G4String volname) {
     const char *cstr = volname.c_str();
     G4int av;
-    G4int impr;
     G4int avOver9 = cstr[4]-'0';
     G4int avOver99 = cstr[5]-'0';
     if(avOver9 == 47) { // under 10
         av = cstr[3]-'0';
-        impr = cstr[10]-'0';
     }
     else if(avOver99 == 47) { // under 100
         av = (cstr[3]-'0')*10+(cstr[4]-'0');
-        impr = cstr[11]-'0';
     }
     else { // OVER 100
         av = (cstr[3]-'0')*100+(cstr[4]-'0')*10+(cstr[5]-'0');
-        impr = cstr[12]-'0';
     }
 
     fDet = (G4int)(ceil((G4double)(av)/(G4double)(fNumberOfAssemblyVols)));
@@ -595,12 +587,10 @@ void SteppingAction::SetDetAndCryNumberForSpiceDetector(G4String volname)
 
 void SteppingAction::SetDetNumberForAncillaryBGODetector(G4String volname) {
     const char *cstr = volname.c_str();
-    G4int av;
     G4int impr;
     G4int avOver9 = cstr[4]-'0';
     G4int avOver99 = cstr[5]-'0';
     if( avOver9 == 47 ) { // under 10
-        av = cstr[3]-'0';
         if((cstr[12]-'0') == 47) { // impr > 10 and < 100
             impr = (cstr[10]-'0')*10+(cstr[11]-'0');
         }
@@ -609,7 +599,6 @@ void SteppingAction::SetDetNumberForAncillaryBGODetector(G4String volname) {
         }
     }
     else if( avOver99 == 47 ) { // under 100
-        av = (cstr[3]-'0')*10+(cstr[4]-'0');
         if((cstr[13]-'0') == 47) { // impr > 10 and < 100
             impr = (cstr[11]-'0')*10+(cstr[12]-'0');
         }
@@ -618,7 +607,6 @@ void SteppingAction::SetDetNumberForAncillaryBGODetector(G4String volname) {
         }
     }
     else { // OVER 100
-        av = (cstr[3]-'0')*100+(cstr[4]-'0')*10+(cstr[5]-'0');  // This was fixed
         if((cstr[14]-'0') == 47) { // impr > 10 and < 100
             impr = (cstr[12]-'0')*10+(cstr[13]-'0');
         }
@@ -628,8 +616,6 @@ void SteppingAction::SetDetNumberForAncillaryBGODetector(G4String volname) {
     }
     fDet = (G4int)((ceil)(G4double(impr)/3.0));
     fCry = impr-((fDet-1)*3);
-
-    //    G4cout << "Found Edep in " << volname <<  " fCry = " << fCry << " fDet = " << fDet << " av = " << av << G4endl;
 }
 
 G4int SteppingAction::FindTrueGriffinDetector(G4int detval) {

@@ -32,23 +32,19 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...... 
 
-#ifndef HistoManager_h
-#define HistoManager_h 1
+#ifndef HISTOMANAGER_HH
+#define HISTOMANAGER_HH
 
 #include "globals.hh"
 #include "g4root.hh"
-//#include "G4RootAnalysisManager.hh" //from g4root.hh
-////#include "g4xml.hh"
-////#include "g4hbook.hh"
 
 #include "G4SystemOfUnits.hh" // new version geant4.10 requires units
-
 
 const G4bool WRITEEKINHISTOS    = true;//bools needed to write histos
 const G4bool WRITEEDEPHISTOS    = true;
 const G4bool WRITETRACKLHISTOS  = true;
 
-const G4int MAXHISTO            = 500;//max number of histos in root file
+const G4int MAXHISTO            = 5000;//max number of histos in root file
 const G4int MAXNTCOL            = 15;
 const G4int MAXNUMDET           = 20;
 const G4int MAXNUMDETSPICE	= 10;
@@ -68,10 +64,10 @@ const G4double  EKINXMAXSPICE   = 10000.5*keV;
 
 // edep histo properties    ///////////////////////
 const G4int     EDEPNBINS  = 10000;//was 10000
-const G4double  EDEPXMIN   = 0.0*keV;
-const G4double  EDEPXMAX   = 10000.0*keV;//was 10000.5
-const G4int     EDEPNBINSSPICE  = 10000;//was 10000
-const G4double  EDEPXMINSPICE   = 0.0*keV;
+const G4double  EDEPXMIN   = 0.5*keV;
+const G4double  EDEPXMAX   = 10000.5*keV;//was 10000.5
+const G4int     EDEPNBINSSPICE  = 10000;//was 10000	//spice histos range different
+const G4double  EDEPXMINSPICE   = 0.*keV;
 const G4double  EDEPXMAXSPICE   = 2100.0*keV;//was 10000.5
 
 // trackl histo properties  ///////////////////////
@@ -105,7 +101,7 @@ public:
     short SpiceHistNumbers[MAXNUMDETSPICE*MAXNUMSEGSPICE+2]; //+2 for edep and sum histos 
     short segmenthisto[120];//this array will hold segment IDs to be transferred to reference for histos
     short angledistro[10]; //this variable will hold the histogran ID for the angular distributions from the cone
-
+    
     void MakeHisto(G4AnalysisManager* analysisManager, G4String filename,  G4String title, G4double xmin, G4double xmax, G4int nbins);
     void MakeHistoWithAxisTitles(G4AnalysisManager* analysisManager, G4String name, 
 					   G4String title, G4double xmin, G4double xmax, 
@@ -117,7 +113,6 @@ public:
     void Fill2DHisto(G4int ih, G4double xbin, G4double ybin, G4double weight = 1.0);
     void Normalize(G4int id, G4double fac);
 
-//    void FillNtuple(G4double eventNumber, G4double stepNumber, G4double cryNumber, G4double detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time);
     void FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ);
     void FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ);
 
@@ -138,6 +133,7 @@ public:
 	 void Paces   (G4bool val) { fPaces    = val; }  
 	 void Descant (G4bool val) { fDescant  = val; }  
 	 void Testcan (G4bool val) { fTestcan  = val; }  
+
 	 // getter
 	 G4bool GridCell() { return fGridCell; }
 	 G4bool Griffin () { return fGriffin;  }
@@ -171,7 +167,7 @@ private:
     G4int         fHistId[MAXHISTO];
     G4AnaH1*      fHistPt[MAXHISTO];
     G4AnaH2*      fHistPt2[MAXHISTO];
-
+    
     G4int         fNtColId[MAXNTCOL];
     G4int         fNtColIdHit[MAXNTCOL];
     G4int         fNtColIdStep[MAXNTCOL];

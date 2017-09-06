@@ -40,14 +40,13 @@
 HistoManager::HistoManager() {
     fFileName[0] = "g4out";
     fFactoryOn = false;
-   
+
     // Only fill one NTuple at a time. If fStepTrackerBool is true, then fHitTrackerBool should be false, or vise-versa.
     // There is no need to have the hit NTuple and the step NTuple.
     fHitTrackerBool = true;
     fStepTrackerBool = false;
 
     fMakeHistoIndex = 0;
-    //short segmenthisto[120];//this array will hold segment IDs to be transferred to reference for histos
     
     // histograms
     for (G4int k=0; k<MAXHISTO; k++) {
@@ -82,7 +81,8 @@ HistoManager::~HistoManager()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void HistoManager::Book() {
-   G4cout << BeamEnergy << " <- Input beam energy ot histomanager" << G4endl;
+    G4cout << BeamEnergy << " <- Input beam energy ot histomanager" << G4endl;
+    
     G4String name;
     G4String title;
     G4String detString;
@@ -523,7 +523,7 @@ void HistoManager::Save() {
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//fMakeHistoIndex is global in Histomanager so allowed in any scope below unaltered
+
 void HistoManager::MakeHisto(G4AnalysisManager* analysisManager, G4String name,  G4String title, G4double xmin, G4double xmax, G4int nbins) {
     fMakeHistoIndex++;
     if (fMakeHistoIndex >= MAXHISTO) {
@@ -536,6 +536,8 @@ void HistoManager::MakeHisto(G4AnalysisManager* analysisManager, G4String name, 
     fHistPt[fMakeHistoIndex] = analysisManager->GetH1(fHistId[fMakeHistoIndex]);
 
 }
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void HistoManager::MakeHistoWithAxisTitles(G4AnalysisManager* analysisManager, G4String name, 
 					   G4String title, G4double xmin, G4double xmax, 
@@ -576,6 +578,8 @@ void HistoManager::FillHisto(G4int ih, G4double xbin, G4double weight) {
     if (fHistPt[ih]) fHistPt[ih]->fill(xbin, weight);
 }
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
 void HistoManager::Fill2DHisto(G4int ih, G4double xbin, G4double ybin, G4double weight) {
     if (ih >= MAXHISTO) {
         G4cout << "---> warning from HistoManager::FillHisto() : histo " << ih
@@ -584,8 +588,6 @@ void HistoManager::Fill2DHisto(G4int ih, G4double xbin, G4double ybin, G4double 
     }
     if (fHistPt2[ih]) fHistPt2[ih]->fill(xbin, ybin, weight);
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void HistoManager::Normalize(G4int ih, G4double fac) {
     if (ih >= MAXHISTO) {

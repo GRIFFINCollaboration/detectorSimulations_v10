@@ -35,9 +35,11 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "EventAction.hh"
-#include "Randomize.hh"
+
 #include "RunAction.hh"
 #include "HistoManager.hh"
+
+#include "Randomize.hh"
 
 #include "G4Event.hh"
 
@@ -57,7 +59,7 @@ EventAction::EventAction(RunAction* run)
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 EventAction::~EventAction() { 
-  G4cout << "1 dep: " << MultiplicityArray[0] << "| 2 dep: " << MultiplicityArray[1] << "| 3 dep: " << MultiplicityArray[2] << 
+    G4cout << "1 dep: " << MultiplicityArray[0] << "| 2 dep: " << MultiplicityArray[1] << "| 3 dep: " << MultiplicityArray[2] << 
   "| 4 dep: " << MultiplicityArray[3] << "| 5 dep: " << MultiplicityArray[4] << G4endl;
   
   G4double ME = MultiplicityArray[1] + MultiplicityArray[2] + MultiplicityArray[3] + MultiplicityArray[4]; //multiple events
@@ -65,7 +67,6 @@ EventAction::~EventAction() {
   G4double OS = ME/(MultiplicityArray[0] + ME); //multiple/all events
   
   G4cout << "Old style multiplicity: " << OS*100.0 << G4endl;//% figure for multiplicity
-  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -100,7 +101,7 @@ void EventAction::EndOfEventAction(const G4Event*) {
     for (G4int i = 0 ; i < fNumberOfSteps; i++) {
 		HistoManager::Instance().FillStepNtuple(fStepTrackerI[0][i], fStepTrackerI[1][i], fStepTrackerI[2][i], fStepTrackerI[3][i],  fStepTrackerI[4][i], fStepTrackerI[5][i], fStepTrackerI[6][i], fStepTrackerI[7][i], fStepTrackerI[8][i], fStepTrackerD[0][i]/keV, fStepTrackerD[1][i]/mm, fStepTrackerD[2][i]/mm, fStepTrackerD[3][i]/mm, fStepTrackerD[4][i]/second, fStepTrackerI[9][i]);
     }
-
+    
     ClearVariables();
 }
 
@@ -409,8 +410,7 @@ void EventAction::FillPacesCryst() {
         }
     }
     if(energySumDet > MINENERGYTHRES) {
-        if(WRITEEDEPHISTOS && (energySumDet > MINENERGYTHRES))     HistoManager::Instance().FillHisto(HistoManager::Instance().PacesHistNumbers[1], energySumDet);
-	
+        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().PacesHistNumbers[1], energySumDet);
     }
 }////////////////////////////////////////////20/6
 

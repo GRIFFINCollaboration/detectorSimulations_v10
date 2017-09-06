@@ -51,7 +51,9 @@
 
 #include "DetectorConstruction.hh" //for detector based information
 #include "HistoManager.hh"
-using namespace CLHEP; //for pi
+
+using namespace CLHEP;
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -65,7 +67,6 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* DC)
     fParticleGun  = new G4ParticleGun(nParticle); //In our code, the gun is called fParticleGun
     //create a messenger for this class
     fGunMessenger = new PrimaryGeneratorMessenger(this);
-    
     
     //these 3 lines initialise the Gun, basic values
     fParticleGun->SetParticleEnergy(0*eV);
@@ -81,9 +82,9 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* DC)
     fEffParticleBool = false;
     fEffPolarization = false;
     fEffBeam = false;
-    LaBrinit(); //sets up default variables - messy having them all declared here
-    
 
+    
+    LaBrInit(); //sets up default variables - messy having them all declared here
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -326,7 +327,8 @@ void PrimaryGeneratorAction::PassTarget(G4double BeamZ){
 
 void PrimaryGeneratorAction::sendbeamenergytohist(G4double input){ HistoManager::Instance().BeamEnergy = input;}
 
-void PrimaryGeneratorAction::LaBrinit() {
+
+void PrimaryGeneratorAction::LaBrInit() {
   //default LaBr properties
     G4double triangleThetaAngle = 54.735610317245360*deg;
     // theta

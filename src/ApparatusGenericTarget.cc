@@ -37,12 +37,12 @@ ApparatusGenericTarget::~ApparatusGenericTarget()
     delete target_log;    
 }
 
-G4int ApparatusGenericTarget::Build(G4String target_material, G4double target_length_x, G4double target_length_y, G4double target_length_z)
+G4int ApparatusGenericTarget::Build(G4String target_material_in, G4double target_length_x_in, G4double target_length_y_in, G4double target_length_z_in)
 {
-  this->target_material = target_material;
-  this->target_length_x = target_length_x*mm;
-  this->target_length_y = target_length_y*mm;
-  this->target_length_z = target_length_z*mm;
+  this->target_material = target_material_in;
+  this->target_length_x = target_length_x_in*mm;
+  this->target_length_y = target_length_y_in*mm;
+  this->target_length_z = target_length_z_in*mm;
 
   // Build assembly volume
   G4AssemblyVolume* myAssembly = new G4AssemblyVolume();
