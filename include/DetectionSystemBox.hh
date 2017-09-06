@@ -32,8 +32,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef DetectionSystemBox_h
-#define DetectionSystemBox_h 1
+#ifndef DETECTIONSYSTEMBOX_HH
+#define DETECTIONSYSTEMBOX_HH
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"

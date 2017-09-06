@@ -34,8 +34,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef PrimaryGeneratorAction_h
-#define PrimaryGeneratorAction_h 1
+#ifndef PRIMARYGENERATORACTION_HH
+#define PRIMARYGENERATORACTION_HH
 
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "globals.hh"
@@ -90,9 +90,10 @@ private:
     G4double fEffBeamRadius;
     G4double fConeRadius;
     G4bool fConeRadiusBool;
+    G4double fDistToSiliFromParticleCreation;
+
     G4ThreeVector SetCone(G4double fConeRadius);
-    G4double disttoSiliFromParticleCreation = 107.50685;
-    void LaBrinit();
+    void LaBrInit();
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

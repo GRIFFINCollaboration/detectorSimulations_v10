@@ -30,8 +30,8 @@
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-#ifndef PhysListHadron_h
-#define PhysListHadron_h 1
+#ifndef PHYSLISTHADRON_HH
+#define PHYSLISTHADRON_HH
 
 #include "G4VPhysicsConstructor.hh"
 #include "globals.hh"

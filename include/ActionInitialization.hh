@@ -28,8 +28,8 @@
 /// \file ActionInitialization.hh
 /// \brief Definition of the ActionInitialization class
 
-#ifndef ActionInitialization_h
-#define ActionInitialization_h 1
+#ifndef ACTIONINITIALIZATION_HH
+#define ACTIONINITIALIZATION_HH
 
 #include "G4VUserActionInitialization.hh"
 

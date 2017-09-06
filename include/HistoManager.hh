@@ -32,14 +32,11 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...... 
 
-#ifndef HistoManager_h
-#define HistoManager_h 1
+#ifndef HISTOMANAGER_HH
+#define HISTOMANAGER_HH
 
 #include "globals.hh"
 #include "g4root.hh"
-//#include "G4RootAnalysisManager.hh" //from g4root.hh
-////#include "g4xml.hh"
-////#include "g4hbook.hh"
 
 #include "G4SystemOfUnits.hh" // new version geant4.10 requires units
 
@@ -47,7 +44,7 @@ const G4bool WRITEEKINHISTOS    = true;//bools needed to write histos
 const G4bool WRITEEDEPHISTOS    = true;
 const G4bool WRITETRACKLHISTOS  = true;
 
-const G4int MAXHISTO            = 500;//max number of histos in root file
+const G4int MAXHISTO            = 5000;//max number of histos in root file
 const G4int MAXNTCOL            = 15;
 const G4int MAXNUMDET           = 20;
 const G4int MAXNUMDETSPICE	= 10;
@@ -102,14 +99,11 @@ public:
     //	sizeof() arrays appear double the elements, due to 2 bits per element
     short PacesHistNumbers[MAXNUMDETPACES+2]; //+2 for edep and sum histos 
     short SpiceHistNumbers[MAXNUMDETSPICE*12+2]; //+2 for edep and sum histos 
-    
-    
 
     void MakeHisto(G4AnalysisManager* analysisManager, G4String filename,  G4String title, G4double xmin, G4double xmax, G4int nbins);
     void FillHisto(G4int ih, G4double e, G4double weight = 1.0);
     void Normalize(G4int id, G4double fac);
 
-//    void FillNtuple(G4double eventNumber, G4double stepNumber, G4double cryNumber, G4double detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time);
     void FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ);
     void FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ);
 
@@ -130,6 +124,7 @@ public:
 	 void Paces   (G4bool val) { fPaces    = val; }  
 	 void Descant (G4bool val) { fDescant  = val; }  
 	 void Testcan (G4bool val) { fTestcan  = val; }  
+
 	 // getter
 	 G4bool GridCell() { return fGridCell; }
 	 G4bool Griffin () { return fGriffin;  }
@@ -142,7 +137,6 @@ public:
 	 G4bool Paces   () { return fPaces;    }  
 	 G4bool Descant () { return fDescant;  }  
 	 G4bool Testcan () { return fTestcan;  } 
-	 short segmenthisto[120];//this array will hold segment IDs to be transferred to reference for histos
 
 private:
     HistoManager();

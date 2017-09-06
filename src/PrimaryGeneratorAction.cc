@@ -76,8 +76,10 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* DC)
     fEffParticleBool = false;
     fEffPolarization = false;
     fEffBeam = false;
+
+	 fDistToSiliFromParticleCreation = 107.50685;
     
-    LaBrinit(); //sets up default variables - messy having them all declared here
+    LaBrInit(); //sets up default variables - messy having them all declared here
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -268,8 +270,8 @@ G4ThreeVector PrimaryGeneratorAction::SetCone(G4double ConeRadius) {
   xSign = G4UniformRand(); ySign = G4UniformRand(); 
   xCone = G4UniformRand()*(ConeRadius);//Random x up to ConeRadius
   yCone = G4UniformRand()*(sqrt(pow(ConeRadius,2)-pow(xCone,2)));//Random y from whatever is left
-  xCone=atan(xCone/disttoSiliFromParticleCreation);//a length at this point, need an angle ratio
-  yCone=atan(yCone/disttoSiliFromParticleCreation);
+  xCone=atan(xCone/fDistToSiliFromParticleCreation);//a length at this point, need an angle ratio
+  yCone=atan(yCone/fDistToSiliFromParticleCreation);
   if (xSign>0.5) xCone=-xCone;//50/50 chance of +or- (sign set here) direction for cone
   if (ySign>0.5) yCone=-yCone;
   coneDirection = G4ThreeVector(xCone,yCone,-1.0);
@@ -277,7 +279,7 @@ G4ThreeVector PrimaryGeneratorAction::SetCone(G4double ConeRadius) {
   return coneDirection;
 }
 
-void PrimaryGeneratorAction::LaBrinit() {
+void PrimaryGeneratorAction::LaBrInit() {
   //default LaBr properties
     G4double triangleThetaAngle = 54.735610317245360*deg;
     // theta
