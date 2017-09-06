@@ -166,8 +166,8 @@ void HistoManager::Book() {
     name  = "z-distribution";
     title     = "z-distro";
     nbins     = 10000;
-    xmin      = -12.;
-    xmax      = 5.;
+    xmin      = -0.0206;
+    xmax      = -0.0198;
     MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
     angledistro[2]=fMakeHistoIndex;
     
