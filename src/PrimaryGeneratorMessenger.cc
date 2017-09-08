@@ -141,7 +141,7 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
     if(command == fEfficiencyEnergyCmd ) {
         fAction->SetEfficiencyEnergy(fEfficiencyEnergyCmd->GetNewDoubleValue(newValue));
 	G4cout << fEfficiencyEnergyCmd->GetNewDoubleValue(newValue) << " <- Input beam energy to PGM" << G4endl;
-	fAction->sendbeamenergytohist(fEfficiencyEnergyCmd->GetNewDoubleValue(newValue));
+	fAction->SendBeamEnergyToHist(fEfficiencyEnergyCmd->GetNewDoubleValue(newValue));
 		  return;
     }
     if( command == fEfficiencyDirectionCmd ) {
@@ -150,8 +150,8 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
     }
     if( command == fEfficiencyPositionCmd ) {
         fAction->SetEfficiencyPosition(fEfficiencyPositionCmd->GetNew3VectorValue(newValue));
-	BeamPos3 = fEfficiencyPositionCmd->GetNew3VectorValue(newValue);//Private to public variable so accessible
-	fAction->PassTarget(BeamPos3.z()); 
+	fBeamPos3 = fEfficiencyPositionCmd->GetNew3VectorValue(newValue);//Private to public variable so accessible
+	fAction->PassTarget(fBeamPos3.z()); 
 		  return;
     }
     if( command == fEfficiencyParticleCmd ) {
@@ -192,7 +192,7 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
 		  return;
     }
     if( command == fBeamDistroCmd ) {
-	fAction->NeedBeamDistro = fBeamDistroCmd->GetNewBoolValue(newValue);
+	fAction->fNeedBeamDistro = fBeamDistroCmd->GetNewBoolValue(newValue);
 	G4cout << "Beam Distribution within SPICE target selected" << G4endl;
     }
 }

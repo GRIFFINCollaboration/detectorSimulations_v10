@@ -61,7 +61,7 @@ public:
 private:
     DetectorConstruction* fDetector;
 
-   G4UIdirectory*             fDetDir;
+    G4UIdirectory*             fDetDir;
     G4UIdirectory*             fAppDir;
     G4UIdirectory*             fWorldDir;
     G4UIdirectory*             fDetSysDir;

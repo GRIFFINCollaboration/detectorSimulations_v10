@@ -372,30 +372,30 @@ private:
 	// --------------------------------
 	// Dimensions of Conical Collimator
 	// --------------------------------
-	G4double mid_inner_radius;
-	G4double mid_outer_radius;
-	G4double mid_z_length;
-	G4double outercyl_outer_radius;
-	G4double outercyl_inner_radius;
-	G4double outercyl_z_length;
-	G4double innercyl_outer_radius;
-	G4double innercyl_inner_radius;
-	G4double innercyl_z_length;
-	G4double edge_inner_radius;
-	G4double edge_outer_radius;
-	G4double edge_z_length;
+	G4double fMidInnerRadius;
+	G4double fMidOuterRadius;
+	G4double fMidZLength;
+	G4double fOuterCylOuterRadius;
+	G4double fOuterCylInnerRadius;
+	G4double fOuterCylZLength;
+	G4double fInnerCylOuterRadius;
+	G4double fInnerCylInnerRadius;
+	G4double fInnerCylZLength;
+	G4double fEdgeInnerRadius;
+	G4double fEdgeOuterRadius;
+	G4double fEdgeZLength;
 	
 	// --------------------------
 	// Dimensions of X-ray Insert
 	// --------------------------
-	G4double insert_cyl_outer_radius;
-	G4double insert_cyl_inner_radius;
-	G4double insert_cyl_z_length;
-	G4double insert_edge_inner_radius;
-	G4double insert_edge_outer_radius;
-	G4double insert_edge_z_length;
-	G4double insert_hole_radius;
-	G4double insert_hole_length;
+	G4double fInsertCylOuterRadius;
+	G4double fInsertCylInnerRadius;
+	G4double fInsertCylZLength;
+	G4double fInsertEdgeInnerRadius;
+	G4double fInsertEdgeOuterRadius;
+	G4double fInsertEdgeZLength;
+	G4double fInsertHoleRadius;
+	G4double fInsertHoleLength;
 	
 	//-----------------------------
 	// copy numbers
@@ -478,7 +478,7 @@ private:
         void PlaceConicalCollimator(G4LogicalVolume*);
 	void PlaceXrayInsert(G4LogicalVolume*);
 	
-	G4double targetz;
+	G4double fTargetZ;
 	
 	// functions
 	G4RotationMatrix* RotateMagnets(G4int);

@@ -73,9 +73,9 @@ public:
     void SetConeMaxAngle( G4double num1 ) {fAngleInit = num1; fConeAngleBool = true; fEffDirectionBool = true;};
     void SetConeMinAngle( G4double num1 ) {fAngleMinInit = num1;};
     //booleans (initially false), above, true if a command has been entered for the loops in source file to be entered
-    void sendbeamenergytohist(G4double);
+    void SendBeamEnergyToHist(G4double);
     void PassTarget(G4double);
-    G4bool NeedBeamDistro = false;
+    G4bool fNeedBeamDistro = false;
     
 
 private:

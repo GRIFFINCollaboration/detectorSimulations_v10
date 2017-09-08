@@ -93,7 +93,7 @@ public:
 
 private:
     RunAction*    fRunAct;
-	HistoManager* fHistoManager;
+    HistoManager* fHistoManager;
 
     G4int     fPrintModulo;
     G4int     fEvtNb;

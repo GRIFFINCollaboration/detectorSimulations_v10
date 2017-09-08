@@ -95,12 +95,12 @@ public:
     void Book();
     void Save();
     
-    
+    //arrays allow histos to be made independently of GRIFFIN
     //	sizeof() arrays appear double the elements, due to 2 bits per element
-    short PacesHistNumbers[MAXNUMDETPACES+2]; //+2 for edep and sum histos 
-    short SpiceHistNumbers[MAXNUMDETSPICE*MAXNUMSEGSPICE+2]; //+2 for edep and sum histos 
-    short segmenthisto[120];//this array will hold segment IDs to be transferred to reference for histos
-    short angledistro[10]; //this variable will hold the histogran ID for the angular distributions from the cone
+    short fPacesHistNumbers[MAXNUMDETPACES+2]; //+2 for edep and sum histos 
+    short fSpiceHistNumbers[MAXNUMDETSPICE*MAXNUMSEGSPICE+2]; //+2 for edep and sum histos 
+    short fSegmentHisto[120];//this array will hold segment IDs to be transferred to reference for histos
+    short fAngleDistro[10]; //this variable will hold the histogran ID for the angular distributions from the cone
     
     void MakeHisto(G4AnalysisManager* analysisManager, G4String filename,  G4String title, G4double xmin, G4double xmax, G4int nbins);
     void MakeHistoWithAxisTitles(G4AnalysisManager* analysisManager, G4String name, 
@@ -175,18 +175,18 @@ private:
     G4bool fStepTrackerBool;
     G4bool fHitTrackerBool;
 
-	 //booleans which control which histograms are created (these are set by the detector construction)
-	 G4bool fGridCell;
- 	 G4bool fGriffin;
-	 G4bool fLaBr;
-	 G4bool fAncBgo;
-	 G4bool fNaI;
-	 G4bool fSceptar;
-	 G4bool fEightPi;
-	 G4bool fDescant;
-	 G4bool fTestcan;	 
-	 G4bool fSpice;
-	 G4bool fPaces;
+    //booleans which control which histograms are created (these are set by the detector construction)
+    G4bool fGridCell;
+    G4bool fGriffin;
+    G4bool fLaBr;
+    G4bool fAncBgo;
+    G4bool fNaI;
+    G4bool fSceptar;
+    G4bool fEightPi;
+    G4bool fDescant;
+    G4bool fTestcan;	 
+    G4bool fSpice;
+    G4bool fPaces;
 };
 
 enum HISTONAME

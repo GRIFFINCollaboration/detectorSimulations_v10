@@ -47,7 +47,7 @@
 
 ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo, G4double TargetPedestal)//parameter chooses which lens is in place.
 {
-	targetz = TargetPedestal;
+	fTargetZ = TargetPedestal;
 	G4cout << TargetPedestal << " <- In constructor" << G4endl;
 	
 	fNumberOfMagnets = 4;
@@ -410,8 +410,8 @@ void ApparatusSpiceTargetChamber::Build(G4LogicalVolume* expHallLog)
 	PlaceXrayInsert(expHallLog);
 	
 	
-	G4cout << ApparatusSpiceTargetChamber::targetz << " <- This should be the macro value" << G4endl;
-	if(ApparatusSpiceTargetChamber::targetz < -4.00){G4cout << "Building target pedestals" << G4endl;
+	G4cout << ApparatusSpiceTargetChamber::fTargetZ << " <- This should be the macro value" << G4endl;
+	if(ApparatusSpiceTargetChamber::fTargetZ < -4.00){G4cout << "Building target pedestals" << G4endl;
 	  BuildCollimator();
 	  PlaceCollimator(expHallLog); 
     
@@ -1483,13 +1483,13 @@ void ApparatusSpiceTargetChamber::BuildConicalCollimator() {
   
   
   // ** shapes
-  G4Tubs* solid_mid_cyl = new G4Tubs("mid_cyl", 3.15*mm, 4.5*mm, 20.25*mm, 0, 360*deg);
-  G4Tubs* solid_inner_cyl = new G4Tubs("inner_cyl", 2.9*mm, 3.15*mm, 7.75*mm, 0, 360*deg);
-  G4Tubs* solid_outer_cyl = new G4Tubs("outer_cyl", 4.5*mm, 4.9*mm, 14.25*mm, 0, 360*deg);
-  G4Tubs* edge1 = new G4Tubs("edges", 4.9*mm, 6.9*mm, 1.0*mm, -20.*deg, 40.*deg);
-  G4Tubs* edge2 = new G4Tubs("edges", 4.9*mm, 6.9*mm, 1.0*mm, 70.*deg, 40.*deg);
-  G4Tubs* edge3 = new G4Tubs("edges", 4.9*mm, 6.9*mm, 1.0*mm, 160.*deg, 40.*deg);
-  G4Tubs* edge4 = new G4Tubs("edges", 4.9*mm, 6.9*mm, 1.0*mm, 250.*deg, 40.*deg);
+  G4Tubs* solid_mid_cyl = new G4Tubs("mid_cyl", 3.15*mm, 4.5*mm, 20.25*mm, 0, 360*CLHEP::deg);
+  G4Tubs* solid_inner_cyl = new G4Tubs("inner_cyl", 2.9*mm, 3.15*mm, 7.75*mm, 0, 360*CLHEP::deg);
+  G4Tubs* solid_outer_cyl = new G4Tubs("outer_cyl", 4.5*mm, 4.9*mm, 14.25*mm, 0, 360*CLHEP::deg);
+  G4Tubs* edge1 = new G4Tubs("edges", 4.9*mm, 6.9*mm, 1.0*mm, -20.*CLHEP::deg, 40.*CLHEP::deg);
+  G4Tubs* edge2 = new G4Tubs("edges", 4.9*mm, 6.9*mm, 1.0*mm, 70.*CLHEP::deg, 40.*CLHEP::deg);
+  G4Tubs* edge3 = new G4Tubs("edges", 4.9*mm, 6.9*mm, 1.0*mm, 160.*CLHEP::deg, 40.*CLHEP::deg);
+  G4Tubs* edge4 = new G4Tubs("edges", 4.9*mm, 6.9*mm, 1.0*mm, 250.*CLHEP::deg, 40.*CLHEP::deg);
   
   G4ThreeVector sTrans1(0., 0., -12.5*mm);
   G4ThreeVector sTrans2(0., 0., -6.*mm);
@@ -1514,21 +1514,21 @@ void ApparatusSpiceTargetChamber::BuildConicalCollimator() {
 void ApparatusSpiceTargetChamber::BuildXrayInsert(){
   
   // ** shapes
-  G4Tubs* solid_insert_cyl = new G4Tubs("insert_cyl", 3.68*mm, 8.5*mm, 1.5*mm, 0, 360*deg);
-  G4Tubs* solid_insert_edges = new G4Tubs("insert_edge", 4.55*mm, 8.5*mm, 1.8*mm, 25.*deg, 40.*deg);
-  G4Tubs* solid_insert_holes = new G4Tubs("insert_hole", 0.*mm, 2.*mm, 5.*mm, 0, 360*deg);
+  G4Tubs* solid_insert_cyl = new G4Tubs("insert_cyl", 3.68*mm, 8.5*mm, 1.5*mm, 0, 360*CLHEP::deg);
+  G4Tubs* solid_insert_edges = new G4Tubs("insert_edge", 4.55*mm, 8.5*mm, 1.8*mm, 25.*CLHEP::deg, 40.*CLHEP::deg);
+  G4Tubs* solid_insert_holes = new G4Tubs("insert_hole", 0.*mm, 2.*mm, 5.*mm, 0, 360*CLHEP::deg);
   
   G4RotationMatrix* sRotate1 = new G4RotationMatrix;
   G4ThreeVector sTrans4(0., 0., -3.3*mm);
   G4UnionSolid* cyland1 = new G4UnionSolid("cyl+edge1", solid_insert_cyl, solid_insert_edges, sRotate1, sTrans4);
-  sRotate1->rotateZ(90.*deg);
+  sRotate1->rotateZ(90.*CLHEP::deg);
   G4UnionSolid* cyland2 = new G4UnionSolid("cyl+edge2", cyland1, solid_insert_edges, sRotate1, sTrans4);
-  sRotate1->rotateZ(90.*deg);
+  sRotate1->rotateZ(90.*CLHEP::deg);
   G4UnionSolid* cyland3 = new G4UnionSolid("cyl+edge3", cyland2, solid_insert_edges, sRotate1, sTrans4);
-  sRotate1->rotateZ(90.*deg);
+  sRotate1->rotateZ(90.*CLHEP::deg);
   G4UnionSolid* cyland4 = new G4UnionSolid("cyl+edge4", cyland3, solid_insert_edges, sRotate1, sTrans4);
   
-  sRotate1->rotateZ(45.*deg);
+  sRotate1->rotateZ(45.*CLHEP::deg);
   G4ThreeVector sTrans5(0., 8.5*mm, 3.3*mm);
   G4SubtractionSolid* c4hole4edge1 = new G4SubtractionSolid("c4hole4", cyland4, solid_insert_holes, sRotate1, sTrans5);
   sTrans5 = G4ThreeVector(0., -8.5*mm, 3.3*mm);

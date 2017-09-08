@@ -153,7 +153,7 @@ void HistoManager::Book() {
     xmin      = 0.;
     xmax      = 4.;
     MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-    angledistro[0]=fMakeHistoIndex;
+    fAngleDistro[0]=fMakeHistoIndex;
     
     name  = "x-y";
     title     = "X-Y 2D distribution";
@@ -161,7 +161,7 @@ void HistoManager::Book() {
     xmin      = -6.;
     xmax      = 6.;
     Make2DHistoWithAxisTitles(analysisManager, name,  title, nbins, xmin, xmax, nbins, xmin, xmax);
-    angledistro[1]=fMakeHistoIndex;
+    fAngleDistro[1]=fMakeHistoIndex;
 
     name  = "z-distribution";
     title     = "z-distro";
@@ -169,7 +169,7 @@ void HistoManager::Book() {
     xmin      = -0.0206;
     xmax      = -0.0198;
     MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-    angledistro[2]=fMakeHistoIndex;
+    fAngleDistro[2]=fMakeHistoIndex;
     
     name  = "x-distribution";
     title     = "x-distro";
@@ -177,7 +177,7 @@ void HistoManager::Book() {
     xmin      = -10.;
     xmax      = 10.;
     MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-    angledistro[3]=fMakeHistoIndex;
+    fAngleDistro[3]=fMakeHistoIndex;
     
     name  = "y-distribution";
     title     = "y-distro";
@@ -185,7 +185,7 @@ void HistoManager::Book() {
     xmin      = -10.;
     xmax      = 10.;
     MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-    angledistro[4]=fMakeHistoIndex;
+    fAngleDistro[4]=fMakeHistoIndex;
     
     if(fGridCell && WRITEEKINHISTOS) {
         for (G4int i=0; i < MAXNUMDET; i++) {
@@ -411,11 +411,11 @@ void HistoManager::Book() {
 	  
 	  name  = "spice_edep"; //edep = energy deposition
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	  SpiceHistNumbers[0]=fMakeHistoIndex; //assigns array item the histo index, for reference by FillHisto()
+	  fSpiceHistNumbers[0]=fMakeHistoIndex; //assigns array item the histo index, for reference by FillHisto()
 
 	  name  = "spice_edep_sum";// summed
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	  SpiceHistNumbers[1]=fMakeHistoIndex;
+	  fSpiceHistNumbers[1]=fMakeHistoIndex;
 	  
 	  for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){
 	    detString = G4intToG4String(ring);
@@ -425,7 +425,7 @@ void HistoManager::Book() {
             name  = "spice_edep_det0" + detString + "phi" + segString;
             MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 	    
-	   SpiceHistNumbers[ring*MAXNUMDETSPICE+i+2]=fMakeHistoIndex;
+	   fSpiceHistNumbers[ring*MAXNUMDETSPICE+i+2]=fMakeHistoIndex;
 	  }
 	  }
 	  
@@ -435,11 +435,11 @@ void HistoManager::Book() {
 		    
 			 name  = "paces_crystal_edep";
 			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	    PacesHistNumbers[0]=fMakeHistoIndex;
+	    fPacesHistNumbers[0]=fMakeHistoIndex;
 	    
 			 name  = "paces_crystal_edep_sum";
 			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	    PacesHistNumbers[1]=fMakeHistoIndex;
+	    fPacesHistNumbers[1]=fMakeHistoIndex;
 	    
 			 for (G4int i=0; i < MAXNUMDETPACES; i++) {//[MAXNUMDET];
             detString = G4intToG4String(i);
@@ -447,7 +447,7 @@ void HistoManager::Book() {
             name  = "paces_crystal_edep_det" + detString;
             MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 	    
-	    PacesHistNumbers[i+2]=fMakeHistoIndex;
+	    fPacesHistNumbers[i+2]=fMakeHistoIndex;
 			 }
 		  }//if(fPaces)
 	 }//if(WRITEEDEPHISTOS)

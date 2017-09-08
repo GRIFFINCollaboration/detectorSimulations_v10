@@ -420,7 +420,7 @@ void DetectorConstruction::AddApparatusSpiceTargetChamber(G4String MedLo, G4doub
    //Create Target Chamber
    ApparatusSpiceTargetChamber* pApparatusSpiceTargetChamber = new ApparatusSpiceTargetChamber(MedLo, TargetPedestal);
    pApparatusSpiceTargetChamber->Build( fLogicWorld );
-   pApparatusSpiceTarget = new ApparatusSpiceTarget(targetz);//prepares target instance after the intro of the chamber
+   pApparatusSpiceTarget = new ApparatusSpiceTarget(fTargetZ);//prepares target instance after the intro of the chamber
 }
 
 void DetectorConstruction::AddApparatus8piVacuumChamber() {

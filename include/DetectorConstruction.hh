@@ -75,7 +75,7 @@ public:
     DetectorConstruction();
     ~DetectorConstruction();
 
-    G4double targetz = 0.0; //for tunnelled z-value of beam position used for SPICE target frame decision
+    G4double fTargetZ = 0.0; //for tunnelled z-value of beam position used for SPICE target frame decision
     G4int fGriffinDetectorsMapIndex;
     G4int fGriffinDetectorsMap[16];
 

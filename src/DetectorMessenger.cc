@@ -563,7 +563,7 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
         fDetector->AddGrid();
     }
     if(command == fAddApparatusSpiceTargetChamberCmd) {
-        fDetector->AddApparatusSpiceTargetChamber(newValue, fDetector->targetz); //removed f
+        fDetector->AddApparatusSpiceTargetChamber(newValue, fDetector->fTargetZ); //removed f
     }
     if(command == fAddApparatus8piVacuumChamberCmd ) {
         fDetector->AddApparatus8piVacuumChamber();

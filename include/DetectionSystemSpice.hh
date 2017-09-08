@@ -78,7 +78,7 @@ private:
 	// SPICE physical properties
 	// OBS: crystal properties are public, others are private
 	//--------------------------------------------------------//
-	G4String 	fWaferMaterial;
+	G4String fWaferMaterial;
 	G4String fDetectorMountMaterial;
 	G4String fAnnularClampMaterial;
 
@@ -132,8 +132,8 @@ private:
 	G4int 	BuildSiliconWafer(G4int ringID);
 	G4int 	BuildInnerGuardRing();
 	G4int 	BuildOuterGuardRing();
-	void 		BuildDetectorMount();
-	void 		BuildAnnularClamps();   
+	void 	BuildDetectorMount();
+	void 	BuildAnnularClamps();   
 
 	G4Tubs*	BuildCrystal(G4int myRingID);
 };
