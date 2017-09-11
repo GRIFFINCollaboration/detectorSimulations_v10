@@ -101,8 +101,8 @@ private:
 	G4LogicalVolume* fColdFingerLog;
 	G4LogicalVolume* fS3CaseLogical;
 	G4LogicalVolume* fBeamPipeLog;
-	G4LogicalVolume* conical_collimator_log;//11/8
-	G4LogicalVolume* xray_insert_log;
+	G4LogicalVolume* fConicalCollimatorLog;//11/8
+	G4LogicalVolume* fXRayInsertLog;
 	
 private:
 	////////////////////////////////////////////
@@ -141,8 +141,8 @@ private:
 	G4VPhysicalVolume* fColdFingerPhys;
 	G4VPhysicalVolume* fS3CasePhysical;
 	G4VPhysicalVolume* fBeamPipePhys;
-	G4VPhysicalVolume* conical_collimator_phys;//11/8
-	G4VPhysicalVolume* xray_insert_phys;
+	G4VPhysicalVolume* fConicalCollimatorPhys;//11/8
+	G4VPhysicalVolume* fXRayInsertPhys;
 
 private:
 	////////////////////////////////////////////
@@ -183,8 +183,8 @@ private:
 	G4String fColdFingerMaterial;//
 	G4String fS3CableCaseMaterial;//
 	G4String fBeamPipeMaterial;//
-	G4String conical_collimator_material;//11/8
-        G4String xray_insert_material;//
+	G4String fConicalCollimatorMaterial;//11/8
+        G4String fXRayInsertMaterial;//
 	//-------------------------
 	// Dimensions:
 	//-------------------------

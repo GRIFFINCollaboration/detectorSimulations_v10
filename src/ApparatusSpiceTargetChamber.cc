@@ -77,8 +77,8 @@ ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo, G4doubl
 	fColdFingerMaterial = "Copper";
 	fS3CableCaseMaterial = "Delrin";
 	fBeamPipeMaterial = "Copper";
-	conical_collimator_material = "WTa";//11/8
-	xray_insert_material="Aluminum";
+	fConicalCollimatorMaterial = "WTa";//11/8
+	fXRayInsertMaterial="Aluminum";
 	
 	//-----------------------------
 	// Dimensions of Target Chamber
@@ -1504,8 +1504,8 @@ void ApparatusSpiceTargetChamber::BuildConicalCollimator() {
   G4UnionSolid* threecyl4edge = new G4UnionSolid("ThreeCyl4edge", threecyl3, edge4, sRotate, sTrans3);
  
   // ** Logical
-  G4Material* sMaterial = G4Material::GetMaterial(this->conical_collimator_material);
-  conical_collimator_log = new G4LogicalVolume(threecyl4edge,         //its solid
+  G4Material* sMaterial = G4Material::GetMaterial(this->fConicalCollimatorMaterial);
+  fConicalCollimatorLog = new G4LogicalVolume(threecyl4edge,         //its solid
                         sMaterial,          //its material
                         "threecyl4edge");           //its name
   
@@ -1539,8 +1539,8 @@ void ApparatusSpiceTargetChamber::BuildXrayInsert(){
   G4SubtractionSolid* c4hole4complete = new G4SubtractionSolid("c4hole4", c4hole4edge3, solid_insert_holes, sRotate1, sTrans5);
   
   // ** Logical  
-    G4Material* sMaterial = G4Material::GetMaterial(this->xray_insert_material);
-  xray_insert_log = new G4LogicalVolume(c4hole4complete,         //its solid
+    G4Material* sMaterial = G4Material::GetMaterial(this->fXRayInsertMaterial);
+  fXRayInsertLog = new G4LogicalVolume(c4hole4complete,         //its solid
                         sMaterial,          //its material
                         "c4hole4");           //its name
 }
@@ -1944,9 +1944,9 @@ void ApparatusSpiceTargetChamber::PlaceConicalCollimator(G4LogicalVolume* expHal
     G4ThreeVector pos1 = G4ThreeVector(0, 0, -44.*mm);//addition to the photon shield
     G4RotationMatrix* sRotate = new G4RotationMatrix;
     sRotate->rotateY(180*deg);
-    conical_collimator_phys = new G4PVPlacement(sRotate,                       //no rotation
+    fConicalCollimatorPhys = new G4PVPlacement(sRotate,                       //no rotation
                     pos1,                    //at position
-                    conical_collimator_log,             //its logical volume
+                    fConicalCollimatorLog,             //its logical volume
                     "threecyl4edge",                //its name
                     expHallLog,                //its mother  volume
                     false,                   //no boolean operation
@@ -1959,9 +1959,9 @@ void ApparatusSpiceTargetChamber::PlaceXrayInsert(G4LogicalVolume* expHallLog){
     G4ThreeVector pos2 = G4ThreeVector(0, 0, (-44-18.75)*mm);
     G4RotationMatrix* sRotate = new G4RotationMatrix;
     sRotate->rotateY(180*deg);
-    xray_insert_phys = new G4PVPlacement(sRotate,                       //no rotation
+    fXRayInsertPhys = new G4PVPlacement(sRotate,                       //no rotation
                     pos2,                    //at position
-                    xray_insert_log,             //its logical volume
+                    fXRayInsertLog,             //its logical volume
                     "insert",                //its name
                     expHallLog,                //its mother  volume
                     false,                   //no boolean operation

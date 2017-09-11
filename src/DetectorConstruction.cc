@@ -351,6 +351,7 @@ void DetectorConstruction::SetSpiceTargetBackerMaterial( G4String name )
 {
   DetectorConstruction::fSetSpiceTargetBackerMaterial = true;
   DetectorConstruction::fSpiceTargetBackerMaterial = name;
+  //use name from here to create distro from file
 }
 
 void DetectorConstruction::SetSpiceTargetBackerThickness( G4double surface_density )
