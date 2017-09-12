@@ -81,6 +81,8 @@ HistoManager::~HistoManager()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void HistoManager::Book() {
+    G4cout<<fBeamEnergy<<" <- Input beam energy ot histomanager"<<G4endl;
+    
     G4String name;
     G4String title;
     G4String detString;
@@ -145,7 +147,46 @@ void HistoManager::Book() {
     xmax      = 100.;
     MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 
+    name  = "Multiplicity of depositions";
+    title     = "Deposition multiplicity";
+    nbins     = 10000;
+    xmin      = 0.;
+    xmax      = 4.;
+    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+    fAngleDistro[0]=fMakeHistoIndex;
+    
+    name  = "x-y";
+    title     = "X-Y 2D distribution";
+    nbins = 100;
+    xmin      = -6.;
+    xmax      = 6.;
+    Make2DHistoWithAxisTitles(analysisManager, name,  title, nbins, xmin, xmax, nbins, xmin, xmax);
+    fAngleDistro[1]=fMakeHistoIndex;
 
+    name  = "z-distribution";
+    title     = "z-distro";
+    nbins     = 10000;
+    xmin      = -0.0206;
+    xmax      = -0.0198;
+    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+    fAngleDistro[2]=fMakeHistoIndex;
+    
+    name  = "x-distribution";
+    title     = "x-distro";
+    nbins     = 10000;
+    xmin      = -10.;
+    xmax      = 10.;
+    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+    fAngleDistro[3]=fMakeHistoIndex;
+    
+    name  = "y-distribution";
+    title     = "y-distro";
+    nbins     = 10000;
+    xmin      = -10.;
+    xmax      = 10.;
+    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+    fAngleDistro[4]=fMakeHistoIndex;
+    
     if(fGridCell && WRITEEKINHISTOS) {
         for (G4int i=0; i < MAXNUMDET; i++) {
             detString = G4intToG4String(i);
@@ -370,11 +411,11 @@ void HistoManager::Book() {
 	  
 	  name  = "spice_edep"; //edep = energy deposition
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	  SpiceHistNumbers[0]=fMakeHistoIndex; //assigns array item the histo index, for reference by FillHisto()
+	  fSpiceHistNumbers[0]=fMakeHistoIndex; //assigns array item the histo index, for reference by FillHisto()
 
 	  name  = "spice_edep_sum";// summed
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	  SpiceHistNumbers[1]=fMakeHistoIndex;
+	  fSpiceHistNumbers[1]=fMakeHistoIndex;
 	  
 	  for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){
 	    detString = G4intToG4String(ring);
@@ -384,7 +425,7 @@ void HistoManager::Book() {
             name  = "spice_edep_det0" + detString + "phi" + segString;
             MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 	    
-	   SpiceHistNumbers[ring*MAXNUMDETSPICE+i+2]=fMakeHistoIndex;
+	   fSpiceHistNumbers[ring*MAXNUMDETSPICE+i+2]=fMakeHistoIndex;
 	  }
 	  }
 	  
@@ -394,11 +435,11 @@ void HistoManager::Book() {
 		    
 			 name  = "paces_crystal_edep";
 			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	    PacesHistNumbers[0]=fMakeHistoIndex;
+	    fPacesHistNumbers[0]=fMakeHistoIndex;
 	    
 			 name  = "paces_crystal_edep_sum";
 			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	    PacesHistNumbers[1]=fMakeHistoIndex;
+	    fPacesHistNumbers[1]=fMakeHistoIndex;
 	    
 			 for (G4int i=0; i < MAXNUMDETPACES; i++) {//[MAXNUMDET];
             detString = G4intToG4String(i);
@@ -406,7 +447,7 @@ void HistoManager::Book() {
             name  = "paces_crystal_edep_det" + detString;
             MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 	    
-	    PacesHistNumbers[i+2]=fMakeHistoIndex;
+	    fPacesHistNumbers[i+2]=fMakeHistoIndex;
 			 }
 		  }//if(fPaces)
 	 }//if(WRITEEDEPHISTOS)
@@ -498,6 +539,35 @@ void HistoManager::MakeHisto(G4AnalysisManager* analysisManager, G4String name, 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+void HistoManager::MakeHistoWithAxisTitles(G4AnalysisManager* analysisManager, G4String name, 
+					   G4String title, G4double xmin, G4double xmax, 
+					   G4int nbins, const G4String& unitName, const G4String& fcnName) {
+      fMakeHistoIndex++; 
+      if (fMakeHistoIndex >= MAXHISTO) {
+        G4cout << "---> Exceeded maximum number of histograms. Increase MAXHISTO in HistoManager.hh" << G4endl;
+        exit(1);
+    }
+
+    fHistId[fMakeHistoIndex] = analysisManager->CreateH1(name, title, nbins, xmin, xmax, unitName, fcnName);
+    fHistPt[fMakeHistoIndex] = analysisManager->GetH1(fHistId[fMakeHistoIndex]);
+}
+
+void HistoManager::Make2DHistoWithAxisTitles(G4AnalysisManager* analysisManager, const G4String& name, const G4String& title,
+                 G4int nxbins, G4double xmin, G4double xmax, 
+                 G4int nybins, G4double ymin, G4double ymax) {
+      fMakeHistoIndex++; //global in Histomanager so allowed in this scope unaltered
+      if (fMakeHistoIndex >= MAXHISTO) {
+        G4cout << "---> Exceeded maximum number of histograms. Increase MAXHISTO in HistoManager.hh" << G4endl;
+        exit(1);
+    }
+
+    fHistId[fMakeHistoIndex] = analysisManager->CreateH2(name, title, nxbins, xmin, xmax, 
+                 nybins, ymin, ymax);
+    fHistPt2[fMakeHistoIndex] = analysisManager->GetH2(fHistId[fMakeHistoIndex]);
+}
+
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void HistoManager::FillHisto(G4int ih, G4double xbin, G4double weight) {
     if (ih >= MAXHISTO) {
@@ -509,6 +579,15 @@ void HistoManager::FillHisto(G4int ih, G4double xbin, G4double weight) {
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void HistoManager::Fill2DHisto(G4int ih, G4double xbin, G4double ybin, G4double weight) {
+    if (ih >= MAXHISTO) {
+        G4cout << "---> warning from HistoManager::FillHisto() : histo " << ih
+               << "does not exist; xbin= " << xbin << " ybin= "<< ybin << " weight= " << weight << G4endl;
+        return;
+    }
+    if (fHistPt2[ih]) fHistPt2[ih]->fill(xbin, ybin, weight);
+}
 
 void HistoManager::Normalize(G4int ih, G4double fac) {
     if (ih >= MAXHISTO) {

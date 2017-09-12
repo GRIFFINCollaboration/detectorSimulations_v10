@@ -39,6 +39,8 @@
 #include "RunAction.hh"
 #include "HistoManager.hh"
 
+#include "Randomize.hh"
+
 #include "G4Event.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -56,7 +58,16 @@ EventAction::EventAction(RunAction* run)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-EventAction::~EventAction() { }
+EventAction::~EventAction() { 
+    G4cout << "1 dep: " << MultiplicityArray[0] << "| 2 dep: " << MultiplicityArray[1] << "| 3 dep: " << MultiplicityArray[2] << 
+  "| 4 dep: " << MultiplicityArray[3] << "| 5 dep: " << MultiplicityArray[4] << G4endl;
+  
+  G4double ME = MultiplicityArray[1] + MultiplicityArray[2] + MultiplicityArray[3] + MultiplicityArray[4]; //multiple events
+  
+  G4double OS = ME/(MultiplicityArray[0] + ME); //multiple/all events
+  
+  G4cout << "Old style multiplicity: " << OS*100.0 << G4endl;//% figure for multiplicity
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -73,6 +84,7 @@ void EventAction::BeginOfEventAction(const G4Event* evt) {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void EventAction::EndOfEventAction(const G4Event*) {
+    BeamInputEnergy = HistoManager::Instance().BeamEnergy();
     FillParticleType() ; // was uncommented - otherwise not filled
     FillGriffinCryst() ;
     Fill8piCryst() ;
@@ -89,7 +101,7 @@ void EventAction::EndOfEventAction(const G4Event*) {
     for (G4int i = 0 ; i < fNumberOfSteps; i++) {
 		HistoManager::Instance().FillStepNtuple(fStepTrackerI[0][i], fStepTrackerI[1][i], fStepTrackerI[2][i], fStepTrackerI[3][i],  fStepTrackerI[4][i], fStepTrackerI[5][i], fStepTrackerI[6][i], fStepTrackerI[7][i], fStepTrackerI[8][i], fStepTrackerD[0][i]/keV, fStepTrackerD[1][i]/mm, fStepTrackerD[2][i]/mm, fStepTrackerD[3][i]/mm, fStepTrackerD[4][i]/second, fStepTrackerI[9][i]);
     }
-
+    
     ClearVariables();
 }
 
@@ -330,36 +342,75 @@ void EventAction::FillGridCell() {
 }
 
 void EventAction::FillSpice() {
+	
 	//G4cout << "size of histo array: " << sizeof(HistoManager::Instance().SpiceHistNumbers) << G4endl;
 	G4double energySumDet = 0;
+	fSpiceMultiplicity = 0;
+	G4double Multiplicityenergy = 0.0;
 	for (G4int ring=0; ring < MAXNUMDETSPICE; ring++) {
 	  for (G4int seg=0; seg < 12; seg++) {
-        if(fSpiceEnergyDet[ring][seg] > MINENERGYTHRES) {
-	    //fill energies in each detector
-            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[0], fSpiceEnergyDet[ring][seg]);
-	    //fill standard energy spectra
-            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[MAXNUMDETSPICE*ring+seg+2], fSpiceEnergyDet[ring][seg]);//any changed must be reflected  in histomanager.hh
-	    //add sum energies
-            energySumDet += fSpiceEnergyDet[ring][seg];
-    }}
-    if(energySumDet > MINENERGYTHRES) {
-	//fill sum energies
-        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[1], energySumDet);
-    }
-}} ///////////////////////////////////////19/6
+	    if(fSpiceEnergyDet[ring][seg] > MINENERGYTHRES) {
+	      //fill energies in each detector
+	      if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[0], G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.002));
+	      //fill standard energy spectra
+	      if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[MAXNUMDETSPICE*ring+seg+2], G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.002));
+	      fSpiceMultiplicity += 1;
+	      Multiplicityenergy += fSpiceEnergyDet[ring][seg];//dont need smeared energies
+	      //add sum energies
+	      /*Resolution of parameters of a HPGe detector is implemented here, only for the sum as of 8/8
+	  G4double A1 = 0.95446 ;
+	  G4double B1 = 0.00335 ;
+	  G4double C1 = -7.4117e-7 ;
+	  G4double TX1 = ((energySumDet)/keV);
+	  G4double per_res1 = (sqrt(A1 + (B1*TX1) + (C1*TX1*TX1)))/2.363;
+	  G4double sigma1 = (per_res1/1000);
+	  energySumDet += fSpiceEnergyDet[ring][seg]; //no smearing
+	  G4cout << "Sigma1 = "<<sigma1<<G4endl;*/
+	      energySumDet += G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.002);//2keV resolution for spice so far - not energy dependent
+	      //summing enery deposits per event for add-back method
+	    }
+	  }
+	}
+	if(energySumDet > MINENERGYTHRES) {//after exiting loops for all rings/segs, will input energy if > threshold
+	  //fill sum energies
+	  if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[1], energySumDet);
+	  }
+	  
+	  if(energySumDet > (BeamInputEnergy-0.015)){//0.6 = 3 sigma 
+	  if(fSpiceMultiplicity>0) HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[0], fSpiceMultiplicity);
+	  switch(fSpiceMultiplicity) {
+	  case 1 : MultiplicityArray[0] += 1;
+             break;       
+	  case 2 : MultiplicityArray[1] += 1;
+	     break;
+	  case 3 : MultiplicityArray[2] += 1; 
+             break;       
+	  case 4 : MultiplicityArray[3] += 1;
+             break;
+	  case 5 : MultiplicityArray[4] += 1;
+             break;       
+  
+	  }}
+	  
+	//  G4cout << "1 dep: " << MultiplicityArray[0] << "| 2 dep: " << MultiplicityArray[1] << "| 3 dep: " << MultiplicityArray[2] << 
+ // "| 4 dep: " << MultiplicityArray[3] << "| 5 dep: " << MultiplicityArray[4] << G4endl;
+	//  G4cout << "Total edep: " << MultiplicityArray[0] + MultiplicityArray[1]*2 + MultiplicityArray[2]*3 +MultiplicityArray[3]*4 +MultiplicityArray[4]*5 <<G4endl;
+  
+}
+//if(WRITEEDEPHISTOS && (energySumDet > MINENERGYTHRES))     G4cout << "energysumDet " <<  energySumDet << G4endl;} ///////////////////////////////////////19/6
 
 void EventAction::FillPacesCryst() {
     G4double energySumDet = 0;
     for (G4int j=0; j < MAXNUMDETPACES; j++) {
         if(fPacesCrystEnergyDet[j] > MINENERGYTHRES) {
 	  
-            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().PacesHistNumbers[0], fPacesCrystEnergyDet[j]);
-            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().PacesHistNumbers[j+2], fPacesCrystEnergyDet[j]);
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fPacesHistNumbers[0], fPacesCrystEnergyDet[j]);
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fPacesHistNumbers[j+2], fPacesCrystEnergyDet[j]);
             energySumDet += fPacesCrystEnergyDet[j];
         }
     }
     if(energySumDet > MINENERGYTHRES) {
-        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().PacesHistNumbers[1], energySumDet);
+        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fPacesHistNumbers[1], energySumDet);
     }
 }////////////////////////////////////////////20/6
 

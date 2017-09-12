@@ -122,6 +122,9 @@ G4int DetectionSystemSpice::Build()
 //---------------------------------------------------------//
 G4int DetectionSystemSpice::PlaceDetector(G4LogicalVolume* ExpHallLog, G4int nRings)
 {
+	PlaceDetectorMount(ExpHallLog);
+	PlaceAnnularClamps(ExpHallLog);   
+	PlaceGuardRing(ExpHallLog);//clears the code in det construction
 	//To see how the segments fill put 1 detector ring in (via macro) and 1,2,3 segments (changed here) to see how they add.
 	//segments add following JanalysisToolkit convention
 	G4int NumberSeg = 12; // Segments in Phi for loop below - originally 12

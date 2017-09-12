@@ -54,7 +54,7 @@ class DetectionSystem8pi;
 class DetectionSystemDescant;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class ApparatusDescantStructure;
-
+class ApparatusSpiceTarget;
 class DetectionSystemDescant;
 
 class DetectionSystemSceptar;
@@ -75,6 +75,7 @@ public:
     DetectorConstruction();
     ~DetectorConstruction();
 
+    G4double fTargetZ; //for tunnelled z-value of beam position used for SPICE target frame decision
     G4int fGriffinDetectorsMapIndex;
     G4int fGriffinDetectorsMap[16];
 
@@ -83,10 +84,26 @@ public:
     void SetWorldVis( G4bool );
     //    void SetWorldMagneticField( G4ThreeVector );
 
-    //    void SetGenericTargetMaterial( G4String );
-    //    void SetGenericTargetDimensions( G4ThreeVector );
-    //    void SetGenericTargetPosition( G4ThreeVector );
-    //    void SetGenericTarget( );
+    //Gneeric Target
+    void SetGenericTargetMaterial( G4String );
+    void SetGenericTargetDimensions( G4ThreeVector );
+    void SetGenericTargetPosition( G4ThreeVector );
+    void SetGenericTarget( );
+    
+    //Spice target
+    void SetSpiceTargetMaterial( G4String );
+    void SetSpiceTargetThickness( G4double );
+    void SetSpiceTargetDensity( G4double );
+    void SetSpiceTarget();    
+    void SetSpiceTargetBackerMaterial( G4String );
+    void SetSpiceTargetBackerThickness( G4double );
+    void SetSpiceTargetBackerDensity( G4double );
+    void SetSpiceBackerTarget( );
+    void SetSpiceTargetProtectorMaterial( G4String );
+    void SetSpiceTargetProtectorThickness( G4double );
+    void SetSpiceTargetProtectorDensity( G4double );
+    void SetSpiceProtectorTarget();  
+    
     //    void SetFieldBoxMaterial( G4String );
     //    void SetFieldBoxDimensions( G4ThreeVector );
     //    void SetFieldBoxPosition( G4ThreeVector );
@@ -107,8 +124,7 @@ public:
     void SetGridColour( G4ThreeVector input )          {fGridColour = input;};
     void SetGridPosOffset( G4ThreeVector input )          {fGridOffset = input;};
     void AddGrid();
-
-    void AddApparatusSpiceTargetChamber(G4String);
+    void AddApparatusSpiceTargetChamber(G4String, G4double);
     void AddApparatus8piVacuumChamber();
     void AddApparatus8piVacuumChamberAuxMatShell(G4double thickness);
     void AddApparatusGriffinStructure(G4int selector);
@@ -174,6 +190,7 @@ public:
 
 
     void UseTIGRESSPositions( G4bool input )                  {fUseTigressPositions = input;};
+    
 private:
 
     //    MagneticField* worldMagField;
@@ -220,7 +237,30 @@ private:
     G4String      fGenericTargetMaterial;
     G4ThreeVector fGenericTargetDimensions;
     G4ThreeVector fGenericTargetPosition;
+    
+    //spice target variables - explicitly named and not reused for debugging
+    G4bool        fSetSpiceTargetMaterial;
+    G4bool        fSetSpiceTargetThickness;
+    G4bool        fSetSpiceTargetDensity;
+    G4String      fSpiceTargetMaterial;
+    G4bool        fSetSpiceTargetBackerMaterial;
+    G4bool        fSetSpiceTargetBackerThickness;
+    G4bool        fSetSpiceTargetBackerDensity;
+    G4String      fSpiceTargetBackerMaterial;
+    G4bool        fSetSpiceTargetProtectorMaterial;
+    G4bool        fSetSpiceTargetProtectorThickness;
+    G4bool        fSetSpiceTargetProtectorDensity;
+    G4String      fSpiceTargetProtectorMaterial;
 
+public://accessed by PGA
+    G4double      fSpiceTargetThickness;
+    G4double 	  fSpiceTargetDensity;
+    G4double      fSpiceTargetBackerThickness;
+    G4double 	  fSpiceTargetBackerDensity;
+    G4double      fSpiceTargetProtectorThickness;
+    G4double 	  fSpiceTargetProtectorDensity;
+    
+private: 
     G4bool        fSetFieldBoxMaterial;
     G4bool        fSetFieldBoxDimensions;
     G4bool        fSetFieldBoxPosition;
@@ -232,7 +272,9 @@ private:
 
     G4String fMatWorldName;
 
+    ApparatusSpiceTarget* pApparatusSpiceTarget;
     DetectorMessenger* fDetectorMessenger;
+    
 
     G4ThreeVector fDescantRotation;
     G4String fDescantColor;
