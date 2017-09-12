@@ -76,13 +76,28 @@ private:
     G4UIcmdWith3VectorAndUnit* fGenericTargetDimensionsCmd;
     G4UIcmdWith3VectorAndUnit* fGenericTargetPositionCmd;
 
+    // Spice Target Apparatus
+    G4UIcmdWithAString*        fSpiceTargetCmd;
+    G4UIcmdWithADoubleAndUnit* fSpiceTargetDensityCmd;
+    G4UIcmdWithADoubleAndUnit* fSpiceTargetThicknessCmd;
+    G4UIcmdWithAString*        fSpiceTargetBackerCmd;
+    G4UIcmdWithADoubleAndUnit* fSpiceTargetBackerDensityCmd;
+    G4UIcmdWithADoubleAndUnit* fSpiceTargetBackerThicknessCmd;
+    G4UIcmdWithAString*        fSpiceTargetProtectorCmd;
+    G4UIcmdWithADoubleAndUnit* fSpiceTargetProtectorDensityCmd;
+    G4UIcmdWithADoubleAndUnit* fSpiceTargetProtectorThicknessCmd;
+    
+    //field box
     G4UIcmdWithAString*        fFieldBoxMaterialCmd;
     G4UIcmdWith3VectorAndUnit* fFieldBoxDimensionsCmd;
     G4UIcmdWith3VectorAndUnit* fFieldBoxPositionCmd;
     G4UIcmdWith3VectorAndUnit* fFieldBoxMagneticFieldCmd;
-	G4UIcmdWithAString*        fTabMagneticFieldCmd; ///19/7
-
-    G4UIcmdWithAString*   fAddApparatusSpiceTargetChamberCmd;
+    
+    
+   //field for SPICE
+    G4UIcmdWithAString*        fTabMagneticFieldCmd; ///19/7
+    
+    G4UIcmdWithAString*        fAddApparatusSpiceTargetChamberCmd;
     G4UIcmdWithoutParameter*   fAddApparatus8piVacuumChamberCmd;
     G4UIcmdWithADoubleAndUnit* fAddApparatus8piVacuumChamberAuxMatShellCmd;
     G4UIcmdWithAnInteger*      fAddApparatusGriffinStructureCmd;
@@ -128,18 +143,17 @@ private:
     G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinBackDetectorCmd;
     //G4UIcmdWith3Vector*       fAddDetectionSystemGriffinPositionConfigCmd;
     G4UIcmdWithAnInteger*       fAddDetectionSystemSpiceCmd;
-	G4UIcmdWithAString*         fAddMagnetSystemSpiceCmd;
+    G4UIcmdWithAString*         fAddMagnetSystemSpiceCmd;
     G4UIcmdWithAnInteger*       fAddDetectionSystemPacesCmd;
     G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinHevimetCmd ;
 
     G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinCustomDetectorCmd ;
-    G4UIcmdWithAnInteger*	     fAddDetectionSystemGriffinCustomCmd ;
+    G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinCustomCmd ;
     G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinShieldSelectCmd ;
     G4UIcmdWithADoubleAndUnit*  fAddDetectionSystemGriffinSetRadialDistanceCmd ;
     G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinSetExtensionSuppLocationCmd ;
     G4UIcmdWith3Vector*         fAddDetectionSystemGriffinSetDeadLayerCmd ;
     G4UIcmdWithABool*           fUseTIGRESSPositionsCmd;
-
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

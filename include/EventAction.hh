@@ -93,11 +93,12 @@ public:
 
 private:
     RunAction*    fRunAct;
-	HistoManager* fHistoManager;
+    HistoManager* fHistoManager;
 
     G4int     fPrintModulo;
     G4int     fEvtNb;
 
+    G4double BeamInputEnergy;
     void ClearVariables();
     void FillParticleType();
     void FillGriffinCryst();
@@ -125,7 +126,9 @@ private:
     G4int    fPTrackID;
     G4int    fPParentID;
 
-
+    G4int    fSpiceMultiplicity;
+    G4int    MultiplicityArray[5];
+    
     // Particle types in simulation
     G4int fParticleTypes[NUMPARTICLETYPES];
 

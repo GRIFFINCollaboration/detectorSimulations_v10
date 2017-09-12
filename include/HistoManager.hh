@@ -48,7 +48,7 @@ const G4int MAXHISTO            = 5000;//max number of histos in root file
 const G4int MAXNTCOL            = 15;
 const G4int MAXNUMDET           = 20;
 const G4int MAXNUMDETSPICE	= 10;
-//const G4int MAXNUMSEGSPICE	= 12;
+const G4int MAXNUMSEGSPICE	= 12;
 const G4int MAXNUMDETPACES	= 5;
 const G4int MAXNUMDETGRIFFIN    = 16;
 const G4int MAXNUMCRYGRIFFIN    = 4;
@@ -67,8 +67,8 @@ const G4int     EDEPNBINS  = 10000;//was 10000
 const G4double  EDEPXMIN   = 0.5*keV;
 const G4double  EDEPXMAX   = 10000.5*keV;//was 10000.5
 const G4int     EDEPNBINSSPICE  = 10000;//was 10000	//spice histos range different
-const G4double  EDEPXMINSPICE   = 0.5*keV;
-const G4double  EDEPXMAXSPICE   = 2500.5*keV;//was 10000.5
+const G4double  EDEPXMINSPICE   = 0.*keV;
+const G4double  EDEPXMAXSPICE   = 2100.0*keV;//was 10000.5
 
 // trackl histo properties  ///////////////////////
 const G4int     TRACKLNBINS = 5000;
@@ -95,13 +95,22 @@ public:
     void Book();
     void Save();
     
-    
+    //arrays allow histos to be made independently of GRIFFIN
     //	sizeof() arrays appear double the elements, due to 2 bits per element
-    short PacesHistNumbers[MAXNUMDETPACES+2]; //+2 for edep and sum histos 
-    short SpiceHistNumbers[MAXNUMDETSPICE*12+2]; //+2 for edep and sum histos 
-
+    short fPacesHistNumbers[MAXNUMDETPACES+2]; //+2 for edep and sum histos 
+    short fSpiceHistNumbers[MAXNUMDETSPICE*MAXNUMSEGSPICE+2]; //+2 for edep and sum histos 
+    short fSegmentHisto[120];//this array will hold segment IDs to be transferred to reference for histos
+    short fAngleDistro[10]; //this variable will hold the histogran ID for the angular distributions from the cone
+    
     void MakeHisto(G4AnalysisManager* analysisManager, G4String filename,  G4String title, G4double xmin, G4double xmax, G4int nbins);
+    void MakeHistoWithAxisTitles(G4AnalysisManager* analysisManager, G4String name, 
+					   G4String title, G4double xmin, G4double xmax, 
+					   G4int nbins, const G4String& unitName, const G4String& fcnName);
+    void Make2DHistoWithAxisTitles(G4AnalysisManager* analysisManager, const G4String& name, const G4String& title,
+                 G4int nxbins, G4double xmin, G4double xmax, 
+                 G4int nybins, G4double ymin, G4double ymax);
     void FillHisto(G4int ih, G4double e, G4double weight = 1.0);
+    void Fill2DHisto(G4int ih, G4double xbin, G4double ybin, G4double weight = 1.0);
     void Normalize(G4int id, G4double fac);
 
     void FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ);
@@ -113,31 +122,33 @@ public:
     G4bool GetHitTrackerBool()  { return fHitTrackerBool;};
 
 	 // setter
-	 void GridCell(G4bool val) { fGridCell = val; }
- 	 void Griffin (G4bool val) { fGriffin  = val; }
-	 void LaBr 	  (G4bool val) { fLaBr     = val; }
-	 void AncBgo  (G4bool val) { fAncBgo   = val; }
-	 void NaI 	  (G4bool val) { fNaI      = val; }
-	 void Sceptar (G4bool val) { fSceptar  = val; }
-	 void EightPi (G4bool val) { fEightPi  = val; }
-	 void Spice   (G4bool val) { fSpice    = val; }
-	 void Paces   (G4bool val) { fPaces    = val; }  
-	 void Descant (G4bool val) { fDescant  = val; }  
-	 void Testcan (G4bool val) { fTestcan  = val; }  
+	 void GridCell  (G4bool val)   { fGridCell = val; }
+ 	 void Griffin   (G4bool val)   { fGriffin  = val; }
+	 void LaBr 	    (G4bool val)   { fLaBr     = val; }
+	 void AncBgo    (G4bool val)   { fAncBgo   = val; }
+	 void NaI 	    (G4bool val)   { fNaI      = val; }
+	 void Sceptar   (G4bool val)   { fSceptar  = val; }
+	 void EightPi   (G4bool val)   { fEightPi  = val; }
+	 void Spice     (G4bool val)   { fSpice    = val; }
+	 void Paces     (G4bool val)   { fPaces    = val; }  
+	 void Descant   (G4bool val)   { fDescant  = val; }  
+	 void Testcan   (G4bool val)   { fTestcan  = val; }  
+	 void BeamEnergy(G4double val) { fBeamEnergy = val; }
 
 	 // getter
-	 G4bool GridCell() { return fGridCell; }
-	 G4bool Griffin () { return fGriffin;  }
-	 G4bool LaBr    () { return fLaBr;     }
-	 G4bool AncBgo  () { return fAncBgo;   }
-	 G4bool NaI 	() { return fNaI;      }
-	 G4bool Sceptar () { return fSceptar;  }
-	 G4bool EightPi () { return fEightPi;  }
-	 G4bool Spice 	() { return fSpice;    }
-	 G4bool Paces   () { return fPaces;    }  
-	 G4bool Descant () { return fDescant;  }  
-	 G4bool Testcan () { return fTestcan;  } 
-
+	 G4bool   GridCell()   { return fGridCell;   }
+	 G4bool   Griffin()    { return fGriffin;    }
+	 G4bool   LaBr()       { return fLaBr;       }
+	 G4bool   AncBgo()     { return fAncBgo;     }
+	 G4bool   NaI()        { return fNaI;        }
+	 G4bool   Sceptar()    { return fSceptar;    }
+	 G4bool   EightPi()    { return fEightPi;    }
+	 G4bool   Spice()      { return fSpice;      }
+	 G4bool   Paces()      { return fPaces;      }  
+	 G4bool   Descant()    { return fDescant;    }  
+	 G4bool   Testcan()    { return fTestcan;    } 
+	 G4double BeamEnergy() { return fBeamEnergy; }
+	 
 private:
     HistoManager();
     ~HistoManager();
@@ -155,7 +166,8 @@ private:
 
     G4int         fHistId[MAXHISTO];
     G4AnaH1*      fHistPt[MAXHISTO];
-
+    G4AnaH2*      fHistPt2[MAXHISTO];
+    
     G4int         fNtColId[MAXNTCOL];
     G4int         fNtColIdHit[MAXNTCOL];
     G4int         fNtColIdStep[MAXNTCOL];
@@ -163,18 +175,20 @@ private:
     G4bool fStepTrackerBool;
     G4bool fHitTrackerBool;
 
-	 //booleans which control which histograms are created (these are set by the detector construction)
-	 G4bool fGridCell;
- 	 G4bool fGriffin;
-	 G4bool fLaBr;
-	 G4bool fAncBgo;
-	 G4bool fNaI;
-	 G4bool fSceptar;
-	 G4bool fEightPi;
-	 G4bool fDescant;
-	 G4bool fTestcan;	 
-	 G4bool fSpice;
-	 G4bool fPaces;
+    //booleans which control which histograms are created (these are set by the detector construction)
+    G4bool fGridCell;
+    G4bool fGriffin;
+    G4bool fLaBr;
+    G4bool fAncBgo;
+    G4bool fNaI;
+    G4bool fSceptar;
+    G4bool fEightPi;
+    G4bool fDescant;
+    G4bool fTestcan;	 
+    G4bool fSpice;
+    G4bool fPaces;
+
+	 G4double fBeamEnergy;
 };
 
 enum HISTONAME
