@@ -23,30 +23,30 @@
 
 ApparatusGenericTarget::ApparatusGenericTarget() :
     // LogicalVolumes 
-    target_log(0)
+    fTargetLog(0)
 { 
-  this->target_material = "Gold";
-  this->target_length_x = 0.0*cm; 
-  this->target_length_y = 0.0*cm;
-  this->target_length_z = 0.0*cm;
+  this->fTargetMaterial = "Gold";
+  this->fTargetLengthX = 0.0*cm; 
+  this->fTargetLengthY = 0.0*cm;
+  this->fTargetLengthZ = 0.0*cm;
 }
 
 ApparatusGenericTarget::~ApparatusGenericTarget()
 {
     // LogicalVolumes 
-    delete target_log;    
+    delete fTargetLog;    
 }
 
-G4int ApparatusGenericTarget::Build(G4String target_material, G4double target_length_x, G4double target_length_y, G4double target_length_z)
+G4int ApparatusGenericTarget::Build(G4String target_material_in, G4double target_length_x_in, G4double target_length_y_in, G4double target_length_z_in)
 {
-  this->target_material = target_material;
-  this->target_length_x = target_length_x*mm;
-  this->target_length_y = target_length_y*mm;
-  this->target_length_z = target_length_z*mm;
+  this->fTargetMaterial = target_material_in;
+  this->fTargetLengthX = target_length_x_in*mm;
+  this->fTargetLengthY = target_length_y_in*mm;
+  this->fTargetLengthZ = target_length_z_in*mm;
 
   // Build assembly volume
   G4AssemblyVolume* myAssembly = new G4AssemblyVolume();
-  this->assembly = myAssembly;
+  this->fAssembly = myAssembly;
 
   G4cout << "BuildTargetVolume" << G4endl;
   BuildTargetVolume();      
@@ -58,16 +58,16 @@ G4int ApparatusGenericTarget::PlaceApparatus(G4LogicalVolume* exp_hall_log, G4Th
 {
   G4int copy_ID = 0;
 
-  this->assembly->MakeImprint(exp_hall_log, move, rotate, copy_ID);
+  this->fAssembly->MakeImprint(exp_hall_log, move, rotate, copy_ID);
 
   return 1;
 }
 
 G4int ApparatusGenericTarget::BuildTargetVolume()
 {
-  G4Material* material = G4Material::GetMaterial(this->target_material);
+  G4Material* material = G4Material::GetMaterial(this->fTargetMaterial);
   if( !material ) {
-    G4cout << " ----> Material " << this->target_material << " not found, cannot build!" << G4endl;
+    G4cout << " ----> Material " << this->fTargetMaterial << " not found, cannot build!" << G4endl;
     return 0;
   }
   
@@ -81,22 +81,22 @@ G4int ApparatusGenericTarget::BuildTargetVolume()
   G4Box* target = BuildTarget(); 
 
   //logical volume
-  if( target_log == NULL )
+  if( fTargetLog == NULL )
   {
-    target_log = new G4LogicalVolume(target, material, "target_log", 0, 0, 0);
-    target_log->SetVisAttributes(vis_att);
+    fTargetLog = new G4LogicalVolume(target, material, "target_log", 0, 0, 0);
+    fTargetLog->SetVisAttributes(vis_att);
   }
 
-  this->assembly->AddPlacedVolume(target_log, move, rotate);
+  this->fAssembly->AddPlacedVolume(fTargetLog, move, rotate);
 
   return 1;
 }
 
 G4Box* ApparatusGenericTarget::BuildTarget()
 {
-  G4double half_length_x = this->target_length_x/2.0;
-  G4double half_length_y = this->target_length_y/2.0;
-  G4double half_length_z = this->target_length_z/2.0;
+  G4double half_length_x = this->fTargetLengthX/2.0;
+  G4double half_length_y = this->fTargetLengthY/2.0;
+  G4double half_length_z = this->fTargetLengthZ/2.0;
 
   G4Box* target = new G4Box("target", half_length_x, half_length_y, half_length_z);
   return target;

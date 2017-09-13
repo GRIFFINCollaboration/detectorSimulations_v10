@@ -32,8 +32,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef DetectionSystemLanthanumBromide_h
-#define DetectionSystemLanthanumBromide_h 1
+#ifndef DETECTIONSYSTEMLANTHANUMBROMIDE_HH
+#define DETECTIONSYSTEMLANTHANUMBROMIDE_HH
 
 #include "G4SystemOfUnits.hh" // new version geant4.10 requires units
 

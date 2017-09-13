@@ -31,8 +31,8 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef PhysicsList_h
-#define PhysicsList_h 1
+#ifndef PHYSICSLIST_HH
+#define PHYSICSLIST_HH
 
 #include "G4VModularPhysicsList.hh"
 #include "globals.hh"

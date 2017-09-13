@@ -31,8 +31,8 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef PhysListParticles_h
-#define PhysListParticles_h 1
+#ifndef PHYSLISTPARTICLES_HH
+#define PHYSLISTPARTICLES_HH
 
 #include "G4VPhysicsConstructor.hh"
 #include "globals.hh"

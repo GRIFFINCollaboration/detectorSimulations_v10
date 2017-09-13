@@ -32,8 +32,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef DetectionSystemTestcan_h
-#define DetectionSystemTestcan_h 1
+#ifndef DETECTIONSYSTEMTESTCAN_HH
+#define DETECTIONSYSTEMTESTCAN_HH
 
 #include "G4SystemOfUnits.hh" // new version geant4.10 requires units
 #include "G4VUserDetectorConstruction.hh"

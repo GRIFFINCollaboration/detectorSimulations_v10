@@ -69,7 +69,7 @@
 #include "G4FieldManager.hh"
 #include "G4UniformMagField.hh"
 #include "G4TransportationManager.hh"
-#include "nonUniformMagneticField.hh"
+#include "NonUniformMagneticField.hh"
 
 #include "DetectionSystemGriffin.hh"
 #include "DetectionSystemSceptar.hh"
@@ -247,8 +247,7 @@ void DetectorConstruction::SetTabMagneticField(G4String PathAndTableName, G4doub
 {
 
   //const char * c = PathAndTableName.c_str();///conversion attempt using .c_str() (a string member function)
-
- nonUniformMagneticField* tabulatedField = new nonUniformMagneticField(PathAndTableName,z_offset,z_rotation);///addition of field for SPICE
+ new NonUniformMagneticField(PathAndTableName,z_offset,z_rotation);///addition of field for SPICE
 }
 
 void DetectorConstruction::UpdateGeometry() {
@@ -681,28 +680,28 @@ G4double DetectorConstruction::GetLanthanumBromideCrystalRadialPosition() {
 
 
 // Temporary Function for testing purposes
-void DetectorConstruction::AddDetectionSystemGriffinCustomDetector( G4int ndet = 0 ) {
-  if(fLogicWorld == NULL) {
-	 Construct();
-  }
-  
-  fGriffinDetectorsMap[fGriffinDetectorsMapIndex] = fCustomDetectorNumber ;
-  fGriffinDetectorsMapIndex++;
+void DetectorConstruction::AddDetectionSystemGriffinCustomDetector(G4int) {
+	if(fLogicWorld == NULL) {
+		Construct();
+	}
 
-  // NOTE: ndet served no purpose in this case but I left it in just in case this needs to be modified later. The position of a detector placed using this function must be set using
-  // SetDeadLayer.
+	fGriffinDetectorsMap[fGriffinDetectorsMapIndex] = fCustomDetectorNumber ;
+	fGriffinDetectorsMapIndex++;
 
-  DetectionSystemGriffin* pGriffinCustom = new DetectionSystemGriffin( fExtensionSuppressorLocation , fDetectorShieldSelect, fDetectorRadialDistance, fHevimetSelector ); // Select Forward (0) or Back (1)
+	// NOTE: ndet served no purpose in this case but I left it in just in case this needs to be modified later. The position of a detector placed using this function must be set using
+	// SetDeadLayer.
 
-  pGriffinCustom->BuildDeadLayerSpecificCrystal(fCustomDetectorNumber-1);
+	DetectionSystemGriffin* pGriffinCustom = new DetectionSystemGriffin( fExtensionSuppressorLocation , fDetectorShieldSelect, fDetectorRadialDistance, fHevimetSelector ); // Select Forward (0) or Back (1)
 
-  pGriffinCustom->PlaceDeadLayerSpecificCrystal( fLogicWorld, fCustomDetectorNumber-1, fCustomDetectorPosition-1, fUseTigressPositions ) ;
+	pGriffinCustom->BuildDeadLayerSpecificCrystal(fCustomDetectorNumber-1);
 
-  pGriffinCustom->BuildEverythingButCrystals();
+	pGriffinCustom->PlaceDeadLayerSpecificCrystal( fLogicWorld, fCustomDetectorNumber-1, fCustomDetectorPosition-1, fUseTigressPositions ) ;
 
-  pGriffinCustom->PlaceEverythingButCrystals( fLogicWorld, fCustomDetectorNumber-1, fCustomDetectorPosition-1, fUseTigressPositions ) ;
+	pGriffinCustom->BuildEverythingButCrystals();
 
-  HistoManager::Instance().Griffin(true);
+	pGriffinCustom->PlaceEverythingButCrystals( fLogicWorld, fCustomDetectorNumber-1, fCustomDetectorPosition-1, fUseTigressPositions ) ;
+
+	HistoManager::Instance().Griffin(true);
 }
 
 void DetectorConstruction::AddDetectionSystemGriffinCustom(G4int ndet) {
