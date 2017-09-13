@@ -1,1 +1,0 @@
-/home/mspencer/spiceg4/detectorSimulations_v10/suppressed/DetectorConstructionSuppressed.cc
