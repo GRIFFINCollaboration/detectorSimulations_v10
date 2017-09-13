@@ -33,8 +33,11 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "PrimaryGeneratorMessenger.hh"
-
 #include "PrimaryGeneratorAction.hh"
+#include "ApparatusSpiceTarget.hh"//for BeamPos
+#include "DetectorConstruction.hh"//for SPICE target pedestal tunnelling
+#include "HistoManager.hh"//Beam energy tunnelling
+
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithADouble.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
@@ -51,7 +54,7 @@
 PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun)
     :fAction(Gun)
 {
-    fNumberOfDecayingLaBrDetectorsCmd = new G4UIcmdWithAnInteger("/DetSys/gun/numberOfDecayingLaBrDetectors",this);
+      fNumberOfDecayingLaBrDetectorsCmd = new G4UIcmdWithAnInteger("/DetSys/gun/numberOfDecayingLaBrDetectors",this);
     fNumberOfDecayingLaBrDetectorsCmd->SetGuidance("Set the number of radioactive LaBr detectors");
     fNumberOfDecayingLaBrDetectorsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
@@ -86,7 +89,30 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun
     fConeRadiusCmd->SetGuidance("Set cone radius");
     fConeRadiusCmd->SetUnitCategory("Length");
     fConeRadiusCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
+    
+    fConeZValueCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/coneZValue",this);//SPICE cone values
+    fConeZValueCmd->SetGuidance("Set cone z value");
+    fConeZValueCmd->SetUnitCategory("Length");
+    fConeZValueCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    
+    fConeRValueCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/coneRValue",this);//SPICE cone values
+    fConeRValueCmd->SetGuidance("Set cone r value");
+    fConeRValueCmd->SetUnitCategory("Length");
+    fConeRValueCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    
+    fConeAngleCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/coneMaxAngle",this);//SPICE cone angle value
+    fConeAngleCmd->SetGuidance("Set cone value for outer theta - use deg (0-90)");
+    fConeAngleCmd->SetUnitCategory("Angle");
+    fConeAngleCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    
+    fConeMinAngleCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/coneMinAngle",this);//SPICE cone angle value
+    fConeMinAngleCmd->SetGuidance("Set cone value for inner theta - use deg (0-90) - default is 0 if none specified");
+    fConeMinAngleCmd->SetUnitCategory("Angle");
+    fConeMinAngleCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    
+    fBeamDistroCmd = new G4UIcmdWithABool("/Detsys/gun/BeamDistro",this);//with target, can apply a distribution
+    fBeamDistroCmd->SetGuidance("Set beam ditribution wihtin a target");
+    fBeamDistroCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -98,6 +124,11 @@ PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger() {
     delete fEfficiencyPolarizationCmd;
     delete fEfficiencyBeamRadiusCmd;
     delete fConeRadiusCmd;
+    delete fConeZValueCmd;
+    delete fConeRValueCmd;
+    delete fConeAngleCmd;
+    delete fConeMinAngleCmd;
+    delete fBeamDistroCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -109,6 +140,8 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
     }
     if(command == fEfficiencyEnergyCmd ) {
         fAction->SetEfficiencyEnergy(fEfficiencyEnergyCmd->GetNewDoubleValue(newValue));
+	G4cout << fEfficiencyEnergyCmd->GetNewDoubleValue(newValue) << " <- Input beam energy to PGM" << G4endl;
+	fAction->SendBeamEnergyToHist(fEfficiencyEnergyCmd->GetNewDoubleValue(newValue));
 		  return;
     }
     if( command == fEfficiencyDirectionCmd ) {
@@ -117,6 +150,8 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
     }
     if( command == fEfficiencyPositionCmd ) {
         fAction->SetEfficiencyPosition(fEfficiencyPositionCmd->GetNew3VectorValue(newValue));
+	fBeamPos3 = fEfficiencyPositionCmd->GetNew3VectorValue(newValue);//Private to public variable so accessible
+	fAction->PassTarget(fBeamPos3.z()); 
 		  return;
     }
     if( command == fEfficiencyParticleCmd ) {
@@ -136,7 +171,30 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
 	G4cout << "Cone Beam selected" << G4endl;
 		  return;
     }
+    if( command == fConeZValueCmd ) {
+        fAction->SetConeZValue(fConeZValueCmd->GetNewDoubleValue(newValue));
+	G4cout << "Cone Beam Z value selected" << G4endl;
+		  return;
+    }
+    if( command == fConeRValueCmd ) {
+        fAction->SetConeRValue(fConeRValueCmd->GetNewDoubleValue(newValue));
+	G4cout << "Cone Beam R value selected" << G4endl;
+		  return;
+    }
+    if( command == fConeAngleCmd ) {
+        fAction->SetConeMaxAngle(fConeAngleCmd->GetNewDoubleValue(newValue));
+	G4cout << "Cone Beam via Angle selected" << G4endl;
+		  return;
+    }
+    if( command == fConeMinAngleCmd ) {
+        fAction->SetConeMinAngle(fConeMinAngleCmd->GetNewDoubleValue(newValue));
+	G4cout << "Cone Beam minimum angle supplied" << G4endl;
+		  return;
+    }
+    if( command == fBeamDistroCmd ) {
+	fAction->fNeedBeamDistro = fBeamDistroCmd->GetNewBoolValue(newValue);
+	G4cout << "Beam Distribution within SPICE target selected" << G4endl;
+    }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
