@@ -100,6 +100,21 @@ public:
     short PacesHistNumbers[MAXNUMDETPACES+2]; //+2 for edep and sum histos 
     short SpiceHistNumbers[MAXNUMDETSPICE*12+2]; //+2 for edep and sum histos 
 
+    // BEGIN GRIFFIN arrays
+    
+    // --- surpressed ---
+    short GriffinSup[MAXNUMDETGRIFFIN+2];
+	// GriffinSup[0] is griffin_crystal_sup_edep
+	// GriffinSup[1] is griffin_crystal_sup_edep_sum
+    short GriffinSupCry[MAXNUMDETGRIFFIN*MAXNUMCRYGRIFFIN+1]; 
+	// GriffinSupCry[0] is griffin_crystal_sup_edep_cry
+    
+    // --- unsurpressed ---
+    short GriffinUnSup[MAXNUMDETGRIFFIN+2];
+    short GriffinUnSupCry[MAXNUMDETGRIFFIN*MAXNUMCRYGRIFFIN+1];
+
+    // END GRIFFIN arrays	
+
     void MakeHisto(G4AnalysisManager* analysisManager, G4String filename,  G4String title, G4double xmin, G4double xmax, G4int nbins);
     void FillHisto(G4int ih, G4double e, G4double weight = 1.0);
     void Normalize(G4int id, G4double fac);
@@ -346,7 +361,7 @@ enum HISTONAME
     kGridcellNeutronTracklDet17,
     kGridcellNeutronTracklDet18,
     kGridcellNeutronTracklDet19,
-    kGriffinCrystalSupEdep,
+ /*   kGriffinCrystalSupEdep,
     kGriffinCrystalSupEdepCry,
     kGriffinCrystalSupEdepSum,
     kGriffinCrystalSupEdepDet0,
@@ -511,7 +526,7 @@ enum HISTONAME
     kGriffinCrystalUnsupEdepDet12Cry3,
     kGriffinCrystalUnsupEdepDet13Cry3,
     kGriffinCrystalUnsupEdepDet14Cry3,
-    kGriffinCrystalUnsupEdepDet15Cry3,
+    kGriffinCrystalUnsupEdepDet15Cry3, */
     kLabrCrystalEdep,
     kLabrCrystalEdepSum,
     kLabrCrystalEdepDet0,

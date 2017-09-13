@@ -228,56 +228,70 @@ void HistoManager::Book() {
 
 	if(fGriffin) {
 	 // Griffin Suppressors
+
 	  name  = "griffin_crystal_sup_edep";
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  GriffinSup[0] = fMakeHistoIndex; // assigns array item the histo index for reference by FillHisto()
 
 	  name  = "griffin_crystal_sup_edep_cry";
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+          GriffinSupCry[0] = fMakeHistoIndex;
 
 	  name  = "griffin_crystal_sup_edep_sum";
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  GriffinSup[1] = fMakeHistoIndex;
 
 	  for (G4int i=0; i < MAXNUMDETGRIFFIN; i++) {
 	      detString = G4intToG4String(i);
 
 	      name  = "griffin_crystal_sup_edep_det" + detString ;
 	      MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	      GriffinSup[i+2] = fMakeHistoIndex;
 	  }
 
 	  for (G4int j=0; j < MAXNUMCRYGRIFFIN; j++) {
 	      for (G4int i=0; i < MAXNUMDETGRIFFIN; i++) {
-				  detString = G4intToG4String(i);
-				  cryString = G4intToG4String(j);
+		   
+		    detString = G4intToG4String(i);
+		    cryString = G4intToG4String(j);
 
-				  name  = "griffin_crystal_sup_edep_det" + detString + "_cry" + cryString;
-				  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+		    name  = "griffin_crystal_sup_edep_det" + detString + "_cry" + cryString;
+		    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+		    GriffinSupCry[MAXNUMDETGRIFFIN*j+1+i] = fMakeHistoIndex;
 	      }
 	  }
 
 	  // Griffin Crystal Unsuppressed
+
 	  name  = "griffin_crystal_unsup_edep";
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  GriffinUnSup[0] = fMakeHistoIndex;
 
 	  name  = "griffin_crystal_unsup_edep_cry";
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  GriffinUnSupCry[0] = fMakeHistoIndex;
 
 	  name  = "griffin_crystal_unsup_edep_sum";
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  GriffinUnSup[1] = fMakeHistoIndex;
 
 	  for (G4int i=0; i < MAXNUMDETGRIFFIN; i++) {
 	      detString = G4intToG4String(i);
 
 	      name  = "griffin_crystal_unsup_edep_det" + detString;
 	      MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	      GriffinUnSup[i+2] = fMakeHistoIndex;
 	  }
 
 	  for (G4int j=0; j < MAXNUMCRYGRIFFIN; j++) {
 	      for (G4int i=0; i < MAXNUMDETGRIFFIN; i++) {
-				  detString = G4intToG4String(i);
-				  cryString = G4intToG4String(j);
+		 
+	  	    detString = G4intToG4String(i);
+		    cryString = G4intToG4String(j);
 
-				  name  = "griffin_crystal_unsup_edep_det" + detString + "_cry" + cryString;
-				  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+		    name  = "griffin_crystal_unsup_edep_det" + detString + "_cry" + cryString;
+		    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+		    GriffinUnSupCry[MAXNUMDETGRIFFIN*j+1+i] = fMakeHistoIndex;
 	      }
 	  }
 	}//if(fGriffin)
