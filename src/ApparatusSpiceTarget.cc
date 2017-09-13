@@ -28,6 +28,7 @@ ApparatusSpiceTarget::ApparatusSpiceTarget(G4double beaminput) {
   this->fTargetMaterial = "Gold";
   this->fTargetBackerMaterial = "Gold";
   this->fTargetProtectorMaterial = "Gold";//initialising - may remove
+  this->fTargetRadius = 9.0*mm;
 }
 
 ApparatusSpiceTarget::~ApparatusSpiceTarget()

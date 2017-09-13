@@ -32,8 +32,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef APPARATUSGRIFFINSTRUCTURE_HH
-#define APPARATUSGRIFFINSTRUCTURE_HH
+#ifndef ApparatusGriffinStructure_h
+#define ApparatusGriffinStructure_h 1
 
 #include "G4SystemOfUnits.hh" // new version geant4.10 requires units
 #include "G4IntersectionSolid.hh"

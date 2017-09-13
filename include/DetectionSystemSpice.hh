@@ -32,110 +32,114 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef DETECTIONSYSTEMSPICE_HH
-#define DETECTIONSYSTEMSPICE_HH
+#ifndef DetectionSystemSpice_h
+#define DetectionSystemSpice_h 1
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 
-#ifndef AL_COL
-#define AL_COL 0.5, 0.5, 0.5
-#endif
+#define AL_COL 0.5,0.5,0.5
 #define PEEK_COL 0.5, 0.5, 0.0
 
 class DetectionSystemSpice
 {
 public:
-	DetectionSystemSpice();
-	~DetectionSystemSpice();
+  DetectionSystemSpice();
+  ~DetectionSystemSpice();
+  
+  //------------------------------------------------//
+  // logical and physical volumes
+  //------------------------------------------------//
+private:
+  G4AssemblyVolume* assembly;
+  G4AssemblyVolume* assemblySiRing[10];
 
-	//------------------------------------------------//
-	// logical and physical volumes
-	//------------------------------------------------//
+  
 public:
-	G4int Build();
-	G4int PlaceDetector(G4LogicalVolume* ExpHallLog, G4int nRings);
-	G4int PlaceGuardRing(G4LogicalVolume* ExpHallLog);
-	void PlaceDetectorMount(G4LogicalVolume* ExpHallLog); 
-	void PlaceAnnularClamps(G4LogicalVolume* ExpHallLog);
-
+  G4int Build();
+  G4int PlaceDetector(G4LogicalVolume* exp_hall_log, G4int nRings);
+  G4int PlaceGuardRing(G4LogicalVolume* exp_hall_log);
+  void PlaceDetectorMount(G4LogicalVolume* exp_hall_log); 
+  void PlaceAnnularClamps(G4LogicalVolume* exp_hall_log);
+  
 private:
-	G4AssemblyVolume* fAssembly;
-	G4AssemblyVolume* fAssemblySiRing[10];
+  G4ThreeVector GetDirectionXYZ(G4double theta, G4double phi);
 
-	G4ThreeVector GetDirectionXYZ(G4double theta, G4double phi);
+  G4LogicalVolume* detector_mount_log;
+  G4LogicalVolume* annular_clamp_log;  
+  G4LogicalVolume* siInnerGuardRing_log;
+  G4LogicalVolume* siOuterGuardRing_log;
+  G4LogicalVolume* siDetSpiceRing_log[10];
 
-	G4LogicalVolume* fDetectorMountLog;
-	G4LogicalVolume* fAnnularClampLog;  
-	G4LogicalVolume* fSiInnerGuardRingLog;
-	G4LogicalVolume* fSiOuterGuardRingLog;
-	G4LogicalVolume* fSiDetSpiceRingLog[10];
-
-	G4VPhysicalVolume* fDetectorMountPhys;
-	G4VPhysicalVolume* fAnnularClampPhys;
-
-	//--------------------------------------------------------//
-	// SPICE physical properties
-	// OBS: crystal properties are public, others are private
-	//--------------------------------------------------------//
-	G4String fWaferMaterial;
-	G4String fDetectorMountMaterial;
-	G4String fAnnularClampMaterial;
-
-	// ----------------------------
-	// Dimensions of Detector Mount
-	// ----------------------------
-	G4double fDetectorMountLength;
-	G4double fDetectorMountWidth;
-	G4double fDetectorMountThickness;
-	G4double fDetectorMountInnerRadius;
-	G4double fDetectorMountLipRadius;
-	G4double fDetectorMountLipThickness;
-	G4double fDetectorMountAngularOffset;
-	G4double fDetectorToTargetDistance;
-	G4double fDetectorThickness;
-
-	// ---------------------------
-	// Dimensions of Annular Clamp
-	// ---------------------------
-	G4double fAnnularClampThickness;
-	G4double fAnnularClampLength;
-	G4double fAnnularClampWidth;
-	G4double fAnnularClampPlaneOffset;
-
-	//-----------------------------
-	// copy numbers
-	//-----------------------------
-	G4int fDetectorMountCopyNumber;
-	G4int fAnnularClampCopyNumber;
-
-	//-----------------------------//
-	// parameters for the annular  //
-	// planar detector crystal     //
-	//-----------------------------//
-	G4double 	fSiDetCrystalThickness;
-	G4double 	fSiDetCrystalOuterDiameter;
-	G4double 	fSiDetCrystalInnerDiameter;
-	G4double 	fSiDetRadialSegments;
-	G4double 	fSiDetPhiSegments;
-
-	//-------------------------------//
-	// parameters for the guard ring //
-	//-------------------------------//
-	G4double 	fSiDetGuardRingInnerDiameter;
-	G4double 	fSiDetGuardRingOuterDiameter;
-
-	//------------------------------------------------//
-	// internal methods in Build()
-	//------------------------------------------------//
+   G4VPhysicalVolume* detector_mount_phys;
+   G4VPhysicalVolume* annular_clamp_phys;
+      
+  //--------------------------------------------------------//
+  // SPICE physical properties
+  // OBS: crystal properties are public, others are private
+  //--------------------------------------------------------//
 private:
-	G4int 	BuildSiliconWafer(G4int ringID);
-	G4int 	BuildInnerGuardRing();
-	G4int 	BuildOuterGuardRing();
-	void 	BuildDetectorMount();
-	void 	BuildAnnularClamps();   
+  G4String 	wafer_material;
+  G4String detector_mount_material;
+  G4String annular_clamp_material;
+  
+  // ----------------------------
+  // Dimensions of Detector Mount
+  // ----------------------------
+  G4double detector_mount_length;
+  G4double detector_mount_width;
+  G4double detector_mount_thickness;
+  G4double detector_mount_inner_radius;
+  G4double detector_mount_lip_radius;
+  G4double detector_mount_lip_thickness;
+  G4double detector_mount_angular_offset;
+  G4double detector_to_target_distance;
+  G4double detector_thickness;
+  
+  // ---------------------------
+  // Dimensions of Annular Clamp
+  // ---------------------------
+  G4double annular_clamp_thickness;
+  G4double annular_clamp_length;
+  G4double annular_clamp_width;
+  G4double annular_clamp_plane_offset;
 
-	G4Tubs*	BuildCrystal(G4int myRingID);
+  //-----------------------------
+  // copy numbers
+  //-----------------------------
+  G4int detectorMountCopyNumber;
+  G4int annularClampCopyNumber;
+      
+  //-----------------------------//
+  // parameters for the annular  //
+  // planar detector crystal     //
+  //-----------------------------//
+public:
+  G4double 	siDetCrystalThickness;
+  G4double 	siDetCrystalOuterDiameter;
+  G4double 	siDetCrystalInnerDiameter;
+  G4double 	siDetRadialSegments;
+  G4double 	siDetPhiSegments;
+  
+  //-------------------------------//
+  // parameters for the guard ring //
+  //-------------------------------//
+private:
+  G4double 	siDetGuardRingInnerDiameter;
+  G4double 	siDetGuardRingOuterDiameter;
+   
+    //------------------------------------------------//
+    // internal methods in Build()
+    //------------------------------------------------//
+private:
+  G4int 	BuildSiliconWafer(G4int ringID);
+  G4int 	BuildInnerGuardRing();
+  G4int 	BuildOuterGuardRing();
+  void 		BuildDetectorMount();
+  void 		BuildAnnularClamps();   
+      
+  G4Tubs*	BuildCrystal(G4int myRingID);
+ 	
 };
 
 #endif

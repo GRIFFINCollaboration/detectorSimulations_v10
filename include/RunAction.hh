@@ -34,8 +34,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef RUNACTION_HH
-#define RUNACTION_HH
+#ifndef RunAction_h
+#define RunAction_h 1
 
 #include "G4UserRunAction.hh"
 #include "globals.hh"

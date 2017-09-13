@@ -63,7 +63,7 @@ class ApparatusSpiceTarget
   private://variables for build, set in the class as read in
     G4String fTargetMaterial;
     G4double fTargetMaterialDensity;
-    G4double fTargetRadius = 9.0*mm;//this value is equal to the target frame hole radius //used for backer, and protector also
+    G4double fTargetRadius;//this value is equal to the target frame hole radius //used for backer, and protector also
     G4double fTargetThickness;
     G4double fTargetSurfaceDensity;
     G4String fTargetBackerMaterial;

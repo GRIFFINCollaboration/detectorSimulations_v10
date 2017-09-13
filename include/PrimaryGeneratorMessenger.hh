@@ -32,13 +32,15 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef PRIMARYGENERATORMESSENGER_HH
-#define PRIMARYGENERATORMESSENGER_HH
+#ifndef PrimaryGeneratorMessenger_h
+#define PrimaryGeneratorMessenger_h 1
 
 #include "G4UImessenger.hh"
 #include "globals.hh"
 #include "G4SystemOfUnits.hh"
 class PrimaryGeneratorAction;
+class BeamDistribution;
+
 class G4UIdirectory;
 class G4UIcmdWithADouble;
 class G4UIcmdWithADoubleAndUnit;
@@ -56,7 +58,8 @@ class PrimaryGeneratorMessenger: public G4UImessenger
 public:
     PrimaryGeneratorMessenger(PrimaryGeneratorAction*);
     virtual ~PrimaryGeneratorMessenger();
-    G4ThreeVector fBeamPos3 = G4ThreeVector(0,0,-7.49315);
+    G4double BeamPos = -7.49315; //initialise BeamPos
+    G4ThreeVector BeamPos3 = G4ThreeVector(0,0,-7.49315);
 
 public:
     void SetNewValue(G4UIcommand*, G4String);
@@ -76,7 +79,7 @@ private:
     G4UIcmdWithADoubleAndUnit*     fConeRValueCmd;
     G4UIcmdWithADoubleAndUnit*     fConeAngleCmd;
     G4UIcmdWithADoubleAndUnit*     fConeMinAngleCmd;
-    G4UIcmdWithABool* 		   fBeamDistroCmd;
+    G4UIcmdWithABool* fBeamDistroCmd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

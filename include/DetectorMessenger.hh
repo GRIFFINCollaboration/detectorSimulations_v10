@@ -32,13 +32,14 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef DETECTORMESSENGER_HH
-#define DETECTORMESSENGER_HH
+#ifndef DetectorMessenger_h
+#define DetectorMessenger_h 1
 
 #include "globals.hh"
 #include "G4UImessenger.hh"
 
 class DetectorConstruction;
+
 class G4UIdirectory;
 class G4UIcmdWithAString;
 class G4UIcmdWithADoubleAndUnit;
@@ -154,6 +155,8 @@ private:
     G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinSetExtensionSuppLocationCmd ;
     G4UIcmdWith3Vector*         fAddDetectionSystemGriffinSetDeadLayerCmd ;
     G4UIcmdWithABool*           fUseTIGRESSPositionsCmd;
+    
+
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

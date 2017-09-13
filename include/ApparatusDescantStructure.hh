@@ -32,8 +32,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef APPARATUSDESCANTSTRUCTURE_HH
-#define APPARATUSDESCANTSTRUCTURE_HH
+#ifndef ApparatusDescantStructure_h
+#define ApparatusDescantStructure_h 1
 
 #include "G4SystemOfUnits.hh" // new version geant4.10 requires units
 //#include "G4IntersectionSolid.hh"
@@ -51,7 +51,7 @@ public:
 
     G4int Build();
 
-    G4int PlaceDescantStructure(G4LogicalVolume* expHallLog);
+    G4int PlaceDescantStructure(G4LogicalVolume* exp_hall_log);
 
 private:
     // Logical volumes

@@ -1655,7 +1655,7 @@ void ApparatusSpiceTargetChamber::PlaceTargetWheel(G4LogicalVolume* expHallLog)
 	rotate->rotateZ((0)*CLHEP::deg); 
 
 	G4double offset = fTargetWheelOffset;
-	G4double ZPosition =  fTargetWheelThickness/2. + fTargetWheelOffset; 
+	G4double ZPosition =  fTargetWheelThickness/2.; 
 
 	G4ThreeVector move(offset, 0, ZPosition);
 	fTargetWheelPhys = new G4PVPlacement(rotate, move, fTargetWheelLog,
@@ -1994,4 +1994,3 @@ G4ThreeVector ApparatusSpiceTargetChamber::TranslateMagnets(G4int copyID, G4doub
 	}
 	return G4ThreeVector(XPosition, YPosition, ZPosition);
 }
-

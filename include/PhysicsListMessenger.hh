@@ -31,8 +31,8 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef PHYSICSLISTMESSENGER_HH
-#define PHYSICSLISTMESSENGER_HH
+#ifndef PhysicsListMessenger_h
+#define PhysicsListMessenger_h 1
 
 #include "globals.hh"
 #include "G4UImessenger.hh"

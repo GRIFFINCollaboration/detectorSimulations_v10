@@ -34,8 +34,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef DETECTORCONSTRUCTION_HH
-#define DETECTORCONSTRUCTION_HH
+#ifndef DetectorConstruction_h
+#define DetectorConstruction_h 1
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
@@ -72,10 +72,13 @@ class DetectionSystemAncillaryBGO;
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
+    
+  
     DetectorConstruction();
     ~DetectorConstruction();
-
-    G4double fTargetZ = 0.0; //for tunnelled z-value of beam position used for SPICE target frame decision
+    
+    
+    G4double targetz = 0.0; //for tunnelled z-value of beam position used for SPICE target frame decision
     G4int fGriffinDetectorsMapIndex;
     G4int fGriffinDetectorsMap[16];
 
@@ -166,13 +169,13 @@ public:
     void AddDetectionSystemGriffinBack(G4int ndet);
     void AddDetectionSystemGriffinBackDetector(G4int ndet);
     //void AddDetectionSystemGriffinPositionConfig(G4ThreeVector input);
-    void AddDetectionSystemGriffinHevimet(G4int input);
-    void AddDetectionSystemGriffinCustom(G4int ndet);
-    void AddDetectionSystemGriffinCustomDetector(G4int ndet  = 0);
-    void AddDetectionSystemGriffinShieldSelect(G4int ShieldSelect );
-    void AddDetectionSystemGriffinSetRadialDistance(G4double detectorDist);
-    void AddDetectionSystemGriffinSetExtensionSuppLocation(G4int detectorPos);
-    void AddDetectionSystemGriffinSetDeadLayer(G4ThreeVector params);
+    void AddDetectionSystemGriffinHevimet( G4int input ) ;
+    void AddDetectionSystemGriffinCustom( G4int ndet ) ;
+    void AddDetectionSystemGriffinCustomDetector( G4int ndet ) ;
+    void AddDetectionSystemGriffinShieldSelect( G4int ShieldSelect ) ;
+    void AddDetectionSystemGriffinSetRadialDistance( G4double detectorDist ) ;
+    void AddDetectionSystemGriffinSetExtensionSuppLocation( G4int detectorPos ) ;
+    void AddDetectionSystemGriffinSetDeadLayer( G4ThreeVector params ) ;
 
     void AddDetectionSystemSceptar(G4int ndet);
     void AddDetectionSystemPaces(G4int ndet);
@@ -242,7 +245,7 @@ private:
     G4bool        fSetSpiceTargetMaterial;
     G4bool        fSetSpiceTargetThickness;
     G4bool        fSetSpiceTargetDensity;
-    G4String      fSpiceTargetMaterial;
+    
     G4bool        fSetSpiceTargetBackerMaterial;
     G4bool        fSetSpiceTargetBackerThickness;
     G4bool        fSetSpiceTargetBackerDensity;
@@ -259,7 +262,7 @@ public://accessed by PGA
     G4double 	  fSpiceTargetBackerDensity;
     G4double      fSpiceTargetProtectorThickness=0.0;
     G4double 	  fSpiceTargetProtectorDensity;
-    
+    G4String      fSpiceTargetMaterial;
 private: 
     G4bool        fSetFieldBoxMaterial;
     G4bool        fSetFieldBoxDimensions;

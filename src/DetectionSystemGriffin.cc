@@ -1292,10 +1292,14 @@ void DetectionSystemGriffin::ConstructColdFinger() {
 
     // Fix overlap.
 
-    G4double cutTubeY0, cutYMov, cutZMov;
+    G4double cutTubeX0, cutTubeY0, cutYMov, cutZMov;
     G4RotationMatrix* cutRotatePiece[4] ;
     G4ThreeVector cutMovePiece[4] ;
     G4Tubs* cutTubeLocation[4] ;
+
+    cutTubeX0 = (fDetectorTotalLength +fBentEndLength
+          - fRearPlateThickness -fCanFaceThickness)/2.0
+            + fShift +fAppliedBackShift ;
 
     cutTubeY0 = (fDetectorTotalWidth/2.0) - (fBentEndLength * tan(fBentEndAngle)) ;
 
@@ -1522,10 +1526,14 @@ G4SubtractionSolid* DetectionSystemGriffin::ExtraColdBlock() {
 
     // Fix overlap
     G4SubtractionSolid* fixExtraColdBlock[4];
-    G4double cutTubeY0, cutYMov, cutZMov;
+    G4double cutTubeX0, cutTubeY0, cutYMov, cutZMov;
     G4RotationMatrix* cutRotatePiece[4] ;
     G4ThreeVector cutMovePiece[4] ;
     G4Tubs* cutTubeLocation[4] ;
+
+    cutTubeX0 = (fDetectorTotalLength +fBentEndLength
+          - fRearPlateThickness -fCanFaceThickness)/2.0
+            + fShift +fAppliedBackShift ;
 
     cutTubeY0 = (fDetectorTotalWidth/2.0) - (fBentEndLength * tan(fBentEndAngle)) ;
 

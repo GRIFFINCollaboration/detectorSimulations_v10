@@ -32,8 +32,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef DETECTIONSYSTEMGRIFFIN_HH
-#define DETECTIONSYSTEMGRIFFIN_HH
+#ifndef DetectionSystemGriffin_h
+#define DetectionSystemGriffin_h 1
 
 #include "G4SubtractionSolid.hh"
 #include "G4UnionSolid.hh"

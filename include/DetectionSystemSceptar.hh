@@ -32,8 +32,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef DETECTIONSYSTEMSCEPTAR_HH
-#define DETECTIONSYSTEMSCEPTAR_HH
+#ifndef DetectionSystemSceptar_h
+#define DetectionSystemSceptar_h 1
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"

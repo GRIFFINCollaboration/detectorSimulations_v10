@@ -32,9 +32,10 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef DETECTIONSYSTEMPACES_HH
-#define DETECTIONSYSTEMPACES_HH
+#ifndef DetectionSystemPaces_h
+#define DetectionSystemPaces_h 1
 
+#include "DetectionSystemPaces.hh"
 #include "globals.hh"
 
 class DetectionSystemPaces

@@ -32,8 +32,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef DETECTIONSYSTEM8PI_HH
-#define DETECTIONSYSTEM8PI_HH
+#ifndef DetectionSystem8pi_h
+#define DetectionSystem8pi_h 1
 
 #include "DetectionSystem8pi.hh"
 #include "globals.hh"

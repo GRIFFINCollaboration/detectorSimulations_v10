@@ -32,8 +32,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef DETECTIONSYSTEMS3_HH
-#define DETECTIONSYSTEMS3_HH
+#ifndef DetectionSystemS3_h
+#define DetectionSystemS3_h 1
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"

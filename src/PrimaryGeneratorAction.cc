@@ -51,9 +51,9 @@
 
 #include "DetectorConstruction.hh" //for detector based information
 #include "HistoManager.hh"
+#include "BeamDistribution.hh"
 
-using namespace CLHEP;
-
+using namespace CLHEP; //for pi
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -67,6 +67,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* DC)
     fParticleGun  = new G4ParticleGun(nParticle); //In our code, the gun is called fParticleGun
     //create a messenger for this class
     fGunMessenger = new PrimaryGeneratorMessenger(this);
+    
     
     //these 3 lines initialise the Gun, basic values
     fParticleGun->SetParticleEnergy(0*eV);
@@ -82,9 +83,8 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* DC)
     fEffParticleBool = false;
     fEffPolarization = false;
     fEffBeam = false;
-
+    LaBrinit(); //sets up default variables - messy having them all declared here
     
-    LaBrInit(); //sets up default variables - messy having them all declared here
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -251,12 +251,16 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	      
 	      effdirection = G4ThreeVector(SinTheta*cos(Phi), SinTheta*sin(Phi), -CosTheta);
 	     // G4cout << effdirection << G4endl;
-	  if (fConeAngleBool) HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[0], SinTheta);//tan(phi) if yCone/xCone 	      
-	  if (fConeAngleBool) HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fAngleDistro[1], asin(SinTheta), asin(sin(Phi)));//tan(phi) if yCone/xCone 	      
+	  if (fConeAngleBool) HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[0], SinTheta);//tan(phi) if yCone/xCone 	      
+	  if (fConeAngleBool) HistoManager::Instance().Fill2DHisto(HistoManager::Instance().angledistro[1], asin(SinTheta), asin(sin(Phi)));//tan(phi) if yCone/xCone 	      
 	     // effdirection = SetCone(tan(fAngleInit),1);//read in as degree, GEANT auto-convert to rads
-	    }
-	} else {
-	    //G4cout << "Random " << G4endl; //may offer the solution, an altered 2pi rando. Using 4pi for efficiency
+
+	    }	  
+	} 
+	
+	else {
+	    
+// 	    G4cout << "Random " <<  G4endl; //may offer the solution, an altered 2pi rando. Using 4pi for efficiency
             // random direction if no preference provided
             effRandCosTheta = 2.*G4UniformRand()-1.0; //cos(theta) = 2cos^2(0.5theta)-1 ??
             effRandSinTheta = sqrt( 1. - effRandCosTheta*effRandCosTheta ); //from sin^2(theta)+cos^2(theta)=1
@@ -266,22 +270,25 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         }
 	//std::cout<<thisEffPosition<<effPart<<effdirection<<fEffEnergy<<std::endl; //gives beam starting pos as expected
 	//effpart is mem location, but all the same indicating just the electron //effdirection is random as expected
-	if(fNeedBeamDistro){
-	  
+if(NeedBeamDistro){
+// 	  G4cout << "BEAM DISTR" << G4endl;
 	  G4double x = G4RandGauss::shoot(0.,1.)*mm;//9mm = target radius for now
 	  G4double y = G4RandGauss::shoot(0.,1.)*mm;
-	  G4double z = -(G4UniformRand()*(fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity)) 
-		    - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) + fDetector->fTargetZ;// divide by two as equally placed around beampos
-	  if(fDetector->fTargetZ < -3.9*mm) z -=  0.5*mm;
-// 	  G4cout << "rand downstream stuff 0->thick: " << -G4UniformRand()*fDetector->fSpiceTargetThickness/(fDetector->fSpiceTargetDensity) << G4endl;
-//  	  G4cout << "hALF TARG THICK: (0.5)" << (fDetector->fSpiceTargetThickness/(fDetector->fSpiceTargetDensity*2.)) << G4endl;
-//  	  G4cout << "z-value for beam distro (0.5 to -0.5): " << z << " Beampos: " << fDetector->fTargetZ << G4endl;
-//   	  G4cout << "EXTRA???: " << - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) << G4endl;
+	  G4double z = +(0.62*micrometer*G4UniformRand())+5.32*micrometer //aerial density calc from file
+		   - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) + fDetector->targetz;
+// 	 G4double z = -(G4UniformRand()*(fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity)) 
+// - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) + fDetector->targetz;
+	  if(fDetector->targetz < -3.9*mm) z -=  0.5*mm;
 	  thisEffPosition = G4ThreeVector(x,y,z);
-	HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fAngleDistro[1], x, y);
-	HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[2],z);
-	HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[3],x);
-	HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[4],y);
+	  HistoManager::Instance().Fill2DHisto(HistoManager::Instance().angledistro[1], x, y);
+	  HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[2],z);
+	  
+// 	  G4cout << (0.62*G4UniformRand())*micrometer+5.32*micrometer << " NEW " << G4endl;
+// 	  G4cout <<  - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) << " initial " << G4endl;
+//  	  G4cout << z << " ZZZ " << G4endl;
+	  HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[3],x);
+	  HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[4],y);
+	    
 	}
 	//after running through if-statements above we now have particle type definition, position, mom. direction, and the energy (or their initialised values)
         fParticleGun->SetParticleDefinition(effPart);
@@ -322,13 +329,21 @@ G4ThreeVector PrimaryGeneratorAction::SetCone(G4double ConeRadius, G4double zVal
 }
 
 void PrimaryGeneratorAction::PassTarget(G4double BeamZ){
-      fDetector->fTargetZ = BeamZ;
+      fDetector->targetz = BeamZ;
 }
 
-void PrimaryGeneratorAction::SendBeamEnergyToHist(G4double input){ HistoManager::Instance().BeamEnergy = input;}
+void PrimaryGeneratorAction::sendbeamenergytohist(G4double input){ HistoManager::Instance().BeamEnergy = input;}
 
+void PrimaryGeneratorAction::PrepareBeamFile(){
+	/*fBeamDistribution = new BeamDistribution();
+  	G4String filename = fDetector->fSpiceTargetMaterial + ".dat";
+	G4cout << filename << G4endl;
+	fBeamDistribution->ReadIn(filename);//read in values from file 
+	fBeamDistribution->ReadOut();//read out values (for error-checking)
+	fBeamDistribution->SumProb();//For normalisation purposes*/	
+}
 
-void PrimaryGeneratorAction::LaBrInit() {
+void PrimaryGeneratorAction::LaBrinit() {
   //default LaBr properties
     G4double triangleThetaAngle = 54.735610317245360*deg;
     // theta

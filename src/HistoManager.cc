@@ -40,13 +40,14 @@
 HistoManager::HistoManager() {
     fFileName[0] = "g4out";
     fFactoryOn = false;
-
+   
     // Only fill one NTuple at a time. If fStepTrackerBool is true, then fHitTrackerBool should be false, or vise-versa.
     // There is no need to have the hit NTuple and the step NTuple.
     fHitTrackerBool = true;
     fStepTrackerBool = false;
 
     fMakeHistoIndex = 0;
+    //short segmenthisto[120];//this array will hold segment IDs to be transferred to reference for histos
     
     // histograms
     for (G4int k=0; k<MAXHISTO; k++) {
@@ -81,8 +82,7 @@ HistoManager::~HistoManager()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void HistoManager::Book() {
-    G4cout << BeamEnergy << " <- Input beam energy ot histomanager" << G4endl;
-    
+   G4cout << BeamEnergy << " <- Input beam energy ot histomanager" << G4endl;
     G4String name;
     G4String title;
     G4String detString;
@@ -118,11 +118,7 @@ void HistoManager::Book() {
 
     // Create directories
     analysisManager->SetHistoDirectoryName("histo");//subfolder in root file
-    /*if(fSpice){
-      for(G4int i=0; i < MAXNUMDETSPICE; i++){
-      analysisManager->SetHistoDirectoryName("RingNumber "+MAXNUMDETSPICE);//subfolder in root file
-    }}*/ //doesn't work
-    
+
     // Open an output file
     G4bool fileOpen = analysisManager->OpenFile(fFileName[0]); 
     if (!fileOpen) {
@@ -153,7 +149,7 @@ void HistoManager::Book() {
     xmin      = 0.;
     xmax      = 4.;
     MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-    fAngleDistro[0]=fMakeHistoIndex;
+    angledistro[0]=fMakeHistoIndex;
     
     name  = "x-y";
     title     = "X-Y 2D distribution";
@@ -161,15 +157,15 @@ void HistoManager::Book() {
     xmin      = -6.;
     xmax      = 6.;
     Make2DHistoWithAxisTitles(analysisManager, name,  title, nbins, xmin, xmax, nbins, xmin, xmax);
-    fAngleDistro[1]=fMakeHistoIndex;
+    angledistro[1]=fMakeHistoIndex;
 
     name  = "z-distribution";
     title     = "z-distro";
     nbins     = 10000;
-    xmin      = -0.0206;
-    xmax      = -0.0198;
+    xmin      = -0.018;
+    xmax      = -0.014;
     MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-    fAngleDistro[2]=fMakeHistoIndex;
+    angledistro[2]=fMakeHistoIndex;
     
     name  = "x-distribution";
     title     = "x-distro";
@@ -177,7 +173,7 @@ void HistoManager::Book() {
     xmin      = -10.;
     xmax      = 10.;
     MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-    fAngleDistro[3]=fMakeHistoIndex;
+    angledistro[3]=fMakeHistoIndex;
     
     name  = "y-distribution";
     title     = "y-distro";
@@ -185,7 +181,7 @@ void HistoManager::Book() {
     xmin      = -10.;
     xmax      = 10.;
     MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-    fAngleDistro[4]=fMakeHistoIndex;
+    angledistro[4]=fMakeHistoIndex;
     
     if(fGridCell && WRITEEKINHISTOS) {
         for (G4int i=0; i < MAXNUMDET; i++) {
@@ -411,11 +407,11 @@ void HistoManager::Book() {
 	  
 	  name  = "spice_edep"; //edep = energy deposition
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	  fSpiceHistNumbers[0]=fMakeHistoIndex; //assigns array item the histo index, for reference by FillHisto()
+	  SpiceHistNumbers[0]=fMakeHistoIndex; //assigns array item the histo index, for reference by FillHisto()
 
 	  name  = "spice_edep_sum";// summed
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	  fSpiceHistNumbers[1]=fMakeHistoIndex;
+	  SpiceHistNumbers[1]=fMakeHistoIndex;
 	  
 	  for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){
 	    detString = G4intToG4String(ring);
@@ -425,7 +421,7 @@ void HistoManager::Book() {
             name  = "spice_edep_det0" + detString + "phi" + segString;
             MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 	    
-	   fSpiceHistNumbers[ring*MAXNUMDETSPICE+i+2]=fMakeHistoIndex;
+	   SpiceHistNumbers[ring*MAXNUMDETSPICE+i+2]=fMakeHistoIndex;
 	  }
 	  }
 	  
@@ -435,11 +431,11 @@ void HistoManager::Book() {
 		    
 			 name  = "paces_crystal_edep";
 			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	    fPacesHistNumbers[0]=fMakeHistoIndex;
+	    PacesHistNumbers[0]=fMakeHistoIndex;
 	    
 			 name  = "paces_crystal_edep_sum";
 			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	    fPacesHistNumbers[1]=fMakeHistoIndex;
+	    PacesHistNumbers[1]=fMakeHistoIndex;
 	    
 			 for (G4int i=0; i < MAXNUMDETPACES; i++) {//[MAXNUMDET];
             detString = G4intToG4String(i);
@@ -447,7 +443,7 @@ void HistoManager::Book() {
             name  = "paces_crystal_edep_det" + detString;
             MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 	    
-	    fPacesHistNumbers[i+2]=fMakeHistoIndex;
+	    PacesHistNumbers[i+2]=fMakeHistoIndex;
 			 }
 		  }//if(fPaces)
 	 }//if(WRITEEDEPHISTOS)
@@ -523,7 +519,7 @@ void HistoManager::Save() {
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
+//fMakeHistoIndex is global in Histomanager so allowed in any scope below unaltered
 void HistoManager::MakeHisto(G4AnalysisManager* analysisManager, G4String name,  G4String title, G4double xmin, G4double xmax, G4int nbins) {
     fMakeHistoIndex++;
     if (fMakeHistoIndex >= MAXHISTO) {
@@ -536,8 +532,6 @@ void HistoManager::MakeHisto(G4AnalysisManager* analysisManager, G4String name, 
     fHistPt[fMakeHistoIndex] = analysisManager->GetH1(fHistId[fMakeHistoIndex]);
 
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void HistoManager::MakeHistoWithAxisTitles(G4AnalysisManager* analysisManager, G4String name, 
 					   G4String title, G4double xmin, G4double xmax, 
@@ -578,8 +572,6 @@ void HistoManager::FillHisto(G4int ih, G4double xbin, G4double weight) {
     if (fHistPt[ih]) fHistPt[ih]->fill(xbin, weight);
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 void HistoManager::Fill2DHisto(G4int ih, G4double xbin, G4double ybin, G4double weight) {
     if (ih >= MAXHISTO) {
         G4cout << "---> warning from HistoManager::FillHisto() : histo " << ih
@@ -588,6 +580,8 @@ void HistoManager::Fill2DHisto(G4int ih, G4double xbin, G4double ybin, G4double 
     }
     if (fHistPt2[ih]) fHistPt2[ih]->fill(xbin, ybin, weight);
 }
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void HistoManager::Normalize(G4int ih, G4double fac) {
     if (ih >= MAXHISTO) {
