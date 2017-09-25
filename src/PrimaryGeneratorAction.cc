@@ -260,7 +260,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	
 	else {
 	    
-// 	    G4cout << "Random " <<  G4endl; //may offer the solution, an altered 2pi rando. Using 4pi for efficiency
+	    //G4cout << "Random " <<  G4endl; //may offer the solution, an altered 2pi rando. Using 4pi for efficiency
             // random direction if no preference provided
             effRandCosTheta = 2.*G4UniformRand()-1.0; //cos(theta) = 2cos^2(0.5theta)-1 ??
             effRandSinTheta = sqrt( 1. - effRandCosTheta*effRandCosTheta ); //from sin^2(theta)+cos^2(theta)=1
@@ -270,25 +270,40 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         }
 	//std::cout<<thisEffPosition<<effPart<<effdirection<<fEffEnergy<<std::endl; //gives beam starting pos as expected
 	//effpart is mem location, but all the same indicating just the electron //effdirection is random as expected
-if(NeedBeamDistro){
-// 	  G4cout << "BEAM DISTR" << G4endl;
+	if(NeedBeamDistro){
+	  // 	  G4cout << "BEAM DISTR" << G4endl;
 	  G4double x = G4RandGauss::shoot(0.,1.)*mm;//9mm = target radius for now
 	  G4double y = G4RandGauss::shoot(0.,1.)*mm;
 	  G4double z = +(0.62*micrometer*G4UniformRand())+5.32*micrometer //aerial density calc from file
 		   - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) + fDetector->targetz;
-// 	 G4double z = -(G4UniformRand()*(fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity)) 
-// - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) + fDetector->targetz;
+	  // 	 G4double z = -(G4UniformRand()*(fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity)) 
+	  // - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) + fDetector->targetz;
 	  if(fDetector->targetz < -3.9*mm) z -=  0.5*mm;
 	  thisEffPosition = G4ThreeVector(x,y,z);
 	  HistoManager::Instance().Fill2DHisto(HistoManager::Instance().angledistro[1], x, y);
 	  HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[2],z);
 	  
-// 	  G4cout << (0.62*G4UniformRand())*micrometer+5.32*micrometer << " NEW " << G4endl;
-// 	  G4cout <<  - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) << " initial " << G4endl;
-//  	  G4cout << z << " ZZZ " << G4endl;
+	  // 	  G4cout << (0.62*G4UniformRand())*micrometer+5.32*micrometer << " NEW " << G4endl;
+	  // 	  G4cout <<  - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) << " initial " << G4endl;
+	  //  	  G4cout << z << " ZZZ " << G4endl;
 	  HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[3],x);
 	  HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[4],y);
 	    
+	}
+	if(NeedFileDistro){
+	  G4double x = G4RandGauss::shoot(0.,1.)*mm;//9mm = target radius for now
+	  G4double y = G4RandGauss::shoot(0.,1.)*mm;
+	  G4double z = -fBeamDistribution->SelectDist(G4UniformRand())-
+		      (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) 
+			      + fDetector->targetz;//SelectDist already has units
+	  
+	  if(fDetector->targetz < -3.9*mm) z -=  0.5*mm; //extra frame no non-existent
+	  thisEffPosition = G4ThreeVector(x,y,z);
+// 	  G4cout << z << " ZZZ " << G4endl;
+	  HistoManager::Instance().Fill2DHisto(HistoManager::Instance().angledistro[1], x, y);
+	  HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[2],z);
+	  HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[3],x);
+	  HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[4],y);
 	}
 	//after running through if-statements above we now have particle type definition, position, mom. direction, and the energy (or their initialised values)
         fParticleGun->SetParticleDefinition(effPart);
@@ -335,9 +350,9 @@ void PrimaryGeneratorAction::PassTarget(G4double BeamZ){
 void PrimaryGeneratorAction::sendbeamenergytohist(G4double input){ HistoManager::Instance().BeamEnergy = input;}
 
 void PrimaryGeneratorAction::PrepareBeamFile(){
-	/*fBeamDistribution = new BeamDistribution();
-  	G4String filename = fDetector->fSpiceTargetMaterial + ".dat";
-	G4cout << filename << G4endl;
+	fBeamDistribution = new BeamDistribution();
+  	G4String filename = fDetector->fSpiceTargetMaterial + ".dat";//e.g. Calcium.dat
+	fBeamDistribution->fSpiceTargetThickness = (fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity);
 	fBeamDistribution->ReadIn(filename);//read in values from file 
 	fBeamDistribution->ReadOut();//read out values (for error-checking)
 	fBeamDistribution->SumProb();//For normalisation purposes*/	

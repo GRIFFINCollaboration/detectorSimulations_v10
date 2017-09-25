@@ -79,7 +79,8 @@ private:
     G4UIcmdWithADoubleAndUnit*     fConeRValueCmd;
     G4UIcmdWithADoubleAndUnit*     fConeAngleCmd;
     G4UIcmdWithADoubleAndUnit*     fConeMinAngleCmd;
-    G4UIcmdWithABool* fBeamDistroCmd;
+    G4UIcmdWithABool* 		   fBeamDistroCmd;
+    G4UIcmdWithABool* 		   fBeamFileCmd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

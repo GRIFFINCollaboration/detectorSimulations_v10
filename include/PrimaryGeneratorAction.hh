@@ -84,6 +84,7 @@ public:
     void PassTarget(G4double);
     void PrepareBeamFile();
     G4bool NeedBeamDistro = false;
+    G4bool NeedFileDistro = false;
     
 private:
     //variables

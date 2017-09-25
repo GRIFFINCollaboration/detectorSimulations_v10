@@ -158,10 +158,6 @@ G4int DetectionSystemSpice::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int n
 		  segmentID++;
 		} // end for(int Seg=0; Seg<NumberSeg; Seg++)
     } // end for(int ring = 0; ring<nRings; ring++)
-  
-  
-  //G4cin.get();
-
  
   return 1;
 }

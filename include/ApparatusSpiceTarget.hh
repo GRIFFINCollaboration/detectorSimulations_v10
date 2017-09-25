@@ -37,6 +37,7 @@
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
+
 //forward declare for placement
 class G4VPhysicalVolume;
 
@@ -59,7 +60,8 @@ class ApparatusSpiceTarget
     G4VPhysicalVolume* fTargetProtectorPhys;
     
     //Material manager
-//     G4NistManager* man = G4NistManager::Instance();
+//  G4NistManager* man = G4NistManager::Instance();
+    
   private://variables for build, set in the class as read in
     G4String fTargetMaterial;
     G4double fTargetMaterialDensity;

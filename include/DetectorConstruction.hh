@@ -256,11 +256,11 @@ private:
     G4String      fSpiceTargetProtectorMaterial;
 
 public://accessed by PGA
-    G4double      fSpiceTargetThickness=0.0;
+    G4double      fSpiceTargetThickness;
     G4double 	  fSpiceTargetDensity;
-    G4double      fSpiceTargetBackerThickness=0.0;
+    G4double      fSpiceTargetBackerThickness;
     G4double 	  fSpiceTargetBackerDensity;
-    G4double      fSpiceTargetProtectorThickness=0.0;
+    G4double      fSpiceTargetProtectorThickness;
     G4double 	  fSpiceTargetProtectorDensity;
     G4String      fSpiceTargetMaterial;
 private: 
@@ -275,7 +275,7 @@ private:
 
     G4String fMatWorldName;
 
-    ApparatusSpiceTarget* pApparatusSpiceTarget;
+    ApparatusSpiceTarget* fApparatusSpiceTarget;
     DetectorMessenger* fDetectorMessenger;
     
 

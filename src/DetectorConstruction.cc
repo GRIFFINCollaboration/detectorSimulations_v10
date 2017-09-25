@@ -324,8 +324,8 @@ void DetectorConstruction::SetSpiceTarget()
 	  G4double surface_density = fSpiceTargetThickness/(mg/cm2);
 	  G4double density = fSpiceTargetDensity/(g/cm3);
 	  
-	  pApparatusSpiceTarget->BuildTarget(name, surface_density, density);
-	  pApparatusSpiceTarget->PlaceTarget(fLogicWorld);
+	  fApparatusSpiceTarget->BuildTarget(name, surface_density, density);
+	  fApparatusSpiceTarget->PlaceTarget(fLogicWorld);
 	}
     }
   }
@@ -359,8 +359,8 @@ void DetectorConstruction::SetSpiceBackerTarget( )
 	  G4double surface_density = fSpiceTargetBackerThickness/(mg/cm2);
 	  G4double density = fSpiceTargetBackerDensity/(g/cm3);
 	  
-	  pApparatusSpiceTarget->BuildBacker(name, surface_density, density);
-	  pApparatusSpiceTarget->PlaceTargetBacker(fLogicWorld);
+	  fApparatusSpiceTarget->BuildBacker(name, surface_density, density);
+	  fApparatusSpiceTarget->PlaceTargetBacker(fLogicWorld);
 	}
     }
   }
@@ -393,8 +393,8 @@ void DetectorConstruction::SetSpiceProtectorTarget()
 	  G4double surface_density = fSpiceTargetProtectorThickness/(mg/cm2);
 	  G4double density = fSpiceTargetProtectorDensity/(g/cm3);
 	  
-	  pApparatusSpiceTarget->BuildProtector(name, surface_density, density);
-	  pApparatusSpiceTarget->PlaceTargetProtector(fLogicWorld);
+	  fApparatusSpiceTarget->BuildProtector(name, surface_density, density);
+	  fApparatusSpiceTarget->PlaceTargetProtector(fLogicWorld);
 	}
     }
   }
@@ -481,9 +481,9 @@ void DetectorConstruction::AddGrid() {
 void DetectorConstruction::AddApparatusSpiceTargetChamber(G4String MedLo, G4double TargetPedestal)//parameter sets lens for SPICE - should be matched with field
 {
    //Create Target Chamber
-   ApparatusSpiceTargetChamber* pApparatusSpiceTargetChamber = new ApparatusSpiceTargetChamber(MedLo, TargetPedestal);
-   pApparatusSpiceTargetChamber->Build( fLogicWorld );
-   pApparatusSpiceTarget = new ApparatusSpiceTarget(targetz);//prepares target instance after the intro of the chamber
+   ApparatusSpiceTargetChamber* fApparatusSpiceTargetChamber = new ApparatusSpiceTargetChamber(MedLo, TargetPedestal);
+   fApparatusSpiceTargetChamber->Build( fLogicWorld );
+   fApparatusSpiceTarget = new ApparatusSpiceTarget(targetz);//prepares target instance after the intro of the chamber
 }
 
 void DetectorConstruction::AddApparatus8piVacuumChamber() {
