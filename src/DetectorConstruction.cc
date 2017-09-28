@@ -165,6 +165,11 @@ DetectorConstruction::DetectorConstruction() :
   fDescantRotation.setX(M_PI);
   fDescantRotation.setY(0.);
   fDescantRotation.setZ(0.);
+  
+  fSpiceTargetThickness=0.;//otherwise when called will be a random
+  fSpiceTargetBackerThickness=0.;
+  fSpiceTargetProtectorThickness=0.;
+  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

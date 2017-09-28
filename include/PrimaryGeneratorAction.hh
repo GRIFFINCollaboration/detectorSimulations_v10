@@ -40,7 +40,7 @@
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "globals.hh"
 #include "G4ThreeVector.hh"
-
+#include <vector>
 #include "G4SystemOfUnits.hh"
 
 
@@ -79,10 +79,10 @@ public:
     void SetConeRValue( G4double num ) {fConeRValue = num; fConeValueBool = true; fEffDirectionBool = true;};
     void SetConeMaxAngle( G4double num1 ) {fAngleInit = num1; fConeAngleBool = true; fEffDirectionBool = true;};
     void SetConeMinAngle( G4double num1 ) {fAngleMinInit = num1;};
-    //booleans (initially false), above, true if a command has been entered for the loops in source file to be entered
-    void sendbeamenergytohist(G4double);
+    void SendBeamEnergyToHist(G4double);
     void PassTarget(G4double);
     void PrepareBeamFile();
+    //booleans (initially false), above, true if a command has been entered for the loops in source file to be entered
     G4bool NeedBeamDistro = false;
     G4bool NeedFileDistro = false;
     
@@ -109,6 +109,7 @@ private:
     G4double fAngleInit;
     G4bool fConeAngleBool;
     G4double fAngleMinInit;
+    std::vector<G4double> fThetaVec;
     
     //functions
     void LaBrinit();

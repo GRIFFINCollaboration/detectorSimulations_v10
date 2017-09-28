@@ -135,7 +135,6 @@ G4int DetectionSystemSpice::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int n
   //To see how the segments fill put 1 detector ring in (via macro) and 1,2,3 segments (changed here) to see how they add.
   //segments add following JanalysisToolkit convention
   G4int NumberSeg = 12; // Segments in Phi for loop below - originally 12
-  G4int segmentID=0;
   G4double annularDetectorDistance = 115*mm /*+ 150*mm*/;
   G4ThreeVector pos(0,0,-annularDetectorDistance); 
     for(int ring=0; ring<nRings; ring++)
@@ -146,16 +145,16 @@ G4int DetectionSystemSpice::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int n
 		  G4double angle = (360.*deg/TotalNumberSeg)*(-Seg); // Seg = {0, ...,11} //changed to -seg and fills in correctly
 		  G4RotationMatrix* rotate = new G4RotationMatrix;
 		  rotate->rotateZ(-180*deg-angle); // the axis are inverted, this operation will correct for it  [MHD : 03 April 2014]
-				   //affecting value here (originally 210) may help mapping
-				   //180 deg gave correct start position for 1st ring, needs to now fill opposite direction
-				   //could bring in loops to here as to iterate and allow for staggered start position (add 30 deg for each ring etc)
-				   //as filling in reverse, can establish the histos in reverse then fill in normally 
+		      //affecting value here (originally 210) may help mapping
+		      //180 deg gave correct start position for 1st ring, needs to now fill opposite direction
+		      //could bring in loops to here as to iterate and allow for staggered start position (add 30 deg for each ring etc)
+		      //as filling in reverse, can establish the histos in reverse then fill in normally 
+// 		  G4double anglerad = (-165*deg-angle)*180/pi;//180 to 165 for true mapping
 		  assemblySiRing[ring]->MakeImprint(exp_hall_log, pos, rotate, Seg);
-		  HistoManager::Instance().segmenthisto[segmentID+2];
-		  G4double anglerad = (-165*deg-angle)*180/pi;//180 to 165 for true mapping
-		  //G4cout << "DetectionSystemSpice :: Ring number : "<< ring <<  " SegNumber in ring : "<< Seg << " SegmentNumber in detector : " <<segmentID<< " at phi angle "<<anglerad<< G4endl;
+		  
+// 		  G4cout << "DetectionSystemSpice::Ring number:"<< ring <<  " SegNumber in ring:"<< Seg << " SegmentNumber in detector:" <<segmentID<< " at phi angle"<<anglerad<< G4endl;
 		  //above for mapping output
-		  segmentID++;
+
 		} // end for(int Seg=0; Seg<NumberSeg; Seg++)
     } // end for(int ring = 0; ring<nRings; ring++)
  

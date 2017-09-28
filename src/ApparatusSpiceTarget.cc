@@ -29,6 +29,7 @@ ApparatusSpiceTarget::ApparatusSpiceTarget(G4double beaminput) {
   this->fTargetBackerMaterial = "Gold";
   this->fTargetProtectorMaterial = "Gold";//initialising - may remove
   this->fTargetRadius = 9.0*mm;
+  this->fTargetBackerSurfaceDensity=0.;
 }
 
 ApparatusSpiceTarget::~ApparatusSpiceTarget()
@@ -63,7 +64,7 @@ G4int ApparatusSpiceTarget::BuildTarget(G4String input_material, G4double input_
     //this->assembly = myAssembly;
    
     G4Material* material = G4Material::GetMaterial(this->fTargetMaterial);
-    G4cout << *(G4Material::GetMaterialTable()) << G4endl;
+   // G4cout << *(G4Material::GetMaterialTable()) << G4endl;
     if( !material ) {
       G4cout << " ----> Target Material " << this->fTargetMaterial << " not found, cannot build!" << G4endl;
       return 0;

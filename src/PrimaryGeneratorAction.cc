@@ -48,7 +48,6 @@
 #include "G4Geantino.hh"
 #include "Randomize.hh"
 
-
 #include "DetectorConstruction.hh" //for detector based information
 #include "HistoManager.hh"
 #include "BeamDistribution.hh"
@@ -85,6 +84,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* DC)
     fEffBeam = false;
     LaBrinit(); //sets up default variables - messy having them all declared here
     
+    G4cout << "PGA CONSTRUCTOR" << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -93,6 +93,8 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 {
     delete fParticleGun;
     delete fGunMessenger;
+    delete fBeamDistribution;
+    for(int p=0;p<5;p++) G4cout << fThetaVec[p] << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -274,7 +276,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	  // 	  G4cout << "BEAM DISTR" << G4endl;
 	  G4double x = G4RandGauss::shoot(0.,1.)*mm;//9mm = target radius for now
 	  G4double y = G4RandGauss::shoot(0.,1.)*mm;
-	  G4double z = +(0.62*micrometer*G4UniformRand())+5.32*micrometer //aerial density calc from file
+	  G4double z = -G4UniformRand()*(fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity)/2. //aerial density calc from file
 		   - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) + fDetector->targetz;
 	  // 	 G4double z = -(G4UniformRand()*(fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity)) 
 	  // - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) + fDetector->targetz;
@@ -285,7 +287,8 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	  
 	  // 	  G4cout << (0.62*G4UniformRand())*micrometer+5.32*micrometer << " NEW " << G4endl;
 	  // 	  G4cout <<  - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) << " initial " << G4endl;
-	  //  	  G4cout << z << " ZZZ " << G4endl;
+// 	    	  G4cout << z << "=ZZZ " << -(fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity)/2. << "=target thicc " << fDetector->targetz 
+// 	    	  << "=macro beampos " << - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) << "=backer" << G4endl;
 	  HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[3],x);
 	  HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[4],y);
 	    
@@ -310,8 +313,10 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         fParticleGun->SetParticlePosition(thisEffPosition);
         fParticleGun->SetParticleMomentumDirection(effdirection);
         fParticleGun->SetParticleEnergy(fEffEnergy);
-	
-	
+// 	G4cout << "Just before" << G4endl;
+	HistoManager::Instance().fBeamTheta = acos(effdirection.z()/effdirection.mag());//crashes if deposition (I think)
+	HistoManager::Instance().fBeamPhi = atan(effdirection.y()/effdirection.x());
+	fThetaVec.push_back(acos(effdirection.z()/effdirection.mag()));//theta is second parameter
     }
 
     // Set Optional Polarization
@@ -347,7 +352,9 @@ void PrimaryGeneratorAction::PassTarget(G4double BeamZ){
       fDetector->targetz = BeamZ;
 }
 
-void PrimaryGeneratorAction::sendbeamenergytohist(G4double input){ HistoManager::Instance().BeamEnergy = input;}
+void PrimaryGeneratorAction::SendBeamEnergyToHist(G4double inputenergy){
+      HistoManager::Instance().fBeamEnergy = inputenergy;
+}
 
 void PrimaryGeneratorAction::PrepareBeamFile(){
 	fBeamDistribution = new BeamDistribution();
@@ -355,7 +362,7 @@ void PrimaryGeneratorAction::PrepareBeamFile(){
 	fBeamDistribution->fSpiceTargetThickness = (fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity);
 	fBeamDistribution->ReadIn(filename);//read in values from file 
 	fBeamDistribution->ReadOut();//read out values (for error-checking)
-	fBeamDistribution->SumProb();//For normalisation purposes*/	
+	fBeamDistribution->SumProb();//For normalisation purposes
 }
 
 void PrimaryGeneratorAction::LaBrinit() {

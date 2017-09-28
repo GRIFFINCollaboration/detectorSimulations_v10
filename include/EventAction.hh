@@ -40,6 +40,7 @@
 #include "G4UserEventAction.hh"
 #include "globals.hh"
 #include "HistoManager.hh"
+#include <vector>
 
 class RunAction;
 class HistoManager;
@@ -89,7 +90,7 @@ public:
 
     void AddHitTracker(G4String mnemonic, G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int trackerZ);
     void AddStepTracker(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int trackerZ);
-
+    
 
 private:
     RunAction*    fRunAct;
@@ -110,7 +111,8 @@ private:
     void FillSpice() ; ///19/7
     void FillGridCell() ;
     void FillTest(); ///27/6
-
+    void MultiplicitySPICE(G4double);//Tidies up SPICE fill function
+    
     // Tracking info
     G4int    fHitTrackerI[NUMSTEPVARS][MAXHITS];
     G4double fHitTrackerD[NUMSTEPVARS][MAXHITS];
@@ -126,10 +128,12 @@ private:
     G4int    fPTrackID;
     G4int    fPParentID;
     
-    G4int    fSpiceMultiplicity=0;
+    //SPICE arrays and sub-variables
+    G4int    fSpiceMultiplicity, fSpiceIterator;
     G4int    MultiplicityArray[5];
-
-
+    G4double fDepEnergy;
+    std::vector<G4double> fDepVec, fSegVec, fThetaVec, fPhiVec;
+    
     // Particle types in simulation
     G4int fParticleTypes[NUMPARTICLETYPES];
 

@@ -37,8 +37,6 @@
 #include "PrimaryGeneratorAction.hh"
 #include "ApparatusSpiceTarget.hh"//for BeamPos
 #include "DetectorConstruction.hh"//for SPICE target pedestal tunnelling
-#include "HistoManager.hh"//Beam energy tunnelling
-#include "BeamDistribution.hh"
 
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithADouble.hh"
@@ -148,7 +146,7 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
     if(command == fEfficiencyEnergyCmd ) {
         fAction->SetEfficiencyEnergy(fEfficiencyEnergyCmd->GetNewDoubleValue(newValue));
 	G4cout << fEfficiencyEnergyCmd->GetNewDoubleValue(newValue) << " <- Input beam energy to PGM" << G4endl;
-	fAction->sendbeamenergytohist(fEfficiencyEnergyCmd->GetNewDoubleValue(newValue));
+	fAction->SendBeamEnergyToHist(fEfficiencyEnergyCmd->GetNewDoubleValue(newValue));
 		  return;
     }
     if( command == fEfficiencyDirectionCmd ) {
@@ -200,11 +198,11 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
     }
     if( command == fBeamDistroCmd ) {
 	fAction->NeedBeamDistro = fBeamDistroCmd->GetNewBoolValue(newValue);
-	G4cout << "Beam Distribution within SPICE target selected" << G4endl;
+	G4cout << "Beam Distribution within SPICE target selected"  << fBeamDistroCmd->GetNewBoolValue(newValue) << G4endl;
     }
     if( command == fBeamFileCmd ) {
 	fAction->NeedFileDistro = fBeamFileCmd->GetNewBoolValue(newValue);
-	G4cout << "Beam Distribution within SPICE target selected" << G4endl;
+	G4cout << "Beam Distribution within SPICE target selected "<< G4endl;
 	fAction->PrepareBeamFile();
     }
 }

@@ -39,7 +39,6 @@
 #include "globals.hh"
 #include "G4SystemOfUnits.hh"
 class PrimaryGeneratorAction;
-class BeamDistribution;
 
 class G4UIdirectory;
 class G4UIcmdWithADouble;
@@ -58,8 +57,8 @@ class PrimaryGeneratorMessenger: public G4UImessenger
 public:
     PrimaryGeneratorMessenger(PrimaryGeneratorAction*);
     virtual ~PrimaryGeneratorMessenger();
-    G4double BeamPos = -7.49315; //initialise BeamPos
-    G4ThreeVector BeamPos3 = G4ThreeVector(0,0,-7.49315);
+    G4double BeamPos; 
+    G4ThreeVector BeamPos3;
 
 public:
     void SetNewValue(G4UIcommand*, G4String);

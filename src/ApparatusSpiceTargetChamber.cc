@@ -359,8 +359,6 @@ void ApparatusSpiceTargetChamber::Build(G4LogicalVolume* expHallLog)
 	BuildTargetWheel();
 	BuildTargetWheelExtension();
 	BuildTargetWheelRods();
-	BuildTargetFrame();
-	BuildCollimator();
 	BuildTargetWheelGears();
 	BuildTargetWheelGearPlates();
 	BuildGearStick();
@@ -387,15 +385,13 @@ void ApparatusSpiceTargetChamber::Build(G4LogicalVolume* expHallLog)
 	PlaceTargetChamberCylinderDownstream(expHallLog); 
 
 	PlaceTargetWheel(expHallLog); 
-	PlaceTargetWheelExtension(expHallLog); 
-	PlaceCollimator(expHallLog);  
+	PlaceTargetWheelExtension(expHallLog);  
 
 	PlaceTargetWheelGears(expHallLog); 
 	PlaceTargetWheelGearPlates(expHallLog); 
 	PlaceGearStick(expHallLog); 
 	PlaceTargetMountPlate(expHallLog); 
 	PlaceBiasPlate(expHallLog); //commented out originally
-
 
 	PlacePhotonShield(expHallLog); 
 	PlaceShieldCovering(expHallLog);
