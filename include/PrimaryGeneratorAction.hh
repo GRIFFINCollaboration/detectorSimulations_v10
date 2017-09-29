@@ -40,7 +40,6 @@
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "globals.hh"
 #include "G4ThreeVector.hh"
-#include <vector>
 #include "G4SystemOfUnits.hh"
 
 
@@ -109,7 +108,6 @@ private:
     G4double fAngleInit;
     G4bool fConeAngleBool;
     G4double fAngleMinInit;
-    std::vector<G4double> fThetaVec;
     
     //functions
     void LaBrinit();

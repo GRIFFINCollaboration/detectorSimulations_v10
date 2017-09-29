@@ -254,7 +254,6 @@ ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo, G4doubl
 	// individual offsets for visualisation
 	// -------------------------------------
 	fFrontDomeOffset = 0*CLHEP::mm;
-	//fTargetWheelOffset = 0*CLHEP::mm;
 	fMiddleRingOffset = 0*CLHEP::mm;
 	fBackDetAndAlBoxOffset = 0*CLHEP::mm;
 

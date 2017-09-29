@@ -45,9 +45,7 @@ HistoManager::HistoManager() {
     // There is no need to have the hit NTuple and the step NTuple.
     fHitTrackerBool = true;
     fStepTrackerBool = false;
-
     fMakeHistoIndex = 0;
-    //short segmenthisto[120];//this array will hold segment IDs to be transferred to reference for histos
     
     // histograms
     for (G4int k=0; k<MAXHISTO; k++) {
@@ -60,7 +58,11 @@ HistoManager::HistoManager() {
         fNtColIdHit[k] = 0;
         fNtColIdStep[k] = 0;
     }
+    for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){//initialises part of array, used for checking file creation in event action
+      for (G4int i=0; i < 12; i++) {//12 segments
 
+      SpiceHistNumbers[ring*MAXNUMDETSPICE+i+2]=0;
+    }}
 	 fGridCell = false;
  	 fGriffin  = false;
 	 fLaBr     = false;
@@ -72,6 +74,9 @@ HistoManager::HistoManager() {
 	 fPaces    = false;
 	 fDescant  = false;
 	 fTestcan  = false;
+	 
+	 G4cout << "Histo CONSTRUCTOR" << G4endl;
+	 fBeamTheta = 4.0;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -82,7 +87,7 @@ HistoManager::~HistoManager()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void HistoManager::Book() {
-   G4cout << BeamEnergy << " <- Input beam energy ot histomanager" << G4endl;
+  G4cout << "HISTOMANAGER " << fBeamEnergy << G4endl;
     G4String name;
     G4String title;
     G4String detString;
@@ -142,46 +147,6 @@ void HistoManager::Book() {
     xmin      = 0.;
     xmax      = 100.;
     MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-
-    name  = "Multiplicity of depositions";
-    title     = "Deposition multiplicity";
-    nbins     = 10000;
-    xmin      = 0.;
-    xmax      = 4.;
-    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-    angledistro[0]=fMakeHistoIndex;
-    
-    name  = "x-y";
-    title     = "X-Y 2D distribution";
-    nbins = 100;
-    xmin      = -6.;
-    xmax      = 6.;
-    Make2DHistoWithAxisTitles(analysisManager, name,  title, nbins, xmin, xmax, nbins, xmin, xmax);
-    angledistro[1]=fMakeHistoIndex;
-
-    name  = "z-distribution";
-    title     = "z-distro";
-    nbins     = 10000;
-    xmin      = -0.03;
-    xmax      = -0.02;
-    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-    angledistro[2]=fMakeHistoIndex;
-    
-    name  = "x-distribution";
-    title     = "x-distro";
-    nbins     = 10000;
-    xmin      = -10.;
-    xmax      = 10.;
-    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-    angledistro[3]=fMakeHistoIndex;
-    
-    name  = "y-distribution";
-    title     = "y-distro";
-    nbins     = 10000;
-    xmin      = -10.;
-    xmax      = 10.;
-    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-    angledistro[4]=fMakeHistoIndex;
     
     if(fGridCell && WRITEEKINHISTOS) {
         for (G4int i=0; i < MAXNUMDET; i++) {
@@ -254,7 +219,6 @@ void HistoManager::Book() {
             MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
         }
     }
-
 
     if(WRITEEDEPHISTOS) {
         // Variables and title used for all detectors
@@ -415,16 +379,54 @@ void HistoManager::Book() {
 	  
 	  for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){
 	    detString = G4intToG4String(ring);
-	  for (G4int i=0; i < 12; i++) {//12 segments
-            segString = G4intToG4String(i);
+	    for (G4int seg=0; seg < 12; seg++) {//12 segments
+	      segString = G4intToG4String(seg);
 
-            name  = "spice_edep_det0" + detString + "phi" + segString;
-            MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	    
-	   SpiceHistNumbers[ring*MAXNUMDETSPICE+i+2]=fMakeHistoIndex;
+	      name  = "spice_edep_det0" + detString + "phi" + segString;
+	      MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);//generates index
+	      
+	    SpiceHistNumbers[ring*MAXNUMSEGSPICE+seg+2]=fMakeHistoIndex;
+	    }
 	  }
-	  }
+	  name  = "Multiplicity of depositions";
+	  title     = "Deposition multiplicity";
+	  nbins     = 1000;
+	  xmin      = 0.;
+	  xmax      = 4.;
+	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  angledistro[0]=fMakeHistoIndex;
 	  
+	  name  = "x-y";
+	  title     = "X-Y 2D distribution";
+	  nbins = 100;
+	  xmin      = -6.;
+	  xmax      = 6.;
+	  Make2DHistoWithAxisTitles(analysisManager, name,  title, nbins, xmin, xmax, nbins, xmin, xmax);
+	  angledistro[1]=fMakeHistoIndex;
+
+	  name  = "z-distribution";
+	  title     = "z-distro";
+	  nbins     = 1000;
+	  xmin      = -0.03;
+	  xmax      = -0.02;
+	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  angledistro[2]=fMakeHistoIndex;
+	  
+	  name  = "x-distribution";
+	  title     = "x-distro";
+	  nbins     = 1000;
+	  xmin      = -10.;
+	  xmax      = 10.;
+	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  angledistro[3]=fMakeHistoIndex;
+	  
+	  name  = "y-distribution";
+	  title     = "y-distro";
+	  nbins     = 1000;
+	  xmin      = -10.;//explicitly defined for clarity
+	  xmax      = 10.;
+	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  angledistro[4]=fMakeHistoIndex;
 	}//if(fSpice)
 
 		  if(fPaces) {// paces detector
@@ -666,7 +668,6 @@ void HistoManager::PrintStatistic() {
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 G4String HistoManager::G4intToG4String(G4int value) {
     G4String theString;
     std::stringstream out;

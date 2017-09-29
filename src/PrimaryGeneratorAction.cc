@@ -94,7 +94,6 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
     delete fParticleGun;
     delete fGunMessenger;
     delete fBeamDistribution;
-    for(int p=0;p<5;p++) G4cout << fThetaVec[p] << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -316,7 +315,6 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 // 	G4cout << "Just before" << G4endl;
 	HistoManager::Instance().fBeamTheta = acos(effdirection.z()/effdirection.mag());//crashes if deposition (I think)
 	HistoManager::Instance().fBeamPhi = atan(effdirection.y()/effdirection.x());
-	fThetaVec.push_back(acos(effdirection.z()/effdirection.mag()));//theta is second parameter
     }
 
     // Set Optional Polarization

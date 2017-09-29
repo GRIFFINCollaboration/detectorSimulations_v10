@@ -76,9 +76,9 @@ EventAction::~EventAction() {
     std::ofstream spicekinematics;
     spicekinematics.open ("kin.dat");
     if (spicekinematics.is_open()) {
-      spicekinematics << "#Segment | Theta | Energy" << G4endl;
+      spicekinematics << "#Seg|Theta|Energy|Phi" << G4endl;
       for(int k=0; k<fSpiceIterator; ++k){
-	spicekinematics << fSegVec[k] << " " << fThetaVec[k] << G4endl;//" " << fDepVec[k] << G4endl;
+	spicekinematics << fSegVec[k] << " " << fThetaVec[k] << " " << fDepVec[k] << " " << fPhiVec[k] << G4endl;
       }
       spicekinematics.close();
     }else G4cout << "SOMETHING WENT WRONG OPENING KIN FILE " << G4endl;
@@ -372,9 +372,8 @@ void EventAction::FillSpice() {
 	    if(WRITEEDEPHISTOS)	HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[MAXNUMSEGSPICE*ring+seg+2], G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.002));
 	    fSpiceMultiplicity += 1;//iterates every deposition per fill
 	    energySumDet += G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.002);//add sum energies with a 2keV resolution for spice smearing so far - not energy dependent  
-	    fDepVec.push_back(G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.002));     
-
-	    fSegVec.push_back(((G4double) ring*MAXNUMSEGSPICE+seg));
+	    fDepVec.push_back(G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.002)); 
+	    fSegVec.push_back(( ring*MAXNUMSEGSPICE+seg)+1);
 	    fThetaVec.push_back(HistoManager::Instance().fBeamTheta);
 	    fPhiVec.push_back(HistoManager::Instance().fBeamPhi);
 	    fSpiceIterator++;//tracks counts for debugging

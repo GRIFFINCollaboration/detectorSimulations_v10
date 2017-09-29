@@ -90,7 +90,6 @@ public:
 
     void AddHitTracker(G4String mnemonic, G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int trackerZ);
     void AddStepTracker(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int trackerZ);
-    
 
 private:
     RunAction*    fRunAct;
@@ -132,8 +131,8 @@ private:
     G4int    fSpiceMultiplicity, fSpiceIterator;
     G4int    MultiplicityArray[5];
     G4double fDepEnergy;
-    std::vector<G4double> fDepVec, fSegVec, fThetaVec, fPhiVec;
-    
+    std::vector<G4double> fDepVec, fThetaVec, fPhiVec;
+    std::vector<G4int> fSegVec;
     // Particle types in simulation
     G4int fParticleTypes[NUMPARTICLETYPES];
 
