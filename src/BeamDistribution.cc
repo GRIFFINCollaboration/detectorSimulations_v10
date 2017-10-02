@@ -98,3 +98,27 @@ double BeamDistribution::SelectDist(G4double RelProb){//the stopping distance fo
     std::cout << "SOMETHING WENT WRONG" << std::endl;
     return 0.;//EXIT criteria if failed
 }
+
+//Bismuth PGA
+/*
+	//quick bismuth energy peak func
+	/*CE K 481.7 1.537 %
+	  CE L   553.8 0.442 %
+	  CE M  565.9 0.111 %
+	  CE K 975.7   7.08 %
+	  CE L    1047.8  1.84 %
+	  CE M 1059.8  0.44 %
+	G4double BiEn[6] =  {481.7,553.8,565.9,975.7,1047.8,1059.8};
+	G4double EnSplit[6] = {0.1342358079,0.1728384279,0.1825327511,0.8008733624,0.9615720524,1.};
+	G4double BiRand = G4UniformRand();
+	//G4cout << "Rando" << BiRand << G4endl;
+	G4int BiIter;
+	for(BiIter = 0; BiIter <6; BiIter ++){
+	 // G4cout << "Iterator" << BiIter << G4endl;
+	  if(BiRand < EnSplit[BiIter] ) {
+	    fEffEnergy = BiEn[BiIter]*keV;
+	    break;
+	  } 
+	}
+	
+	*/

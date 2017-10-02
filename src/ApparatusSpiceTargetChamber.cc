@@ -48,7 +48,7 @@
 ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo, G4double TargetPedestal)//parameter chooses which lens is in place.
 {
 	fTargetZ = TargetPedestal;
-	G4cout << TargetPedestal << " <- In constructor" << G4endl;
+	G4cout << TargetPedestal << " <- Beam Position in constructor" << G4endl;
 	
 	fNumberOfMagnets = 4;
 	fNumberOfFrames = 3;

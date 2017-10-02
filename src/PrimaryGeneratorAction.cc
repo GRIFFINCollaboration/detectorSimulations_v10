@@ -275,7 +275,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	  // 	  G4cout << "BEAM DISTR" << G4endl;
 	  G4double x = G4RandGauss::shoot(0.,1.)*mm;//9mm = target radius for now
 	  G4double y = G4RandGauss::shoot(0.,1.)*mm;
-	  G4double z = -G4UniformRand()*(fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity)/2. //aerial density calc from file
+	  G4double z = -G4UniformRand()*(fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity) 
 		   - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) + fDetector->targetz;
 	  // 	 G4double z = -(G4UniformRand()*(fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity)) 
 	  // - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) + fDetector->targetz;
@@ -312,10 +312,11 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         fParticleGun->SetParticlePosition(thisEffPosition);
         fParticleGun->SetParticleMomentumDirection(effdirection);
         fParticleGun->SetParticleEnergy(fEffEnergy);
-// 	G4cout << "Just before" << G4endl;
 	HistoManager::Instance().fBeamTheta = acos(effdirection.z()/effdirection.mag());//crashes if deposition (I think)
-	HistoManager::Instance().fBeamPhi = atan(effdirection.y()/effdirection.x());
+	HistoManager::Instance().fBeamPhi = atan2(effdirection.y(),effdirection.x());
+      
     }
+
 
     // Set Optional Polarization
     if(fEffPolarization) {
