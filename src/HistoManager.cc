@@ -367,34 +367,45 @@ void HistoManager::Book() {
 	  nbins     = EDEPNBINSSPICE;
 	  xmin      = EDEPXMINSPICE;
 	  xmax      = EDEPXMAXSPICE;
-	  title     = "Edep in crystal (M eV)";
+	  title     = "Edep in crystal (MeV)";
 	  
-	  name  = "spice_edep"; //edep = energy deposition
+	  name  = "full edep"; //edep = energy deposition
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 	  SpiceHistNumbers[0]=fMakeHistoIndex; //assigns array item the histo index, for reference by FillHisto()
 
-	  name  = "spice_edep_sum";// summed
+	  name  = "edep_addback";// summed
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 	  SpiceHistNumbers[1]=fMakeHistoIndex;
 	  
 	  for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){
 	    detString = G4intToG4String(ring);
-	    for (G4int seg=0; seg < 12; seg++) {//12 segments
+	    for (G4int seg=0; seg < MAXNUMSEGSPICE; seg++) {//12 segments but 3 for changes
 	      segString = G4intToG4String(seg);
-
-	      name  = "spice_edep_det0" + detString + "phi" + segString;
+	      
+	      name  = "R" + detString + "S" + segString;
 	      MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);//generates index
 	      
 	    SpiceHistNumbers[ring*MAXNUMSEGSPICE+seg+2]=fMakeHistoIndex;
 	    }
 	  }
-	  name  = "Multiplicity of depositions";
+	  name = "Beam Energy";
+	  title ="Energy of Input Beam";
+	  MakeHisto(analysisManager, name, title, xmin, xmax, nbins);
+	  angledistro[0]=fMakeHistoIndex;
+	  
+	  name = "allSegEnergies";
+	  title = "Energy vs. Segment";
+	  Make2DHistoWithAxisTitles(analysisManager, name, title,
+                 120, 0., 120., nbins, 0., xmax);
+	  angledistro[1]=fMakeHistoIndex;
+	  
+	  name  = "Multiplicity";
 	  title     = "Deposition multiplicity";
 	  nbins     = 1000;
 	  xmin      = 0.;
 	  xmax      = 4.;
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	  angledistro[0]=fMakeHistoIndex;
+	  angledistro[2]=fMakeHistoIndex;
 	  
 	  name  = "x-y";
 	  title     = "X-Y 2D distribution";
@@ -402,53 +413,86 @@ void HistoManager::Book() {
 	  xmin      = -6.;
 	  xmax      = 6.;
 	  Make2DHistoWithAxisTitles(analysisManager, name,  title, nbins, xmin, xmax, nbins, xmin, xmax);
-	  angledistro[1]=fMakeHistoIndex;
+	  angledistro[3]=fMakeHistoIndex;
 
-	  name  = "z-distribution";
-	  title     = "z-distro";
+	  title  = "z-distribution";
+	  name     = "z-distro";
 	  nbins     = 1000;
-	  xmin      = -0.03;
-	  xmax      = -0.02;
+	  xmin      = 0.;
+	  xmax      = 0.1;
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	  angledistro[2]=fMakeHistoIndex;
+	  angledistro[4]=fMakeHistoIndex;
 	  
-	  name  = "x-distribution";
-	  title     = "x-distro";
+	  title  = "x-distribution";
+	  name     = "x-distro";
 	  nbins     = 1000;
 	  xmin      = -10.;
 	  xmax      = 10.;
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	  angledistro[3]=fMakeHistoIndex;
+	  angledistro[5]=fMakeHistoIndex;
 	  
-	  name  = "y-distribution";
-	  title     = "y-distro";
+	  title  = "y-distribution";
+	  name     = "y-distro";
 	  nbins     = 1000;
 	  xmin      = -10.;//explicitly defined for clarity
 	  xmax      = 10.;
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	  angledistro[4]=fMakeHistoIndex;
+	  angledistro[6]=fMakeHistoIndex;
+	  
+	  for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){  
+	    for (G4int seg=0; seg < 3; seg++) {//12 segments but 3 for changes - adjusted in Event action
+	      
+	    title  = "Angular kinematic effects";
+	    name     = "Segment " + std::to_string(ring*MAXNUMSEGSPICE+seg) + " - Angular kinematic effects ";
+	    nbins     = 314;
+	    xmin      = 0.;//explicitly defined for clarity
+	    xmax      = 3.14;
+	    Make2DHistoWithAxisTitles(analysisManager, name, title,
+                 nbins/2, xmin, xmax, nbins, -xmax, xmax);
+
+	  
+	    SpiceAngleHists[ring*MAXNUMSEGSPICE+seg]=fMakeHistoIndex;
+	    }
+	  }
+	  title  = "Double Peak angles";
+	  name     = "Double Peaks";
+	  nbins     = 314;
+	  xmin      = 0.;//explicitly defined for clarity
+	  xmax      = 3.14;
+	  Make2DHistoWithAxisTitles(analysisManager, name, title,
+		nbins/2, xmin, xmax, nbins, -xmax, xmax);
+	  SpiceAngleHists[100]=fMakeHistoIndex;
+	  
+	  title = "Erroneous peak angular distribution";
+	  name = "480 ang. distro.";
+	  nbins     = 314;
+	  xmin      = 0.;//explicitly defined for clarity
+	  xmax      = 3.14;
+	  Make2DHistoWithAxisTitles(analysisManager, name, title,
+		nbins/2, xmin, xmax, nbins, -xmax, xmax);
+	  SpiceAngleHists[101]=fMakeHistoIndex;
 	}//if(fSpice)
 
-		  if(fPaces) {// paces detector
+	if(fPaces) {// paces detector
 		    
-			 name  = "paces_crystal_edep";
-			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	    PacesHistNumbers[0]=fMakeHistoIndex;
-	    
-			 name  = "paces_crystal_edep_sum";
-			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	    PacesHistNumbers[1]=fMakeHistoIndex;
-	    
-			 for (G4int i=0; i < MAXNUMDETPACES; i++) {//[MAXNUMDET];
-            detString = G4intToG4String(i);
+	  name  = "paces_crystal_edep";
+	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  PacesHistNumbers[0]=fMakeHistoIndex;
+	  
+	  name  = "paces_crystal_edep_sum";
+	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  PacesHistNumbers[1]=fMakeHistoIndex;
+	  
+	  for (G4int i=0; i < MAXNUMDETPACES; i++) {//[MAXNUMDET];
+	    detString = G4intToG4String(i);
 
-            name  = "paces_crystal_edep_det" + detString;
-            MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	    
+	    name  = "paces_crystal_edep_det" + detString;
+	    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  
 	    PacesHistNumbers[i+2]=fMakeHistoIndex;
-			 }
-		  }//if(fPaces)
-	 }//if(WRITEEDEPHISTOS)
+	  }
+	}//if(fPaces)
+      }//if(WRITEEDEPHISTOS)
 
 	 //title just at top of graph, string. 
 	 //Name is the reference to.
@@ -456,7 +500,8 @@ void HistoManager::Book() {
 
     ///////////////////////////////////////////////////////////////////
     // Create 1 ntuple
-    if(fHitTrackerBool) {
+    if(!fSpice){
+      if(fHitTrackerBool) {
         analysisManager->CreateNtuple("ntuple", "HitTracker");
         fNtColIdHit[0] = analysisManager->CreateNtupleIColumn("eventNumber");
         fNtColIdHit[1] = analysisManager->CreateNtupleIColumn("trackID");
@@ -477,10 +522,10 @@ void HistoManager::Book() {
 		  }
         analysisManager->FinishNtuple();
 		  G4cout<<"created ntuple HitTracker"<<G4endl;
-    }
+      }
 
 
-    if(fStepTrackerBool) {
+      if(fStepTrackerBool) {
         analysisManager->CreateNtuple("ntuple", "StepTracker");
         fNtColIdStep[0] = analysisManager->CreateNtupleIColumn("eventNumber");
         fNtColIdStep[1] = analysisManager->CreateNtupleIColumn("trackID");
@@ -500,8 +545,8 @@ void HistoManager::Book() {
 			 fNtColIdStep[14] = analysisManager->CreateNtupleIColumn("targetZ");
 		  }
         analysisManager->FinishNtuple();
+      }
     }
-
     fFactoryOn = true;
     G4cout << "\n----> Histogram Tree is opened in " << fFileName[1] << G4endl;
 }

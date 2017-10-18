@@ -283,7 +283,11 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	// ntuple
       fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry, fDet, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);//-1 on cry/det
       //fEventAction->AddStepTracker(evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry, fDet, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
-
+      //G4cout << "STEP LENGTH " << fStepNumber << " " << stepl << " " << edep<<G4endl;
+      if(fStepNumber > 5000) {
+	G4cout<< "Killing track " << evntNb << " due to looping condition" << G4endl;
+	theTrack->SetTrackStatus(fStopAndKill);
+      }
     
   }
 

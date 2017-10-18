@@ -67,7 +67,6 @@ ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo, G4doubl
 	fTargetWheelGearMaterialB = "Aluminum";
 	fGearPlateMaterial = "Aluminum";
 	fTargetMountPlateMaterial = "Peek"; 
-	fBiasPlateMaterial = "Aluminum"; 
 	fGearStickMaterial = "Peek"; 
 	fElectroBoxMaterial = "Aluminum"; 
 	fSmallBoltMaterial = "Brass"; 
@@ -122,12 +121,6 @@ ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo, G4doubl
 	fTargetRadius = 9*CLHEP::mm; //6*CLHEP::mm; // 4mm for old
 	fTargetOffset = 15*CLHEP::mm;
 	fCollimatorRadius = 9*CLHEP::mm;
-
-	// Bias Plate
-	fBiasPlateOuterRadius = 61*CLHEP::mm;
-	fBiasPlateThickness = 0.8*CLHEP::mm;
-	fBiasPlateOffsetZ = -0.2*CLHEP::mm;
-	fBiasPlateCut = 100*CLHEP::mm;
 
 	// Gears
 	fFirstGearRadius = 12.7*CLHEP::mm;
@@ -295,7 +288,6 @@ ApparatusSpiceTargetChamber::~ApparatusSpiceTargetChamber()
 	delete fGearPlateTwoLog;
 	delete fGearStickLog;
 	delete fTargetMountPlateLog;
-	delete fBiasPlateLog;
 	delete fPhotonShieldLayerOneLog;
 	delete fPhotonShieldLayerTwoLog;
 	delete fPhotonShieldLayerThreeLog;
@@ -327,7 +319,6 @@ ApparatusSpiceTargetChamber::~ApparatusSpiceTargetChamber()
 	delete fGearPlateTwoPhys;
 	delete fGearStickPhys;
 	delete fTargetMountPlatePhys;
-	delete fBiasPlatePhys;
 	delete fPhotonShieldLayerOnePhys;
 	delete fPhotonShieldLayerTwoPhys;
 	delete fPhotonShieldLayerThreePhys;
@@ -362,7 +353,6 @@ void ApparatusSpiceTargetChamber::Build(G4LogicalVolume* expHallLog)
 	BuildTargetWheelGearPlates();
 	BuildGearStick();
 	BuildTargetMountPlate();
-	BuildBiasPlate();
 	BuildPhotonShield();
 	BuildPhotonShieldClamps();
 	BuildPhotonShieldClampBolts();
@@ -390,7 +380,6 @@ void ApparatusSpiceTargetChamber::Build(G4LogicalVolume* expHallLog)
 	PlaceTargetWheelGearPlates(expHallLog); 
 	PlaceGearStick(expHallLog); 
 	PlaceTargetMountPlate(expHallLog); 
-	PlaceBiasPlate(expHallLog); //commented out originally
 
 	PlacePhotonShield(expHallLog); 
 	PlaceShieldCovering(expHallLog);
@@ -822,37 +811,6 @@ void ApparatusSpiceTargetChamber::BuildTargetMountPlate(){
 	fTargetMountPlateLog->SetVisAttributes(VisAtt);
 } // end BuildTargetMountPlate
 
-
-void ApparatusSpiceTargetChamber::BuildBiasPlate(){
-	// ** Visualisation
-	G4VisAttributes* VisAtt = new G4VisAttributes(G4Colour(AL_COL));
-	VisAtt->SetVisibility(true);
-
-	// ** Dimensions
-	G4double PlateOuterRadius = fBiasPlateOuterRadius;
-	G4double BiasPlateHalfThickness = fBiasPlateThickness/2.;
-	// Target Wheel Cut
-	G4double WheelRadius = fTargetWheelRadius;
-	G4double WheelHalfThickness = fTargetWheelThickness;
-	// Notch
-	G4double BoxLength = fBiasPlateCut/2.;
-
-	// ** Shapes
-	G4Tubs* BiasPlatePre = new G4Tubs("BiasPlatePre", 0, PlateOuterRadius, BiasPlateHalfThickness, 0, 360*CLHEP::deg);
-	G4Tubs* TargetWheel = new G4Tubs("TargetWheel", 0, WheelRadius, WheelHalfThickness, 0, 360*CLHEP::deg);
-	G4Box* NotchBox = new G4Box("NotchBox", BoxLength, BoxLength, BoxLength);	
-
-	G4double offset = fTargetWheelOffset / sqrt(2.);
-	G4ThreeVector move(offset, offset, 0);
-	G4SubtractionSolid* BiasPlatePre2 = new G4SubtractionSolid("BiasPlatePre2", BiasPlatePre, TargetWheel, 0, move);
-	G4ThreeVector move2(PlateOuterRadius, PlateOuterRadius, 0);
-	G4SubtractionSolid* BiasPlate = new G4SubtractionSolid("BiasPlate", BiasPlatePre2, NotchBox, 0, move2);
-
-	// ** Logical
-	G4Material* biasPlateMaterial = G4Material::GetMaterial(fBiasPlateMaterial);
-	fBiasPlateLog = new G4LogicalVolume(BiasPlate, biasPlateMaterial, "BiasPlateLog", 0, 0, 0);
-}
-
 void ApparatusSpiceTargetChamber::BuildPhotonShield()
 {
 	// ** Visualization
@@ -971,7 +929,7 @@ void ApparatusSpiceTargetChamber::BuildPhotonShield()
 void ApparatusSpiceTargetChamber::BuildShieldCovering()
 {
 	// ** Visualization
-	G4VisAttributes* VisAtt = new G4VisAttributes(G4Colour(KAPTON_COL));
+	G4VisAttributes* VisAtt = new G4VisAttributes(G4Colour(0.0,0.2,0.8));
 	VisAtt->SetVisibility(true);
 
 	// ** Build Photon Shield Solid
@@ -1724,18 +1682,6 @@ void ApparatusSpiceTargetChamber::PlaceTargetMountPlate(G4LogicalVolume* expHall
 			false,0);
 } // end PlaceTargetMountPlate()
 
-void ApparatusSpiceTargetChamber::PlaceBiasPlate(G4LogicalVolume* expHallLog)
-{
-	G4RotationMatrix* rotate = new G4RotationMatrix;  
-	rotate->rotateZ(45*CLHEP::deg); 
-
-	G4double ZOffset = fBiasPlateOffsetZ - fBiasPlateThickness/2. + fTargetWheelOffset;
-	G4ThreeVector move(0,0,ZOffset);
-	fBiasPlatePhys = new G4PVPlacement(rotate, move, fBiasPlateLog,
-			"BiasPlate", expHallLog, 
-			false,0);
-} // end:PlaceBiasPlate()
-
 void ApparatusSpiceTargetChamber::PlacePhotonShield(G4LogicalVolume* expHallLog)
 {
 	G4RotationMatrix* rotate = new G4RotationMatrix;
@@ -1759,13 +1705,13 @@ void ApparatusSpiceTargetChamber::PlacePhotonShield(G4LogicalVolume* expHallLog)
 			"PhotonShieldLayerTwo", expHallLog,
 			false,0);
 
-	move.set(0,0, fPhotonShieldBackFacePos
+	/*move.set(0,0, fPhotonShieldBackFacePos
 			+ fPhotonShieldLayerThreeThickness/2. 
 			+ fPhotonShieldLayerTwoThickness/2. 
 			+ fPhotonShieldLayerOneThickness/2.);
 	fPhotonShieldLayerThreePhys = new G4PVPlacement(rotate,move, fPhotonShieldLayerThreeLog,
 			"PhotonShieldLayerThree", expHallLog,
-			false,0);
+			false,0);*/
 
 }// end:PlacePhotonShield()
 

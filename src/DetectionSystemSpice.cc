@@ -136,7 +136,7 @@ G4int DetectionSystemSpice::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int n
     
   //To see how the segments fill put 1 detector ring in (via macro) and 1,2,3 segments (changed here) to see how they add.
   //segments add following JanalysisToolkit convention
-  G4int NumberSeg = 12; // Segments in Phi for loop below - originally 12
+  G4int NumberSeg = 12; // Segments in Phi for loop below
   G4double annularDetectorDistance = 115*mm /*+ 150*mm*/;
   G4ThreeVector pos(0,0,-annularDetectorDistance); 
     for(int ring=0; ring<nRings; ring++)
@@ -146,7 +146,7 @@ G4int DetectionSystemSpice::PlaceDetector(G4LogicalVolume* exp_hall_log, G4int n
 		  G4int TotalNumberSeg = (G4int)this->fSiDetPhiSegments; // total number of segments = 12
 		  G4double angle = (360.*deg/TotalNumberSeg)*(-Seg); // Seg = {0, ...,11} //changed to -seg and fills in correctly
 		  G4RotationMatrix* rotate = new G4RotationMatrix;
-		  rotate->rotateZ(-180*deg-angle); // the axis are inverted, this operation will correct for it  [MHD : 03 April 2014]
+		  rotate->rotateZ(-angle); // the axis are inverted, this operation will correct for it  [MHD : 03 April 2014]
 		      //affecting value here (originally 210) may help mapping
 		      //180 deg gave correct start position for 1st ring, needs to now fill opposite direction
 		      //could bring in loops to here as to iterate and allow for staggered start position (add 30 deg for each ring etc)
@@ -421,7 +421,7 @@ void DetectionSystemSpice::BuildAnnularClamps() {
 // Build one segment of Spice, 			       //
 // the geometry depends on the distance from the center//
 /////////////////////////////////////////////////////////
-G4Tubs* DetectionSystemSpice::BuildCrystal(G4int RingID)//called for wafer construction, splits here?? 
+G4Tubs* DetectionSystemSpice::BuildCrystal(G4int RingID)//called for wafer construction 
 {
   // define angle, length, thickness, and inner and outer diameter
   // of silicon detector segment

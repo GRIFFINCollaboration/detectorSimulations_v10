@@ -82,8 +82,8 @@ public:
     void PassTarget(G4double);
     void PrepareBeamFile();
     //booleans (initially false), above, true if a command has been entered for the loops in source file to be entered
-    G4bool NeedBeamDistro = false;
-    G4bool NeedFileDistro = false;
+    G4bool fNeedBeamDistro;
+    G4bool fNeedFileDistro;
     
 private:
     //variables

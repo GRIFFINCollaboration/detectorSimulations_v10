@@ -197,11 +197,11 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
 		  return;
     }
     if( command == fBeamDistroCmd ) {
-	fAction->NeedBeamDistro = fBeamDistroCmd->GetNewBoolValue(newValue);
+	fAction->fNeedBeamDistro = fBeamDistroCmd->GetNewBoolValue(newValue);
 	G4cout << "Beam Distribution within SPICE target selected"  << fBeamDistroCmd->GetNewBoolValue(newValue) << G4endl;
     }
     if( command == fBeamFileCmd ) {
-	fAction->NeedFileDistro = fBeamFileCmd->GetNewBoolValue(newValue);
+	fAction->fNeedFileDistro = fBeamFileCmd->GetNewBoolValue(newValue);
 	G4cout << "Beam Distribution within SPICE target selected "<< G4endl;
 	fAction->PrepareBeamFile();
     }

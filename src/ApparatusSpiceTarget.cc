@@ -9,6 +9,8 @@
 #include "G4Sphere.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
+#include "G4SubtractionSolid.hh"
+#include "G4UnionSolid.hh"
 
 #include "G4GeometryManager.hh"
 #include "G4PhysicalVolumeStore.hh"
@@ -28,8 +30,21 @@ ApparatusSpiceTarget::ApparatusSpiceTarget(G4double beaminput) {
   this->fTargetMaterial = "Gold";
   this->fTargetBackerMaterial = "Gold";
   this->fTargetProtectorMaterial = "Gold";//initialising - may remove
-  this->fTargetRadius = 9.0*mm;
+  this->fTargetRadius = 4.5*mm;
   this->fTargetBackerSurfaceDensity=0.;
+  
+  fBracketMaterial = "G4_Al";
+  fBracketSideLength = 19.77*mm;
+  fBracketBackLength = 30.77*mm;
+  fBracketBackTopThickness = 3.63*mm;//x/y-axis
+  fBracketSideTopThickness = 4.34*mm;
+  fBracketDepth = 4.08*mm;//z-axis
+  
+  fHolderMaterial = "G4_Al";
+  fHolderOuterRadii = 25.*mm;
+  fHolderInnerRadii = 6.*mm;
+  fHolderThickness = 1.*mm;
+
 }
 
 ApparatusSpiceTarget::~ApparatusSpiceTarget()
@@ -38,9 +53,13 @@ ApparatusSpiceTarget::~ApparatusSpiceTarget()
     delete fTargetSpiceLog;
     delete fTargetBackerSpiceLog;
     delete fTargetProtectorSpiceLog;
+    delete fTargetBracketLog;
+    delete fTargetHolderLog;
     delete fTargetPhys;
     delete fTargetBackerPhys;
     delete fTargetProtectorPhys;
+    delete fTargetBracketPhys;
+    delete fTargetHolderPhys;
 }
 
 G4int ApparatusSpiceTarget::BuildTarget(G4String input_material, G4double input_surface_density, G4double input_density)
@@ -70,7 +89,7 @@ G4int ApparatusSpiceTarget::BuildTarget(G4String input_material, G4double input_
       return 0;
     } 
     
-    G4Tubs* target = new G4Tubs("Spice_Target", 0.0, fTargetRadius, fTargetThickness/2.,
+    G4Tubs* target = new G4Tubs("Spice_Target", 0.0, 12.5*mm, fTargetThickness/2.,
                 0.0, 360*deg);
     
     //logical volume
@@ -96,7 +115,7 @@ G4int ApparatusSpiceTarget::BuildBacker(G4String input_material, G4double input_
       return 0;
     }
     
-    G4Tubs* target_Backer = new G4Tubs("Spice_Target_Backer", 0.0, fTargetRadius, fTargetBackerThickness/2.,
+    G4Tubs* target_Backer = new G4Tubs("Spice_Target_Backer", 0.0, 12.5*mm, fTargetBackerThickness/2.,
                 0.0, 360*deg);
     
     //logical volume
@@ -122,7 +141,7 @@ G4int ApparatusSpiceTarget::BuildProtector(G4String input_material, G4double inp
       return 0;
     }  
 
-    G4Tubs* target_Protector = new G4Tubs("Spice_Target_Protector", 0.0, fTargetRadius, fTargetProtectorThickness/2.,
+    G4Tubs* target_Protector = new G4Tubs("Spice_Target_Protector", 0.0,  12.5*mm, fTargetProtectorThickness/2.,
                 0.0, 360*deg);
     
     //logical volume
@@ -131,13 +150,62 @@ G4int ApparatusSpiceTarget::BuildProtector(G4String input_material, G4double inp
     return 1;
 }
 
+
+G4int ApparatusSpiceTarget::BuildBracket(){
+    // Set visualization attributes
+    G4VisAttributes* vis_att = new G4VisAttributes(G4Colour(132./(404.),135./404.,137./404.));//bracket
+    vis_att->SetVisibility(true); 
+
+    
+    G4Material* material = G4Material::GetMaterial(this->fBracketMaterial);
+    if( !material ) {
+      G4cout << " ----> Target Bracket Material " << this-> fBracketMaterial<< " not found, cannot build!" << G4endl;
+      return 0;
+    }  
+    
+    G4Box* OverBracket = new G4Box("Bracket", fBracketBackLength/2., fBracketSideLength/2., fBracketDepth/2.);//Larger rectangle
+    G4Box* InnerBracket = new G4Box("TakeAway", ((22.09/2.))*mm,((19.77-3.63)/2.)*mm, fBracketDepth/1.2);//Smaller rectangle
+    
+    G4RotationMatrix* sRotate = new G4RotationMatrix;//no rotation but need null-matrix
+    G4ThreeVector sTrans(0., -3.64*mm, 0.);//Moves in Y to create 3-sided bracket
+    
+    G4SubtractionSolid* Bracket = new G4SubtractionSolid("Bracket", OverBracket, InnerBracket, sRotate, sTrans);
+    
+    fTargetBracketLog = new G4LogicalVolume(Bracket, material, "target_Bracket_spice_log", 0, 0, 0);
+    fTargetBracketLog->SetVisAttributes(vis_att);
+    
+  return 1;
+}
+
+G4int ApparatusSpiceTarget::BuildHolder()
+{
+  
+    G4VisAttributes* vis_att = new G4VisAttributes(G4Colour(0.4,0.4,0.2));
+    vis_att->SetVisibility(true);
+
+    G4Material* material = G4Material::GetMaterial(fHolderMaterial);
+   // G4cout << *(G4Material::GetMaterialTable()) << G4endl;
+    if( !material ) {
+      G4cout << " ----> Target Material " << fHolderMaterial << " not found, cannot build!" << G4endl;
+      return 0;
+    } 
+    
+    G4Tubs* holder = new G4Tubs("Spice_Target_Holder", fHolderInnerRadii/2., fHolderOuterRadii/2., fHolderThickness/2.,
+                0.0, 360*deg);
+    
+    //logical volume
+      fTargetHolderLog = new G4LogicalVolume(holder, material, "target_spice_holder_log", 0, 0, 0);
+      fTargetHolderLog->SetVisAttributes(vis_att);
+      return 1;
+}
+
 void ApparatusSpiceTarget::PlaceTarget(G4LogicalVolume* oexpHallLog)
 {
   G4cout << "Spice Target implemented " << G4endl;
   G4cout << "targ-thick: " << fTargetThickness << " BACKER IN TARG: " <<this->fTargetBackerThickness << G4endl;
   G4double placement = fBeamPos*mm - fTargetBackerThickness - fTargetThickness/2.;//0.5mm=half thickness of target wheel where 0,0,0 is placed
   if(fBeamPos < -3.9*mm) placement = placement - 0.5*mm;
-  G4cout << " Placement target : " << placement << " " << placement*mm << G4endl;
+  G4cout << "Placement target : " << placement << " " << placement*mm << G4endl;
   //NEED TO LINK BEAM POS TO HERE for move = three-vector for mosition
   //fBeamPos*mm-(target_Backer_thickness)*cm
   G4ThreeVector move = G4ThreeVector(0.,0.,placement);//0 for now until read in 
@@ -178,15 +246,56 @@ void ApparatusSpiceTarget::PlaceTargetProtector(G4LogicalVolume* oexpHallLog)
 //   fBeamPos-(target_Backer_thickness/target_Backer_material_density)*2.0-(target_thickness/target_material_density)*2.0
   //NEED TO LINK BEAM POS TO HERE for move = three-vector for mosition
   G4cout << " Pro-thick: " << fTargetProtectorThickness << G4endl;
-  G4double placement = fBeamPos*mm - (this->fTargetBackerThickness) - (this->fTargetThickness) - (this->fTargetProtectorThickness/2.);
+  G4double placement = fBeamPos*mm - (this->fTargetBackerThickness) - (this->fTargetThickness) - (this->fTargetProtectorThickness/2.)-1.*mm;//1mm for bismuth tests
   if(fBeamPos < -3.9*mm) placement = placement - 0.5*mm;
-  G4cout << " Placement pro : " << placement << " " << placement*mm << " targetthick " << (this->fTargetThickness)<<" "<<G4endl;
+  G4cout << "Placement pro : " << placement << " " << placement*mm << " targetthick " << (this->fTargetThickness)<<" "<<G4endl;
   G4ThreeVector move = G4ThreeVector(0.,0.,placement);//0 for now until read in 
   G4RotationMatrix* sRotate = new G4RotationMatrix;
-  fTargetProtectorPhys = new G4PVPlacement(sRotate,                       //no rotation
+  fTargetProtectorPhys = new G4PVPlacement(sRotate,                       //rotation
                     move,                    //at position
                     fTargetProtectorSpiceLog,             //its logical volume
                     "Target_Protector_SPICE",                //its name
+                    oexpHallLog,                //its mother  volume
+                    false,                   //no boolean operation
+                    false,                       //copy number
+                    0);          //overlaps checking
+}
+
+void ApparatusSpiceTarget::PlaceBracket(G4LogicalVolume* oexpHallLog){
+  G4cout << "Spice Target bracket implemented " << G4endl;
+  G4double placement = fBeamPos*mm - (this->fTargetBackerThickness) - (this->fTargetThickness) - (this->fTargetProtectorThickness) - fBracketBackTopThickness/2. - 1.5*mm;//1mm for bismuth tests
+   G4cout << "Spice Target bracket implemented " << G4endl;
+  //if parts of target not used, values are initialised to 0 thickness
+   
+  G4ThreeVector move = G4ThreeVector(0.,0.,placement);//position of bracket
+  G4RotationMatrix* sRotate = new G4RotationMatrix;//rotation of bracket
+  sRotate->rotateZ(277.*CLHEP::deg);
+  
+  fTargetBracketPhys = new G4PVPlacement(sRotate,                       //rotation
+                    move,                    //at position
+                    fTargetBracketLog,             //its logical volume
+                    "Target_Bracket_SPICE",                //its name
+                    oexpHallLog,                //its mother  volume
+                    false,                   //no boolean operation
+                    false,                       //copy number
+                    0);          //overlaps checking
+  G4cout << "Spice Target bracket implemented " << G4endl;
+  
+}
+void ApparatusSpiceTarget::PlaceHolder(G4LogicalVolume* oexpHallLog)
+{
+  G4cout << "Spice Target holder implemented " << G4endl;
+  G4double placement = fBeamPos*mm - fTargetBackerThickness - fTargetThickness - fHolderThickness/2.;//0.5mm=half thickness of target wheel where 0,0,0 is placed
+  if(fBeamPos < -3.9*mm) placement -= 0.5*mm;
+  G4cout << "Placement holder: " << placement << " " << placement*mm << G4endl;
+
+  G4ThreeVector move = G4ThreeVector(0.,0.,placement);//0 for now until read in 
+   
+  G4RotationMatrix* sRotate = new G4RotationMatrix;
+  fTargetHolderPhys = new G4PVPlacement(sRotate,                       //no rotation
+                    move,                    //at position
+                    fTargetHolderLog,             //its logical volume
+                    "Target_SPICE",                //its name
                     oexpHallLog,                //its mother  volume
                     false,                   //no boolean operation
                     false,                       //copy number

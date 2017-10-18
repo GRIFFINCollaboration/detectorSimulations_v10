@@ -102,23 +102,35 @@ double BeamDistribution::SelectDist(G4double RelProb){//the stopping distance fo
 //Bismuth PGA
 /*
 	quick bismuth energy peak func
-	CE K 481.7 1.537 %
+	  CE K 481.7 1.537 %
 	  CE L   553.8 0.442 %
 	  CE M  565.9 0.111 %
 	  CE K 975.7   7.08 %
 	  CE L    1047.8  1.84 %
 	  CE M 1059.8  0.44 %
-	G4double BiEn[6] =  {481.7,553.8,565.9,975.7,1047.8,1059.8};
-	G4double EnSplit[6] = {0.1342358079,0.1728384279,0.1825327511,0.8008733624,0.9615720524,1.};
-	G4double BiRand = G4UniformRand();
-	G4cout << "Rando" << BiRand << G4endl;
+	  CE K  1682.2   0.0238 % 
+	  CE L   1754.4   0.0034 % 
+
+*/
+
+
+	/*G4double BiEn[8] =  {481.7,553.8,565.9,975.7,1047.8,1059.8,1682.2,1754.4};
+	G4double EnSplit[8] = {0.13391768027045,0.038511135120064,0.0096713484125048,0.61687519604085,0.16031784755864,
+			0.038336876590109,0.002073676506465 ,0.00029623950092357};
+	
+	G4double BiRand = G4UniformRand(), BiEnSum;
 	G4int BiIter;
-	for(BiIter = 0; BiIter <6; BiIter ++){
-	 // G4cout << "Iterator" << BiIter << G4endl;
+// 	G4cout << "Rando" << BiRand << G4endl;
+
+	for(BiIter = 0; BiIter <8; BiIter ++){
+	  BiEnSum += EnSplit[BiIter];
+	  EnSplit[BiIter] = BiEnSum;
+	}
+	for(BiIter = 0; BiIter <8; BiIter ++){
+	// G4cout << "Iterator" << BiIter << G4endl;
 	  if(BiRand < EnSplit[BiIter] ) {
+	    //G4cout << fEffEnergy << " ENERGY BISMUTH" << G4endl;
 	    fEffEnergy = BiEn[BiIter]*keV;
 	    break;
 	  } 
-	}
-	
-	*/
+	}*/

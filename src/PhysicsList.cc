@@ -273,7 +273,7 @@ void PhysicsList::SetCuts()
     SetCutValue(fCutForGamma, "gamma");
     SetCutValue(fCutForElectron, "e-");
     SetCutValue(fCutForPositron, "e+");
-    G4cout << "world cuts are set" << G4endl;
+    G4cout << "World cuts are set" << G4endl;
 
     //  if( !fTargetCuts ) SetTargetCut(fCutForElectron);
     //  G4Region* region = (G4RegionStore::GetInstance())->GetRegion("Target");
