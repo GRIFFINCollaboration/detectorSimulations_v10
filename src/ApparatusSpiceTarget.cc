@@ -21,6 +21,8 @@
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
 
+#include "G4UserLimits.hh" //individual step-size per logical volume/region
+
 #include "ApparatusSpiceTarget.hh"
 
 ApparatusSpiceTarget::ApparatusSpiceTarget(G4double beaminput) { 
@@ -41,10 +43,13 @@ ApparatusSpiceTarget::ApparatusSpiceTarget(G4double beaminput) {
   fBracketDepth = 4.08*mm;//z-axis
   
   fHolderMaterial = "G4_Al";
-  fHolderOuterRadii = 25.*mm;
-  fHolderInnerRadii = 6.*mm;
-  fHolderThickness = 1.*mm;
-
+  fHolderOuterRadii = 26.*mm;
+  fHolderInnerRadii = 25*mm;
+  fHolderThickness = 0.5*mm;
+  
+  fMaxStep= 10.*CLHEP::um;
+  
+  fStepLimit = new G4UserLimits(fMaxStep);
 }
 
 ApparatusSpiceTarget::~ApparatusSpiceTarget()
@@ -60,6 +65,8 @@ ApparatusSpiceTarget::~ApparatusSpiceTarget()
     delete fTargetProtectorPhys;
     delete fTargetBracketPhys;
     delete fTargetHolderPhys;
+    
+    delete fStepLimit;
 }
 
 G4int ApparatusSpiceTarget::BuildTarget(G4String input_material, G4double input_surface_density, G4double input_density)
@@ -189,7 +196,7 @@ G4int ApparatusSpiceTarget::BuildHolder()
       G4cout << " ----> Target Material " << fHolderMaterial << " not found, cannot build!" << G4endl;
       return 0;
     } 
-    
+    fHolderThickness =  fTargetProtectorThickness + fTargetBackerThickness +fTargetThickness+1.*mm; //all data in by this point - as inputs before builds (called upon material choice)
     G4Tubs* holder = new G4Tubs("Spice_Target_Holder", fHolderInnerRadii/2., fHolderOuterRadii/2., fHolderThickness/2.,
                 0.0, 360*deg);
     
@@ -219,6 +226,8 @@ void ApparatusSpiceTarget::PlaceTarget(G4LogicalVolume* oexpHallLog)
                     false,                   //no boolean operation
                     false,                       //copy number
                     0);          //overlaps checking
+  
+  fTargetSpiceLog->SetUserLimits(fStepLimit);
 }
 
 void ApparatusSpiceTarget::PlaceTargetBacker(G4LogicalVolume* oexpHallLog)
@@ -238,6 +247,8 @@ void ApparatusSpiceTarget::PlaceTargetBacker(G4LogicalVolume* oexpHallLog)
                     false,                   //no boolean operation
                     false,                       //copy number
                     0);          //overlaps checking
+  
+    fTargetBackerSpiceLog->SetUserLimits(fStepLimit);
 }
 
 void ApparatusSpiceTarget::PlaceTargetProtector(G4LogicalVolume* oexpHallLog)
@@ -259,6 +270,8 @@ void ApparatusSpiceTarget::PlaceTargetProtector(G4LogicalVolume* oexpHallLog)
                     false,                   //no boolean operation
                     false,                       //copy number
                     0);          //overlaps checking
+  
+  fTargetProtectorSpiceLog->SetUserLimits(fStepLimit);
 }
 
 void ApparatusSpiceTarget::PlaceBracket(G4LogicalVolume* oexpHallLog){
@@ -279,13 +292,16 @@ void ApparatusSpiceTarget::PlaceBracket(G4LogicalVolume* oexpHallLog){
                     false,                   //no boolean operation
                     false,                       //copy number
                     0);          //overlaps checking
+  
+  fTargetBracketLog->SetUserLimits(fStepLimit);
+  
   G4cout << "Spice Target bracket implemented " << G4endl;
   
 }
 void ApparatusSpiceTarget::PlaceHolder(G4LogicalVolume* oexpHallLog)
 {
   G4cout << "Spice Target holder implemented " << G4endl;
-  G4double placement = fBeamPos*mm - fTargetBackerThickness - fTargetThickness - fHolderThickness/2.;//0.5mm=half thickness of target wheel where 0,0,0 is placed
+  G4double placement = fBeamPos*mm - fHolderThickness/2.;//0.5mm=half thickness of target wheel where 0,0,0 is placed
   if(fBeamPos < -3.9*mm) placement -= 0.5*mm;
   G4cout << "Placement holder: " << placement << " " << placement*mm << G4endl;
 
@@ -295,9 +311,11 @@ void ApparatusSpiceTarget::PlaceHolder(G4LogicalVolume* oexpHallLog)
   fTargetHolderPhys = new G4PVPlacement(sRotate,                       //no rotation
                     move,                    //at position
                     fTargetHolderLog,             //its logical volume
-                    "Target_SPICE",                //its name
+                    "Target_Holder_SPICE",                //its name
                     oexpHallLog,                //its mother  volume
                     false,                   //no boolean operation
                     false,                       //copy number
                     0);          //overlaps checking
+  
+  fTargetHolderLog->SetUserLimits(fStepLimit);
 }

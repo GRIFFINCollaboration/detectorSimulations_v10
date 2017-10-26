@@ -75,6 +75,8 @@ HistoManager::HistoManager() {
 	 fDescant  = false;
 	 fTestcan  = false;
 	 
+	 fSpiceRes = false;
+	 
 	 G4cout << "Histo CONSTRUCTOR" << G4endl;
 	 fBeamTheta = 4.0;
 }
@@ -367,10 +369,10 @@ void HistoManager::Book() {
 	  nbins     = EDEPNBINSSPICE;
 	  xmin      = EDEPXMINSPICE;
 	  xmax      = EDEPXMAXSPICE;
-	  title     = "Edep in crystal (MeV)";
 	  
+	  title     = "Edep in crystal (keV)";
 	  name  = "full edep"; //edep = energy deposition
-	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  MakeHisto(analysisManager, name,  title, xmin*1000., xmax*1000., nbins);
 	  SpiceHistNumbers[0]=fMakeHistoIndex; //assigns array item the histo index, for reference by FillHisto()
 
 	  name  = "edep_addback";// summed
@@ -395,7 +397,7 @@ void HistoManager::Book() {
 	  
 	  name = "allSegEnergies";
 	  title = "Energy vs. Segment";
-	  Make2DHistoWithAxisTitles(analysisManager, name, title,
+	  Make2DHisto(analysisManager, name, title,
                  120, 0., 120., nbins, 0., xmax);
 	  angledistro[1]=fMakeHistoIndex;
 	  
@@ -412,14 +414,14 @@ void HistoManager::Book() {
 	  nbins = 100;
 	  xmin      = -6.;
 	  xmax      = 6.;
-	  Make2DHistoWithAxisTitles(analysisManager, name,  title, nbins, xmin, xmax, nbins, xmin, xmax);
+	  Make2DHisto(analysisManager, name,  title, nbins, xmin, xmax, nbins, xmin, xmax);
 	  angledistro[3]=fMakeHistoIndex;
 
 	  title  = "z-distribution";
 	  name     = "z-distro";
 	  nbins     = 1000;
-	  xmin      = 0.;
-	  xmax      = 0.1;
+	  xmin      = -0.6;
+	  xmax      = -0.4;
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 	  angledistro[4]=fMakeHistoIndex;
 	  
@@ -437,6 +439,9 @@ void HistoManager::Book() {
 	  xmin      = -10.;//explicitly defined for clarity
 	  xmax      = 10.;
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  MakeHistoWithAxisTitles(analysisManager, name, 
+					   title, xmin, xmax, 
+					   nbins, "mm", "Counts");
 	  angledistro[6]=fMakeHistoIndex;
 	  
 	  for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){  
@@ -447,30 +452,22 @@ void HistoManager::Book() {
 	    nbins     = 314;
 	    xmin      = 0.;//explicitly defined for clarity
 	    xmax      = 3.14;
-	    Make2DHistoWithAxisTitles(analysisManager, name, title,
+	    Make2DHisto(analysisManager, name, title,
                  nbins/2, xmin, xmax, nbins, -xmax, xmax);
 
 	  
 	    SpiceAngleHists[ring*MAXNUMSEGSPICE+seg]=fMakeHistoIndex;
 	    }
 	  }
-	  title  = "Double Peak angles";
-	  name     = "Double Peaks";
+	  title  = "Theta Error";
+	  name     = "Error";
 	  nbins     = 314;
 	  xmin      = 0.;//explicitly defined for clarity
 	  xmax      = 3.14;
-	  Make2DHistoWithAxisTitles(analysisManager, name, title,
-		nbins/2, xmin, xmax, nbins, -xmax, xmax);
+	  MakeHisto(analysisManager, name, title, xmin, xmax, nbins);
 	  SpiceAngleHists[100]=fMakeHistoIndex;
 	  
-	  title = "Erroneous peak angular distribution";
-	  name = "480 ang. distro.";
-	  nbins     = 314;
-	  xmin      = 0.;//explicitly defined for clarity
-	  xmax      = 3.14;
-	  Make2DHistoWithAxisTitles(analysisManager, name, title,
-		nbins/2, xmin, xmax, nbins, -xmax, xmax);
-	  SpiceAngleHists[101]=fMakeHistoIndex;
+
 	}//if(fSpice)
 
 	if(fPaces) {// paces detector
@@ -593,7 +590,7 @@ void HistoManager::MakeHistoWithAxisTitles(G4AnalysisManager* analysisManager, G
     fHistPt[fMakeHistoIndex] = analysisManager->GetH1(fHistId[fMakeHistoIndex]);
 }
 
-void HistoManager::Make2DHistoWithAxisTitles(G4AnalysisManager* analysisManager, const G4String& name, const G4String& title,
+void HistoManager::Make2DHisto(G4AnalysisManager* analysisManager, const G4String& name, const G4String& title,
                  G4int nxbins, G4double xmin, G4double xmax, 
                  G4int nybins, G4double ymin, G4double ymax) {
       fMakeHistoIndex++; //global in Histomanager so allowed in this scope unaltered
@@ -606,8 +603,23 @@ void HistoManager::Make2DHistoWithAxisTitles(G4AnalysisManager* analysisManager,
                  nybins, ymin, ymax);
     fHistPt2[fMakeHistoIndex] = analysisManager->GetH2(fHistId[fMakeHistoIndex]);
 }
+void HistoManager::Make2DHistoWithAxisTitles(G4AnalysisManager* analysisManager, const G4String& name, const G4String& title,
+                 G4int nxbins, G4double xmin, G4double xmax, 
+                 G4int nybins, G4double ymin, G4double ymax,
+                 const G4String& xunitName = "none", 
+                 const G4String& yunitName = "none",
+                 const G4String& xfcnName = "none", 
+                 const G4String& yfcnName = "none"){
+		fMakeHistoIndex++; //global in Histomanager so allowed in this scope unaltered
+      if (fMakeHistoIndex >= MAXHISTO) {
+        G4cout << "---> Exceeded maximum number of histograms. Increase MAXHISTO in HistoManager.hh" << G4endl;
+        exit(1);
+    }
 
-
+    fHistId[fMakeHistoIndex] = analysisManager->CreateH2(name, title, nxbins, xmin, xmax, 
+                 nybins, ymin, ymax, xunitName, yunitName, xfcnName, yfcnName);
+    fHistPt2[fMakeHistoIndex] = analysisManager->GetH2(fHistId[fMakeHistoIndex]);   
+}
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void HistoManager::FillHisto(G4int ih, G4double xbin, G4double weight) {

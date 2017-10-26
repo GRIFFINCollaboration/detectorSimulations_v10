@@ -337,8 +337,7 @@ void DetectorConstruction::SetSpiceTarget()
   }
   fApparatusSpiceTarget->BuildBracket();
   //fApparatusSpiceTarget->PlaceBracket(fLogicWorld); //no build yet
-  fApparatusSpiceTarget->BuildHolder();
-  fApparatusSpiceTarget->PlaceHolder(fLogicWorld); //no build yet
+
 }
 
 void DetectorConstruction::SetSpiceTargetBackerMaterial( G4String name )
@@ -381,6 +380,9 @@ void DetectorConstruction::SetSpiceTargetProtectorMaterial( G4String name )
   DetectorConstruction::fSetSpiceTargetProtectorMaterial = true;
   DetectorConstruction::fSpiceTargetProtectorMaterial = name;
   DetectorConstruction::SetSpiceProtectorTarget();
+  
+  fApparatusSpiceTarget->BuildHolder();
+  fApparatusSpiceTarget->PlaceHolder(fLogicWorld); //no build yet
 }
 
 void DetectorConstruction::SetSpiceTargetProtectorThickness( G4double surface_density )
@@ -1085,4 +1087,8 @@ void DetectorConstruction::AddDetectionSystemPaces(G4int ndet) {
   pPaces->PlaceDetector( fLogicWorld, ndet ) ;
 
   HistoManager::Instance().Paces(true);
+}
+
+void DetectorConstruction::SetSpiceRes(G4bool input){
+  HistoManager::Instance().SpiceResolution(input);
 }

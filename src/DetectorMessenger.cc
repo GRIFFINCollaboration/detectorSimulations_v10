@@ -353,10 +353,14 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     fAddDetectionSystemSceptarCmd->SetGuidance("Add Detection System Sceptar");
     fAddDetectionSystemSceptarCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 	 
-   fAddDetectionSystemSpiceCmd = new G4UIcmdWithAnInteger("/DetSys/det/addSpice",this);
-   fAddDetectionSystemSpiceCmd->SetGuidance("Add Detection System Spice");
-   fAddDetectionSystemSpiceCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
+    fAddDetectionSystemSpiceCmd = new G4UIcmdWithAnInteger("/DetSys/det/addSpice",this);
+    fAddDetectionSystemSpiceCmd->SetGuidance("Add Detection System Spice");
+    fAddDetectionSystemSpiceCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+   
+    fUseSpiceResolutionCmd = new G4UIcmdWithABool("/DetSys/det/UseSpiceResolution",this);
+    fUseSpiceResolutionCmd->SetGuidance("Apply a resolution to energy depositions");
+    fUseSpiceResolutionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    
     fAddDetectionSystemPacesCmd = new G4UIcmdWithAnInteger("/DetSys/det/addPaces",this);
     fAddDetectionSystemPacesCmd->SetGuidance("Add Detection System Paces");
     fAddDetectionSystemPacesCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
@@ -451,6 +455,7 @@ DetectorMessenger::~DetectorMessenger()
     delete fAddDetectionSystemGriffinSetExtensionSuppLocationCmd ;
     delete fAddDetectionSystemGriffinSetDeadLayerCmd ;
 
+    delete fUseSpiceResolutionCmd;
     delete fUseTIGRESSPositionsCmd;
 
 }
@@ -482,7 +487,7 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	fDetector->SetGenericTargetPosition(fGenericTargetPositionCmd->GetNew3VectorValue(newValue));
     }
     if(command == fSpiceTargetCmd ) {
-	fDetector->SetSpiceTargetMaterial(newValue);// can piggyback targetz value here too (fDetector->targetz)
+	fDetector->SetSpiceTargetMaterial(newValue);
     }
     if(command == fSpiceTargetDensityCmd ) {
 	fDetector->SetSpiceTargetDensity(fSpiceTargetDensityCmd->GetNewDoubleValue(newValue));
@@ -606,17 +611,16 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 
     if(command == fSetDetectionSystemDescantColorCmd ) {
 		fDetector->SetDetectionSystemDescantColor(newValue);
-	 }
-	 if(command == fSetDetectionSystemDescantRotationCmd ) {
-		fDetector->SetDetectionSystemDescantRotation(fSetDetectionSystemDescantRotationCmd->GetNew3VectorValue(newValue));
-	 }
-	 if(command == fAddDetectionSystemDescantCartCmd ) {
-		fDetector->AddDetectionSystemDescantCart(fAddDetectionSystemDescantCartCmd->GetNew3VectorValue(newValue));
-	 }
-	 if(command == fAddDetectionSystemDescantSpherCmd ) {
-		fDetector->AddDetectionSystemDescantSpher(fAddDetectionSystemDescantSpherCmd->GetNew3VectorRawValue(newValue), fAddDetectionSystemDescantSpherCmd->GetNewUnitValue(newValue));
-	 }
-
+    }
+    if(command == fSetDetectionSystemDescantRotationCmd ) {
+	  fDetector->SetDetectionSystemDescantRotation(fSetDetectionSystemDescantRotationCmd->GetNew3VectorValue(newValue));
+    }
+    if(command == fAddDetectionSystemDescantCartCmd ) {
+	  fDetector->AddDetectionSystemDescantCart(fAddDetectionSystemDescantCartCmd->GetNew3VectorValue(newValue));
+    }
+    if(command == fAddDetectionSystemDescantSpherCmd ) {
+	  fDetector->AddDetectionSystemDescantSpher(fAddDetectionSystemDescantSpherCmd->GetNew3VectorRawValue(newValue), fAddDetectionSystemDescantSpherCmd->GetNewUnitValue(newValue));
+    }
     if(command == fAddDetectionSystemTestcanCmd ) { 
         fDetector->AddDetectionSystemTestcan(fAddDetectionSystemTestcanCmd->GetNew3VectorValue(newValue));
     }
@@ -661,7 +665,10 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
         fDetector->AddDetectionSystemGriffinSetDeadLayer(fAddDetectionSystemGriffinSetDeadLayerCmd->GetNew3VectorValue(newValue ) ) ;
     }
     if(command == fAddDetectionSystemSpiceCmd ) {
-		fDetector->AddDetectionSystemSpice(fAddDetectionSystemSpiceCmd->GetNewIntValue(newValue)); 
+	fDetector->AddDetectionSystemSpice(fAddDetectionSystemSpiceCmd->GetNewIntValue(newValue)); 
+    }
+    if(command == fUseSpiceResolutionCmd ) {
+        fDetector->SetSpiceRes(fUseSpiceResolutionCmd->GetNewBoolValue(newValue));
     }
     if(command == fAddDetectionSystemPacesCmd ) {
         fDetector->AddDetectionSystemPaces(fAddDetectionSystemPacesCmd->GetNewIntValue(newValue));

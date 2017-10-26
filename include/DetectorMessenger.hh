@@ -155,6 +155,7 @@ private:
     G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinSetExtensionSuppLocationCmd ;
     G4UIcmdWith3Vector*         fAddDetectionSystemGriffinSetDeadLayerCmd ;
     G4UIcmdWithABool*           fUseTIGRESSPositionsCmd;
+    G4UIcmdWithABool*		fUseSpiceResolutionCmd;
     
 
 };

@@ -53,6 +53,7 @@ SteppingAction::SteppingAction(DetectorConstruction* detcon,
     fGriffinDetectorMapSet = false;
     fNumberOfAssemblyVols = 13; 
     fStepNumber = 0;
+    fSpiceTrack =0.;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -145,6 +146,15 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
     G4ThreeVector pos1 = point1->GetPosition();
     G4ThreeVector pos2 = point2->GetPosition();
 
+    
+    if(fDetector->fSpiceTargetMaterial == "Acrylic") {
+      fSpiceTrack += abs(pos2.mag()-pos1.mag());
+//       G4cout << fSpiceTrack << G4endl; 
+      if(fStepNumber > 50000) {
+	  G4cout<< "Killing track " << evntNb << " due to 50000 looping condition" << G4endl;
+	  theTrack->SetTrackStatus(fStopAndKill);
+      }
+    }
     //G4double time1 = point1->GetGlobalTime();
     G4double time2 = point2->GetGlobalTime();
 

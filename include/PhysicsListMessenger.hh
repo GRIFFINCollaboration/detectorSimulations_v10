@@ -67,7 +67,7 @@ private:
     G4UIcmdWithADoubleAndUnit* fECutCmd;
     G4UIcmdWithAString*        fPListCmd;
     G4UIcmdWithABool*          fConstructOpCmd;
-
+    G4UIcmdWithABool*          fSpiceStepperCmd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

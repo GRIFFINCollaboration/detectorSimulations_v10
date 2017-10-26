@@ -364,67 +364,77 @@ void EventAction::FillSpice() {
 //     G4cout << "FillSpice entered " << G4endl;
     G4double energySumDet = 0;
     fSpiceMultiplicity = 0;
+    G4double SpiceResolutionEnergy;
+    G4double SpiceRawEnergy;
     for (G4int ring=0; ring < MAXNUMDETSPICE; ring++) {
-
       for (G4int seg=0; seg < 12; seg++) {
 	if(fSpiceEnergyDet[ring][seg] > MINENERGYTHRES) {
+	  SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0035);
+	  SpiceRawEnergy = fSpiceEnergyDet[ring][seg];
 	  //fill energies in each detector
-	  if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[0], fSpiceEnergyDet[ring][seg]);
-	    //fill standard energy spectra
-	  
+	  if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution()){
+	    HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[0],SpiceResolutionEnergy*1000.);
+	  } //fill standard energy spectra - no add-back
+	  else if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution() == false){
+	    HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[0],SpiceRawEnergy*1000.);
+	  } //fill standard energy spectra - no add-back
 	  G4int remainder = seg%3;//used to overlay mirrored segment histos within a ring
 	  switch(remainder){
-	    case 1 : remainder = 0;
+	    case 1 : remainder = 1;//0
 		      break;
-	    case 2 : remainder = 1;
+	    case 2 : remainder = 2;//1
 		      break;
-	    case 0 : remainder = 2;
+	    case 0 : remainder = 0;//2
 		      break;
 	  }
 	  
 	  G4double PhiMap = 0.;//used to map kinematic groupings so data matches on segment histo overlays
-	    if(seg == 0 || seg == 1 || seg == 2) PhiMap = 0.;
-	    if(seg == 3 || seg == 4 || seg == 5 ) {
-	      if (HistoManager::Instance().fBeamPhi > 0.) PhiMap =  -CLHEP::pi/2; 
-		else PhiMap =  CLHEP::pi*3/2;
-	      }
-	    if(seg == 6 || seg == 7 || seg == 8 ) {	    	      
-	      if (HistoManager::Instance().fBeamPhi > 0.) PhiMap =  -CLHEP::pi; 
-		else PhiMap =  CLHEP::pi;
-	      }
+	  if(seg == 0 || seg == 1 || seg == 2) PhiMap = 0.;
+	  if(seg == 3 || seg == 4 || seg == 5 ) {
+	    if (HistoManager::Instance().fBeamPhi > 0.) PhiMap =  -CLHEP::pi/2; 
+	      else PhiMap =  CLHEP::pi*3/2;
+	    }
+	  if(seg == 6 || seg == 7 || seg == 8 ) {	    	      
+	    if (HistoManager::Instance().fBeamPhi > 0.) PhiMap =  -CLHEP::pi; 
+	      else PhiMap =  CLHEP::pi;
+	  }
 	  if(seg == 9 || seg == 10 || seg == 11 ) PhiMap = CLHEP::pi/2;
 	  
-	  if(HistoManager::Instance().fBeamPhi+PhiMap > CLHEP::pi){//adjusts non-standard data so none is lost off of histogram limits
+	  //adjusts non-standard data so none is lost off of histogram limits
+	  if(HistoManager::Instance().fBeamPhi+PhiMap > CLHEP::pi){
 	    PhiMap -= 2.*CLHEP::pi;//minus 2pi from map to go to bottom of graph (wraps data)
-	  } 
+	  }
 	  if(HistoManager::Instance().fBeamPhi+PhiMap < -CLHEP::pi){
 	    PhiMap += 2.*CLHEP::pi;//adds 2pi from map to go to top of graph (wraps data)
 	  }
+	  if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution())HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[MAXNUMSEGSPICE*ring+seg+2],
+	    SpiceResolutionEnergy);//broadening removed 11/10
+	  else if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution() == false)HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[MAXNUMSEGSPICE*ring+seg+2],
+	    SpiceRawEnergy);//broadening removed 11/10
+	    
+	  fSpiceMultiplicity += 1;//iterates every deposition per fill to track multiplciity per event
 	  
-	  if(WRITEEDEPHISTOS)	HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[MAXNUMSEGSPICE*ring+seg+2], G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0026));//broadening removed 11/10
-	  fSpiceMultiplicity += 1;//iterates every deposition per fill
-	  energySumDet += G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0026);//add sum energies with a 2keV resolution for spice smearing so far - not energy dependent  
-	  fDepVec.push_back(G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0026)); 
+	  if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution())energySumDet += SpiceResolutionEnergy;//add sum energies with a 2keV resolution for spice smearing so far - not energy dependent 
+	  else if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution() == false) energySumDet += SpiceRawEnergy;
+	  
+	  fDepVec.push_back(SpiceResolutionEnergy); //always want resolution on kinematic data
 	  fSegVec.push_back(( ring*MAXNUMSEGSPICE+seg)+1);
 	  fThetaVec.push_back(HistoManager::Instance().fBeamTheta);
 	  fPhiVec.push_back(HistoManager::Instance().fBeamPhi);
 	  fSpiceIterator++;//tracks counts for debugging
-	  if(fSpiceEnergyDet[ring][seg]+75.*keV > HistoManager::Instance().fBeamEnergy && //gating on backscatter energy
-	    fSpiceEnergyDet[ring][seg] - 75.*keV < HistoManager::Instance().fBeamEnergy){
+	  
+	  if(fSpiceEnergyDet[ring][seg] + 100.*keV > HistoManager::Instance().fBeamEnergy && //gating kinematics on backscatter energy
+	    fSpiceEnergyDet[ring][seg] - 100.*keV < HistoManager::Instance().fBeamEnergy){
 	    HistoManager::Instance().Fill2DHisto(HistoManager::Instance().SpiceAngleHists[MAXNUMSEGSPICE*ring+remainder], HistoManager::Instance().fBeamTheta,
 					       HistoManager::Instance().fBeamPhi+PhiMap, 1.);}//THETA vs. PHI
-	  if(fSpiceEnergyDet[ring][seg]+5.*keV > HistoManager::Instance().fBeamEnergy && //gating on beam energy
-	    fSpiceEnergyDet[ring][seg] - 5.*keV < HistoManager::Instance().fBeamEnergy) {
-	      HistoManager::Instance().Fill2DHisto(HistoManager::Instance().SpiceAngleHists[100], HistoManager::Instance().fBeamTheta,
-					       HistoManager::Instance().fBeamPhi, 1.);//THETA vs. PHI
+	  if(fSpiceEnergyDet[ring][seg]+100.*keV > HistoManager::Instance().fBeamEnergy && //gating on beam energy
+	    fSpiceEnergyDet[ring][seg] - 100.*keV < HistoManager::Instance().fBeamEnergy) {
+	      HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceAngleHists[100], HistoManager::Instance().fBeamTheta);//THETA error
 	    }
+	    
 	  if(WRITEEDEPHISTOS)	HistoManager::Instance().Fill2DHisto(HistoManager::Instance().angledistro[1], (G4double) MAXNUMSEGSPICE*ring+seg, 
-		G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0026), 1.0);
-	  /*if(fSpiceEnergyDet[ring][seg]+5*keV > 480*CLHEP::keV && //480peak fro bismuth errors
-	    fSpiceEnergyDet[ring][seg] - 5*keV < 480*CLHEP::keV) {
-	      HistoManager::Instance().Fill2DHisto(HistoManager::Instance().SpiceAngleHists[101], HistoManager::Instance().fBeamTheta,
-					       HistoManager::Instance().fBeamPhi, 1.);//THETA vs. PHI
-	    }*/
+		G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0035), 1.0);
+
 	}
       }
     }

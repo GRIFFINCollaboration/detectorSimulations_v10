@@ -40,7 +40,7 @@
 
 //forward declare for placement
 class G4VPhysicalVolume;
-
+class G4UserLimits;
 class ApparatusSpiceTarget
 {
   public:
@@ -102,6 +102,10 @@ class ApparatusSpiceTarget
     G4double fHolderOuterRadii;
     G4double fHolderInnerRadii;
     G4double fHolderThickness;
+    
+    
+    G4double fMaxStep;
+    G4UserLimits* fStepLimit;
     
   public: 
     G4int BuildTarget(G4String fTargetMaterial, G4double fTargetThickness, G4double fTargetMaterialDensity);

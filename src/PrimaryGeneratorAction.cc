@@ -278,7 +278,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	  // 	  G4cout << "BEAM DISTR" << G4endl;
 	  G4double x = G4RandGauss::shoot(0.,1.)*mm;//9mm = target radius for now
 	  G4double y = G4RandGauss::shoot(0.,1.)*mm;
-	  G4double z = -G4UniformRand()*(fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity) 
+	  G4double z = -0.01*(fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity) 
 		   - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) + fDetector->targetz;
 	  // 	 G4double z = -(G4UniformRand()*(fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity)) 
 	  // - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) + fDetector->targetz;

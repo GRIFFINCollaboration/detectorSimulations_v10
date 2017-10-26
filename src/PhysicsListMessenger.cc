@@ -52,7 +52,8 @@ PhysicsListMessenger::PhysicsListMessenger(PhysicsList* pPhys)
       fMCutCmd(0),
       fECutCmd(0),
       fPListCmd(0),
-      fConstructOpCmd(0)
+      fConstructOpCmd(0),
+      fSpiceStepperCmd(0)
 {
     fPhysDir = new G4UIdirectory("/DetSys/phys/");
     fPhysDir->SetGuidance("physics control.");
@@ -108,6 +109,11 @@ PhysicsListMessenger::PhysicsListMessenger(PhysicsList* pPhys)
     fConstructOpCmd->SetGuidance("Choose to build optical physics models");
     fConstructOpCmd->SetDefaultValue(false);
     fConstructOpCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    
+    fSpiceStepperCmd = new G4UIcmdWithABool("/DetSys/phys/SpiceStepper",this);
+    fSpiceStepperCmd->SetGuidance("Choose to invoke SPICE stepper");
+    fSpiceStepperCmd->SetDefaultValue(false);
+    fSpiceStepperCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -123,6 +129,7 @@ PhysicsListMessenger::~PhysicsListMessenger()
     delete fECutCmd;
     delete fMCutCmd;
     delete fConstructOpCmd;
+    delete fSpiceStepperCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -158,6 +165,9 @@ void PhysicsListMessenger::SetNewValue(G4UIcommand* command,
 
     if( command == fConstructOpCmd )
     { fPPhysicsList->ConstructOp(fConstructOpCmd->GetNewBoolValue(newValue));}
+    
+    if( command == fSpiceStepperCmd )
+    { fPPhysicsList->SpiceStepper(fSpiceStepperCmd->GetNewBoolValue(newValue));}
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -67,6 +67,7 @@ private:
     G4int FindTrueGriffinDetector(G4int);
 
     G4int fStepNumber;
+    G4double fSpiceTrack;
     G4int fDet;
     G4int fCry;
     G4int fTrueGriffinDetectorMap[16];

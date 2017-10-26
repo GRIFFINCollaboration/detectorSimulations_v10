@@ -191,7 +191,7 @@ public:
     G4double GetLanthanumBromideRoll(G4int i);
     G4double GetLanthanumBromideCrystalRadialPosition();
 
-
+    void SetSpiceRes(G4bool);
     void UseTIGRESSPositions( G4bool input )                  {fUseTigressPositions = input;};
     
 private:
