@@ -459,7 +459,11 @@ void EventAction::FillPacesCryst() {
         if(WRITEEDEPHISTOS && (energySumDet > MINENERGYTHRES))     HistoManager::Instance().FillHisto(HistoManager::Instance().PacesHistNumbers[1], energySumDet);
 	
     }
-}////////////////////////////////////////////20/6
+}
+
+G4bool EventAction::SpiceTest(){
+  return HistoManager::Instance().Spice();
+}
 
 void EventAction::AddHitTracker(G4String mnemonic, G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ) {
     G4bool newhit = true;
