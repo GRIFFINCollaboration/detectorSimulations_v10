@@ -145,15 +145,20 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 
     G4ThreeVector pos1 = point1->GetPosition();
     G4ThreeVector pos2 = point2->GetPosition();
-
     
-    if(fDetector->fSpiceTargetMaterial == "Acrylic") {
+    if(fStepNumber == 1) fSpiceTrack = 0.;
+    if(fEventAction->SpiceTest()) {//temp fix
       fSpiceTrack += abs(pos2.mag()-pos1.mag());
-//       G4cout << fSpiceTrack << G4endl; 
+//        G4cout << fSpiceTrack << G4endl; 
       if(fStepNumber > 50000) {
 	  G4cout<< "Killing track " << evntNb << " due to 50000 looping condition" << G4endl;
 	  theTrack->SetTrackStatus(fStopAndKill);
       }
+      if(fSpiceTrack > 500000){
+	  G4cout<< "Killing track " << evntNb << " due to length looping condition" << G4endl;
+	  theTrack->SetTrackStatus(fStopAndKill);
+      }
+      
     }
     //G4double time1 = point1->GetGlobalTime();
     G4double time2 = point2->GetGlobalTime();
