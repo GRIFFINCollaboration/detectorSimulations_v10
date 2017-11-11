@@ -368,8 +368,19 @@ void EventAction::FillSpice() {
     G4double SpiceRawEnergy;
     for (G4int ring=0; ring < MAXNUMDETSPICE; ring++) {
       for (G4int seg=0; seg < 12; seg++) {
-	if(fSpiceEnergyDet[ring][seg] > MINENERGYTHRES) {
-	  SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0035);
+	if(fSpiceEnergyDet[ring][seg] > 65.*CLHEP::keV) {
+	  if(fSpiceEnergyDet[ring][seg] > 600*keV){
+	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0030);
+	  } else if (fSpiceEnergyDet[ring][seg] > 305*keV && fSpiceEnergyDet[ring][seg] < 335*keV) {
+	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0055);
+	  } else if (fSpiceEnergyDet[ring][seg] > 335*keV && fSpiceEnergyDet[ring][seg] < 400*keV) {
+	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0045);
+	  } else if (fSpiceEnergyDet[ring][seg] < 305*keV && fSpiceEnergyDet[ring][seg] > 270*keV){
+	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0035);
+	  } else if (fSpiceEnergyDet[ring][seg] <  270*keV){
+	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0040);
+	  }
+	  } else SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0030);//i.e the 400 to 600 range - look at bismuth
 	  SpiceRawEnergy = fSpiceEnergyDet[ring][seg];
 	  //fill energies in each detector
 	  if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution()){
@@ -392,13 +403,13 @@ void EventAction::FillSpice() {
 	  if(seg == 0 || seg == 1 || seg == 2) PhiMap = 0.;
 	  if(seg == 3 || seg == 4 || seg == 5 ) {
 	    if (HistoManager::Instance().fBeamPhi > 0.) PhiMap =  -CLHEP::pi/2; 
-	      else PhiMap =  CLHEP::pi*3/2;
+	      else PhiMap =  CLHEP::pi*3./2.;
 	    }
 	  if(seg == 6 || seg == 7 || seg == 8 ) {	    	      
 	    if (HistoManager::Instance().fBeamPhi > 0.) PhiMap =  -CLHEP::pi; 
 	      else PhiMap =  CLHEP::pi;
 	  }
-	  if(seg == 9 || seg == 10 || seg == 11 ) PhiMap = CLHEP::pi/2;
+	  if(seg == 9 || seg == 10 || seg == 11 ) PhiMap = CLHEP::pi/2.;
 	  
 	  //adjusts non-standard data so none is lost off of histogram limits
 	  if(HistoManager::Instance().fBeamPhi+PhiMap > CLHEP::pi){
@@ -412,28 +423,34 @@ void EventAction::FillSpice() {
 	  else if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution() == false)HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[MAXNUMSEGSPICE*ring+seg+2],
 	    SpiceRawEnergy);//broadening removed 11/10
 	    
-	  fSpiceMultiplicity += 1;//iterates every deposition per fill to track multiplciity per event
+	  fSpiceMultiplicity += 1;//iterates every deposition per fill to track multiplcity per event
 	  
 	  if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution())energySumDet += SpiceResolutionEnergy;//add sum energies with a 2keV resolution for spice smearing so far - not energy dependent 
 	  else if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution() == false) energySumDet += SpiceRawEnergy;
 	  
-	  fDepVec.push_back(SpiceResolutionEnergy); //always want resolution on kinematic data
-	  fSegVec.push_back(( ring*MAXNUMSEGSPICE+seg)+1);
-	  fThetaVec.push_back(HistoManager::Instance().fBeamTheta);
-	  fPhiVec.push_back(HistoManager::Instance().fBeamPhi);
-	  fSpiceIterator++;//tracks counts for debugging
-	  
-	  if(fSpiceEnergyDet[ring][seg] + 100.*keV > HistoManager::Instance().fBeamEnergy && //gating kinematics on backscatter energy
-	    fSpiceEnergyDet[ring][seg] - 100.*keV < HistoManager::Instance().fBeamEnergy){
-	    HistoManager::Instance().Fill2DHisto(HistoManager::Instance().SpiceAngleHists[MAXNUMSEGSPICE*ring+remainder], HistoManager::Instance().fBeamTheta,
-					       HistoManager::Instance().fBeamPhi+PhiMap, 1.);}//THETA vs. PHI
-	  if(fSpiceEnergyDet[ring][seg]+100.*keV > HistoManager::Instance().fBeamEnergy && //gating on beam energy
-	    fSpiceEnergyDet[ring][seg] - 100.*keV < HistoManager::Instance().fBeamEnergy) {
-	      HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceAngleHists[100], HistoManager::Instance().fBeamTheta);//THETA error
-	    }
+	  if(fSpiceEnergyDet[ring][seg] + 10.*keV > HistoManager::Instance().fBeamEnergy && //gating kinematics on backscatter energy
+	    fSpiceEnergyDet[ring][seg] - 10.*keV < HistoManager::Instance().fBeamEnergy){
 	    
+	    
+	      HistoManager::Instance().Fill2DHisto(HistoManager::Instance().SpiceAngleHists[MAXNUMSEGSPICE*ring+remainder], HistoManager::Instance().fBeamTheta,
+					       HistoManager::Instance().fBeamPhi+PhiMap, 1.);//THETA vs. PHI
+	      //HistoManager::Instance().Fill2DHisto(HistoManager::Instance().Test[MAXNUMSEGSPICE*ring+seg], HistoManager::Instance().fBeamTheta,
+					      // HistoManager::Instance().fBeamPhi, 1.);//THETA vs. PHI
+	      
+		      /*HistoManager::Instance().Fill2DHisto(HistoManager::Instance().SpiceAngleHists[MAXNUMSEGSPICE*ring+remainder], HistoManager::Instance().fBeamTheta,
+					       HistoManager::Instance().fBeamPhi+PhiMap, 1.);//THETA vs. PHI  */    
+	      
+	      
+	      HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceAngleHists[100], HistoManager::Instance().fBeamTheta);//THETA error
+	      fDepVec.push_back(SpiceResolutionEnergy); //always want resolution on kinematic data
+	      fSegVec.push_back((ring*MAXNUMSEGSPICE+seg)+1);//add one for input as ignored a 0
+	      fThetaVec.push_back(HistoManager::Instance().fBeamTheta);
+	      fPhiVec.push_back(HistoManager::Instance().fBeamPhi);
+	      fSpiceIterator++;//tracks counts for debugging
+	  }
+
 	  if(WRITEEDEPHISTOS)	HistoManager::Instance().Fill2DHisto(HistoManager::Instance().angledistro[1], (G4double) MAXNUMSEGSPICE*ring+seg, 
-		G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0035), 1.0);
+		G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0030), 1.0);
 
 	}
       }
@@ -461,7 +478,7 @@ void EventAction::FillPacesCryst() {
     }
 }
 
-G4bool EventAction::SpiceTest(){
+G4bool EventAction::SpiceTest(){//is SPICE inputted
   return HistoManager::Instance().Spice();
 }
 
@@ -532,10 +549,10 @@ void EventAction::AddStepTracker(G4int eventNumber, G4int trackID, G4int parentI
     }
 }
 
-void EventAction::MultiplicitySPICE(G4double energySumDet){
+void EventAction::MultiplicitySPICE(G4double energySumDet){//tests the multiplicity of SPICE depositions
   
   	  if(energySumDet > (BeamInputEnergy-0.015)){//0.6 = 3 sigma 
-	  if(fSpiceMultiplicity>0) HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[0], fSpiceMultiplicity);
+	  //if(fSpiceMultiplicity>0) HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[0], fSpiceMultiplicity);
 	  switch(fSpiceMultiplicity) {
 	  case 1 : MultiplicityArray[0] += 1;
              break;       

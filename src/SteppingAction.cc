@@ -150,8 +150,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
     if(fEventAction->SpiceTest()) {//temp fix
       fSpiceTrack += abs(pos2.mag()-pos1.mag());
 //        G4cout << fSpiceTrack << G4endl; 
-      if(fStepNumber > 50000) {
-	  G4cout<< "Killing track " << evntNb << " due to 50000 looping condition" << G4endl;
+      if(fStepNumber > 200000) {
+	  G4cout<< "Killing track " << evntNb << " due to excessive step looping condition" << G4endl;
 	  theTrack->SetTrackStatus(fStopAndKill);
       }
       if(fSpiceTrack > 500000){
@@ -298,12 +298,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	// ntuple
       fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry, fDet, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);//-1 on cry/det
       //fEventAction->AddStepTracker(evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry, fDet, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
-      //G4cout << "STEP LENGTH " << fStepNumber << " " << stepl << " " << edep<<G4endl;
-      if(fStepNumber > 5000) {
-	G4cout<< "Killing track " << evntNb << " due to looping condition" << G4endl;
-	theTrack->SetTrackStatus(fStopAndKill);
-      }
-    
   }
 
  //PACES energy ///20/6 deposits/////////////////////////////////////////////////////////////////////////////////

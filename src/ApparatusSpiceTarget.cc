@@ -65,6 +65,8 @@ ApparatusSpiceTarget::~ApparatusSpiceTarget()
     delete fTargetProtectorPhys;
     delete fTargetBracketPhys;
     delete fTargetHolderPhys;
+    delete fSourceLog;//May be temp
+    delete fSourcePhys;
     
     delete fStepLimit;
 }
@@ -83,7 +85,7 @@ G4int ApparatusSpiceTarget::BuildTarget(G4String input_material, G4double input_
     this->fTargetSurfaceDensity = input_surface_density*(mg/cm2);//need units
     G4cout << "Post-units: " << fTargetSurfaceDensity << G4endl;
     this->fTargetThickness = (fTargetSurfaceDensity/fTargetMaterialDensity);
-    G4cout << "Thicc: " << fTargetThickness << G4endl;
+    G4cout << "Target Thickness: " << fTargetThickness << G4endl;
 
     // Build assembly volume
     //G4AssemblyVolume* myAssembly = new G4AssemblyVolume();
@@ -206,6 +208,24 @@ G4int ApparatusSpiceTarget::BuildHolder()
       return 1;
 }
 
+G4int ApparatusSpiceTarget::BuildSource()
+{
+   G4VisAttributes* vis_att = new G4VisAttributes(G4Colour(0.33806818181,0.33096590909,0.33096590909));
+   vis_att->SetVisibility(true);
+   G4Material* material = G4Material::GetMaterial("Barium");
+   if( !material ) {
+      G4cout << " ----> Source Material " << "Barium" << " not found, cannot build!" << G4endl;
+      return 0;
+   }
+   G4double SourceThickness = 0.27624309392*CLHEP::um*2.;
+   G4Tubs* source = new G4Tubs("Spice_Source_Block", 0., 4.*CLHEP::mm, SourceThickness,
+                0.0, 360*deg);
+   //logical volume
+   fSourceLog = new G4LogicalVolume(source, material, "target_spice_source_log", 0, 0, 0);
+   fSourceLog->SetVisAttributes(vis_att);
+   return 1;
+}
+
 void ApparatusSpiceTarget::PlaceTarget(G4LogicalVolume* oexpHallLog)
 {
   G4cout << "Spice Target implemented " << G4endl;
@@ -228,6 +248,8 @@ void ApparatusSpiceTarget::PlaceTarget(G4LogicalVolume* oexpHallLog)
                     0);          //overlaps checking
   
   fTargetSpiceLog->SetUserLimits(fStepLimit);
+  BuildSource();
+  PlaceSource(oexpHallLog);//(0.27624309392*2.)*CLHEP::um 
 }
 
 void ApparatusSpiceTarget::PlaceTargetBacker(G4LogicalVolume* oexpHallLog)
@@ -257,7 +279,8 @@ void ApparatusSpiceTarget::PlaceTargetProtector(G4LogicalVolume* oexpHallLog)
 //   fBeamPos-(target_Backer_thickness/target_Backer_material_density)*2.0-(target_thickness/target_material_density)*2.0
   //NEED TO LINK BEAM POS TO HERE for move = three-vector for mosition
   G4cout << " Pro-thick: " << fTargetProtectorThickness << G4endl;
-  G4double placement = fBeamPos*mm - (this->fTargetBackerThickness) - (this->fTargetThickness) - (this->fTargetProtectorThickness/2.)-1.*mm;//1mm for bismuth tests
+  G4double placement = fBeamPos*mm - (this->fTargetBackerThickness) - (this->fTargetThickness) 
+  - (this->fTargetProtectorThickness/2.)-1.*mm - (0.27624309392*2.)*CLHEP::um ;//1mm for bismuth tests
   if(fBeamPos < -3.9*mm) placement = placement - 0.5*mm;
   G4cout << "Placement pro : " << placement << " " << placement*mm << " targetthick " << (this->fTargetThickness)<<" "<<G4endl;
   G4ThreeVector move = G4ThreeVector(0.,0.,placement);//0 for now until read in 
@@ -276,7 +299,8 @@ void ApparatusSpiceTarget::PlaceTargetProtector(G4LogicalVolume* oexpHallLog)
 
 void ApparatusSpiceTarget::PlaceBracket(G4LogicalVolume* oexpHallLog){
   G4cout << "Spice Target bracket implemented " << G4endl;
-  G4double placement = fBeamPos*mm - (this->fTargetBackerThickness) - (this->fTargetThickness) - (this->fTargetProtectorThickness) - fBracketBackTopThickness/2. - 1.5*mm;//1mm for bismuth tests
+  G4double placement = fBeamPos*mm - (this->fTargetBackerThickness) - (this->fTargetThickness)
+  - (this->fTargetProtectorThickness) - fBracketBackTopThickness/2. - 1.5*mm - (0.27624309392*2.)*CLHEP::um ;//1mm for bismuth tests
    G4cout << "Spice Target bracket implemented " << G4endl;
   //if parts of target not used, values are initialised to 0 thickness
    
@@ -318,4 +342,26 @@ void ApparatusSpiceTarget::PlaceHolder(G4LogicalVolume* oexpHallLog)
                     0);          //overlaps checking
   
   fTargetHolderLog->SetUserLimits(fStepLimit);
+}
+
+void ApparatusSpiceTarget::PlaceSource(G4LogicalVolume* oexpHallLog){
+  G4cout << "Spice source implemented " << G4endl;
+  G4double placement = fBeamPos*mm - fTargetBackerThickness -(0.27624309392)*CLHEP::um ;//0.5mm=half thickness of target wheel where 0,0,0 is placed
+  if(fBeamPos < -3.9*mm) placement -= 0.5*mm;
+  G4cout << "Placement source: " << placement << " " << placement*mm << G4endl;
+
+  G4ThreeVector move = G4ThreeVector(0.,0.,placement);//0 for now until read in 
+   
+  G4RotationMatrix* sRotate = new G4RotationMatrix;
+  sRotate->rotateZ(90.*CLHEP::deg);
+  fSourcePhys = new G4PVPlacement(sRotate,                       //no rotation
+                    move,                    //at position
+                    fSourceLog,             //its logical volume
+                    "Target_source_SPICE",                //its name
+                    oexpHallLog,                //its mother  volume
+                    false,                   //no boolean operation
+                    false,                       //copy number
+                    0);          //overlaps checking
+  
+  fSourceLog->SetUserLimits(fStepLimit);
 }
