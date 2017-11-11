@@ -55,6 +55,7 @@ class ApparatusSpiceTarget
     G4LogicalVolume* fTargetProtectorSpiceLog;
     G4LogicalVolume* fTargetBracketLog;
     G4LogicalVolume* fTargetHolderLog;
+    G4LogicalVolume* fSourceLog;
     
     //Physical Volumes
     G4VPhysicalVolume* fTargetPhys;
@@ -62,6 +63,8 @@ class ApparatusSpiceTarget
     G4VPhysicalVolume* fTargetProtectorPhys;
     G4VPhysicalVolume* fTargetBracketPhys;
     G4VPhysicalVolume* fTargetHolderPhys;
+    G4VPhysicalVolume* fSourcePhys;
+    
     
     //Material manager
 //  G4NistManager* man = G4NistManager::Instance();
@@ -103,7 +106,7 @@ class ApparatusSpiceTarget
     G4double fHolderInnerRadii;
     G4double fHolderThickness;
     
-    
+    //Independent stepping
     G4double fMaxStep;
     G4UserLimits* fStepLimit;
     
@@ -111,10 +114,12 @@ class ApparatusSpiceTarget
     G4int BuildTarget(G4String fTargetMaterial, G4double fTargetThickness, G4double fTargetMaterialDensity);
     G4int BuildBacker(G4String fTargetBackerMaterial, G4double fTargetBackerThickness, G4double fTargetBackerMaterialDensity);
     G4int BuildProtector(G4String fTargetProtectorMaterial, G4double fTargetProtectorThickness, G4double fTargetProtectorMaterialDensity);
+    G4int BuildSource();
 
     void  PlaceTarget(G4LogicalVolume*);
     void  PlaceTargetBacker(G4LogicalVolume*);
     void  PlaceTargetProtector(G4LogicalVolume*);
+    void  PlaceSource(G4LogicalVolume*);
     
     G4int BuildBracket();
     void  PlaceBracket(G4LogicalVolume*);

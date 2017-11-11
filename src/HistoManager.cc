@@ -371,11 +371,11 @@ void HistoManager::Book() {
 	  xmax      = EDEPXMAXSPICE;
 	  
 	  title     = "Edep in crystal (keV)";
-	  name  = "full edep"; //edep = energy deposition
+	  name  = "FullEdep"; //edep = energy deposition
 	  MakeHisto(analysisManager, name,  title, xmin*1000., xmax*1000., nbins);
 	  SpiceHistNumbers[0]=fMakeHistoIndex; //assigns array item the histo index, for reference by FillHisto()
 
-	  name  = "edep_addback";// summed
+	  name  = "Edep_Addback";// summed
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 	  SpiceHistNumbers[1]=fMakeHistoIndex;
 	  
@@ -390,12 +390,12 @@ void HistoManager::Book() {
 	    SpiceHistNumbers[ring*MAXNUMSEGSPICE+seg+2]=fMakeHistoIndex;
 	    }
 	  }
-	  name = "Beam Energy";
+	  name = "BeamEnergy";
 	  title ="Energy of Input Beam";
 	  MakeHisto(analysisManager, name, title, xmin, xmax, nbins);
 	  angledistro[0]=fMakeHistoIndex;
 	  
-	  name = "allSegEnergies";
+	  name = "AllSegEnergies";
 	  title = "Energy vs. Segment";
 	  Make2DHisto(analysisManager, name, title,
                  120, 0., 120., nbins, 0., xmax);
@@ -438,20 +438,19 @@ void HistoManager::Book() {
 	  nbins     = 1000;
 	  xmin      = -10.;//explicitly defined for clarity
 	  xmax      = 10.;
-	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 	  MakeHistoWithAxisTitles(analysisManager, name, 
 					   title, xmin, xmax, 
-					   nbins, "mm", "Counts");
+					   nbins, "", "mm");
 	  angledistro[6]=fMakeHistoIndex;
 	  
 	  for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){  
 	    for (G4int seg=0; seg < 3; seg++) {//12 segments but 3 for changes - adjusted in Event action
 	      
-	    title  = "Angular kinematic effects";
-	    name     = "Segment " + std::to_string(ring*MAXNUMSEGSPICE+seg) + " - Angular kinematic effects ";
-	    nbins     = 314;
+	    title  = "AngR" + std::to_string(ring) + "S" +std::to_string(seg);
+	    name     = "AngR" + std::to_string(ring) + "S" +std::to_string(seg);
+	    nbins     = 200;
 	    xmin      = 0.;//explicitly defined for clarity
-	    xmax      = 3.14;
+	    xmax      = CLHEP::pi;
 	    Make2DHisto(analysisManager, name, title,
                  nbins/2, xmin, xmax, nbins, -xmax, xmax);
 
@@ -459,15 +458,56 @@ void HistoManager::Book() {
 	    SpiceAngleHists[ring*MAXNUMSEGSPICE+seg]=fMakeHistoIndex;
 	    }
 	  }
-	  title  = "Theta Error";
-	  name     = "Error";
+	  
+	  for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){  
+	    for (G4int seg=0; seg < 12; seg++) {//12 segments but 3 for changes - adjusted in Event action
+	      
+	    title  = "TEST"+std::to_string(ring)+"S" +std::to_string(seg);
+	    name     = "TEST"+std::to_string(ring)+"S" +std::to_string(seg) ;
+	    nbins     = 200;
+	    xmin      = 0.;//explicitly defined for clarity
+	    xmax      = CLHEP::pi;
+	    Make2DHisto(analysisManager, name, title,
+                 nbins/2, xmin, xmax, nbins, -xmax, xmax);
+
+	  
+	    Test[ring*MAXNUMSEGSPICE+seg]=fMakeHistoIndex;
+	    }
+	  }
+	  /*title  = "Theta Error";
+	  name     = "ErrorTheta";
 	  nbins     = 314;
 	  xmin      = 0.;//explicitly defined for clarity
 	  xmax      = 3.14;
 	  MakeHisto(analysisManager, name, title, xmin, xmax, nbins);
-	  SpiceAngleHists[100]=fMakeHistoIndex;
+	  SpiceAngleHists[100]=fMakeHistoIndex;*/
 	  
+	  /*title  = "Kinematics of edge feature (940 to 970keV)";
+	  name     = "Dip1";
+	  nbins     = 314;
+	  xmin      = 0.;//explicitly defined for clarity
+	  xmax      = 3.14;
+	  Make2DHisto(analysisManager, name, title,
+		nbins/2, xmin, xmax, nbins, -xmax, xmax);
+	  SpiceAngleHists[101]=fMakeHistoIndex;
 
+	  title  = "Kinematics of edge feature (1020 to 1040keV)";
+	  name     = "Dip2";
+	  nbins     = 314;
+	  xmin      = 0.;//explicitly defined for clarity
+	  xmax      = 3.14;
+	  Make2DHisto(analysisManager, name, title,
+		nbins/2, xmin, xmax, nbins, -xmax, xmax);
+	  SpiceAngleHists[102]=fMakeHistoIndex;
+	  
+	  title  = "Kinematics of edge feature (combined)";
+	  name     = "Dips1+2";
+	  nbins     = 314;
+	  xmin      = 0.;//explicitly defined for clarity
+	  xmax      = 3.14;
+	  Make2DHisto(analysisManager, name, title,
+		nbins/2, xmin, xmax, nbins, -xmax, xmax);
+	  SpiceAngleHists[103]=fMakeHistoIndex;*/
 	}//if(fSpice)
 
 	if(fPaces) {// paces detector

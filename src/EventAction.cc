@@ -379,7 +379,6 @@ void EventAction::FillSpice() {
 	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0035);
 	  } else if (fSpiceEnergyDet[ring][seg] <  270*keV){
 	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0040);
-	  }
 	  } else SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0030);//i.e the 400 to 600 range - look at bismuth
 	  SpiceRawEnergy = fSpiceEnergyDet[ring][seg];
 	  //fill energies in each detector

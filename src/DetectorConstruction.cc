@@ -336,8 +336,10 @@ void DetectorConstruction::SetSpiceTarget()
     }
   }
   fApparatusSpiceTarget->BuildBracket();
-  //fApparatusSpiceTarget->PlaceBracket(fLogicWorld); //no build yet
-
+  fApparatusSpiceTarget->PlaceBracket(fLogicWorld); //no build yet
+  fApparatusSpiceTarget->BuildHolder();
+  fApparatusSpiceTarget->PlaceHolder(fLogicWorld); //no build yet
+  //Add a bool to see if already placed
 }
 
 void DetectorConstruction::SetSpiceTargetBackerMaterial( G4String name )
@@ -381,8 +383,7 @@ void DetectorConstruction::SetSpiceTargetProtectorMaterial( G4String name )
   DetectorConstruction::fSpiceTargetProtectorMaterial = name;
   DetectorConstruction::SetSpiceProtectorTarget();
   
-  fApparatusSpiceTarget->BuildHolder();
-  fApparatusSpiceTarget->PlaceHolder(fLogicWorld); //no build yet
+
 }
 
 void DetectorConstruction::SetSpiceTargetProtectorThickness( G4double surface_density )
