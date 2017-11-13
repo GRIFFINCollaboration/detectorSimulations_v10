@@ -57,8 +57,6 @@ class PrimaryGeneratorMessenger: public G4UImessenger
 public:
     PrimaryGeneratorMessenger(PrimaryGeneratorAction*);
     virtual ~PrimaryGeneratorMessenger();
-    G4double BeamPos; 
-    G4ThreeVector BeamPos3;
 
 public:
     void SetNewValue(G4UIcommand*, G4String);

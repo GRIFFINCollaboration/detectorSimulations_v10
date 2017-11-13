@@ -32,13 +32,15 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef DetectionSystemSpice_h
-#define DetectionSystemSpice_h 1
+#ifndef DETECTIONSYSTEMSPICE_H
+#define DETECTIONSYSTEMSPICE_H 1
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 
+#ifndef AL_COL
 #define AL_COL 0.5,0.5,0.5
+#endif
 #define PEEK_COL 0.5, 0.5, 0.0
 
 class DetectionSystemSpice
@@ -54,10 +56,10 @@ public:
   
 public:
   G4int Build();
-  G4int PlaceDetector(G4LogicalVolume* exp_hall_log, G4int nRings);
-  G4int PlaceGuardRing(G4LogicalVolume* exp_hall_log);
-  void PlaceDetectorMount(G4LogicalVolume* exp_hall_log); 
-  void PlaceAnnularClamps(G4LogicalVolume* exp_hall_log);
+  G4int PlaceDetector(G4LogicalVolume* , G4int nRings);
+  G4int PlaceGuardRing(G4LogicalVolume* );
+  void PlaceDetectorMount(G4LogicalVolume* ); 
+  void PlaceAnnularClamps(G4LogicalVolume* );
   
 private:
     G4AssemblyVolume* fAssembly;

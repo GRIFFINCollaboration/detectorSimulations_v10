@@ -60,9 +60,9 @@ HistoManager::HistoManager() {
     }
     for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){//initialises part of array, used for checking file creation in event action
       for (G4int i=0; i < 12; i++) {//12 segments
-
-      SpiceHistNumbers[ring*MAXNUMDETSPICE+i+2]=0;
-    }}
+	fSpiceHistNumbers[ring*MAXNUMDETSPICE+i+2]=0;
+      } 
+    }
 	 fGridCell = false;
  	 fGriffin  = false;
 	 fLaBr     = false;
@@ -373,11 +373,11 @@ void HistoManager::Book() {
 	  title     = "Edep in crystal (keV)";
 	  name  = "FullEdep"; //edep = energy deposition
 	  MakeHisto(analysisManager, name,  title, xmin*1000., xmax*1000., nbins);
-	  SpiceHistNumbers[0]=fMakeHistoIndex; //assigns array item the histo index, for reference by FillHisto()
+	  fSpiceHistNumbers[0]=fMakeHistoIndex; //assigns array item the histo index, for reference by FillHisto()
 
 	  name  = "Edep_Addback";// summed
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	  SpiceHistNumbers[1]=fMakeHistoIndex;
+	  fSpiceHistNumbers[1]=fMakeHistoIndex;
 	  
 	  for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){
 	    detString = G4intToG4String(ring);
@@ -387,19 +387,19 @@ void HistoManager::Book() {
 	      name  = "R" + detString + "S" + segString;
 	      MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);//generates index
 	      
-	    SpiceHistNumbers[ring*MAXNUMSEGSPICE+seg+2]=fMakeHistoIndex;
+	    fSpiceHistNumbers[ring*MAXNUMSEGSPICE+seg+2]=fMakeHistoIndex;
 	    }
 	  }
 	  name = "BeamEnergy";
 	  title ="Energy of Input Beam";
 	  MakeHisto(analysisManager, name, title, xmin, xmax, nbins);
-	  angledistro[0]=fMakeHistoIndex;
+	  fAngleDistro[0]=fMakeHistoIndex;
 	  
 	  name = "AllSegEnergies";
 	  title = "Energy vs. Segment";
 	  Make2DHisto(analysisManager, name, title,
                  120, 0., 120., nbins, 0., xmax);
-	  angledistro[1]=fMakeHistoIndex;
+	  fAngleDistro[1]=fMakeHistoIndex;
 	  
 	  name  = "Multiplicity";
 	  title     = "Deposition multiplicity";
@@ -407,7 +407,7 @@ void HistoManager::Book() {
 	  xmin      = 0.;
 	  xmax      = 4.;
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	  angledistro[2]=fMakeHistoIndex;
+	  fAngleDistro[2]=fMakeHistoIndex;
 	  
 	  name  = "x-y";
 	  title     = "X-Y 2D distribution";
@@ -415,7 +415,7 @@ void HistoManager::Book() {
 	  xmin      = -6.;
 	  xmax      = 6.;
 	  Make2DHisto(analysisManager, name,  title, nbins, xmin, xmax, nbins, xmin, xmax);
-	  angledistro[3]=fMakeHistoIndex;
+	  fAngleDistro[3]=fMakeHistoIndex;
 
 	  title  = "z-distribution";
 	  name     = "z-distro";
@@ -423,7 +423,7 @@ void HistoManager::Book() {
 	  xmin      = -0.6;
 	  xmax      = -0.4;
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	  angledistro[4]=fMakeHistoIndex;
+	  fAngleDistro[4]=fMakeHistoIndex;
 	  
 	  title  = "x-distribution";
 	  name     = "x-distro";
@@ -431,7 +431,7 @@ void HistoManager::Book() {
 	  xmin      = -10.;
 	  xmax      = 10.;
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	  angledistro[5]=fMakeHistoIndex;
+	  fAngleDistro[5]=fMakeHistoIndex;
 	  
 	  title  = "y-distribution";
 	  name     = "y-distro";
@@ -441,7 +441,7 @@ void HistoManager::Book() {
 	  MakeHistoWithAxisTitles(analysisManager, name, 
 					   title, xmin, xmax, 
 					   nbins, "", "mm");
-	  angledistro[6]=fMakeHistoIndex;
+	  fAngleDistro[6]=fMakeHistoIndex;
 	  
 	  for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){  
 	    for (G4int seg=0; seg < 3; seg++) {//12 segments but 3 for changes - adjusted in Event action
@@ -455,7 +455,7 @@ void HistoManager::Book() {
                  nbins/2, xmin, xmax, nbins, -xmax, xmax);
 
 	  
-	    SpiceAngleHists[ring*MAXNUMSEGSPICE+seg]=fMakeHistoIndex;
+	    fSpiceAngleHists[ring*MAXNUMSEGSPICE+seg]=fMakeHistoIndex;
 	    }
 	  }
 	  
@@ -471,7 +471,7 @@ void HistoManager::Book() {
                  nbins/2, xmin, xmax, nbins, -xmax, xmax);
 
 	  
-	    Test[ring*MAXNUMSEGSPICE+seg]=fMakeHistoIndex;
+	    fTest[ring*MAXNUMSEGSPICE+seg]=fMakeHistoIndex;
 	    }
 	  }
 	  /*title  = "Theta Error";
@@ -480,7 +480,7 @@ void HistoManager::Book() {
 	  xmin      = 0.;//explicitly defined for clarity
 	  xmax      = 3.14;
 	  MakeHisto(analysisManager, name, title, xmin, xmax, nbins);
-	  SpiceAngleHists[100]=fMakeHistoIndex;*/
+	  fSpiceAngleHists[100]=fMakeHistoIndex;*/
 	  
 	  /*title  = "Kinematics of edge feature (940 to 970keV)";
 	  name     = "Dip1";
@@ -489,7 +489,7 @@ void HistoManager::Book() {
 	  xmax      = 3.14;
 	  Make2DHisto(analysisManager, name, title,
 		nbins/2, xmin, xmax, nbins, -xmax, xmax);
-	  SpiceAngleHists[101]=fMakeHistoIndex;
+	  fSpiceAngleHists[101]=fMakeHistoIndex;
 
 	  title  = "Kinematics of edge feature (1020 to 1040keV)";
 	  name     = "Dip2";
@@ -498,7 +498,7 @@ void HistoManager::Book() {
 	  xmax      = 3.14;
 	  Make2DHisto(analysisManager, name, title,
 		nbins/2, xmin, xmax, nbins, -xmax, xmax);
-	  SpiceAngleHists[102]=fMakeHistoIndex;
+	  fSpiceAngleHists[102]=fMakeHistoIndex;
 	  
 	  title  = "Kinematics of edge feature (combined)";
 	  name     = "Dips1+2";
@@ -507,18 +507,18 @@ void HistoManager::Book() {
 	  xmax      = 3.14;
 	  Make2DHisto(analysisManager, name, title,
 		nbins/2, xmin, xmax, nbins, -xmax, xmax);
-	  SpiceAngleHists[103]=fMakeHistoIndex;*/
+	  fSpiceAngleHists[103]=fMakeHistoIndex;*/
 	}//if(fSpice)
 
 	if(fPaces) {// paces detector
 		    
 	  name  = "paces_crystal_edep";
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	  PacesHistNumbers[0]=fMakeHistoIndex;
+	  fPacesHistNumbers[0]=fMakeHistoIndex;
 	  
 	  name  = "paces_crystal_edep_sum";
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	  PacesHistNumbers[1]=fMakeHistoIndex;
+	  fPacesHistNumbers[1]=fMakeHistoIndex;
 	  
 	  for (G4int i=0; i < MAXNUMDETPACES; i++) {//[MAXNUMDET];
 	    detString = G4intToG4String(i);
@@ -526,7 +526,7 @@ void HistoManager::Book() {
 	    name  = "paces_crystal_edep_det" + detString;
 	    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 	  
-	    PacesHistNumbers[i+2]=fMakeHistoIndex;
+	    fPacesHistNumbers[i+2]=fMakeHistoIndex;
 	  }
 	}//if(fPaces)
       }//if(WRITEEDEPHISTOS)

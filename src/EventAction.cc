@@ -70,7 +70,7 @@ EventAction::~EventAction() {
     
     G4cout << "Old style multiplicity: " << OS*100.0 << G4endl;//% figure for multiplicity
   }
-  if(HistoManager::Instance().SpiceHistNumbers[4] != 0){//will be 0 due to initialisation, only overwritten if SPICE is used
+  if(HistoManager::Instance().fSpiceHistNumbers[4] != 0){//will be 0 due to initialisation, only overwritten if SPICE is used
     G4cout << "WRITING KINEMATICS FILE " << G4endl;
     G4cout << fSpiceIterator << G4endl;//correct value - by root
     std::ofstream spicekinematics;
@@ -369,7 +369,9 @@ void EventAction::FillSpice() {
     for (G4int ring=0; ring < MAXNUMDETSPICE; ring++) {
       for (G4int seg=0; seg < 12; seg++) {
 	if(fSpiceEnergyDet[ring][seg] > 65.*CLHEP::keV) {
-	  if(fSpiceEnergyDet[ring][seg] > 600*keV){
+	  if(fSpiceEnergyDet[ring][seg] > 400*keV && fSpiceEnergyDet[ring][seg] < 600*keV ){
+	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0025);
+	  } else if (fSpiceEnergyDet[ring][seg] > 600*keV) {
 	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0030);
 	  } else if (fSpiceEnergyDet[ring][seg] > 305*keV && fSpiceEnergyDet[ring][seg] < 335*keV) {
 	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0055);
@@ -377,17 +379,18 @@ void EventAction::FillSpice() {
 	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0045);
 	  } else if (fSpiceEnergyDet[ring][seg] < 305*keV && fSpiceEnergyDet[ring][seg] > 270*keV){
 	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0035);
-	  } else if (fSpiceEnergyDet[ring][seg] <  270*keV){
-	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0040);
-	  } else SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0030);//i.e the 400 to 600 range - look at bismuth
+	  } else if (fSpiceEnergyDet[ring][seg] <  270*keV && fSpiceEnergyDet[ring][seg] > 243*keV){
+	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0042);
+	  } else SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0037);//so nothing falls through
 	  SpiceRawEnergy = fSpiceEnergyDet[ring][seg];
 	  //fill energies in each detector
 	  if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution()){
-	    HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[0],SpiceResolutionEnergy*1000.);
+	    HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[0],SpiceResolutionEnergy*1000.);
 	  } //fill standard energy spectra - no add-back
 	  else if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution() == false){
-	    HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[0],SpiceRawEnergy*1000.);
+	    HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[0],SpiceRawEnergy*1000.);
 	  } //fill standard energy spectra - no add-back
+	  
 	  G4int remainder = seg%3;//used to overlay mirrored segment histos within a ring
 	  switch(remainder){
 	    case 1 : remainder = 1;//0
@@ -417,9 +420,9 @@ void EventAction::FillSpice() {
 	  if(HistoManager::Instance().fBeamPhi+PhiMap < -CLHEP::pi){
 	    PhiMap += 2.*CLHEP::pi;//adds 2pi from map to go to top of graph (wraps data)
 	  }
-	  if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution())HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[MAXNUMSEGSPICE*ring+seg+2],
+	  if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution())HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[MAXNUMSEGSPICE*ring+seg+2],
 	    SpiceResolutionEnergy);//broadening removed 11/10
-	  else if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution() == false)HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[MAXNUMSEGSPICE*ring+seg+2],
+	  else if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution() == false)HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[MAXNUMSEGSPICE*ring+seg+2],
 	    SpiceRawEnergy);//broadening removed 11/10
 	    
 	  fSpiceMultiplicity += 1;//iterates every deposition per fill to track multiplcity per event
@@ -431,16 +434,16 @@ void EventAction::FillSpice() {
 	    fSpiceEnergyDet[ring][seg] - 10.*keV < HistoManager::Instance().fBeamEnergy){
 	    
 	    
-	      HistoManager::Instance().Fill2DHisto(HistoManager::Instance().SpiceAngleHists[MAXNUMSEGSPICE*ring+remainder], HistoManager::Instance().fBeamTheta,
+	      HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fSpiceAngleHists[MAXNUMSEGSPICE*ring+remainder], HistoManager::Instance().fBeamTheta,
 					       HistoManager::Instance().fBeamPhi+PhiMap, 1.);//THETA vs. PHI
-	      //HistoManager::Instance().Fill2DHisto(HistoManager::Instance().Test[MAXNUMSEGSPICE*ring+seg], HistoManager::Instance().fBeamTheta,
+	      //HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fTest[MAXNUMSEGSPICE*ring+seg], HistoManager::Instance().fBeamTheta,
 					      // HistoManager::Instance().fBeamPhi, 1.);//THETA vs. PHI
 	      
-		      /*HistoManager::Instance().Fill2DHisto(HistoManager::Instance().SpiceAngleHists[MAXNUMSEGSPICE*ring+remainder], HistoManager::Instance().fBeamTheta,
+		      /*HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fSpiceAngleHists[MAXNUMSEGSPICE*ring+remainder], HistoManager::Instance().fBeamTheta,
 					       HistoManager::Instance().fBeamPhi+PhiMap, 1.);//THETA vs. PHI  */    
 	      
 	      
-	      HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceAngleHists[100], HistoManager::Instance().fBeamTheta);//THETA error
+	      HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceAngleHists[100], HistoManager::Instance().fBeamTheta);//THETA error
 	      fDepVec.push_back(SpiceResolutionEnergy); //always want resolution on kinematic data
 	      fSegVec.push_back((ring*MAXNUMSEGSPICE+seg)+1);//add one for input as ignored a 0
 	      fThetaVec.push_back(HistoManager::Instance().fBeamTheta);
@@ -448,7 +451,7 @@ void EventAction::FillSpice() {
 	      fSpiceIterator++;//tracks counts for debugging
 	  }
 
-	  if(WRITEEDEPHISTOS)	HistoManager::Instance().Fill2DHisto(HistoManager::Instance().angledistro[1], (G4double) MAXNUMSEGSPICE*ring+seg, 
+	  if(WRITEEDEPHISTOS)	HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fAngleDistro[1], (G4double) MAXNUMSEGSPICE*ring+seg, 
 		G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0030), 1.0);
 
 	}
@@ -457,7 +460,7 @@ void EventAction::FillSpice() {
     MultiplicitySPICE(energySumDet);//multiplicity counters [Array]
     if(energySumDet > MINENERGYTHRES) {//after exiting loops for all rings/segs, will input energy if > threshold
       //fill sum energies
-      if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().SpiceHistNumbers[1], energySumDet);
+      if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[1], energySumDet);
     }
 }
 
@@ -466,13 +469,13 @@ void EventAction::FillPacesCryst() {
     for (G4int j=0; j < MAXNUMDETPACES; j++) {
         if(fPacesCrystEnergyDet[j] > MINENERGYTHRES) {
 	  
-            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().PacesHistNumbers[0], fPacesCrystEnergyDet[j]);
-            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().PacesHistNumbers[j+2], fPacesCrystEnergyDet[j]);
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fPacesHistNumbers[0], fPacesCrystEnergyDet[j]);
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fPacesHistNumbers[j+2], fPacesCrystEnergyDet[j]);
             energySumDet += fPacesCrystEnergyDet[j];
         }
     }
     if(energySumDet > MINENERGYTHRES) {
-        if(WRITEEDEPHISTOS && (energySumDet > MINENERGYTHRES))     HistoManager::Instance().FillHisto(HistoManager::Instance().PacesHistNumbers[1], energySumDet);
+        if(WRITEEDEPHISTOS && (energySumDet > MINENERGYTHRES))     HistoManager::Instance().FillHisto(HistoManager::Instance().fPacesHistNumbers[1], energySumDet);
 	
     }
 }

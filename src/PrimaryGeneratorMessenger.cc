@@ -155,8 +155,7 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
     }
     if( command == fEfficiencyPositionCmd ) {
         fAction->SetEfficiencyPosition(fEfficiencyPositionCmd->GetNew3VectorValue(newValue));
-	BeamPos3 = fEfficiencyPositionCmd->GetNew3VectorValue(newValue);//Private to public variable so accessible
-	fAction->PassTarget(BeamPos3.z()); 
+	fAction->PassTarget(fEfficiencyPositionCmd->GetNew3VectorValue(newValue).z()); 
 		  return;
     }
     if( command == fEfficiencyParticleCmd ) {

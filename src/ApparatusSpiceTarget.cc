@@ -32,7 +32,7 @@ ApparatusSpiceTarget::ApparatusSpiceTarget(G4double beaminput) {
   this->fTargetMaterial = "Gold";
   this->fTargetBackerMaterial = "Gold";
   this->fTargetProtectorMaterial = "Gold";//initialising - may remove
-  this->fTargetRadius = 4.5*mm;
+  this->fTargetRadius = 12.5*mm;
   this->fTargetBackerSurfaceDensity=0.;
   
   fBracketMaterial = "G4_Al";
@@ -98,7 +98,7 @@ G4int ApparatusSpiceTarget::BuildTarget(G4String input_material, G4double input_
       return 0;
     } 
     
-    G4Tubs* target = new G4Tubs("Spice_Target", 0.0, 12.5*mm, fTargetThickness/2.,
+    G4Tubs* target = new G4Tubs("Spice_Target", 0.0, fTargetRadius, fTargetThickness/2.,
                 0.0, 360*deg);
     
     //logical volume
@@ -124,7 +124,7 @@ G4int ApparatusSpiceTarget::BuildBacker(G4String input_material, G4double input_
       return 0;
     }
     
-    G4Tubs* target_Backer = new G4Tubs("Spice_Target_Backer", 0.0, 12.5*mm, fTargetBackerThickness/2.,
+    G4Tubs* target_Backer = new G4Tubs("Spice_Target_Backer", 0.0, fTargetRadius, fTargetBackerThickness/2.,
                 0.0, 360*deg);
     
     //logical volume
@@ -150,7 +150,7 @@ G4int ApparatusSpiceTarget::BuildProtector(G4String input_material, G4double inp
       return 0;
     }  
 
-    G4Tubs* target_Protector = new G4Tubs("Spice_Target_Protector", 0.0,  12.5*mm, fTargetProtectorThickness/2.,
+    G4Tubs* target_Protector = new G4Tubs("Spice_Target_Protector", 0.0, fTargetRadius, fTargetProtectorThickness/2.,
                 0.0, 360*deg);
     
     //logical volume

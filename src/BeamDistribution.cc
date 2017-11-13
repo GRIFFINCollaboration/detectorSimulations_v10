@@ -30,7 +30,9 @@ void BeamDistribution::ReadIn(G4String filename){//Reads in the data from the fi
 	  if ( !std::isdigit(c) ) {
 	      std::getline(distrodata,fInfo);
 	      counter++;
-	  }else fDigitBool = true;
+	  } else {
+	    fDigitBool = true;
+	  }
 	}
 	
 	for(fCol = 0; std::getline(distrodata, fInfo); ++fCol){}
@@ -56,7 +58,9 @@ void BeamDistribution::ReadIn(G4String filename){//Reads in the data from the fi
 	  }
 	}
 	distrodata.close();
-    }else std::cout << "File not opened" << std::endl; 
+    } else {
+      std::cout << "File not opened" << std::endl; 
+    }
 }
 
 void BeamDistribution::ReadOut(){//reads out the data, mainly used for debugging. Called in PGA if need to turn off
@@ -99,21 +103,6 @@ double BeamDistribution::SelectDist(G4double RelProb){//the stopping distance fo
     return 0.;//EXIT criteria if failed
 }
 
-//Bismuth PGA
-/*
-	quick bismuth energy peak func
-	  CE K 481.7 1.537 %
-	  CE L   553.8 0.442 %
-	  CE M  565.9 0.111 %
-	  CE K 975.7   7.08 %
-	  CE L    1047.8  1.84 %
-	  CE M 1059.8  0.44 %
-	  CE K  1682.2   0.0238 % 
-	  CE L   1754.4   0.0034 % 
-
-*/
-
-
 	/*G4double BiEn[8] =  {481.7,553.8,565.9,975.7,1047.8,1059.8,1682.2,1754.4};
 	G4double EnSplit[8] = {0.13391768027045,0.038511135120064,0.0096713484125048,0.61687519604085,0.16031784755864,
 			0.038336876590109,0.002073676506465 ,0.00029623950092357};
@@ -133,4 +122,23 @@ double BeamDistribution::SelectDist(G4double RelProb){//the stopping distance fo
 	    fEffEnergy = BiEn[BiIter]*keV;
 	    break;
 	  } 
+	}*/
+	/*G4double BaEn[15] =  {73.8999,79.7808,187.2522,240.4143,266.8662,275.1818,297.1365,301.6337,302.62,320.0283,347.8639,350.2986,354.7958,355.7821,378.1342};
+	G4double EnSplitBa[15] = {0.575,1.47,0.0379,0.329,0.684,0.01262,0.0887,0.0181,0.00383,1.309,0.1506,0.215,0.0447,0.0093,0.0241};
+	
+	G4double BaRand = G4UniformRand()*4.97185, BaEnSum;//adjusts for relatives
+	G4int BaIter;
+// 	G4cout << "Rando" << BiRand << G4endl;
+
+	for(BaIter = 0; BaIter <15; BaIter ++){
+	  BaEnSum += EnSplitBa[BaIter];
+	  EnSplitBa[BaIter] = BaEnSum;
+	}
+	for(BaIter = 0; BaIter <15; BaIter ++){
+	// G4cout << "Iterator" << BiIter << G4endl;
+	  if(BaRand < EnSplitBa[BaIter] ) {
+	    //G4cout << fEffEnergy << " ENERGY BISMUTH" << G4endl;
+	    fEffEnergy = BaEn[BaIter]*keV;
+	    break;
+	  }
 	}*/

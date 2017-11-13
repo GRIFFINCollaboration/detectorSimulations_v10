@@ -101,11 +101,12 @@ public:
     
     
     //	sizeof() arrays appear double the elements, due to 2 bits per element
-    short PacesHistNumbers[MAXNUMDETPACES+2]; //+2 for edep and sum histos 
-    short SpiceHistNumbers[MAXNUMDETSPICE*MAXNUMSEGSPICE+2]; //+2 for edep and sum histos 
-    short SpiceAngleHists[120];//im lazy
-    short angledistro[10]; //this variable will hold the histogran ID for the angular distributions from the cone
-
+    short fPacesHistNumbers[MAXNUMDETPACES+2]; //+2 for edep and sum histos 
+    short fSpiceHistNumbers[MAXNUMDETSPICE*MAXNUMSEGSPICE+2]; //+2 for edep and sum histos 
+    short fSpiceAngleHists[120];//im lazy
+    short fAngleDistro[10]; //this variable will hold the histogran ID for the angular distributions from the cone
+    short fTest[120];
+    
     void MakeHisto(G4AnalysisManager* analysisManager, G4String filename,  G4String title, G4double xmin, G4double xmax, G4int nbins);
     void MakeHistoWithAxisTitles(G4AnalysisManager* analysisManager, G4String name, 
 					   G4String title, G4double xmin, G4double xmax, 
