@@ -376,7 +376,7 @@ void HistoManager::Book() {
 	  fSpiceHistNumbers[0]=fMakeHistoIndex; //assigns array item the histo index, for reference by FillHisto()
 
 	  name  = "Edep_Addback";// summed
-	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  MakeHisto(analysisManager, name,  title, xmin*1000., xmax*1000., nbins);
 	  fSpiceHistNumbers[1]=fMakeHistoIndex;
 	  
 	  for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){

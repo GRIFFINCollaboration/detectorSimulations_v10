@@ -119,7 +119,7 @@ class ApparatusSpiceTarget
     void  PlaceTarget(G4LogicalVolume*);
     void  PlaceTargetBacker(G4LogicalVolume*);
     void  PlaceTargetProtector(G4LogicalVolume*);
-    void  PlaceSource(G4LogicalVolume*);
+    void  PlaceSource();
     
     G4int BuildBracket();
     void  PlaceBracket(G4LogicalVolume*);

@@ -278,7 +278,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	  // 	  G4cout << "BEAM DISTR" << G4endl;
 	  G4double x = G4RandGauss::shoot(0.,1.)*mm;//9mm = target radius for now
 	  G4double y = G4RandGauss::shoot(0.,1.)*mm;
-	  G4double z = -G4UniformRand()*0.1*CLHEP::um 
+	  G4double z = -G4UniformRand()*(fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity)
 		   - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) + fDetector->targetz;
 	  // 	 G4double z = -(G4UniformRand()*(fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity)) 
 	  // - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) + fDetector->targetz;
@@ -364,7 +364,7 @@ void PrimaryGeneratorAction::SendBeamEnergyToHist(G4double inputenergy){
 void PrimaryGeneratorAction::PrepareBeamFile(){
 	fBeamDistribution = new BeamDistribution();
   	G4String filename = fDetector->fSpiceTargetMaterial + ".dat";//e.g. Calcium.dat
-	fBeamDistribution->fSpiceTargetThickness = (fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity);
+	fBeamDistribution->GetThickness(fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity);
 	fBeamDistribution->ReadIn(filename);//read in values from file 
 	fBeamDistribution->ReadOut();//read out values (for error-checking)
 	fBeamDistribution->SumProb();//For normalisation purposes

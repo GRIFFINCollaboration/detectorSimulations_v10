@@ -366,26 +366,39 @@ void EventAction::FillSpice() {
     fSpiceMultiplicity = 0;
     G4double SpiceResolutionEnergy;
     G4double SpiceRawEnergy;
+    G4double Gauss2;
     for (G4int ring=0; ring < MAXNUMDETSPICE; ring++) {
       for (G4int seg=0; seg < 12; seg++) {
 	if(fSpiceEnergyDet[ring][seg] > 65.*CLHEP::keV) {
-	  if(fSpiceEnergyDet[ring][seg] > 400*keV && fSpiceEnergyDet[ring][seg] < 600*keV ){
-	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0025);
-	  } else if (fSpiceEnergyDet[ring][seg] > 600*keV) {
-	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0030);
+	  Gauss2 = G4UniformRand();
+	  if(fSpiceEnergyDet[ring][seg] > 400*keV && fSpiceEnergyDet[ring][seg] < 520*keV ){
+	    if(Gauss2 > 0.15){SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.00138);      
+	    } else {SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.00534);} 
+	  } else if (fSpiceEnergyDet[ring][seg] > 520*keV && fSpiceEnergyDet[ring][seg] < 600*keV) {
+	    if(Gauss2 > 0.50){SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.00151);
+	    } else {SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0045);}
+	  } else if (fSpiceEnergyDet[ring][seg] > 600*keV && fSpiceEnergyDet[ring][seg] < 1010*keV) {
+	    if(Gauss2 > 0.45){SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.00166);
+	    } else if (Gauss2 < 0.45 && Gauss2 > 0.12){SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.008);
+	    } else {SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.056);}
+	  } else if (fSpiceEnergyDet[ring][seg] > 1010*keV) {
+	    if(Gauss2 > 0.60){SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0018);
+	    } else {SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.00569);}//0.00369
 	  } else if (fSpiceEnergyDet[ring][seg] > 305*keV && fSpiceEnergyDet[ring][seg] < 335*keV) {
-	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0055);
+	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0056);
 	  } else if (fSpiceEnergyDet[ring][seg] > 335*keV && fSpiceEnergyDet[ring][seg] < 400*keV) {
-	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0045);
-	  } else if (fSpiceEnergyDet[ring][seg] < 305*keV && fSpiceEnergyDet[ring][seg] > 270*keV){
-	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0035);
-	  } else if (fSpiceEnergyDet[ring][seg] <  270*keV && fSpiceEnergyDet[ring][seg] > 243*keV){
-	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0042);
-	  } else SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0037);//so nothing falls through
+	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0055);
+	  } else if (fSpiceEnergyDet[ring][seg] < 305*keV && fSpiceEnergyDet[ring][seg] > 280*keV){
+	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0030);
+	  } else if (fSpiceEnergyDet[ring][seg] <  280*keV && fSpiceEnergyDet[ring][seg] > 245*keV){
+	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0054);
+	  } else if (fSpiceEnergyDet[ring][seg] < 245*keV){
+	    SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.0029);
+	  } else SpiceResolutionEnergy = G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.000000001);//so nothing falls through
 	  SpiceRawEnergy = fSpiceEnergyDet[ring][seg];
 	  //fill energies in each detector
 	  if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution()){
-	    HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[0],SpiceResolutionEnergy*1000.);
+	    HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[0],(SpiceResolutionEnergy+4.*CLHEP::keV)*1000.);
 	  } //fill standard energy spectra - no add-back
 	  else if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution() == false){
 	    HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[0],SpiceRawEnergy*1000.);
@@ -436,18 +449,18 @@ void EventAction::FillSpice() {
 	    
 	      HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fSpiceAngleHists[MAXNUMSEGSPICE*ring+remainder], HistoManager::Instance().fBeamTheta,
 					       HistoManager::Instance().fBeamPhi+PhiMap, 1.);//THETA vs. PHI
-	      //HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fTest[MAXNUMSEGSPICE*ring+seg], HistoManager::Instance().fBeamTheta,
-					      // HistoManager::Instance().fBeamPhi, 1.);//THETA vs. PHI
+	      /*HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fTest[MAXNUMSEGSPICE*ring+seg], HistoManager::Instance().fBeamTheta,
+					       HistoManager::Instance().fBeamPhi, 1.);//THETA vs. PHI
 	      
-		      /*HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fSpiceAngleHists[MAXNUMSEGSPICE*ring+remainder], HistoManager::Instance().fBeamTheta,
+		      HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fSpiceAngleHists[MAXNUMSEGSPICE*ring+remainder], HistoManager::Instance().fBeamTheta,
 					       HistoManager::Instance().fBeamPhi+PhiMap, 1.);//THETA vs. PHI  */    
 	      
 	      
 	      HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceAngleHists[100], HistoManager::Instance().fBeamTheta);//THETA error
 	      fDepVec.push_back(SpiceResolutionEnergy); //always want resolution on kinematic data
-	      fSegVec.push_back((ring*MAXNUMSEGSPICE+seg)+1);//add one for input as ignored a 0
+	      fSegVec.push_back((ring*MAXNUMSEGSPICE+remainder)+1);//add one for input as ignored a 0
 	      fThetaVec.push_back(HistoManager::Instance().fBeamTheta);
-	      fPhiVec.push_back(HistoManager::Instance().fBeamPhi);
+	      fPhiVec.push_back(HistoManager::Instance().fBeamPhi+PhiMap);
 	      fSpiceIterator++;//tracks counts for debugging
 	  }
 
@@ -460,7 +473,7 @@ void EventAction::FillSpice() {
     MultiplicitySPICE(energySumDet);//multiplicity counters [Array]
     if(energySumDet > MINENERGYTHRES) {//after exiting loops for all rings/segs, will input energy if > threshold
       //fill sum energies
-      if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[1], energySumDet);
+      if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[1], energySumDet*1000.);
     }
 }
 

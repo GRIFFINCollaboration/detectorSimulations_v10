@@ -303,22 +303,21 @@ void DetectorConstruction::SetGenericTarget()
 //*******************
 void DetectorConstruction::SetSpiceTargetMaterial( G4String name)
 {
-  DetectorConstruction::fSetSpiceTargetMaterial = true;
-  DetectorConstruction::fSpiceTargetMaterial = name; 
-  DetectorConstruction::SetSpiceTarget();
+  fSetSpiceTargetMaterial = true;
+  fSpiceTargetMaterial = name; 
+  SetSpiceTarget();
 }
 
 void DetectorConstruction::SetSpiceTargetThickness( G4double surface_density )
 {
-  DetectorConstruction::fSetSpiceTargetThickness = true;
-  DetectorConstruction::fSpiceTargetThickness = surface_density;
+  fSetSpiceTargetThickness = true;
+  fSpiceTargetThickness = surface_density;
 }
 
 void DetectorConstruction::SetSpiceTargetDensity( G4double density)
 {
-  DetectorConstruction::fSetSpiceTargetDensity = true;
-  DetectorConstruction::fSpiceTargetDensity = density;
- 
+  fSetSpiceTargetDensity = true;
+  fSpiceTargetDensity = density;
 }
 
 void DetectorConstruction::SetSpiceTarget()
@@ -336,29 +335,29 @@ void DetectorConstruction::SetSpiceTarget()
     }
   }
   fApparatusSpiceTarget->BuildBracket();
-  fApparatusSpiceTarget->PlaceBracket(fLogicWorld); //no build yet
+  fApparatusSpiceTarget->PlaceBracket(fLogicWorld);
   fApparatusSpiceTarget->BuildHolder();
-  fApparatusSpiceTarget->PlaceHolder(fLogicWorld); //no build yet
+  fApparatusSpiceTarget->PlaceHolder(fLogicWorld);
   //Add a bool to see if already placed
 }
 
 void DetectorConstruction::SetSpiceTargetBackerMaterial( G4String name )
 {
-  DetectorConstruction::fSetSpiceTargetBackerMaterial = true;
-  DetectorConstruction::fSpiceTargetBackerMaterial = name;
-  DetectorConstruction::SetSpiceBackerTarget();//should be last one given, may add to all to allow for any ordered commands
+  fSetSpiceTargetBackerMaterial = true;
+  fSpiceTargetBackerMaterial = name;
+  SetSpiceBackerTarget();//should be last one given, may add to all to allow for any ordered commands
 }
 
 void DetectorConstruction::SetSpiceTargetBackerThickness( G4double surface_density )
 {
-  DetectorConstruction::fSetSpiceTargetBackerThickness = true;
-  DetectorConstruction::fSpiceTargetBackerThickness = surface_density;
+  fSetSpiceTargetBackerThickness = true;
+  fSpiceTargetBackerThickness = surface_density;
 }
 
 void DetectorConstruction::SetSpiceTargetBackerDensity( G4double density )
 {
-  DetectorConstruction::fSetSpiceTargetBackerDensity = true;
-  DetectorConstruction::fSpiceTargetBackerDensity = density;
+  fSetSpiceTargetBackerDensity = true;
+  fSpiceTargetBackerDensity = density;
   
 }
 
@@ -379,24 +378,21 @@ void DetectorConstruction::SetSpiceBackerTarget( )
 }
 void DetectorConstruction::SetSpiceTargetProtectorMaterial( G4String name )
 {
-  DetectorConstruction::fSetSpiceTargetProtectorMaterial = true;
-  DetectorConstruction::fSpiceTargetProtectorMaterial = name;
-  DetectorConstruction::SetSpiceProtectorTarget();
-  
-
+  fSetSpiceTargetProtectorMaterial = true;
+  fSpiceTargetProtectorMaterial = name;
+  SetSpiceProtectorTarget();
 }
 
 void DetectorConstruction::SetSpiceTargetProtectorThickness( G4double surface_density )
 {
-  DetectorConstruction::fSetSpiceTargetProtectorThickness = true;
-  DetectorConstruction::fSpiceTargetProtectorThickness = surface_density;
+  fSetSpiceTargetProtectorThickness = true;
+  fSpiceTargetProtectorThickness = surface_density;
 }
 
 void DetectorConstruction::SetSpiceTargetProtectorDensity( G4double density )
 {
-  DetectorConstruction::fSetSpiceTargetProtectorDensity = true;
-  DetectorConstruction::fSpiceTargetProtectorDensity = density;
-  
+  fSetSpiceTargetProtectorDensity = true;
+  fSpiceTargetProtectorDensity = density;
 }
 
 void DetectorConstruction::SetSpiceProtectorTarget()

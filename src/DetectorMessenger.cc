@@ -104,7 +104,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     fSpiceTargetCmd->SetParameterName("choice",false);
     fSpiceTargetCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 	 
-    fSpiceTargetThicknessCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/app/SpiceTargetThickness",this);
+    fSpiceTargetThicknessCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/app/SpiceTargetSurfaceDensity",this);
     fSpiceTargetThicknessCmd->SetGuidance("Set spice target thickness - mg/cm^2 unit.");
     fSpiceTargetThicknessCmd->SetUnitCategory("Mass/Surface");
     fSpiceTargetThicknessCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
@@ -119,7 +119,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     fSpiceTargetBackerCmd->SetParameterName("choice",false);
     fSpiceTargetBackerCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 	 
-    fSpiceTargetBackerThicknessCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/app/SpiceTargetBackerThickness",this);
+    fSpiceTargetBackerThicknessCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/app/SpiceTargetBackerSurfaceDensity",this);
     fSpiceTargetBackerThicknessCmd->SetGuidance("Set spice target backer thickness - mg/cm^2 unit.");
     fSpiceTargetBackerThicknessCmd->SetUnitCategory("Mass/Surface");
     fSpiceTargetBackerThicknessCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
@@ -134,7 +134,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     fSpiceTargetProtectorCmd->SetParameterName("choice",false);
     fSpiceTargetProtectorCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 	 
-    fSpiceTargetProtectorThicknessCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/app/SpiceTargetProtectorThickness",this);
+    fSpiceTargetProtectorThicknessCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/app/SpiceTargetProtectorSurfaceDensity",this);
     fSpiceTargetProtectorThicknessCmd->SetGuidance("Set spice target protector thickness - mg/cm^2 unit.");
     fSpiceTargetProtectorThicknessCmd->SetUnitCategory("Mass/Surface");
     fSpiceTargetProtectorThicknessCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
