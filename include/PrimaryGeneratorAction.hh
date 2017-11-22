@@ -34,8 +34,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef PrimaryGeneratorAction_h
-#define PrimaryGeneratorAction_h 1
+#ifndef PRIMARYGENERATORACTION_h
+#define PRIMARYGENERATORACTION__h 1
 
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "globals.hh"

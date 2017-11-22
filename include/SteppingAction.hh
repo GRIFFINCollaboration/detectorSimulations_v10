@@ -34,8 +34,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef SteppingAction_h
-#define SteppingAction_h 1
+#ifndef STEPPINGACTION_h
+#define STEPPINGACTION_h 1
 
 #include "globals.hh"
 #include "G4UserSteppingAction.hh"

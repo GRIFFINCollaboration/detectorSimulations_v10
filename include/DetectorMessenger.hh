@@ -32,8 +32,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef DetectorMessenger_h
-#define DetectorMessenger_h 1
+#ifndef DETECTORMESSENGER_h
+#define DETECTORMESSENGER_h 1
 
 #include "globals.hh"
 #include "G4UImessenger.hh"

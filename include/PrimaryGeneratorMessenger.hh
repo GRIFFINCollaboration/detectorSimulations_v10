@@ -32,8 +32,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef PrimaryGeneratorMessenger_h
-#define PrimaryGeneratorMessenger_h 1
+#ifndef PRIMARYGENERATORMESSENGER_h
+#define PRIMARYGENERATORMESSENGER_h 1
 
 #include "G4UImessenger.hh"
 #include "globals.hh"
