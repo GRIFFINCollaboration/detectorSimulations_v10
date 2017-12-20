@@ -371,7 +371,7 @@ void EventAction::FillSpice() {
       for (G4int seg=0; seg < 12; seg++) {
 	if(fSpiceEnergyDet[ring][seg] > 70.*CLHEP::keV) {
 
-	  SpiceResolutionEnergy = ApplySpiceRes(fSpiceEnergyDet[ring][seg]) + 9.0*CLHEP::keV ;// + 2.1*CLHEP::keV;
+	  SpiceResolutionEnergy = ApplySpiceRes(fSpiceEnergyDet[ring][seg]);// + 9.0*CLHEP::keV ;// + 2.1*CLHEP::keV;
 // 	  G4cout << "SPICE dep: " << fSpiceEnergyDet[ring][seg] << G4endl;
 	  //one of two Gaussians, or decay tail//add for bismuth exp. shift
 	  SpiceRawEnergy = fSpiceEnergyDet[ring][seg];//No resolution applied as demanded by command in macro
@@ -425,7 +425,7 @@ void EventAction::FillSpice() {
 	    if (HistoManager::Instance().fBeamPhi > 0.) PhiMap =  -CLHEP::pi; 
 	      else PhiMap =  CLHEP::pi;
 	  }
-if(seg == 9 || seg == 10 || seg == 11 ) PhiMap = CLHEP::pi/2.;
+	  if(seg == 9 || seg == 10 || seg == 11 ) PhiMap = CLHEP::pi/2.;
 	    
 	    	  //adjusts non-standard data so none is lost off of histogram limits
 	  if(HistoManager::Instance().fBeamPhi+PhiMap > CLHEP::pi){
@@ -433,9 +433,9 @@ if(seg == 9 || seg == 10 || seg == 11 ) PhiMap = CLHEP::pi/2.;
 	  }
 	  if(HistoManager::Instance().fBeamPhi+PhiMap < -CLHEP::pi){
 	    PhiMap += 2.*CLHEP::pi;//adds 2pi from map to go to top of graph (wraps data)
-}
+	  }
 	    
-	    
+
 	      //THETA vs. PHI
 	      HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fSpiceAngleHists[MAXNUMSEGSPICE*ring+remainder], HistoManager::Instance().fBeamTheta,
 					       HistoManager::Instance().fBeamPhi + PhiMap, 1.);//PHI M<AP!!!!!!!!!!!!!
@@ -450,7 +450,7 @@ if(seg == 9 || seg == 10 || seg == 11 ) PhiMap = CLHEP::pi/2.;
 	      fSpiceIterator++;//tracks counts for debugging 
 	      
 	     /* HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fSpiceTest[MAXNUMSEGSPICE*ring+seg], HistoManager::Instance().fBeamTheta,
-					       HistoManager::Instance().fBeamPhi, 1.);*/
+					       HistoManager::Instance().fBeamPhi, 1.);*/ //if test histos wanted
 	  }
 
 	  //2D all seg energies
