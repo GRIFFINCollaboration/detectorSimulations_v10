@@ -144,6 +144,10 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     fSpiceTargetProtectorDensityCmd->SetUnitCategory("Volumic Mass");
     fSpiceTargetProtectorDensityCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
     
+    fSpiceSourceCmd = new G4UIcmdWithABool("/DetSys/app/spiceSourceTest",this);
+    fSpiceSourceCmd->SetGuidance("Set up geometry for source tests (barium/bismuth)");
+    fSpiceSourceCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    
     fFieldBoxMaterialCmd = new G4UIcmdWithAString("/DetSys/app/fieldBoxMaterial",this);
     fFieldBoxMaterialCmd->SetGuidance("Select material of the target.");
     fFieldBoxMaterialCmd->SetParameterName("choice",false);
@@ -396,6 +400,8 @@ DetectorMessenger::~DetectorMessenger()
     delete fSpiceTargetProtectorCmd;
     delete fSpiceTargetProtectorDensityCmd;
     delete fSpiceTargetProtectorThicknessCmd;
+    delete fSpiceSourceCmd;
+    
     delete fFieldBoxMaterialCmd;
     delete fFieldBoxDimensionsCmd;
     delete fFieldBoxPositionCmd;
@@ -512,6 +518,9 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     }
     if(command == fSpiceTargetProtectorThicknessCmd ) {
 	fDetector->SetSpiceTargetProtectorThickness(fSpiceTargetThicknessCmd->GetNewDoubleValue(newValue));
+    }
+    if(command == fSpiceSourceCmd ) {
+	fDetector->SetSpiceSource(fSpiceSourceCmd->GetNewBoolValue(newValue));
     }
     //  if(command == fFieldBoxMaterialCmd ) {
     //    fDetector->SetFieldBoxMaterial(newValue);

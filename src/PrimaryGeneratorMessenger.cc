@@ -117,6 +117,10 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun
     fBeamFileCmd = new G4UIcmdWithABool("/Detsys/gun/FileDistro",this);//with target, can apply a distribution
     fBeamFileCmd->SetGuidance("Set beam ditribution within a target using definitions in a data file");
     fBeamFileCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    
+    fSourceBeamCmd = new G4UIcmdWithAString("/Detsys/gun/SourceBeam",this);//apply beam make-up from bismuth/barium
+    fSourceBeamCmd->SetGuidance("Set beam distribution from source, named by the command");
+    fSourceBeamCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -134,6 +138,7 @@ PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger() {
     delete fConeMinAngleCmd;
     delete fBeamDistroCmd;
     delete fBeamFileCmd;
+    delete fSourceBeamCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -196,14 +201,19 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
 		  return;
     }
     if( command == fBeamDistroCmd ) {
-	fAction->fNeedBeamDistro = fBeamDistroCmd->GetNewBoolValue(newValue);
+	fAction->SetNeedBeamDistro(fBeamDistroCmd->GetNewBoolValue(newValue));
 	G4cout << "Beam Distribution within SPICE target selected"  << fBeamDistroCmd->GetNewBoolValue(newValue) << G4endl;
     }
     if( command == fBeamFileCmd ) {
-	fAction->fNeedFileDistro = fBeamFileCmd->GetNewBoolValue(newValue);
+	fAction->SetNeedFileDistro(fBeamFileCmd->GetNewBoolValue(newValue));
 	G4cout << "Beam Distribution within SPICE target selected "<< G4endl;
 	fAction->PrepareBeamFile();
     }
+    if( command == fSourceBeamCmd ) {
+	fAction->SetSourceNeeded(true);
+	G4cout << "Source beam chosen"<< G4endl;
+	fAction->SetSourceName(newValue);
+    }  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

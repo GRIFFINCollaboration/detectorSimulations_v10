@@ -112,6 +112,9 @@ private:
     void FillTest(); ///27/6
     void MultiplicitySPICE(G4double);//Tidies up SPICE fill function
     
+    G4double ApplySpiceRes(G4double);
+    G4int SPICEPhiRemainder(G4int);
+    G4int SPICEPhiMap(G4int);
     // Tracking info
     G4int    fHitTrackerI[NUMSTEPVARS][MAXHITS];
     G4double fHitTrackerD[NUMSTEPVARS][MAXHITS];
@@ -126,6 +129,8 @@ private:
  
     G4int    fPTrackID;
     G4int    fPParentID;
+    
+    G4bool ERFCFlag;
     
     //SPICE arrays and sub-variables
     G4int    fSpiceMultiplicity, fSpiceIterator;

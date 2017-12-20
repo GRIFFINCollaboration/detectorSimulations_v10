@@ -57,6 +57,12 @@ TabulatedMagneticField::TabulatedMagneticField(const char* filename, G4double zO
 		file.getline(buffer,256);
 	} while (buffer[1] != '0');
 
+	fXTotal1=0.; fXTotal2=0.; fXTotal3=0.; fXTotal4=0.;
+	fYTotal1=0.; fYTotal2=0.; fYTotal3=0.; fYTotal4=0.;
+	fZTotal1=0.; fZTotal2=0.; fZTotal3=0.; fZTotal4=0.;
+	f1Count=0; f2Count=0; f3Count=0; f4Count=0;
+	
+	
 	// Read in the data and fill arrays
 	G4double xval,yval,zval,bx,by,bz;
 	G4double permeability; // Not used in this example. (is 0 for spice)
@@ -64,9 +70,9 @@ TabulatedMagneticField::TabulatedMagneticField(const char* filename, G4double zO
 		for(G4int iy=0; iy<fNy; iy++) {
 			for(G4int ix=0; ix<fNx; ix++) {
 				file >> xval >> yval >> zval >> bx >> by >> bz >> permeability;
-				bx =bx/1000.;
-				by =by/1000.;
-				bz =bz/1000.;
+				bx = bx/1000.;
+				by = by/1000.;
+				bz = bz/1000.;
 				if(ix==0 && iy==0 && iz==0) {//min is first value?? theres no sort/search 
 					fMinx = xval * lenUnit;
 					fMiny = yval * lenUnit;
@@ -75,19 +81,51 @@ TabulatedMagneticField::TabulatedMagneticField(const char* filename, G4double zO
 				fXField[ix][iy][iz] = bx * fieldUnit;
 				fYField[ix][iy][iz] = by * fieldUnit;
 				fZField[ix][iy][iz] = bz * fieldUnit;
-
+				
 				if(bx > fMaxbx) fMaxbx = bx; // no unit as read-out in terminal
 				if(by > fMaxby) fMaxby = by;
 				if(bz > fMaxbz) fMaxbz = bz;
+				
+				//looking at the symetry of the field - simple mean
+				if(xval>0 && yval>0){
+				  fXTotal1+=bx;
+				  fYTotal1+=by;
+				  fZTotal1+=bz;
+				  f1Count++;
+				}
+				if(xval>0 && yval<0){
+				  fXTotal2+=bx;
+				  fYTotal2+=by;
+				  fZTotal2+=bz;
+				  f2Count++;
+				}
+				if(xval<0 && yval<0){
+				  fXTotal3+=bx;
+				  fYTotal3+=by;
+				  fZTotal3+=bz;
+				  f3Count++;
+				}
+				if(xval<0 && yval>0){
+				  fXTotal4+=bx;
+				  fYTotal4+=by;
+				  fZTotal4+=bz;
+				  f4Count++;
+				}
 			}
 		}
 	}
 	file.close(); //internally stored values, so can close file
-
+	
 	//my attempts - max field value in each column
-	G4cout<<"\t\t\tMax Bx value = "<< fMaxbx<<" Tesla."<<G4endl;
-	G4cout<<"\t\t\tMax By value = "<< fMaxby<<" Tesla."<<G4endl;
 	G4cout<<"\t\t\tMax Bz value = "<< fMaxbz<<" Tesla."<<G4endl;
+	G4cout<<"\t\t\tMax Bz value = "<< fMaxbz<<" Tesla."<<G4endl;
+	G4cout<<"\t\t\tMax Bz value = "<< fMaxbz<<" Tesla."<<G4endl;
+	
+	//Symmetry ananlysis output to terminal
+	G4cout << "\tMagnet Sector 1: = " << fXTotal1/f1Count << " " << fYTotal1/f1Count <<  " " << fZTotal1/f1Count << " Tesla." << G4endl;
+	G4cout << "\tMagnet Sector 1: = " << fXTotal2/f2Count << " " << fYTotal2/f2Count <<  " " << fZTotal2/f2Count << " Tesla." << G4endl;
+	G4cout << "\tMagnet Sector 1: = " << fXTotal3/f3Count << " " << fYTotal3/f3Count <<  " " << fZTotal3/f3Count << " Tesla." << G4endl;
+	G4cout << "\tMagnet Sector 1: = " << fXTotal4/f4Count << " " << fYTotal4/f4Count <<  " " << fZTotal4/f4Count << " Tesla." << G4endl;
 
 	fMaxx = xval * lenUnit; //now max dimension values are the last values - i.e. post-loop values
 	fMaxy = yval * lenUnit;

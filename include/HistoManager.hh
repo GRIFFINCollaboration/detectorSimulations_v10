@@ -104,6 +104,7 @@ public:
     short fPacesHistNumbers[MAXNUMDETPACES+2]; //+2 for edep and sum histos 
     short fSpiceHistNumbers[MAXNUMDETSPICE*MAXNUMSEGSPICE+2]; //+2 for edep and sum histos 
     short fSpiceAngleHists[120];//im lazy
+    short fSpiceTest[120];
     short fAngleDistro[10]; //this variable will hold the histogran ID for the angular distributions from the cone
     short fTest[120];
     
@@ -158,7 +159,9 @@ public:
 	 G4double fBeamEnergy, fBeamTheta, fBeamPhi;//changes on a per run basis - accessed by SPICE
 	 void SpiceResolution(G4bool val) { fSpiceRes = val; }
 	 G4bool SpiceResolution() {return fSpiceRes;}
-	 
+	 void SPICE_ERFC_Setup();
+	 G4double SPICE_ERFC();//Getter for decay-shaped resolution
+
 private:
     HistoManager();
     ~HistoManager();
@@ -198,7 +201,12 @@ private:
 	 G4bool fSpice;
 	 G4bool fPaces;
 	 
+	 //Applying a resolution to SPCIE energies if desired
 	 G4bool fSpiceRes;
+	 G4double Amp[10000];//Bin amp (effective y)
+	 G4double Ampx[10000];
+	 G4double channel, c, AmpTot = 0.;//channel(effective x) and centroid
+	 
 };
 
 enum HISTONAME

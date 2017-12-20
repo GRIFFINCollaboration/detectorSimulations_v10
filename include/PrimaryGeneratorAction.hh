@@ -82,8 +82,11 @@ public:
     void PassTarget(G4double);
     void PrepareBeamFile();
     //booleans (initially false), above, true if a command has been entered for the loops in source file to be entered
-    G4bool fNeedBeamDistro;
-    G4bool fNeedFileDistro;
+    void SetNeedBeamDistro(G4bool input){fNeedBeamDistro = input;};
+    void SetNeedFileDistro(G4bool input){fNeedFileDistro = input;};
+    
+    void SetSourceNeeded(G4bool needed){fSourceNeeded = needed;};
+    void SetSourceName(G4String input){fSourceName = input;};
     
 private:
     //variables
@@ -98,6 +101,7 @@ private:
     G4double fDetectorAnglesLaBr3[8][5];
     G4bool fEffPolarization;
     G4ThreeVector fEffPolarizationVector;
+    
     G4bool fEffBeam;
     G4double fEffBeamRadius;
     G4double fConeRadius;
@@ -108,6 +112,12 @@ private:
     G4double fAngleInit;
     G4bool fConeAngleBool;
     G4double fAngleMinInit;
+    
+    G4bool fNeedBeamDistro;
+    G4bool fNeedFileDistro;
+    
+    G4bool fSourceNeeded;
+    G4String fSourceName;
     
     //functions
     void LaBrinit();

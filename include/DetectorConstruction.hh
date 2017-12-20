@@ -106,7 +106,7 @@ public:
     void SetSpiceTargetProtectorThickness( G4double );
     void SetSpiceTargetProtectorDensity( G4double );
     void SetSpiceProtectorTarget();  
-    
+    void SetSpiceSource( G4bool ); 
     //    void SetFieldBoxMaterial( G4String );
     //    void SetFieldBoxDimensions( G4ThreeVector );
     //    void SetFieldBoxPosition( G4ThreeVector );

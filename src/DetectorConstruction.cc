@@ -334,11 +334,6 @@ void DetectorConstruction::SetSpiceTarget()
 	}
     }
   }
-  fApparatusSpiceTarget->BuildBracket();
-  fApparatusSpiceTarget->PlaceBracket(fLogicWorld);
-  fApparatusSpiceTarget->BuildHolder();
-  fApparatusSpiceTarget->PlaceHolder(fLogicWorld);
-  //Add a bool to see if already placed
 }
 
 void DetectorConstruction::SetSpiceTargetBackerMaterial( G4String name )
@@ -358,7 +353,6 @@ void DetectorConstruction::SetSpiceTargetBackerDensity( G4double density )
 {
   fSetSpiceTargetBackerDensity = true;
   fSpiceTargetBackerDensity = density;
-  
 }
 
 void DetectorConstruction::SetSpiceBackerTarget( )
@@ -408,6 +402,15 @@ void DetectorConstruction::SetSpiceProtectorTarget()
 	  fApparatusSpiceTarget->PlaceTargetProtector(fLogicWorld);
 	}
     }
+  }
+}
+
+void DetectorConstruction::SetSpiceSource(G4bool need){
+  if(need == true){
+    fApparatusSpiceTarget->BuildBracket();
+    fApparatusSpiceTarget->PlaceBracket(fLogicWorld);
+    fApparatusSpiceTarget->BuildHolder();
+    fApparatusSpiceTarget->PlaceHolder(fLogicWorld);
   }
 }
 

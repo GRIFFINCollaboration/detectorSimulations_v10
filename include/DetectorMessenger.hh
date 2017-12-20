@@ -87,6 +87,7 @@ private:
     G4UIcmdWithAString*        fSpiceTargetProtectorCmd;
     G4UIcmdWithADoubleAndUnit* fSpiceTargetProtectorDensityCmd;
     G4UIcmdWithADoubleAndUnit* fSpiceTargetProtectorThicknessCmd;
+    G4UIcmdWithABool*          fSpiceSourceCmd;
     
     //field box
     G4UIcmdWithAString*        fFieldBoxMaterialCmd;

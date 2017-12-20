@@ -25,6 +25,8 @@ class BeamDistribution
       
       //Variable called externally
       void GetThickness(G4double val){ fSpiceTargetThickness = val; };
+      
+      G4double SetSource(G4String, G4double, G4double);
 
   private:
       std::vector<G4double> fDistVec, fRelProbVec; //these vectors will hld all of the data that is read in

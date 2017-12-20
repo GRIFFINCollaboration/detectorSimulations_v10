@@ -37,10 +37,12 @@ private:
   std::vector<std::vector<std::vector<G4double> > > fXField;
   std::vector<std::vector<std::vector<G4double> > > fYField;
   std::vector<std::vector<std::vector<G4double> > > fZField;
+  
   // The dimensions of the table
   G4int fNx;
   G4int fNy;
   G4int fNz; 
+  
   // The physical limits of the defined region
   G4double fMinx;
   G4double fMaxx;
@@ -48,10 +50,12 @@ private:
   G4double fMaxy;
   G4double fMinz;
   G4double fMaxz;
+  
   //The physical limits of the defined region
   G4double fMaxbx;
   G4double fMaxby;
   G4double fMaxbz;
+  
   // The physical extent of the defined region
   G4double fDx;
   G4double fDy;
@@ -61,5 +65,12 @@ private:
   G4bool   fInvertX;
   G4bool   fInvertY;
   G4bool   fInvertZ;
+  
+  //symmetry check
+  G4double fXTotal1,fXTotal2,fXTotal3,fXTotal4;//(x,y) -> (+,+) = 1, (+,-) = 2, (-,-) = 3, and (-,+) = 4
+  G4double fYTotal1,fYTotal2,fYTotal3,fYTotal4;
+  G4double fZTotal1,fZTotal2,fZTotal3,fZTotal4;
+  G4int f1Count, f2Count,f3Count,f4Count;
+  
 };
 #endif

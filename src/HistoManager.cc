@@ -35,6 +35,7 @@
 #include "HistoManager.hh"
 #include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"
+#include "Randomize.hh"
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 HistoManager::HistoManager() {
@@ -390,6 +391,7 @@ void HistoManager::Book() {
 	    fSpiceHistNumbers[ring*MAXNUMSEGSPICE+seg+2]=fMakeHistoIndex;
 	    }
 	  }
+	  
 	  name = "BeamEnergy";
 	  title ="Energy of Input Beam";
 	  MakeHisto(analysisManager, name, title, xmin, xmax, nbins);
@@ -401,21 +403,21 @@ void HistoManager::Book() {
                  120, 0., 120., nbins, 0., xmax);
 	  fAngleDistro[1]=fMakeHistoIndex;
 	  
-	  name  = "Multiplicity";
+	  /*name  = "Multiplicity";
 	  title     = "Deposition multiplicity";
 	  nbins     = 1000;
 	  xmin      = 0.;
 	  xmax      = 4.;
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	  fAngleDistro[2]=fMakeHistoIndex;
+	  fAngleDistro[2]=fMakeHistoIndex;*/
 	  
-	  name  = "x-y";
+	  /*name  = "x-y";
 	  title     = "X-Y 2D distribution";
 	  nbins = 100;
 	  xmin      = -6.;
 	  xmax      = 6.;
 	  Make2DHisto(analysisManager, name,  title, nbins, xmin, xmax, nbins, xmin, xmax);
-	  fAngleDistro[3]=fMakeHistoIndex;
+	  fAngleDistro[3]=fMakeHistoIndex;*/
 
 	  title  = "z-distribution";
 	  name     = "z-distro";
@@ -425,7 +427,7 @@ void HistoManager::Book() {
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 	  fAngleDistro[4]=fMakeHistoIndex;
 	  
-	  title  = "x-distribution";
+	  /*title  = "x-distribution";
 	  name     = "x-distro";
 	  nbins     = 1000;
 	  xmin      = -10.;
@@ -441,10 +443,10 @@ void HistoManager::Book() {
 	  MakeHistoWithAxisTitles(analysisManager, name, 
 					   title, xmin, xmax, 
 					   nbins, "", "mm");
-	  fAngleDistro[6]=fMakeHistoIndex;
+	  fAngleDistro[6]=fMakeHistoIndex;*/
 	  
 	  for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){  
-	    for (G4int seg=0; seg < 3; seg++) {//12 segments but 3 for changes - adjusted in Event action
+	    for (G4int seg=0; seg < 3; seg++) {
 	      
 	    title  = "AngR" + std::to_string(ring) + "S" +std::to_string(seg);
 	    name     = "AngR" + std::to_string(ring) + "S" +std::to_string(seg);
@@ -459,11 +461,11 @@ void HistoManager::Book() {
 	    }
 	  }
 	  
-	  for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){  
-	    for (G4int seg=0; seg < 12; seg++) {//12 segments but 3 for changes - adjusted in Event action
+	  /*for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){  
+	    for (G4int seg=0; seg < 12; seg++) {
 	      
-	    title  = "TEST"+std::to_string(ring)+"S" +std::to_string(seg);
-	    name     = "TEST"+std::to_string(ring)+"S" +std::to_string(seg) ;
+	    title  = "TESTR" + std::to_string(ring) + "S" +std::to_string(seg);
+	    name     = "TESTR" + std::to_string(ring) + "S" +std::to_string(seg);
 	    nbins     = 200;
 	    xmin      = 0.;//explicitly defined for clarity
 	    xmax      = CLHEP::pi;
@@ -471,9 +473,10 @@ void HistoManager::Book() {
                  nbins/2, xmin, xmax, nbins, -xmax, xmax);
 
 	  
-	    fTest[ring*MAXNUMSEGSPICE+seg]=fMakeHistoIndex;
+	    fSpiceTest[ring*MAXNUMSEGSPICE+seg]=fMakeHistoIndex;
 	    }
-	  }
+	  }*/
+	  
 	  /*title  = "Theta Error";
 	  name     = "ErrorTheta";
 	  nbins     = 314;
@@ -482,32 +485,35 @@ void HistoManager::Book() {
 	  MakeHisto(analysisManager, name, title, xmin, xmax, nbins);
 	  fSpiceAngleHists[100]=fMakeHistoIndex;*/
 	  
-	  /*title  = "Kinematics of edge feature (940 to 970keV)";
-	  name     = "Dip1";
-	  nbins     = 314;
-	  xmin      = 0.;//explicitly defined for clarity
-	  xmax      = 3.14;
-	  Make2DHisto(analysisManager, name, title,
-		nbins/2, xmin, xmax, nbins, -xmax, xmax);
-	  fSpiceAngleHists[101]=fMakeHistoIndex;
-
-	  title  = "Kinematics of edge feature (1020 to 1040keV)";
-	  name     = "Dip2";
-	  nbins     = 314;
-	  xmin      = 0.;//explicitly defined for clarity
-	  xmax      = 3.14;
-	  Make2DHisto(analysisManager, name, title,
-		nbins/2, xmin, xmax, nbins, -xmax, xmax);
-	  fSpiceAngleHists[102]=fMakeHistoIndex;
-	  
-	  title  = "Kinematics of edge feature (combined)";
-	  name     = "Dips1+2";
-	  nbins     = 314;
-	  xmin      = 0.;//explicitly defined for clarity
-	  xmax      = 3.14;
-	  Make2DHisto(analysisManager, name, title,
-		nbins/2, xmin, xmax, nbins, -xmax, xmax);
-	  fSpiceAngleHists[103]=fMakeHistoIndex;*/
+	  SPICE_ERFC_Setup();
+	    //to view the ERFC
+	  name  = "ERFC";
+	  title     = "ERFC";
+	  nbins     = 1000;
+	  xmin      = -3.8;
+	  xmax      = 0.2;
+	  MakeHisto(analysisManager, name, title, xmin, xmax, nbins);
+	  fAngleDistro[7]=fMakeHistoIndex;
+	  G4double ERFCRand = 0.;
+	  for(int i = 0; i < 100000; i++){
+	    ERFCRand = G4UniformRand()*AmpTot;
+	    for(int j = 0;j<100000;j++){
+		c += Amp[j];
+	      if(c > ERFCRand){
+		FillHisto(fAngleDistro[7], (((double)j)/1000. - 80.)*0.01);
+		break;
+	      }
+	    }
+	    c=0.;	  
+	  }
+	  	    
+	  name  = "ERFC_Overlay";
+	  title     = "ERFC";
+	  nbins     = EDEPNBINSSPICE;
+	  xmin      = EDEPXMINSPICE*1000.;
+	  xmax      = EDEPXMAXSPICE*1000.;
+	  MakeHisto(analysisManager, name, title, xmin, xmax, nbins);
+	  fAngleDistro[8]=fMakeHistoIndex;
 	}//if(fSpice)
 
 	if(fPaces) {// paces detector
@@ -771,4 +777,34 @@ G4String HistoManager::G4intToG4String(G4int value) {
     out << value;
     theString = out.str();
     return theString;
+}
+void HistoManager::SPICE_ERFC_Setup(){
+  //1000 bins between -0.5 and 0.5 containing decay function information for SPICE pre-amps
+  AmpTot = 0.;//channel(effective x) and centroid
+  
+  //making fixed ERFC func - accessed via a getter (local to this class) from EventAction
+  for(int i=0;i<10000;i++){//Full function from -80 to +20
+    channel = (double) i;
+    channel /= 100.;
+    channel -= 80;
+    c = 0.;
+    Amp[i] = exp((channel-c)/30.)*erfc(((channel-c)/(sqrt(2.)))+1./(sqrt(2.)*30.));
+    Ampx[i] = channel;//have a corresponding x-array to the Ampitudes
+    AmpTot += Amp[i];//Data now in array
+  }
+}
+
+G4double HistoManager::SPICE_ERFC(){
+  c=0.;
+  G4double ERFCRand = G4UniformRand()*AmpTot, control =0.;
+    for(int j = 0;j<10000;j++){
+	c += Amp[j];
+      if(c > ERFCRand){
+// 	std::cout << "mdg: " << Ampx[j] <<std::endl;
+	return Ampx[j];//(((double)j)/1000. - 80.)*0.01;
+	control = Ampx[j];//=(((double)j)/1000. - 80.)*0.01;
+	break;
+      }
+    }
+  return control;//stops warnings
 }

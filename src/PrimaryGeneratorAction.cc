@@ -66,7 +66,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* DC)
     fParticleGun  = new G4ParticleGun(nParticle); //In our code, the gun is called fParticleGun
     //create a messenger for this class
     fGunMessenger = new PrimaryGeneratorMessenger(this);
-    
+    fSourceNeeded = false;
     
     //these 3 lines initialise the Gun, basic values
     fParticleGun->SetParticleEnergy(0*eV);
@@ -282,17 +282,17 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 		   - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) + fDetector->targetz;
 	  // 	 G4double z = -(G4UniformRand()*(fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity)) 
 	  // - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) + fDetector->targetz;
-	  if(fDetector->targetz < -3.9*mm) z -=  0.5*mm;
+// 	  if(fDetector->targetz < -3.9*mm) z -=  0.5*mm;
 	  thisEffPosition = G4ThreeVector(x,y,z);
-	  HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fAngleDistro[3], x, y);
+	  //HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fAngleDistro[3], x, y);
 	  HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[4],z);
 	  
 	  // 	  G4cout << (0.62*G4UniformRand())*micrometer+5.32*micrometer << " NEW " << G4endl;
 	  // 	  G4cout <<  - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) << " initial " << G4endl;
 // 	    	  G4cout << z << "=ZZZ " << -(fDetector->fSpiceTargetThickness/fDetector->fSpiceTargetDensity)/2. << "=target thicc " << fDetector->targetz 
 // 	    	  << "=macro beampos " << - (fDetector->fSpiceTargetBackerThickness/fDetector->fSpiceTargetBackerDensity) << "=backer" << G4endl;
-	  HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[5],x);
-	  HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[6],y);
+	 // HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[5],x);
+	 // HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[6],y);
 	    
 	}
 	if(fNeedFileDistro){
@@ -314,13 +314,17 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         fParticleGun->SetParticleDefinition(effPart);
         fParticleGun->SetParticlePosition(thisEffPosition);
         fParticleGun->SetParticleMomentumDirection(effdirection);
-
-        fParticleGun->SetParticleEnergy(fEffEnergy);
-	HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[0],fEffEnergy);
+	fParticleGun->SetParticleEnergy(fEffEnergy);
+	
+	if(fSourceNeeded) {fParticleGun->SetParticleEnergy(fBeamDistribution->SetSource(fSourceName, fEffEnergy, G4UniformRand()));
+// 	  G4cout << "NEEEEEEEEEEEEEEEED " << fParticleGun->GetParticleEnergy() << "With OUTPUT " << fBeamDistribution->SetSource(fSourceName, fEffEnergy, G4UniformRand()) << G4endl;
+	}
+	
+        
+	HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[0],fEffEnergy);//input beam energy
 	HistoManager::Instance().fBeamEnergy = fEffEnergy;
 	HistoManager::Instance().fBeamTheta = acos(effdirection.z()/effdirection.mag());
 	HistoManager::Instance().fBeamPhi = atan2(effdirection.y(),effdirection.x());
-      
     }
 
 
