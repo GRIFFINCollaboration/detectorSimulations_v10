@@ -119,11 +119,12 @@ DetectionSystemPaces::DetectionSystemPaces() :
     fPacesPlacementDistance[4] = 29.50*mm;
 
     // phi angle from measurement
-    fPacesPlacementPhi[0] =   0.0000*deg; //OK
-    fPacesPlacementPhi[1] =  -68.7575*deg; //OK
-    fPacesPlacementPhi[2] = -138.4082*deg; //OK
-    fPacesPlacementPhi[3] = -212.1280*deg; //OK
-    fPacesPlacementPhi[4] = -287.4275*deg; //OK
+    // modified -- Rishita: December 14 2017
+    fPacesPlacementPhi[0] =   21.000*deg; //OK
+    fPacesPlacementPhi[1] =   94.000*deg; //OK
+    fPacesPlacementPhi[2] =   166.000*deg; //OK
+    fPacesPlacementPhi[3] =   237.000*deg; //OK
+    fPacesPlacementPhi[4] =   313.000*deg; //OK
 
     // theta angle is guess estimate
     fPacesPlacementTheta[0] = (180 - 60.0)*deg; //~
