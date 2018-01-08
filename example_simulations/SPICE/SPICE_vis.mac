@@ -1,0 +1,71 @@
+#order of commands
+#./Griffinv10
+#/vis/open OGL
+#/control/execute SPICE_vis.mac #executes this file.
+
+/run/initialize #set up run
+
+/process/em/fluo true #declare physics lists
+/process/em/auger true
+/process/em/pixe true
+
+/DetSys/phys/SpiceStepper 0 #1 for slow, 0 is normal #defines smaller step-sizes within SPICE targets
+/DetSys/det/UseSpiceResolution 1 #1 for resolution on SPICE detectors, 0 for raw data
+
+/control/verbose 2 #verbosities for terminal output - useful for debugging
+/run/verbose 2
+/event/verbose 0
+/tracking/verbose 0
+
+/DetSys/world/material Vacuum #vacuum in SPICE
+
+/DetSys/gun/particle e- #electrons in gun
+/DetSys/gun/efficiencyEnergy 1100 keV #electron energy - will be overwritten if declaring other distro
+/Detsys/gun/SourceBeam Bismuth #used if bismuth or barium resolution calibration
+
+#gun physical commands
+/DetSys/gun/position 0.0 0.0 -8. mm #use if target tests
+#/DetSys/gun/position 0.0 0.0 0.0 mm #use if source tests
+#/DetSys/gun/direction 0.0 0.0 -1.0 #can be used if not 4pi
+#/DetSys/gun/coneRadius 1.0 mm #use -1 if 2pi wanted
+#/DetSys/gun/coneZValue #Different cones available
+#/DetSys/gun/coneRValue
+#/DetSys/gun/coneMinAngle 45.0 deg
+#/DetSys/gun/coneMaxAngle 60.0 deg
+
+/DetSys/app/addSpiceTargetChamber Med #defining different chamber geometry due to lens
+/DetSys/det/addSpice 10 #number of Si(Li) rings
+/DetSys/world/TabMagneticField MagneticField3D.MED.TABLE -1 -45 #adding medium-energy lens mag. field
+#/DetSys/world/TabMagneticField MagneticField3D.LOW.TABLE -1 -45 #adding low-energy lens mag. field
+#For clarification of parameters: -1 is the position offset, -45 is the rotation in z
+
+#/vis/open HepRepFile #if you want to use HEPrep - needed to view the Si(Li)
+#/vis/drawVolume #draws volume for HEPrep
+
+#SPICE target commands
+#/DetSys/app/spiceTargetBackerDensity 10.0 g/cm3
+#/DetSys/app/SpiceTargetBackerSurfaceDensity 500. mg/cm2
+#/DetSys/app/spiceTargetDensity 1.18 g/cm3
+#/DetSys/app/SpiceTargetSurfaceDensity 0.15 mg/cm2
+#/DetSys/app/spiceTargetProtectorDensity 2.700 g/cm3
+#/DetSys/app/SpiceTargetProtectorSurfaceDensity 0.15 mg/cm2
+#/DetSys/app/spiceTargetBacker G4_Al
+#/DetSys/app/spiceTarget Acrylic
+#/DetSys/app/spiceTargetProtector G4_Al
+#/DetSys/app/spiceSourceTest true #source geometry - the bracket etc.
+
+/Detsys/gun/BeamDistro 1 #can use a set electron beam distro in z
+#/Detsys/gun/FileDistro 1 #can use a file-specified beam distro in z
+##For viewing in OGL - works now
+/vis/scene/endOfEventAction accumulate #if want to view all electron trajectories in visualisation
+/vis/scene/add/hits 
+/vis/viewer/set/style surface
+#/vis/viewer/set/style wireframe
+/vis/scene/add/magneticField
+#/vis/scene/add/trajectories
+
+/run/beamOn 5 #final command - number of electrons in SPICE - want low numbers if visualising
+#/vis/drawVolume #needed if not running a beam
+#/vis/viewer/flush #needed if not running a beam
+#/vis/viewer/refresh #needed if not running a beam
+
