@@ -1,26 +1,59 @@
 After a successful make, you can run the simulation in one of 3 ways:
-A macro file to run in batch mode (spice.mac for exmaple), a visual run with altvis.mac, or a bash script 
-for several runs with one command etc.
+A macro file to run in batch mode (spice.mac for exmaple), a visual run with 
+altvis.mac, or via a script for several runs with one command etc.
 
-A non-visual SPICE batch run will produce a g4out.root ROOT file containing chosen histograms and a kin.dat kinematics data file.
+A non-visual SPICE batch run will produce a g4out.root ROOT file containing chosen
+histograms and a kin.dat kinematics data file.
 These can then be moved to wherever in a script for example.
-A visual run can also be ran in batch to produce a HepRep visualisation file used for when the detector needs to be 
-visualised (not often), but mostly in the OGL viewer ran using ./Griffinv10 command and some subsequent inputs for just the chamber.
+A visual run can also be ran in batch to produce a HepRep visualisation file used
+for when the detector needs to be visualised (not often), but mostly in the OGL 
+viewer ran using ./Griffinv10 command and some subsequent inputs for just the chamber.
 
-There are 3 parts to the target system: A backer that is furthest from the detector rings (furthest downstream), the target 
-itself that is in the middle, and finally the protector that is the first point-of-impact for the beam
-and is the nearest part to the detetor rings (furthest upstream).
-Each part of the target system, if used, must have a material, a surface density (with units) and a thickness (with units)
-fully defined in the macro. Materials that are not defined correctly will seg-fault the program.
-Once this is so, it is work checking the targets have been placed correctly in the simulation. A correct position will be determined 
-by the initial beam position. It is also worth checking the beam distribution chosen sits where you want it to 
-(e.g. uniform through the target) which can be done with the visualisation macro also.
+There are 3 parts to the target system: A backer that is furthest from the detector
+rings (furthest downstream), the target itself that is in the middle, and finally
+the protector that is the first point-of-impact for the beam and is the nearest 
+part to the detetor rings (furthest upstream).
+Each part of the target system, if used, must have a material, a surface density
+(with units) and a thickness (with units) fully defined in the macro. Materials 
+that are not defined within the MyMaterial framework within DetectorConstructionSuppressed.cc
+will seg-fault the program. Once this is so, it is
+worth checking the targets have been placed correctly in the simulation.
 
-The field file must match with the geometry used to create the chamber. These are two separate lines in the macro that can be easily overlooked but will invalidate your results.
+The targets are positioned as follows: 
+1) Densities and thicknesses are defined after an initial beam position (/DetSys/gun/position)
+2) Materials are then defined for the components with densities and thicknesses already
+entered
+3) Will place in the order: backer, then target, then protector
+	- the target will be centred on the beam position
+
+It is also worth checking
+the beam distribution chosen sits where you want it to as defined by the macro (e.g. uniform through the target from '/Detsys/gun/BeamDistro 1') 
+which can be done with the visualisation macro also.
+To check:
+1) './Griffinv10' in terminal (no macro used)
+2) /vis/open OGL
+3) enter 
+
+/vis/viewer/set/viewpointThetaPhi 90 0 deg
+
+/vis/viewer/zoom 25
+
+/vis/viewer/pan -250.0 0.0 mm
+
+on three separate calls to the command line within the viewer
+
+Following 1), 2), and 3) you should be viewing the target
+
+
+The field file must match with the geometry used to create the chamber. These are 
+two separate lines in the macro that can be easily overlooked but will invalidate your results.
 
 You can feed a beam distribution through a SPICE target into the simulation via the
-"/Detsys/gun/FileDistro 1" command. It reads a file specified by the target material
-e.g. Calcium.dat, or Gold.dat from within the build folder.
+"/Detsys/gun/FileDistro 1" boolean command. When the command is invoked it reads a
+file specified by the name of the target material e.g. if the target material is gold
+the simualtion will read a file gold.dat within the build folder.
+You call a bool, but it opens a file based on the name of your target material as
+defined from within DetectorConstructionSuppressed.cc.
 The beam file contains 2 columns - the first is the z-position value of the beam, and
 the second is the weighted probability of emission from that position. The probabilities 
 do not have to sum to 1.
