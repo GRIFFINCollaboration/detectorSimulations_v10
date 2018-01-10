@@ -1,40 +1,111 @@
-/run/initialize #set up run
+#Fully commented example SPICE macro
+#A 'cleaner' macro is provided also in the 'example_simulations'subfolder
+#all commands left uncommented - will not use all for a normal run
+#where commands may overwrite data they have been highlighted, either only invoke one set of data
+#or the last command be the data you want used
 
+
+#### Initialiser ALWAYS REQUIRED ####
+/run/initialize #set up run
+#####################################
+
+#### Physics List (Dont change, but can add to) ####
 /process/em/fluo true #declare physics lists
 /process/em/auger true
 /process/em/pixe true
+####################################################
 
-/DetSys/phys/SpiceStepper 0 #1 for slow, 0 is normal #defines smaller step-sizes within SPICE targets
+#### SPICE specific event/step functions ####
+/DetSys/phys/SpiceStepper 0 #boolean for smaller 10um step-size (true), false 
+#bool is 0.1mm normal step-size #defines smaller step-sizes within SPICE targets
+#SPICE step value an be changed in ApparatusSpiceTarget constructor (in ApparatusSpiceTarget.cc)
+
 /DetSys/det/UseSpiceResolution 1 #1 for resolution on SPICE detectors, 0 for raw data
+#A step in GEANT4 refers to the maximum distance, or portion of time, in which a particle 
+#can move before it can decay or interact. 
+#Smaller steps mainly used when calibrating the resolution to new experimental data
+################ SPICE STEP END ####################
 
-/control/verbose 2 #verbosities for terminal output - useful for debugging
+#### Verbosities ####
+#Defines terminal output - useful for debugging
+#0 = no output, higher integers give greater output
+/control/verbose 2
 /run/verbose 2
 /event/verbose 0
 /tracking/verbose 0
+#### Verbosities END ####
 
+#### Vacuum ####
+#World contains all geometries
 /DetSys/world/material Vacuum #vacuum in SPICE
+#### VACUUM END ####
 
-/DetSys/gun/particle e- #electrons in gun
-/DetSys/gun/efficiencyEnergy 1100 keV #electron energy - will be overwritten if declaring other distro
-/Detsys/gun/SourceBeam Bismuth #used if bismuth or barium resolution calibration
+#### Gun info (particle generator) ####
+/DetSys/gun/particle e- #particle type in gun
+/DetSys/gun/efficiencyEnergy 1100 keV #particle energy - will be overwritten if 
+#declaring a source distro (directly below)
+/Detsys/gun/SourceBeam Bismuth #used if bismuth or barium ICE source energies wanted
+#to create a distribution of energies (BeamDistribution.cc)
+########### GUN INFO END ##############
 
-#gun physical commands
-/DetSys/gun/position 0.0 0.0 -8. mm #use if target tests
-#/DetSys/gun/position 0.0 0.0 0.0 mm #use if source tests
-#/DetSys/gun/direction 0.0 0.0 -1.0 #can be used if not 4pi
-#/DetSys/gun/coneRadius 1.0 mm #use -1 if 2pi wanted
-#/DetSys/gun/coneZValue #Different cones available
-#/DetSys/gun/coneRValue
-#/DetSys/gun/coneMinAngle 45.0 deg
-#/DetSys/gun/coneMaxAngle 60.0 deg
+#### Gun physical commands ####
+## Define a position ONLY if 4pi isotropic wanted ##
+## i.e. omitting all other gun physicals will produce a 4pi 
+#isotropic beam at the position specified here
+/DetSys/gun/position 0.0 0.0 -8. mm #use if SPICE target (experiment) tests
+/DetSys/gun/position 0.0 0.0 0.0 mm #use if SPICE source tests
+#if position is <-4. mm then the target pedestals will be made
+#position will be overwritten if a beam positional distribution is used
+#by invoking the '/Detsys/gun/FileDistro 1' command 
 
+/DetSys/gun/direction 0.0 0.0 -1.0 #can be used if want a beam in a given direction 
+#(with slight error as defined in PrimaryGeneratorAction.cc)
+
+##### CONE shaped beam #####
+
+/DetSys/gun/coneRadius 1.0 mm #use -1 if 2pi wanted
+#standalone - define a radius (at Si(Li)) for the beam to be isotropic within the cone created
+# should account for the beam initial position
+
+/DetSys/gun/coneZValue 
+/DetSys/gun/coneRValue
+#alternatively, use general commands to define a distance in z and a radius to give a
+#cone (might be useful for other people, as coneRadius command integrates directly with SPICE)
+
+/DetSys/gun/coneMinAngle 45.0 deg
+/DetSys/gun/coneMaxAngle 60.0 deg
+#Final cone commands - again general, defines a minimum and maximum theta angle for a cone
+#MUST LOOK at direction of beam as SPICE is upstream, otherwise cone will be in the wrong direction
+##### CONE END #####
+#### GUN PHYSICAL END ######
+
+
+#### Adding SPICE chamber + Si(Li) ####
+## Note no S3, no coincidence measurements ##
+
+#### Pick one(!) ####
+### medium-energy lens set-up ###
 /DetSys/app/addSpiceTargetChamber Med #defining different chamber geometry due to lens
 /DetSys/det/addSpice 10 #number of Si(Li) rings
 /DetSys/world/TabMagneticField MagneticField3D.MED.TABLE -1 -45 #adding medium-energy lens mag. field
-#/DetSys/world/TabMagneticField MagneticField3D.LOW.TABLE -1 -45 #adding low-energy lens mag. field
-#For clarification of parameters: -1 is the position offset, -45 is the rotation in z
 
-#SPICE target commands
+### low-energy lens set-up ###
+/DetSys/app/addSpiceTargetChamber Low #defining different chamber geometry due to lens
+/DetSys/world/TabMagneticField MagneticField3D.LOW.TABLE -1 -45 #adding low-energy lens mag. field
+/DetSys/det/addSpice 10 #number of Si(Li) rings
+
+#### End Pick one ####
+#For clarification of lens parameters: -1 is the position offset, -45 is the rotation in z
+###### SPICE CHAMBER END ######
+
+#### SPICE target commands ####
+#choose a material density, surface density, and finally the material
+#material defined last as when enetered will build and place in simulation
+#If one target component is needed should use spiceTarget due to beam distribution
+#when a standalone target is placed will be centred on the beam position as defined by '/DetSys/gun/position' 
+#In decreasing z: backer, then target, then protector
+#If no targets wanted, uncomment all of this section!
+
 /DetSys/app/spiceTargetBackerDensity 10.0 g/cm3
 /DetSys/app/SpiceTargetBackerSurfaceDensity 500. mg/cm2
 /DetSys/app/spiceTargetDensity 1.18 g/cm3
@@ -44,10 +115,18 @@
 /DetSys/app/spiceTargetBacker G4_Al
 /DetSys/app/spiceTarget Acrylic
 /DetSys/app/spiceTargetProtector G4_Al
+
+#Use if running calibration measurements
+#invoked after definitions of other target geometry as adapts to it
 /DetSys/app/spiceSourceTest true #source geometry - the bracket etc.
 
 /Detsys/gun/BeamDistro 1 #can use a set electron beam distro in z
-#/Detsys/gun/FileDistro 1 #can use a file-specified beam distro in z
+#default now is isotropic through the spiceTarget as defined above
 
-/run/beamOn 5000000 #final command - number of electrons in SPICE
+/Detsys/gun/FileDistro 1 
+#or can use a file-specified emission profile in z (see SPICE_help.txt and Calcium.dat)
+####### SPICE TARGET END #######
 
+#### BEAM-ON ####
+/run/beamOn 5000000 #always final command - number of electrons in SPICE
+#### BEAM END ####
