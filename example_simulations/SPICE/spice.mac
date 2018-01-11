@@ -19,11 +19,23 @@
 /DetSys/phys/SpiceStepper 0 #boolean for smaller 10um step-size (true), false 
 #bool is 0.1mm normal step-size #defines smaller step-sizes within SPICE targets
 #SPICE step value an be changed in ApparatusSpiceTarget constructor (in ApparatusSpiceTarget.cc)
-
-/DetSys/det/UseSpiceResolution 1 #1 for resolution on SPICE detectors, 0 for raw data
 #A step in GEANT4 refers to the maximum distance, or portion of time, in which a particle 
 #can move before it can decay or interact. 
 #Smaller steps mainly used when calibrating the resolution to new experimental data
+
+/DetSys/det/UseSpiceResolution 1 #1 for resolution on SPICE detectors, 0 for raw data
+#Following successful calibration can use (true) to artificially broaden simulation peaks
+#to match experimental data. A (false) bool will not apply any broadening, with the raw values 
+#found within the simulation plotted in g4out.root
+#If (true) is chosen, the ApplySpiceRes() subroutine within the FillSpice() subrioutine of EventAction.cc
+#change the energy of a Si(Li) deposition. Three distributions are available to shift the energy.
+#The parameters used are found from experimental data using the jrootanalysistools toolkit.
+#For each natural peak i.e. those with no target effects a two-Gaussian fit should be made to find the 
+#broad and the narrow sigma values for the Gaussians. These values should be fed into the ApplySpiceRes()
+#subroutine (with the narrow Gaussian also being used in the ERFC loop). In addition, the decay value of
+#the peak from a one Gaussian fit should relace the one in the ERFC loop. The two sigma values and the 
+#decay value should be compared from a variety of runs from the single experiment (e.g. from Bi-207) for 
+#the best final fit.
 ################ SPICE STEP END ####################
 
 #### Verbosities ####
@@ -43,9 +55,12 @@
 #### Gun info (particle generator) ####
 /DetSys/gun/particle e- #particle type in gun
 /DetSys/gun/efficiencyEnergy 1100 keV #particle energy - will be overwritten if 
-#declaring a source distro (directly below)
-/Detsys/gun/SourceBeam Bismuth #used if bismuth or barium ICE source energies wanted
-#to create a distribution of energies (BeamDistribution.cc)
+#declaring a source distro (2 commands below)
+
+/Detsys/gun/SourceBeam Bismuth #used if Bi-207 ICE source energies wanted (10 energies)
+/Detsys/gun/SourceBeam Barium #used if Ba-133 ICE source energies wanted (15 energies)
+#above two create a distribution of ICE energies from within BeamDistribution.cc
+#Just declare the source wanted, no change of code needed
 ########### GUN INFO END ##############
 
 #### Gun physical commands ####
@@ -59,13 +74,15 @@
 #by invoking the '/Detsys/gun/FileDistro 1' command 
 
 /DetSys/gun/direction 0.0 0.0 -1.0 #can be used if want a beam in a given direction 
-#(with slight error as defined in PrimaryGeneratorAction.cc)
+#with slight range in x/y as defined in PrimaryGeneratorAction.cc
+#sigma of Gaussian used is equivalent to 1mm
 
 ##### CONE shaped beam #####
 
 /DetSys/gun/coneRadius 1.0 mm #use -1 if 2pi wanted
-#standalone - define a radius (at Si(Li)) for the beam to be isotropic within the cone created
-# should account for the beam initial position
+#standalone - define a radius (at Si(Li)) for the beam to be isotropic within the 
+#solid angle of the cone created
+#should also account for the beam initial position
 
 /DetSys/gun/coneZValue 
 /DetSys/gun/coneRValue
@@ -99,12 +116,17 @@
 ###### SPICE CHAMBER END ######
 
 #### SPICE target commands ####
-#choose a material density, surface density, and finally the material
-#material defined last as when enetered will build and place in simulation
-#If one target component is needed should use spiceTarget due to beam distribution
-#when a standalone target is placed will be centred on the beam position as defined by '/DetSys/gun/position' 
+#Choose a material density, surface density (not thickness or a unit of length), and finally the material
+#material defined last as when entered will build and place in simulation
+#i.e. define all geometries before specifying materials of target components at a lower Z!
 #In decreasing z: backer, then target, then protector
-#If no targets wanted, uncomment all of this section!
+#Should place the backer first, then the target, then the protector.
+#Can fully define, then place a target component before moving onto the next or
+#define all components first then place in succession as seen below. Both are fine.
+#If one target component is needed should use spiceTarget due to beam distribution dependency
+#when a standalone target is placed will be centred on the beam position as defined by '/DetSys/gun/position'.
+
+#If no targets wanted, comment all of this section!
 
 /DetSys/app/spiceTargetBackerDensity 10.0 g/cm3
 /DetSys/app/SpiceTargetBackerSurfaceDensity 500. mg/cm2
@@ -116,15 +138,27 @@
 /DetSys/app/spiceTarget Acrylic
 /DetSys/app/spiceTargetProtector G4_Al
 
-#Use if running calibration measurements
-#invoked after definitions of other target geometry as adapts to it
-/DetSys/app/spiceSourceTest true #source geometry - the bracket etc.
+/DetSys/app/spiceSourceTest true #source geometry
+#Can be used if running calibration measurements.
+#Invoked after definitions of other target geometry as adapts to it.
+#Builds the staple shaped bracket and a holder; a
+#cylinder around the target components that have been placed
+#Found in SetSpiceSource() in DetectorConstruction().
+#Additionally a slice of a source can be made, by BuildSource() and
+#PlaceSource(), but this is not included in the SetSpiceSource() at the
+#moment. All values for the source are currently hard-coded, with no
+#accompanying messenger commands.
 
 /Detsys/gun/BeamDistro 1 #can use a set electron beam distro in z
-#default now is isotropic through the spiceTarget as defined above
+#When called creates isotropic emission through the spiceTarget as defined above
+#with slight range in x/y as defined in PrimaryGeneratorAction.cc
+#sigma of Gaussian used is equivalent to 1mm
 
 /Detsys/gun/FileDistro 1 
 #or can use a file-specified emission profile in z (see SPICE_help.txt and Calcium.dat)
+#with a range in x/y as defined in PrimaryGeneratorAction.cc
+#sigma of Gaussian used is equivalent to 1mm
+
 ####### SPICE TARGET END #######
 
 #### BEAM-ON ####
