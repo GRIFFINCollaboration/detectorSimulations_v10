@@ -73,9 +73,8 @@
 #position will be overwritten if a beam positional distribution is used
 #by invoking the '/Detsys/gun/FileDistro 1' command 
 
-/DetSys/gun/direction 0.0 0.0 -1.0 #can be used if want a beam in a given direction 
-#with slight range in x/y as defined in PrimaryGeneratorAction.cc
-#sigma of Gaussian used is equivalent to 1mm
+/DetSys/gun/direction 0.0 0.0 -1.0 #can be used if want a point-like beam in a given direction 
+
 
 ##### CONE shaped beam #####
 
@@ -159,6 +158,9 @@
 #with a range in x/y as defined in PrimaryGeneratorAction.cc
 #sigma of Gaussian used is equivalent to 1mm
 
+
+#Both of the above have a slight range in x/y emission position as defined in
+#PrimaryGeneratorAction.cc. The sigma of the Gaussian used is equivalent to 1mm
 ####### SPICE TARGET END #######
 
 #### BEAM-ON ####
