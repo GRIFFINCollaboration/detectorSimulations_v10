@@ -427,7 +427,7 @@ void HistoManager::Book() {
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 	  fAngleDistro[4]=fMakeHistoIndex;
 	  
-	  /*title  = "x-distribution";
+	  title  = "x-distribution";
 	  name     = "x-distro";
 	  nbins     = 1000;
 	  xmin      = -10.;
@@ -443,7 +443,7 @@ void HistoManager::Book() {
 	  MakeHistoWithAxisTitles(analysisManager, name, 
 					   title, xmin, xmax, 
 					   nbins, "", "mm");
-	  fAngleDistro[6]=fMakeHistoIndex;*/
+	  fAngleDistro[6]=fMakeHistoIndex;
 	  
 	  for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){  
 	    for (G4int seg=0; seg < 3; seg++) {
