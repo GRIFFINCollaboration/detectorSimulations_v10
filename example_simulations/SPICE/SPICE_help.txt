@@ -24,7 +24,7 @@ The targets are positioned as follows:
 2) Materials are then defined for the components with densities and thicknesses already
 entered
 3) Will place in the order: backer, then target, then protector
-	- the target will be centred on the beam position
+    - the target will be centred on the beam position
 
 It is also worth checking
 the beam distribution chosen sits where you want it to as defined by the macro (e.g. uniform through the target from '/Detsys/gun/BeamDistro 1') 
@@ -42,8 +42,11 @@ To check:
 
 on three separate calls to the command line within the viewer
 
-Following 1), 2), and 3) you should be viewing the target
-
+Following 1), 2), and 3) you should be viewing the target to check visually if the beam is withni the target in z
+There is output in the ROOT file generated that plots the values of the x, y, and z to quantitatively 
+check the beam distribution. The limits of the histogram may have to be altered depending on the position 
+of the beam. This can be turned off by uncommenting the fill commands at the point of emission in
+PrimaryGeneratorAction.cc.
 
 The field file must match with the geometry used to create the chamber. These are 
 two separate lines in the macro that can be easily overlooked but will invalidate your results.
