@@ -301,7 +301,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	if(fSourceNeeded) {fParticleGun->SetParticleEnergy(fBeamDistribution->SetSource(fSourceName, fEffEnergy, G4UniformRand()));
 // 	  G4cout << "NEEEEEEEEEEEEEEEED " << fParticleGun->GetParticleEnergy() << "With OUTPUT " << fBeamDistribution->SetSource(fSourceName, fEffEnergy, G4UniformRand()) << G4endl;
 	}
-	if(fSourceNeeded || fNeedFileDistro || fNeedBeamDistro || fConeAngleBool || fConeRadiusBool || fConeValueBool){
+	if(fDetector->GetSpiceIn() || fSourceNeeded || fNeedFileDistro || fNeedBeamDistro || fConeAngleBool || fConeRadiusBool || fConeValueBool){
         HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[4],effdirection.z());
 	HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[5],effdirection.x());
 	HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[6],effdirection.y());
