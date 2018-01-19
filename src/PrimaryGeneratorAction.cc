@@ -290,7 +290,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	  
 	  if(fDetector->targetz < -3.9*mm) z -=  0.5*mm; //extra frame no non-existent
 	  thisEffPosition = G4ThreeVector(x,y,z);
-	  HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fAngleDistro[3], x, y);
+	  //HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fAngleDistro[3], x, y);
 	}
 	//after running through if-statements above we now have particle type definition, position, mom. direction, and the energy (or their initialised values)
         fParticleGun->SetParticleDefinition(effPart);
@@ -302,9 +302,9 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 // 	  G4cout << "NEEEEEEEEEEEEEEEED " << fParticleGun->GetParticleEnergy() << "With OUTPUT " << fBeamDistribution->SetSource(fSourceName, fEffEnergy, G4UniformRand()) << G4endl;
 	}
 	if(fSourceNeeded || fNeedFileDistro || fNeedBeamDistro || fConeAngleBool || fConeRadiusBool || fConeValueBool){
-        HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[4],z);
-	HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[5],x);
-	HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[6],y);
+        HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[4],effdirection.z());
+	HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[5],effdirection.x());
+	HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[6],effdirection.y());
 	HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[0],fEffEnergy);//input beam energy
 	HistoManager::Instance().fBeamEnergy = fEffEnergy;
 	HistoManager::Instance().fBeamTheta = acos(effdirection.z()/effdirection.mag());
