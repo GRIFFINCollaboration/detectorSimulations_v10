@@ -192,6 +192,7 @@ public:
     G4double GetLanthanumBromideCrystalRadialPosition();
 
     void SetSpiceRes(G4bool);
+    G4bool GetSpiceIn();
     void UseTIGRESSPositions( G4bool input )                  {fUseTigressPositions = input;};
     
 private:
@@ -254,6 +255,8 @@ private:
     G4bool        fSetSpiceTargetProtectorThickness;
     G4bool        fSetSpiceTargetProtectorDensity;
     G4String      fSpiceTargetProtectorMaterial;
+    
+    G4bool        fSetSpiceIn;
 
 public://accessed by PGA
     G4double      fSpiceTargetThickness;
