@@ -170,6 +170,7 @@ DetectorConstruction::DetectorConstruction() :
   fSpiceTargetBackerThickness=0.;
   fSpiceTargetProtectorThickness=0.;
   
+  fSetSpiceIn = false;	  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -498,6 +499,7 @@ void DetectorConstruction::AddApparatusSpiceTargetChamber(G4String MedLo, G4doub
    ApparatusSpiceTargetChamber* fApparatusSpiceTargetChamber = new ApparatusSpiceTargetChamber(MedLo, TargetPedestal);
    fApparatusSpiceTargetChamber->Build( fLogicWorld );
    fApparatusSpiceTarget = new ApparatusSpiceTarget(targetz);//prepares target instance after the intro of the chamber
+   fSetSpiceIn = true;
 }
 
 void DetectorConstruction::AddApparatus8piVacuumChamber() {
