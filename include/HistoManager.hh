@@ -54,6 +54,12 @@ const G4int MAXNUMDETGRIFFIN    = 16;
 const G4int MAXNUMCRYGRIFFIN    = 4;
 const G4int NUMPARTICLETYPES    = 20;
 
+// Anita & Rishita
+const G4int MAXNUMANG_GG = 11;
+const G4int MAXNUMANG_GE = 18;
+const G4int MAXNUMANG = std::max(MAXNUMANG_GG,MAXNUMANG_GE);
+const G4int MAXANGCORRHISTO = 3;
+
 // ekin histo properties    ///////////////////////
 const G4int     EKINNBINS  = 10000;
 const G4double  EKINXMIN   = 0.5*keV;
@@ -69,6 +75,9 @@ const G4double  EDEPXMAX   = 10000.5*keV;//was 10000.5
 const G4int     EDEPNBINSSPICE  = 10000;//was 10000	//spice histos range different
 const G4double  EDEPXMINSPICE   = 0.*keV;
 const G4double  EDEPXMAXSPICE   = 2100.0*keV;//was 10000.5
+const G4int 	EDEPNBINSGRIFFIN = 1500;
+const G4double	EDEPXMINGRIFFIN = 0.0;
+const G4double 	EDEPXMAXGRIFFIN	= 1500.0;
 
 // trackl histo properties  ///////////////////////
 const G4int     TRACKLNBINS = 5000;
@@ -94,6 +103,15 @@ public:
 
     void Book();
     void Save();
+
+// Anita & Rishita ----------------------------
+// replace MAXNUMANG_GE with the highest valued MAXNUMANG variable
+short AngCorrNumbers[MAXNUMANG_GE*MAXANGCORRHISTO+MAXANGCORRHISTO];
+short fAngCorrAngles[1];
+G4bool   gg = false;
+G4bool   ge = true;
+G4bool   ee = false;
+//---------------------------------------------
     
     //arrays allow histos to be made independently of GRIFFIN
     //	sizeof() arrays appear double the elements, due to 2 bits per element
@@ -102,6 +120,16 @@ public:
     short fSegmentHisto[120];//this array will hold segment IDs to be transferred to reference for histos
     short fAngleDistro[10]; //this variable will hold the histogran ID for the angular distributions from the cone
     
+    // BEGIN GRIFFIN arrays
+    short GriffinSup[MAXNUMDETGRIFFIN+2];
+	// edep is stored at index 0
+	// edep_sum is stored at index 1
+    short GriffinSupCry[MAXNUMDETGRIFFIN*MAXNUMCRYGRIFFIN+1];
+	// edep_cry is stored at index 0
+    short GriffinUnSup[MAXNUMDETGRIFFIN+2];
+    short GriffinUnSupCry[MAXNUMDETGRIFFIN*MAXNUMCRYGRIFFIN+1];
+    // END GRIFFIN arrays
+
     void MakeHisto(G4AnalysisManager* analysisManager, G4String filename,  G4String title, G4double xmin, G4double xmax, G4int nbins);
     void MakeHistoWithAxisTitles(G4AnalysisManager* analysisManager, G4String name, 
 					   G4String title, G4double xmin, G4double xmax, 
@@ -187,7 +215,7 @@ private:
     G4bool fTestcan;	 
     G4bool fSpice;
     G4bool fPaces;
-
+    G4bool fAngCorr; //Anita
 	 G4double fBeamEnergy;
 };
 
@@ -217,7 +245,7 @@ enum HISTONAME
     kSpiceEdepDet16,
     kSpiceEdepDet17,
     kSpiceEdepDet18,
-    kSpiceEdepDet19,
+    kSpiceEdepDet19,*/
     kPacesCrystalEdep,		// This is probably the wrong number of detectors for paces.
     kPacesCrystalEdepSum,
     kPacesCrystalEdepDet0,
@@ -225,7 +253,7 @@ enum HISTONAME
     kPacesCrystalEdepDet2,
     kPacesCrystalEdepDet3,
     kPacesCrystalEdepDet4, // reduced to 5 total (zero-indexed) as number of detectors 22/6
-    kPacesCrystalEdepDet5,
+  /* kPacesCrystalEdepDet5,
     kPacesCrystalEdepDet6,
     kPacesCrystalEdepDet7,
     kPacesCrystalEdepDet8,

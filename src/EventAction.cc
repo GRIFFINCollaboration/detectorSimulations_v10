@@ -97,13 +97,190 @@ void EventAction::EndOfEventAction(const G4Event*) {
     //G4cout << "fNumberOfHits = " << fNumberOfHits << G4endl;
     for (G4int i = 0 ; i < fNumberOfHits; i++) {
 		HistoManager::Instance().FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i]);
-    }
-    for (G4int i = 0 ; i < fNumberOfSteps; i++) {
-		HistoManager::Instance().FillStepNtuple(fStepTrackerI[0][i], fStepTrackerI[1][i], fStepTrackerI[2][i], fStepTrackerI[3][i],  fStepTrackerI[4][i], fStepTrackerI[5][i], fStepTrackerI[6][i], fStepTrackerI[7][i], fStepTrackerI[8][i], fStepTrackerD[0][i]/keV, fStepTrackerD[1][i]/mm, fStepTrackerD[2][i]/mm, fStepTrackerD[3][i]/mm, fStepTrackerD[4][i]/second, fStepTrackerI[9][i]);
-    }
+    
+// Rishita Gudapati & Anita Mathews ------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+//	incorrect angles?
+//	G4double arr_gg[] = {33.6541, 53.8336, 66.4608, 76.3814, 88.4736, 101.331, 112.5438, 119.8489, 135.6357, 161.2132, 180.00};
+
+	// used for gamma-gamma correlations
+	G4double arr_gg[MAXNUMANG_GG] = {33.166, 53.690, 66.891, 76.694, 88.418, 101.57, 112.95, 119.84, 135.66, 160.87, 180.00};
+	
+	// used for all other correlations
+	G4double arr[MAXNUMANG_GE] = {5.237, 16.203, 24.515, 35.016, 44.340, 55.517, 65.511, 74.412, 84.969, 94.932, 105.660, 114.784, 124.771, 135.490, 145.176, 155.214, 164.536, 174.763};
+
+// All 52 angles for germanium-germanium hits, along with their weights, are below.
+// to access the angle, use arr_gg[k][0]
+// only 11 angles are used. To change this, reset MAXNUMANG_GG in the HistoManager header.
+
+/*	G4double arr_gg[52][2] = {
+        {0.0000, 64},
+        {19.131, 128},
+        {25.235, 64},
+        {27.184, 64},
+        {31.860, 64},
+        {33.166, 48},
+        {44.341, 128},
+        {46.607, 96},
+        {48.703, 128},
+        {49.631, 96},
+        {53.690, 48},
+        {60.157, 96},
+        {62.720, 48},
+        {63.403, 64},
+        {65.195, 96},
+        {66.891, 64},
+        {67.049, 64},
+        {69.473, 64},
+        {71.054, 96},
+        {72.817, 64},
+        {76.694, 96},
+        {78.429, 64},
+        {82.965, 64},
+        {86.164, 64},
+        {86.721, 48},
+        {88.418, 128},
+        {91.582, 128},
+        {93.279, 48},
+        {93.836, 64},
+        {97.035, 64},
+        {101.57, 64},
+        {103.31, 96},
+        {107.18, 64},
+        {108.95, 96},
+        {110.53, 64},
+        {112.95, 64},
+        {113.11, 64},
+        {114.81, 96},
+        {116.60, 64},
+        {117.28, 48},
+        {119.84, 96},
+        {126.31, 48},
+        {130.37, 96},
+        {131.30, 128},
+        {133.39, 96},
+        {135.66, 128},
+        {146.83, 48},
+        {148.14, 64},
+        {152.82, 64},
+        {154.77, 64},
+        {160.87, 128},
+        {180.00, 64}
+    };
+
+// All 18 angles for paces-germanium hits, along with their weights, are below.
+// angle == mean value, not bin centre.
+
+	G4double arr[18][2] = 
+	{{5.237, 2},
+	{16.203, 3},
+	{24.515, 15},
+	{35.016, 13},
+	{44.340, 23},
+	{55.517, 18},
+	{65.511, 21},
+	{74.412, 21},
+	{84.969, 29},
+	{94.932, 29},
+	{105.660, 24},
+	{114.784, 20},
+	{124.771, 19},
+	{135.490, 24},
+	{145.176, 16},
+	{155.214, 17},
+	{164.536, 4},
+	{174.763, 2}};
+*/
+
+	// satisfied only when the hit was either in a germanium (ID 1000) or in paces (ID 50)
+	if((fHitTrackerI[6][i] == 1000) || (fHitTrackerI[6][i] == 50)) { 
+			
+		edep1 = fHitTrackerD[0][i]/keV;
+		
+		G4int det1 = fHitTrackerI[8][i];
+	 	G4int cry1 = fHitTrackerI[7][i];
+		G4int cry1_index = -1;
+
+		if (fHitTrackerI[6][i] == 1000) {
+			cry1_index = det1*MAXNUMCRYGRIFFIN + cry1;
+		} else {
+			cry1_index = det1;
+		}
+		
+		// start at i + 1 to prevent double counting		
+		for(G4int j = i + 1; j < fNumberOfHits; j++) {
+			if ((fHitTrackerI[6][j] == 1000) || (fHitTrackerI[6][j] == 50)) {
+
+				edep2 = fHitTrackerD[0][j]/keV;
+
+				G4int det2 = fHitTrackerI[8][j];
+				G4int cry2 = fHitTrackerI[7][j];
+				G4int cry2_index = -1;
+
+				if (fHitTrackerI[6][j] == 1000) {
+					cry2_index = det2*MAXNUMCRYGRIFFIN + cry2;
+				} else {
+					cry2_index = det2;
+				}
+
+				G4double value = -1;
+			
+				if((fHitTrackerI[6][i] == 1000) && (fHitTrackerI[6][j] == 1000) && gg) { // germanium-germanium
+					value = thisGriffinCryMap[cry1_index][cry2_index]; 
+	        			for (G4int k = 0; k < MAXNUMANG_GG; k++) {
+						if (arr_gg[k] > (value - GGBIN) && arr_gg[k] < (value + GGBIN)) {
+						   HistoManager::Instance().Fill2DHisto(HistoManager::Instance().AngCorrNumbers[k*MAXANGCORRHISTO], edep1, edep2, 1.0);					
+							break; // once k is found, there's no need to keep looking through the array for it
+						}
+					}
+				} else if ((fHitTrackerI[6][i] == 1000) && (fHitTrackerI[6][j] == 50) && ge) { // germanium-paces
+					value = thisPacesGriffinCryMap[cry2_index][cry1_index]; // first index is for paces
+	        			for (G4int k = 0; k < MAXNUMANG_GE; k++) {
+						if (arr[k] > (value - GEBIN) && arr[k] < (value + GEBIN)) {
+							HistoManager::Instance().Fill2DHisto(HistoManager::Instance().AngCorrNumbers[k*MAXANGCORRHISTO+1], edep1, edep2, 1.0);
+							break;
+						}
+					}
+				} else if ((fHitTrackerI[6][i] == 50) && (fHitTrackerI[6][j] == 1000) && ge) { // paces-germanium
+					value = thisPacesGriffinCryMap[cry1_index][cry2_index]; 
+					for (G4int k = 0; k < MAXNUMANG_GE; k++) {
+						if (arr[k] > (value - GEBIN) && arr[k] < (value + GEBIN)) {
+							// is filled into the same histogram as a germanium-paces
+							// edep1 and edep2 switched to keep germanium on x-axis
+							HistoManager::Instance().Fill2DHisto(HistoManager::Instance().AngCorrNumbers[k*MAXANGCORRHISTO+1], edep2, edep1, 1.0);
+							break;
+						}
+					}
+
+				// a Paces-Paces angle array is necessary.
+			/*	} else if ((fHitTrackerI[6][i] == 50) && (fHitTrackerI[6][j] == 50) && ee) { //paces-paces
+					G4double value = thisPacesPacesCryMap[cry1_index][cry2_index]; 
+					for (G4int k = 0; k < MAXNUMANG_EE; k++) {
+						if (arr[k][0] > (value - 0.005) && arr[k][0] < (value + 0.005)) {
+							HistoManager::Instance().Fill2DHisto(HistoManager::Instance().AngCorrNumbers[k*MAXANGCORRHISTO+2], edep1, edep2, 1.0);
+							break;
+						}
+					}
+			*/
+				}
+			
+	        		HistoManager::Instance().FillHisto(HistoManager::Instance().fAngCorrAngles[0], value); // keeps track of all values produced in simulation
+			} // type of hit on second detector	
+		}// for(j = i + 1 to number of hits)
+
+	} // type of hit on first detector
+    }// for(i == 0 to numberofhits)    
+// -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    	for (G4int i = 0 ; i < fNumberOfSteps; i++) {
+		HistoManager::Instance().FillStepNtuple(fStepTrackerI[0][i], fStepTrackerI[1][i], fStepTrackerI[2][i], fStepTrackerI[3][i],  fStepTrackerI[4][i], 
+			fStepTrackerI[5][i], fStepTrackerI[6][i], fStepTrackerI[7][i], fStepTrackerI[8][i], fStepTrackerD[0][i]/keV, fStepTrackerD[1][i]/mm, 
+			fStepTrackerD[2][i]/mm, fStepTrackerD[3][i]/mm, fStepTrackerD[4][i]/second, fStepTrackerI[9][i]);
+    	}
     
     ClearVariables();
-}
+}// EventAction::EndOfEventAction
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -243,34 +420,44 @@ void EventAction::FillGriffinCryst()
         for (G4int j=0; j < MAXNUMCRYGRIFFIN; j++) {
             if(fGriffinCrystEnergyDet[i][j] > MINENERGYTHRES) {
                 // fill energies in each crystal
-                if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto((kGriffinCrystalUnsupEdepDet0Cry0+(MAXNUMDETGRIFFIN*j))+i, fGriffinCrystEnergyDet[i][j]);
-                if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(kGriffinCrystalUnsupEdepCry, fGriffinCrystEnergyDet[i][j]);
-                if(!suppressorBackFired[i] && !suppressorExtensionFired[i] && !suppressorSideFired[i]) { // Suppressor fired?
-                    if(WRITEEDEPHISTOS) HistoManager::Instance().FillHisto((kGriffinCrystalSupEdepDet0Cry0+(MAXNUMDETGRIFFIN*j))+i, fGriffinCrystEnergyDet[i][j]);
-                    if(WRITEEDEPHISTOS) HistoManager::Instance().FillHisto(kGriffinCrystalSupEdepCry, fGriffinCrystEnergyDet[i][j]);
+
+                if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().GriffinUnSupCry[MAXNUMDETGRIFFIN*j+1+i], fGriffinCrystEnergyDet[i][j]/keV);
+                if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().GriffinUnSupCry[0], fGriffinCrystEnergyDet[i][j]/keV);
+                
+		if(!suppressorBackFired[i] && !suppressorExtensionFired[i] && !suppressorSideFired[i]) { // Suppressor fired?
+                  
+		    if(WRITEEDEPHISTOS) HistoManager::Instance().FillHisto(HistoManager::Instance().GriffinSupCry[MAXNUMDETGRIFFIN*j+1+i], fGriffinCrystEnergyDet[i][j]/keV);
+                    if(WRITEEDEPHISTOS) HistoManager::Instance().FillHisto(HistoManager::Instance().GriffinSupCry[0], fGriffinCrystEnergyDet[i][j]/keV);
+
                 }
                 energySumDet += fGriffinCrystEnergyDet[i][j];
             }
         }
         if(energySumDet > MINENERGYTHRES) {
-            // fill energies in each detector
-            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(kGriffinCrystalUnsupEdepDet0+i, energySumDet);
-            // fill standard energy and track spectra
-            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(kGriffinCrystalUnsupEdep, energySumDet);
-            if(!suppressorBackFired[i] && !suppressorExtensionFired[i] && !suppressorSideFired[i]) {
-                // fill energies in each detector
-                if(WRITEEDEPHISTOS) HistoManager::Instance().FillHisto(kGriffinCrystalSupEdepDet0+i, energySumDet);
-                // fill standard energy and track spectra
-                if(WRITEEDEPHISTOS) HistoManager::Instance().FillHisto(kGriffinCrystalSupEdep, energySumDet);
+            
+	    // fill energies in each detector
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().GriffinUnSup[i+2], energySumDet/keV);
+            
+	    // fill standard energy and track spectra
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().GriffinUnSup[0], energySumDet/keV);
+            
+	    if(!suppressorBackFired[i] && !suppressorExtensionFired[i] && !suppressorSideFired[i]) {
+                
+		// fill energies in each detector
+                if(WRITEEDEPHISTOS) HistoManager::Instance().FillHisto(HistoManager::Instance().GriffinSup[i+2], energySumDet/keV);
+                
+		// fill standard energy and track spectra
+                if(WRITEEDEPHISTOS) HistoManager::Instance().FillHisto(HistoManager::Instance().GriffinSup[0], energySumDet/keV);
+
             }
         }
         energySum += energySumDet;
     }
 
     if(energySum > MINENERGYTHRES) {
-        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(kGriffinCrystalUnsupEdepSum, energySum);
+        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().GriffinUnSup[1], energySum/keV);
         if(!suppressorFired) {
-            if(WRITEEDEPHISTOS) HistoManager::Instance().FillHisto(kGriffinCrystalSupEdepSum, energySum);
+            if(WRITEEDEPHISTOS) HistoManager::Instance().FillHisto(HistoManager::Instance().GriffinSup[1], energySum/keV);
         }
     }
 }
@@ -404,13 +591,13 @@ void EventAction::FillPacesCryst() {
     for (G4int j=0; j < MAXNUMDETPACES; j++) {
         if(fPacesCrystEnergyDet[j] > MINENERGYTHRES) {
 	  
-            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fPacesHistNumbers[0], fPacesCrystEnergyDet[j]);
-            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fPacesHistNumbers[j+2], fPacesCrystEnergyDet[j]);
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fPacesHistNumbers[0], fPacesCrystEnergyDet[j]/keV);
+            if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fPacesHistNumbers[j+2], fPacesCrystEnergyDet[j]/keV);
             energySumDet += fPacesCrystEnergyDet[j];
         }
     }
     if(energySumDet > MINENERGYTHRES) {
-        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fPacesHistNumbers[1], energySumDet);
+        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fPacesHistNumbers[1], energySumDet/keV);
     }
 }////////////////////////////////////////////20/6
 
