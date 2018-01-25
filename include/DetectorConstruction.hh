@@ -34,8 +34,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef DetectorConstruction_h
-#define DetectorConstruction_h 1
+#ifndef DetectorConstruction_HH
+#define DetectorConstruction_HH
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"

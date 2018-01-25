@@ -34,8 +34,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef EVENTACTION_h
-#define EVENTACTION 1
+#ifndef EVENTACTION_HH
+#define EVENTACTION HH
 
 #include "G4UserEventAction.hh"
 #include "globals.hh"

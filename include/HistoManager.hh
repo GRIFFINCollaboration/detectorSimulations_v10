@@ -32,8 +32,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...... 
 
-#ifndef HISTOMANAGER_h
-#define HISTOMANAGER_h 1
+#ifndef HISTOMANAGER_HH
+#define HISTOMANAGER_HH
 
 #include "globals.hh"
 #include "g4root.hh"
