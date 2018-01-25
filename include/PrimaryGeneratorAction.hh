@@ -34,55 +34,60 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef PRIMARYGENERATORACTION_HH
-#define PRIMARYGENERATORACTION_HH
+#ifndef PRIMARYGENERATORACTION_h
+#define PRIMARYGENERATORACTION__h 1
 
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "globals.hh"
 #include "G4ThreeVector.hh"
-
 #include "G4SystemOfUnits.hh"
 
 
 class G4ParticleGun;
 class G4Event;
-class DetectorConstruction;
-class PrimaryGeneratorMessenger;
-class HistoManager;
 
+class PrimaryGeneratorMessenger;
+class DetectorConstruction;
+class HistoManager;
+class BeamDistribution;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
+private:    
+    G4ParticleGun*                fParticleGun;  //pointer a to G4 class
+    DetectorConstruction*         fDetector;     //pointer to the geometry
+    PrimaryGeneratorMessenger*    fGunMessenger; //messenger of this class
+    BeamDistribution*		  fBeamDistribution;//pointer to the BeamDistribution class
+
 public:
     PrimaryGeneratorAction(DetectorConstruction*);
     virtual ~PrimaryGeneratorAction();
-
     virtual void GeneratePrimaries(G4Event*);
+    
 
     void SetNumberOfDecayingLaBrDetectors( G4int num ) {fNumberOfDecayingLaBrDetectors = num;} ;
     void SetEfficiencyEnergy( G4double num ) {fEffEnergy = num;} ;
     void SetEfficiencyDirection( G4ThreeVector num ) {fEffDirection = num; fEffDirectionBool = true;} ;
-    void SetEfficiencyPosition( G4ThreeVector num ) {fEffPosition = num; fEffPositionBool = true;} ;
+    
+    void PassEfficiencyPosition( G4ThreeVector num );
+    void SetEfficiencyPosition( G4ThreeVector num ) {fEffPosition = num; fEffPositionBool = true;PassEfficiencyPosition(fEffPosition);}
+    
     void SetEfficiencyParticle( G4String val ) {fEffParticle = val; fEffParticleBool = true;} ;
     void SetEfficiencyPolarization( G4ThreeVector num ) {fEffPolarizationVector = num; fEffPolarization = true;} ;
-    void SetEfficiencyBeamRadius( G4double num ) {fEffBeamRadius = num; fEffBeam = true; } ;
-    void SetConeRadius( G4double num ) {fConeRadius = num; fConeRadiusBool = true; fEffDirectionBool = true;} ;//Direction needed, should not require explicit initialisation command
-    void SetConeZValue( G4double num ) {fConeZValue = num; fConeValueBool = true; fEffDirectionBool = true;};
-    void SetConeRValue( G4double num ) {fConeRValue = num; fConeValueBool = true; fEffDirectionBool = true;};
     void SetConeMaxAngle( G4double num1 ) {fAngleInit = num1; fConeAngleBool = true; fEffDirectionBool = true;};
     void SetConeMinAngle( G4double num1 ) {fAngleMinInit = num1;};
-    //booleans (initially false), above, true if a command has been entered for the loops in source file to be entered
+    void SetBeamSpotSigma( G4double num1 ) {fBeamSpotSigma = num1;};
     void SendBeamEnergyToHist(G4double);
     void PassTarget(G4double);
-    G4bool fNeedBeamDistro;
+    void PrepareBeamFile(G4String);
+    void SetLayeredTargetBeamDistro(G4int layer);
+ 
     
-
+    void SetSourceNeeded(G4bool needed){fSourceNeeded = needed;};
+    void SetSourceName(G4String input){fSourceName = input;};
+    
 private:
-    G4ParticleGun*                fParticleGun;  //pointer a to G4 class
-    DetectorConstruction*         fDetector;     //pointer to the geometry
-    PrimaryGeneratorMessenger*    fGunMessenger; //messenger of this class
-
     //variables
     G4int fNumberOfDecayingLaBrDetectors;
     G4double fEffEnergy;
@@ -95,19 +100,24 @@ private:
     G4double fDetectorAnglesLaBr3[8][5];
     G4bool fEffPolarization;
     G4ThreeVector fEffPolarizationVector;
-    G4bool fEffBeam;
-    G4double fEffBeamRadius;
-    G4double fConeRadius;
-    G4bool fConeRadiusBool;
-    G4double fConeZValue;
-    G4double fConeRValue;
-    G4bool fConeValueBool;
+    
     G4double fAngleInit;
     G4bool fConeAngleBool;
     G4double fAngleMinInit;
+    G4double fBeamSpotSigma;
 
-    G4ThreeVector SetCone(G4double fConeRadius, G4double zVal=107.50685);//value is disttoSiliFromParticleCreation
-    void LaBrInit();
+    G4bool fTargetDistro;
+    G4double fLayerStart;
+    G4double fLayerLength;
+    G4bool fNeedFileDistro;
+    
+    G4bool fSourceNeeded;
+    G4String fSourceName;
+    
+    //functions
+    void LaBrinit();
+        
+    
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

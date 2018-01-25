@@ -32,13 +32,14 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef DETECTORMESSENGER_HH
-#define DETECTORMESSENGER_HH
+#ifndef DETECTORMESSENGER_h
+#define DETECTORMESSENGER_h 1
 
 #include "globals.hh"
 #include "G4UImessenger.hh"
 
 class DetectorConstruction;
+
 class G4UIdirectory;
 class G4UIcmdWithAString;
 class G4UIcmdWithADoubleAndUnit;
@@ -75,18 +76,12 @@ private:
     G4UIcmdWithAString*        fGenericTargetCmd;
     G4UIcmdWith3VectorAndUnit* fGenericTargetDimensionsCmd;
     G4UIcmdWith3VectorAndUnit* fGenericTargetPositionCmd;
+    
+    
+    G4UIcmdWithAString*        fLayeredTargetAddCmd;
 
     // Spice Target Apparatus
-    G4UIcmdWithAString*        fSpiceTargetCmd;
-    G4UIcmdWithADoubleAndUnit* fSpiceTargetDensityCmd;
-    G4UIcmdWithADoubleAndUnit* fSpiceTargetThicknessCmd;
-    G4UIcmdWithAString*        fSpiceTargetBackerCmd;
-    G4UIcmdWithADoubleAndUnit* fSpiceTargetBackerDensityCmd;
-    G4UIcmdWithADoubleAndUnit* fSpiceTargetBackerThicknessCmd;
-    G4UIcmdWithAString*        fSpiceTargetProtectorCmd;
-    G4UIcmdWithADoubleAndUnit* fSpiceTargetProtectorDensityCmd;
-    G4UIcmdWithADoubleAndUnit* fSpiceTargetProtectorThicknessCmd;
-    
+
     //field box
     G4UIcmdWithAString*        fFieldBoxMaterialCmd;
     G4UIcmdWith3VectorAndUnit* fFieldBoxDimensionsCmd;
@@ -142,7 +137,7 @@ private:
     G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinBackCmd;
     G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinBackDetectorCmd;
     //G4UIcmdWith3Vector*       fAddDetectionSystemGriffinPositionConfigCmd;
-    G4UIcmdWithAnInteger*       fAddDetectionSystemSpiceCmd;
+    G4UIcmdWithoutParameter*    fAddDetectionSystemSpiceCmd;
     G4UIcmdWithAString*         fAddMagnetSystemSpiceCmd;
     G4UIcmdWithAnInteger*       fAddDetectionSystemPacesCmd;
     G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinHevimetCmd ;
@@ -154,6 +149,9 @@ private:
     G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinSetExtensionSuppLocationCmd ;
     G4UIcmdWith3Vector*         fAddDetectionSystemGriffinSetDeadLayerCmd ;
     G4UIcmdWithABool*           fUseTIGRESSPositionsCmd;
+    G4UIcmdWithABool*		fUseSpiceResolutionCmd;
+    
+
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

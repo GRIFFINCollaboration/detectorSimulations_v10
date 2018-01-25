@@ -32,57 +32,38 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef ApparatusSpiceTarget_h
-#define ApparatusSpiceTarget_h 1
+#ifndef ApparatusLayeredTarget_h
+#define ApparatusLayeredTarget_h 1
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
+
 //forward declare for placement
 class G4VPhysicalVolume;
-
-class ApparatusSpiceTarget
+class G4UserLimits;
+class ApparatusLayeredTarget
 {
   public:
-    ApparatusSpiceTarget(G4double);
-    ~ApparatusSpiceTarget();
+	  
+    ApparatusLayeredTarget(G4double);
+    ~ApparatusLayeredTarget();
 
   private:
-    // Logical volumes
-    //G4LogicalVolume* expHallLog;
-    G4LogicalVolume* fTargetSpiceLog;
-    G4LogicalVolume* fTargetBackerSpiceLog;
-    G4LogicalVolume* fTargetProtectorSpiceLog;
+   std::vector< G4LogicalVolume* > fTargetLayerLog;
+   std::vector< G4VPhysicalVolume* > fTargetLayerPhys;
+   std::vector< G4double > fTargetLayerThick;
     
-    //Physical Volumes
-    G4VPhysicalVolume* fTargetPhys;
-    G4VPhysicalVolume* fTargetBackerPhys;
-    G4VPhysicalVolume* fTargetProtectorPhys;
-    
-    //Material manager
-//     G4NistManager* man = G4NistManager::Instance();
   private://variables for build, set in the class as read in
-    G4String fTargetMaterial;
-    G4double fTargetMaterialDensity;
-    G4double fTargetRadius;//this value is equal to the target frame hole radius //used for backer, and protector also
-    G4double fTargetThickness;
-    G4double fTargetSurfaceDensity;
-    G4String fTargetBackerMaterial;
-    G4double fTargetBackerMaterialDensity;
-    G4double fTargetBackerThickness;
-    G4double fTargetBackerSurfaceDensity;
-    G4String fTargetProtectorMaterial;
-    G4double fTargetProtectorMaterialDensity;
-    G4double fTargetProtectorThickness;
-    G4double fTargetProtectorSurfaceDensity;
     
+    G4double fTargetRadius;
+    
+    //Independent stepping
+    G4UserLimits* fStepLimit;
     
   public: 
-    G4int BuildTarget(G4String fTargetMaterial, G4double fTargetThickness, G4double fTargetMaterialDensity);
-    G4int BuildBacker(G4String fTargetBackerMaterial, G4double fTargetBackerThickness, G4double fTargetBackerMaterialDensity);
-    G4int BuildProtector(G4String fTargetProtectorMaterial, G4double fTargetProtectorThickness, G4double fTargetProtectorMaterialDensity);
-    void  PlaceTarget(G4LogicalVolume* );
-    void  PlaceTargetBacker(G4LogicalVolume* );
-    void  PlaceTargetProtector(G4LogicalVolume* );
+    G4int BuildTargetLayer(G4String LayerMaterial, G4double LayerArealDensity);
+    void  PlaceTarget(G4LogicalVolume*);
+    G4double LayerStart(int);
     
     G4double fBeamPos;//uses beam position to place targets
              
