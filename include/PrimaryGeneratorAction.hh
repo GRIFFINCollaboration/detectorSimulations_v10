@@ -35,7 +35,7 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #ifndef PRIMARYGENERATORACTION_HH
-#define PRIMARYGENERATORACTION__HH
+#define PRIMARYGENERATORACTION_HH
 
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "globals.hh"

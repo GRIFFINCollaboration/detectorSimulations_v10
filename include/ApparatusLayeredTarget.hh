@@ -32,8 +32,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef ApparatusLayeredTarget_h
-#define ApparatusLayeredTarget_h 1
+#ifndef ApparatusLayeredTarget_HH
+#define ApparatusLayeredTarget_HH
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"

@@ -54,23 +54,12 @@ EventAction::EventAction(RunAction* run)
     fNumberOfHits = 0;
     fNumberOfSteps = 0;
     fPrintModulo = 1000;
-    fSpiceIterator = 0;//counts depositions in SPICE
     
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 EventAction::~EventAction() {	
-  if(MultiplicityArray[0]!=0){
-    G4cout << "1 dep: " << MultiplicityArray[0] << "| 2 dep: " << MultiplicityArray[1] << "| 3 dep: " << MultiplicityArray[2] << 
-    "| 4 dep: " << MultiplicityArray[3] << "| 5 dep: " << MultiplicityArray[4] << G4endl;
-    
-    G4double ME = MultiplicityArray[1] + MultiplicityArray[2] + MultiplicityArray[3] + MultiplicityArray[4]; //multiple events
-    
-    G4double OS = ME/(MultiplicityArray[0] + ME); //multiple/all events
-    
-    G4cout << "Old style multiplicity: " << OS*100.0 << G4endl;//% figure for multiplicity
-  }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -351,7 +340,7 @@ void EventAction::FillGridCell() {
 void EventAction::FillSpice() {
 //     G4cout << "FillSpice entered " << G4endl;
     G4double energySumDet = 0;
-    fSpiceMultiplicity = 0;
+    G4Int fSpiceMultiplicity = 0;
     G4double SpiceEnergy,SpiceEnergyRaw;
     for (G4int ring=0; ring < MAXNUMDETSPICE; ring++) {
       for (G4int seg=0; seg < 12; seg++) {
@@ -395,8 +384,6 @@ void EventAction::FillSpice() {
 	}//end of filling histos with SPICE detections per individual seg
       }//seg loop
     }//ring loop
-    
-    MultiplicitySPICE(energySumDet);//fill multiplicity counters [Array] - BORKEN
     
     //wiritng add-backed energies
     if(energySumDet > MINENERGYTHRES) {//after exiting loops for all rings/segs, will input summed (add-back) energy if above threshold
@@ -491,24 +478,6 @@ void EventAction::AddStepTracker(G4int eventNumber, G4int trackID, G4int parentI
     }
 }
 
-void EventAction::MultiplicitySPICE(G4double energySumDet){//tests the multiplicity of SPICE depositions
-  
-  	  if(energySumDet > (BeamInputEnergy-0.015)){//0.6 = 3 sigma 
-	  //if(fSpiceMultiplicity>0) HistoManager::Instance().FillHisto(HistoManager::Instance().angledistro[0], fSpiceMultiplicity);
-	  switch(fSpiceMultiplicity) {
-	  case 1 : MultiplicityArray[0] += 1;
-             break;       
-	  case 2 : MultiplicityArray[1] += 1;
-	     break;
-	  case 3 : MultiplicityArray[2] += 1; 
-             break;       
-	  case 4 : MultiplicityArray[3] += 1;
-             break;
-	  case 5 : MultiplicityArray[4] += 1;
-             break;       
-  
-	  }}
-}
 
 G4double EventAction::ApplySpiceRes(G4double EnergyIn){//pre-calculated functions that scale with energy to give accurate resolution split
   G4double GaussPick = G4UniformRand();//depending on result, will be part of one of two Gaussians, or a ERFC-bsaed decay

@@ -35,12 +35,11 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #ifndef EVENTACTION_HH
-#define EVENTACTION HH
+#define EVENTACTION_HH
 
 #include "G4UserEventAction.hh"
 #include "globals.hh"
 #include "HistoManager.hh"
-#include <vector>
 
 class RunAction;
 class HistoManager;
@@ -110,7 +109,6 @@ private:
     void FillSpice() ; ///19/7
     void FillGridCell() ;
     void FillTest(); ///27/6
-    void MultiplicitySPICE(G4double);//Tidies up SPICE fill function
     
     G4double ApplySpiceRes(G4double);
     G4int SPICEPhiRemainder(G4int);
@@ -130,10 +128,6 @@ private:
     G4int    fPTrackID;
     G4int    fPParentID;
     
-    //SPICE arrays and sub-variables
-    G4int    fSpiceMultiplicity, fSpiceIterator;
-    G4int    MultiplicityArray[5];
-    G4double fDepEnergy;
     // Particle types in simulation
     G4int fParticleTypes[NUMPARTICLETYPES];
 
