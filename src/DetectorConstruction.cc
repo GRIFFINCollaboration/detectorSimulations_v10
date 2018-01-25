@@ -316,64 +316,6 @@ G4double DetectorConstruction::LayeredTargetLayerStart(int layer){
 	return fDetEffPosition.z();
 }
 
-//void DetectorConstruction::SetFieldBoxMaterial( G4String name )
-//{
-//  fSetFieldBoxMaterial = true;
-//  fieldBoxMaterial = name;
-//  SetFieldBox();
-//}
-
-//void DetectorConstruction::SetFieldBoxDimensions( G4ThreeVector vec )
-//{
-//  fSetFieldBoxDimensions = true;
-//  fieldBoxDimensions = vec;
-//  SetFieldBox();
-//}
-
-//void DetectorConstruction::SetFieldBoxPosition( G4ThreeVector vec )
-//{
-//  fSetFieldBoxPosition = true;
-//  fieldBoxPosition = vec;
-//  SetFieldBox();
-//}
-
-//void DetectorConstruction::SetFieldBoxMagneticField( G4ThreeVector vec )
-//{
-//  fSetFieldBoxMagneticField = true;
-//  fieldBoxMagneticField = vec;
-//  SetFieldBox();
-//}
-
-//void DetectorConstruction::SetFieldBox( )
-//{
-//  if( fSetFieldBoxMagneticField && fSetFieldBoxMaterial &&
-//        fSetFieldBoxDimensions 	 && fSetFieldBoxPosition   )
-//        {
-//            G4String name = fieldBoxMaterial;
-//            G4double vecX = fieldBoxDimensions.x()/mm;
-//            G4double vecY = fieldBoxDimensions.y()/mm;
-//            G4double vecZ = fieldBoxDimensions.z()/mm;
-//            ApparatusFieldBox* pApparatusFieldBox = new ApparatusFieldBox();
-//            pApparatusFieldBox->Build(name, vecX, vecY, vecZ, fieldBoxMagneticField);
-//            G4RotationMatrix* rotate = new G4RotationMatrix;
-//            pApparatusFieldBox->PlaceApparatus(fLogicWorld, fieldBoxPosition, rotate);
-//        }
-//}
-
-//void DetectorConstruction::AddBox()
-//{
-//    if(fBoxThickness != 0.0*mm)
-//    {
-//        DetectionSystemBox* pBox = new DetectionSystemBox(	fBoxInnerDimensions.x(),
-//                                                                                                            fBoxInnerDimensions.y(),
-//                                                                                                            fBoxInnerDimensions.z(),
-//                                                                                                            fBoxThickness,
-//                                                                                                            fBoxMat,
-//                                                                                                            fBoxColour ) ;
-//        pBox->Build() ;
-//        pBox->PlaceDetector( fLogicWorld ) ;
-//    }
-//}
 
 void DetectorConstruction::AddGrid() {
   if(fLogicWorld == NULL) {
@@ -434,23 +376,6 @@ void DetectorConstruction::AddApparatusGriffinStructure(G4int selector) {
 	pApparatusGriffinStructure->Place(fLogicWorld, selector);
 }
 
-//void DetectorConstruction::AddDetectionSystemGammaTracking(G4int ndet)
-//{
-//  // Describe Placement
-//  G4ThreeVector direction = G4ThreeVector(0,0,1);
-//  G4ThreeVector move = 0.0 * direction;
-//  G4RotationMatrix* rotate = new G4RotationMatrix;
-//  rotate->rotateX(0.0);
-//  rotate->rotateY(0.0);
-//  rotate->rotateZ(0.0);
-
-//  G4int detectorNumber = 0;
-
-//    DetectionSystemGammaTracking* pGammaTracking = new DetectionSystemGammaTracking() ;
-//    pGammaTracking->Build() ;
-
-//  pGammaTracking->PlaceDetector( fLogicWorld, move, rotate, detectorNumber );
-//}
 
 void DetectorConstruction::AddDetectionSystemSodiumIodide(G4int ndet) {
 	if(fLogicWorld == NULL) {

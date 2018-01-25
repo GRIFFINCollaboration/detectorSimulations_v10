@@ -77,7 +77,7 @@ void EventAction::BeginOfEventAction(const G4Event* evt) {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void EventAction::EndOfEventAction(const G4Event*) {
-    BeamInputEnergy = HistoManager::Instance().fBeamEnergy;
+    BeamInputEnergy = HistoManager::Instance().BeamEnergy();
     FillParticleType() ; // was uncommented - otherwise not filled
     FillGriffinCryst() ;
     Fill8piCryst() ;
@@ -340,7 +340,7 @@ void EventAction::FillGridCell() {
 void EventAction::FillSpice() {
 //     G4cout << "FillSpice entered " << G4endl;
     G4double energySumDet = 0;
-    G4Int fSpiceMultiplicity = 0;
+    G4int fSpiceMultiplicity = 0;
     G4double SpiceEnergy,SpiceEnergyRaw;
     for (G4int ring=0; ring < MAXNUMDETSPICE; ring++) {
       for (G4int seg=0; seg < 12; seg++) {

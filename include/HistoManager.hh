@@ -107,12 +107,12 @@ public:
     void MakeHistoWithAxisTitles(G4AnalysisManager* analysisManager, G4String name, 
 					   G4String title, G4double xmin, G4double xmax, 
 					   G4int nbins, const G4String& unitName, const G4String& fcnName);
-    void Make2DHistoWithAxisTitles(G4AnalysisManager* analysisManager, const G4String& name, const G4String& title,
-                 G4int nxbins, G4double xmin, G4double xmax, 
-                 G4int nybins, G4double ymin, G4double ymax);
     void Make2DHisto(G4AnalysisManager* analysisManager, const G4String& name, const G4String& title,
                  G4int nxbins, G4double xmin, G4double xmax, 
                  G4int nybins, G4double ymin, G4double ymax);
+    void Make2DHistoWithAxisTitles(G4AnalysisManager* analysisManager, const G4String& name, const G4String& title,
+                 G4int nxbins, G4double xmin, G4double xmax, 
+                 G4int nybins, G4double ymin, G4double ymax, const G4String& xunitName, const G4String& yunitName, const G4String& xfcnName, const G4String& yfcnName);
     void FillHisto(G4int ih, G4double e, G4double weight = 1.0);
     void Fill2DHisto(G4int ih, G4double xbin, G4double ybin, G4double weight = 1.0);
     void Normalize(G4int id, G4double fac);
