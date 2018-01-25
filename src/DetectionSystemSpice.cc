@@ -80,7 +80,7 @@ DetectionSystemSpice::DetectionSystemSpice() :
 }
 
 DetectionSystemSpice::~DetectionSystemSpice()
-{   
+{   	
 	// LogicalVolumes in ConstructSPICEDetectionSystem
 	delete fDetectorMountLog;
 	delete fAnnularClampLog;

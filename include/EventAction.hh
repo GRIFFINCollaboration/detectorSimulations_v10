@@ -130,14 +130,10 @@ private:
     G4int    fPTrackID;
     G4int    fPParentID;
     
-    G4bool ERFCFlag;
-    
     //SPICE arrays and sub-variables
     G4int    fSpiceMultiplicity, fSpiceIterator;
     G4int    MultiplicityArray[5];
     G4double fDepEnergy;
-    std::vector<G4double> fDepVec, fThetaVec, fPhiVec;
-    std::vector<G4int> fSegVec;
     // Particle types in simulation
     G4int fParticleTypes[NUMPARTICLETYPES];
 

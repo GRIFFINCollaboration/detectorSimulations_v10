@@ -60,7 +60,7 @@ EventAction::EventAction(RunAction* run)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-EventAction::~EventAction() {
+EventAction::~EventAction() {	
   if(MultiplicityArray[0]!=0){
     G4cout << "1 dep: " << MultiplicityArray[0] << "| 2 dep: " << MultiplicityArray[1] << "| 3 dep: " << MultiplicityArray[2] << 
     "| 4 dep: " << MultiplicityArray[3] << "| 5 dep: " << MultiplicityArray[4] << G4endl;
@@ -70,19 +70,6 @@ EventAction::~EventAction() {
     G4double OS = ME/(MultiplicityArray[0] + ME); //multiple/all events
     
     G4cout << "Old style multiplicity: " << OS*100.0 << G4endl;//% figure for multiplicity
-  }
-  if(HistoManager::Instance().fSpiceHistNumbers[4] != 0){//will be 0 due to initialisation, only overwritten if SPICE is used
-    G4cout << "WRITING KINEMATICS FILE " << G4endl;
-    G4cout << fSpiceIterator << G4endl;//correct value - by root
-    std::ofstream spicekinematics;
-    spicekinematics.open ("kin.dat");
-    if (spicekinematics.is_open()) {
-      spicekinematics << "#Seg|Theta|Energy|Phi" << G4endl;
-      for(int k=0; k<fSpiceIterator; ++k){
-	spicekinematics << fSegVec[k] << " " << fThetaVec[k] << " " << fDepVec[k] << " " << fPhiVec[k] << G4endl;
-      }
-      spicekinematics.close();
-    }else G4cout << "SOMETHING WENT WRONG OPENING KIN FILE " << G4endl;
   }
 }
 
@@ -363,99 +350,48 @@ void EventAction::FillGridCell() {
 
 void EventAction::FillSpice() {
 //     G4cout << "FillSpice entered " << G4endl;
-    G4double energySumDet = 0, PhiMap = 0.; ERFCFlag=0;
-    G4int remainder = 0;
+    G4double energySumDet = 0;
     fSpiceMultiplicity = 0;
-    G4double SpiceResolutionEnergy, SpiceRawEnergy;
+    G4double SpiceEnergy,SpiceEnergyRaw;
     for (G4int ring=0; ring < MAXNUMDETSPICE; ring++) {
       for (G4int seg=0; seg < 12; seg++) {
-	if(fSpiceEnergyDet[ring][seg] > 70.*CLHEP::keV) {
-
-	  SpiceResolutionEnergy = ApplySpiceRes(fSpiceEnergyDet[ring][seg]);// + 9.0*CLHEP::keV ;// + 2.1*CLHEP::keV;
-// 	  G4cout << "SPICE dep: " << fSpiceEnergyDet[ring][seg] << G4endl;
-	  //one of two Gaussians, or decay tail//add for bismuth exp. shift
-	  SpiceRawEnergy = fSpiceEnergyDet[ring][seg];//No resolution applied as demanded by command in macro
-	  
+	if(fSpiceEnergyDet[ring][seg] > 70.*CLHEP::keV&&WRITEEDEPHISTOS) {
+		
+		SpiceEnergyRaw = fSpiceEnergyDet[ring][seg];// SpiceRawEnergy. No resolution applied
+		SpiceEnergy=SpiceEnergyRaw;
+		if(HistoManager::Instance().SpiceResolution()){
+			SpiceEnergy = ApplySpiceRes(SpiceEnergyRaw);// + 9.0*CLHEP::keV ;// + 2.1*CLHEP::keV;	  //fill decay histo
+			HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[8],SpiceEnergy*1000);
+		}
+		
 	  //fill energies across all segments
-	  if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution()) {
-	    HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[0],(SpiceResolutionEnergy)*1000.);//+4keV for Bismuth
-	  } //fill standard energy spectra - no add-back
-	  else if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution() == false){
-	    HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[0],SpiceRawEnergy*1000.);
-	  } //fill standard energy spectra - no add-back
-	  
+	    HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[0],(SpiceEnergy)*1000.);//+4keV for Bismuth
+	  //fill standard energy spectra - no add-back
+
 	  //Segment based energies
-	  if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution()) HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[MAXNUMSEGSPICE*ring+seg+2],
-	    SpiceResolutionEnergy);
-	  else if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution() == false)HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[MAXNUMSEGSPICE*ring+seg+2],
-	    SpiceRawEnergy);
+// 	  HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[MAXNUMSEGSPICE*ring+seg+2],SpiceEnergy);
 	  
-	  //fill decay histo
-	  if(ERFCFlag) HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[8],SpiceResolutionEnergy*1000);
+	  //2D all seg energies
+	  HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fAngleDistro[1], (G4double) MAXNUMSEGSPICE*ring+seg,SpiceEnergy*1000., 1.0);
 	  
-	  fSpiceMultiplicity += 1;//iterates every deposition per fill to track multiplicity per event
-	  
-	  //Add-backed energy addition
-	  if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution()) energySumDet += SpiceResolutionEnergy;
-	  else if(WRITEEDEPHISTOS && HistoManager::Instance().SpiceResolution() == false) energySumDet += SpiceRawEnergy;
+
+	  fSpiceMultiplicity++;//iterates every deposition per fill to track multiplicity per event
+	  energySumDet += SpiceEnergy;
 	  
 	  //Gated angular histos
-	  if(fSpiceEnergyDet[ring][seg] + 10.*keV > HistoManager::Instance().fBeamEnergy && //gating kinematics on (raw) detected energy
-	    fSpiceEnergyDet[ring][seg] - 10.*keV < HistoManager::Instance().fBeamEnergy){
+	  if(abs(SpiceEnergyRaw - HistoManager::Instance().fBeamEnergy) < 10.*keV){//gating kinematics on (raw) detected energy
 	    
-	      //Mapping phi to overlay mirrored segments
-	     // PhiMap = SPICEPhiMap(seg);remainder = SPICEPhiRemainder(seg);
-	      
-	  remainder = seg%3;//used to overlay mirrored segment histos within a ring
-	  switch(remainder){
-	    case 1 : remainder = 1;//0
-		      break;
-	    case 2 : remainder = 2;//1
-		      break;
-	    case 0 : remainder = 0;//2
-		      break;
-	  }
-	  
-	  if(seg == 0 || seg == 1 || seg == 2) PhiMap = 0.;
-	  if(seg == 3 || seg == 4 || seg == 5 ) {
-	    if (HistoManager::Instance().fBeamPhi > 0.) PhiMap =  -CLHEP::pi/2; 
-	      else PhiMap =  CLHEP::pi*3./2.;
-	    }
-	  if(seg == 6 || seg == 7 || seg == 8 ) {	    	      
-	    if (HistoManager::Instance().fBeamPhi > 0.) PhiMap =  -CLHEP::pi; 
-	      else PhiMap =  CLHEP::pi;
-	  }
-	  if(seg == 9 || seg == 10 || seg == 11 ) PhiMap = CLHEP::pi/2.;
-	    
-	    	  //adjusts non-standard data so none is lost off of histogram limits
-	  if(HistoManager::Instance().fBeamPhi+PhiMap > CLHEP::pi){
-	    PhiMap -= 2.*CLHEP::pi;//minus 2pi from map to go to bottom of graph (wraps data)
-	  }
-	  if(HistoManager::Instance().fBeamPhi+PhiMap < -CLHEP::pi){
-	    PhiMap += 2.*CLHEP::pi;//adds 2pi from map to go to top of graph (wraps data)
-	  }
-	    
-
+		//Mapping phi to overlay mirrored segments
+		G4int remainder = seg%3;
+		G4double PhiMap = ((int)seg/3)*CLHEP::pi/2;
+		PhiMap = HistoManager::Instance().fBeamPhi-PhiMap;
+		PhiMap = asin(sin(PhiMap));//if we went over 360
+	
 	      //THETA vs. PHI
-	      HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fSpiceAngleHists[MAXNUMSEGSPICE*ring+remainder], HistoManager::Instance().fBeamTheta,
-					       HistoManager::Instance().fBeamPhi + PhiMap, 1.);//PHI M<AP!!!!!!!!!!!!!
-	      //THETA error
-// 	      HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceAngleHists[100], HistoManager::Instance().fBeamTheta);
-	      
-	      //Data for kinematic output - stored here and outputted in class destructor
-	      fDepVec.push_back(SpiceResolutionEnergy); //always want resolution on kinematic data
-	      fSegVec.push_back((ring*MAXNUMSEGSPICE+remainder)+1);//add one for input as ignored a 0
-	      fThetaVec.push_back(HistoManager::Instance().fBeamTheta);
-	      fPhiVec.push_back(HistoManager::Instance().fBeamPhi+PhiMap);
-	      fSpiceIterator++;//tracks counts for debugging 
-	      
-	     /* HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fSpiceTest[MAXNUMSEGSPICE*ring+seg], HistoManager::Instance().fBeamTheta,
-					       HistoManager::Instance().fBeamPhi, 1.);*/ //if test histos wanted
+	      HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fSpiceAngleHists[MAXNUMSEGSPICE*ring+remainder], HistoManager::Instance().fBeamTheta,PhiMap, 1.);//PHI M<AP!!!!!!!!!!!!!
 	  }
 
-	  //2D all seg energies
-	  if(WRITEEDEPHISTOS)	HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fAngleDistro[1], (G4double) MAXNUMSEGSPICE*ring+seg, 
-		SpiceResolutionEnergy, 1.0);
+
 	}//end of filling histos with SPICE detections per individual seg
       }//seg loop
     }//ring loop
@@ -590,7 +526,6 @@ G4double EventAction::ApplySpiceRes(G4double EnergyIn){//pre-calculated function
 //        std::cout << "ERFC energy out: " << EnergyOut << std::endl;
 //        std::cout << "ERFC changed out: " << ERFChold*(0.5E-6*EnergyIn + 0.0012)+EnergyIn/CLHEP::keV/1000. << std::endl;
   //     EnergyOut /= CLHEP::keV;
-    ERFCFlag = 1;
   } else {
       G4double Sigma2 = (1.8E-6*EnergyIn/CLHEP::keV + 0.00500);
   //    std::cout << "Sigma2: " << Sigma2 << std::endl;

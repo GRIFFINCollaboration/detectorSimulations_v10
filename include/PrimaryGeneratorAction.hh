@@ -69,21 +69,20 @@ public:
     void SetNumberOfDecayingLaBrDetectors( G4int num ) {fNumberOfDecayingLaBrDetectors = num;} ;
     void SetEfficiencyEnergy( G4double num ) {fEffEnergy = num;} ;
     void SetEfficiencyDirection( G4ThreeVector num ) {fEffDirection = num; fEffDirectionBool = true;} ;
-    void SetEfficiencyPosition( G4ThreeVector num ) {fEffPosition = num; fEffPositionBool = true;} ;
+    
+    void PassEfficiencyPosition( G4ThreeVector num );
+    void SetEfficiencyPosition( G4ThreeVector num ) {fEffPosition = num; fEffPositionBool = true;PassEfficiencyPosition(fEffPosition);}
+    
     void SetEfficiencyParticle( G4String val ) {fEffParticle = val; fEffParticleBool = true;} ;
     void SetEfficiencyPolarization( G4ThreeVector num ) {fEffPolarizationVector = num; fEffPolarization = true;} ;
-    void SetEfficiencyBeamRadius( G4double num ) {fEffBeamRadius = num; fEffBeam = true; } ;
-    void SetConeRadius( G4double num ) {fConeRadius = num; fConeRadiusBool = true; fEffDirectionBool = true;} ;//Direction needed, should not require explicit initialisation command
-    void SetConeZValue( G4double num ) {fConeZValue = num; fConeValueBool = true; fEffDirectionBool = true;};
-    void SetConeRValue( G4double num ) {fConeRValue = num; fConeValueBool = true; fEffDirectionBool = true;};
     void SetConeMaxAngle( G4double num1 ) {fAngleInit = num1; fConeAngleBool = true; fEffDirectionBool = true;};
     void SetConeMinAngle( G4double num1 ) {fAngleMinInit = num1;};
+    void SetBeamSpotSigma( G4double num1 ) {fBeamSpotSigma = num1;};
     void SendBeamEnergyToHist(G4double);
     void PassTarget(G4double);
-    void PrepareBeamFile();
-    //booleans (initially false), above, true if a command has been entered for the loops in source file to be entered
-    void SetNeedBeamDistro(G4bool input){fNeedBeamDistro = input;};
-    void SetNeedFileDistro(G4bool input){fNeedFileDistro = input;};
+    void PrepareBeamFile(G4String);
+    void SetLayeredTargetBeamDistro(G4int layer);
+ 
     
     void SetSourceNeeded(G4bool needed){fSourceNeeded = needed;};
     void SetSourceName(G4String input){fSourceName = input;};
@@ -102,18 +101,14 @@ private:
     G4bool fEffPolarization;
     G4ThreeVector fEffPolarizationVector;
     
-    G4bool fEffBeam;
-    G4double fEffBeamRadius;
-    G4double fConeRadius;
-    G4bool fConeRadiusBool;
-    G4double fConeZValue;
-    G4double fConeRValue;
-    G4bool fConeValueBool;
     G4double fAngleInit;
     G4bool fConeAngleBool;
     G4double fAngleMinInit;
-    
-    G4bool fNeedBeamDistro;
+    G4double fBeamSpotSigma;
+
+    G4bool fTargetDistro;
+    G4double fLayerStart;
+    G4double fLayerLength;
     G4bool fNeedFileDistro;
     
     G4bool fSourceNeeded;
@@ -121,9 +116,7 @@ private:
     
     //functions
     void LaBrinit();
-    
-    G4ThreeVector SetCone(G4double fConeRadius, G4double zVal=107.50685);//value is disttoSiliFromParticleCreation
-    
+        
     
 };
 

@@ -380,17 +380,17 @@ void HistoManager::Book() {
 	  MakeHisto(analysisManager, name,  title, xmin*1000., xmax*1000., nbins);
 	  fSpiceHistNumbers[1]=fMakeHistoIndex;
 	  
-	  for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){
-	    detString = G4intToG4String(ring);
-	    for (G4int seg=0; seg < MAXNUMSEGSPICE; seg++) {//12 segments but 3 for changes
-	      segString = G4intToG4String(seg);
-	      
-	      name  = "R" + detString + "S" + segString;
-	      MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);//generates index
-	      
-	    fSpiceHistNumbers[ring*MAXNUMSEGSPICE+seg+2]=fMakeHistoIndex;
-	    }
-	  }
+// 	  for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){
+// 	    detString = G4intToG4String(ring);
+// 	    for (G4int seg=0; seg < MAXNUMSEGSPICE; seg++) {//12 segments but 3 for changes
+// 	      segString = G4intToG4String(seg);
+// 	      
+// 	      name  = "R" + detString + "S" + segString;
+// 	      MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);//generates index
+// 	      
+// 	    fSpiceHistNumbers[ring*MAXNUMSEGSPICE+seg+2]=fMakeHistoIndex;
+// 	    }
+// 	  }
 	  
 	  name = "BeamEnergy";
 	  title ="Energy of Input Beam";
@@ -400,7 +400,7 @@ void HistoManager::Book() {
 	  name = "AllSegEnergies";
 	  title = "Energy vs. Segment";
 	  Make2DHisto(analysisManager, name, title,
-                 120, 0., 120., nbins, 0., xmax);
+                 120, 0., 120., nbins, 0., xmax*1000.);
 	  fAngleDistro[1]=fMakeHistoIndex;
 	  
 	  /*name  = "Multiplicity";
@@ -411,39 +411,19 @@ void HistoManager::Book() {
 	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
 	  fAngleDistro[2]=fMakeHistoIndex;*/
 	  
-	  /*name  = "x-y";
+	  name  = "x-y";
 	  title     = "X-Y 2D distribution";
 	  nbins = 100;
 	  xmin      = -6.;
 	  xmax      = 6.;
 	  Make2DHisto(analysisManager, name,  title, nbins, xmin, xmax, nbins, xmin, xmax);
-	  fAngleDistro[3]=fMakeHistoIndex;*/
+	  fAngleDistro[3]=fMakeHistoIndex;
 
 	  title  = "z-distribution";
 	  name     = "z-distro";
-	  nbins     = 1000;
-	  xmin      = -0.6;
-	  xmax      = -0.4;
-	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  MakeHisto(analysisManager, name,  title, -0.1, 0.1, 1000);
 	  fAngleDistro[4]=fMakeHistoIndex;
 	  
-	  title  = "x-distribution";
-	  name     = "x-distro";
-	  nbins     = 1000;
-	  xmin      = -10.;
-	  xmax      = 10.;
-	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	  fAngleDistro[5]=fMakeHistoIndex;
-	  
-	  title  = "y-distribution";
-	  name     = "y-distro";
-	  nbins     = 1000;
-	  xmin      = -10.;//explicitly defined for clarity
-	  xmax      = 10.;
-	  MakeHistoWithAxisTitles(analysisManager, name, 
-					   title, xmin, xmax, 
-					   nbins, "", "mm");
-	  fAngleDistro[6]=fMakeHistoIndex;
 	  
 	  for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){  
 	    for (G4int seg=0; seg < 3; seg++) {

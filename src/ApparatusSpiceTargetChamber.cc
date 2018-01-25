@@ -339,7 +339,35 @@ ApparatusSpiceTargetChamber::~ApparatusSpiceTargetChamber()
 
 void ApparatusSpiceTargetChamber::Build(G4LogicalVolume* expHallLog)
 {
-	BuildTargetChamberFrontRing();
+// 	BuildMagnetCovering();
+// 	BuildPhotonShieldClampBolts();
+// 	BuildCollectorMagnet();
+// 	BuildMagnetClampChamber();
+// 	BuildMagnetClampPhotonShield();
+// 	BuildTargetChamberCylinderDownstream();
+// 
+// 	PlaceTargetChamberCylinderDownstream(expHallLog); 
+// 	PlaceMagnetCovering(1, expHallLog);
+// 	PlaceCollectorMagnet(1, expHallLog);
+// 	PlaceMagnetClampChamber(1, expHallLog);
+// 	PlaceMagnetClampPhotonShield(1, expHallLog);
+// 	PlacePhotonShieldClampBolts(1, expHallLog);
+// 
+// 	BuildPhotonShield();
+// 	BuildPhotonShieldClamps();
+// 	BuildShieldCovering();
+// 	BuildConicalCollimator();
+// 	BuildXrayInsert();
+// 	
+// 	PlacePhotonShield(expHallLog); 
+// 	PlaceShieldCovering(expHallLog);
+// 	PlacePhotonShieldClamps(expHallLog);
+// 	PlaceConicalCollimator(expHallLog);
+// 	PlaceXrayInsert(expHallLog);
+// 	return;
+	
+	
+// 	BuildTargetChamberFrontRing();
 	BuildTargetChamberSphere();
 	BuildTargetChamberCylinderDownstream();
 	BuildTargetWheel();
@@ -362,49 +390,54 @@ void ApparatusSpiceTargetChamber::Build(G4LogicalVolume* expHallLog)
 	BuildS3CableHolder();
 	BuildConicalCollimator();
 	BuildXrayInsert();
-	
-	PlaceTargetChamberFrontRing(expHallLog);
+	BuildCollimator();
+
+// 	PlaceTargetChamberFrontRing(expHallLog);
 	PlaceTargetChamberSphere(expHallLog);
-
 	PlaceTargetChamberCylinderDownstream(expHallLog); 
-
-	PlaceTargetWheel(expHallLog); 
-	PlaceTargetWheelExtension(expHallLog);  
-
 	PlaceTargetWheelGears(expHallLog); 
 	PlaceTargetWheelGearPlates(expHallLog); 
 	PlaceGearStick(expHallLog); 
 	PlaceTargetMountPlate(expHallLog); 
-
 	PlacePhotonShield(expHallLog); 
 	PlaceShieldCovering(expHallLog);
 	PlacePhotonShieldClamps(expHallLog);
 	PlaceElectroBox(expHallLog);
 	PlaceColdFinger(expHallLog); 
-
 	PlaceS3CableHolder(expHallLog);
-
 	PlaceConicalCollimator(expHallLog);
 	PlaceXrayInsert(expHallLog);
+
 	
-	
-	G4cout << ApparatusSpiceTargetChamber::fTargetZ << " <- This should be the macro value" << G4endl;
-	if(ApparatusSpiceTargetChamber::fTargetZ < -4.00){G4cout << "Building target pedestals" << G4endl;
-	  BuildCollimator();
-	  PlaceCollimator(expHallLog); 
-    
-	  BuildTargetFrame();//First draft of target bool
-	  G4double fFrameDegrees[2] = {0*deg, -110*deg};
-	  for(G4int i=0; i<2; i++)
-	    PlaceTargetFrame(fFrameDegrees[i], expHallLog);
- 
-	    G4double fRodDegrees[7] = {40*deg, -40*deg, -70*deg, -150*deg, 91.2*deg, 125.*deg, 158.8*deg};
-	    G4double fRodRadius[7] = {10.624, 10.624, 10.624, 10.624, 18.166, 8.4, 18.166 };
-	    for(G4int i=0; i<7; i++)
-	      PlaceTargetWheelRods(fRodDegrees[i], fRodRadius[i], expHallLog);
-	    } else G4cout << "Target Pedestals not built due to beam position" << G4endl;
+	if(ApparatusSpiceTargetChamber::fTargetZ < -4.00){
+		G4cout << "Building target pedestals" << G4endl;
+
+		PlaceTargetWheel(expHallLog); 
+		PlaceTargetWheelExtension(expHallLog);
+		PlaceCollimator(expHallLog); 
+		
+		BuildTargetFrame();//First draft of target bool
+		
+		
+		G4double fFrameDegrees[2] = {0*deg, -110*deg};
+		for(G4int i=0; i<2; i++)
+		PlaceTargetFrame(fFrameDegrees[i], expHallLog);
+
+		G4double fRodDegrees[7] = {40*deg, -40*deg, -70*deg, -150*deg, 91.2*deg, 125.*deg, 158.8*deg};
+		G4double fRodRadius[7] = {10.624, 10.624, 10.624, 10.624, 18.166, 8.4, 18.166 };
+		for(G4int i=0; i<4; i++){
+			PlaceTargetWheelRods(fRodDegrees[i], fRodRadius[i], expHallLog);
+		}
+	}else{
+		//Th
+		PlaceTargetWheel(expHallLog); 
+		PlaceTargetWheelExtension(expHallLog);
+		PlaceCollimator(expHallLog); 
+		
+		G4cout << "Target Pedestals not built due to beam position" << G4endl;
+	}
   
-	
+
 	for(G4int copyID=0; copyID<fNumberOfMagnets; copyID++)    {
 		PlaceCollectorMagnet(copyID, expHallLog);
 		PlaceMagnetClampChamber(copyID, expHallLog);
@@ -1245,7 +1278,9 @@ void ApparatusSpiceTargetChamber::BuildMagnetCovering()
 
 	// ** Logical Volume
 	G4Material* magnetCoverMaterial = G4Material::GetMaterial(fMagnetCoverMaterial);
-	fMagnetCoverLog = new G4LogicalVolume(MagnetCover, magnetCoverMaterial, "MagnetCoverLog", 0, 0, 0);
+// 	fMagnetCoverLog = new G4LogicalVolume(MagnetCover, magnetCoverMaterial, "MagnetCoverLog", 0, 0, 0);
+	fMagnetCoverLog = new G4LogicalVolume(CoverCombo, magnetCoverMaterial, "MagnetCoverLog", 0, 0, 0);
+// 	fMagnetCoverLog = new G4LogicalVolume(TotalDeduction, magnetCoverMaterial, "MagnetCoverLog", 0, 0, 0);
 	fMagnetCoverLog->SetVisAttributes(VisAtt);
 }
 
@@ -1517,7 +1552,8 @@ void ApparatusSpiceTargetChamber::PlaceCollimator(G4LogicalVolume* expHallLog) {
 	G4double sOffset = fTargetWheelOffset; 
 	G4double sOffsetAdj = sOffset - 15.2;
 
-	G4double sPosZ = -7.75*CLHEP::mm; 
+// 	G4double sPosZ = -7.75*CLHEP::mm; 
+	G4double sPosZ = -0.5*CLHEP::mm; 
 	G4double sPosY = (sOffset-sOffsetAdj)*sin(-55*CLHEP::deg);
 	G4double sPosX = sOffset + (sOffset-sOffsetAdj)*cos(-55*CLHEP::deg);
 

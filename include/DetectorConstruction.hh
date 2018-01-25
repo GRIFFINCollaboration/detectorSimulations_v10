@@ -54,7 +54,7 @@ class DetectionSystem8pi;
 class DetectionSystemDescant;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class ApparatusDescantStructure;
-class ApparatusSpiceTarget;
+class ApparatusLayeredTarget;
 class DetectionSystemDescant;
 
 class DetectionSystemSceptar;
@@ -77,8 +77,8 @@ public:
     DetectorConstruction();
     ~DetectorConstruction();
     
-    
-    G4double targetz = 0.0; //for tunnelled z-value of beam position used for SPICE target frame decision
+    void PassEfficiencyPosition( G4ThreeVector num ) {fDetEffPosition = num;}
+
     G4int fGriffinDetectorsMapIndex;
     G4int fGriffinDetectorsMap[16];
 
@@ -93,20 +93,8 @@ public:
     void SetGenericTargetPosition( G4ThreeVector );
     void SetGenericTarget( );
     
-    //Spice target
-    void SetSpiceTargetMaterial( G4String );
-    void SetSpiceTargetThickness( G4double );
-    void SetSpiceTargetDensity( G4double );
-    void SetSpiceTarget();    
-    void SetSpiceTargetBackerMaterial( G4String );
-    void SetSpiceTargetBackerThickness( G4double );
-    void SetSpiceTargetBackerDensity( G4double );
-    void SetSpiceBackerTarget( );
-    void SetSpiceTargetProtectorMaterial( G4String );
-    void SetSpiceTargetProtectorThickness( G4double );
-    void SetSpiceTargetProtectorDensity( G4double );
-    void SetSpiceProtectorTarget();  
-    void SetSpiceSource( G4bool ); 
+    G4double LayeredTargetLayerStart(int);
+ 
     //    void SetFieldBoxMaterial( G4String );
     //    void SetFieldBoxDimensions( G4ThreeVector );
     //    void SetFieldBoxPosition( G4ThreeVector );
@@ -119,6 +107,8 @@ public:
     //        void SetBoxColour( G4ThreeVector input )           {boxColour = input;};
     //        void AddBox();
 
+    void LayeredTargetAdd(G4String, G4double);
+    
     void SetTabMagneticField(G4String, G4double, G4double);
     // Grid Functions
     void SetGridMat( G4String input )                  {fGridMat = input;};
@@ -127,7 +117,7 @@ public:
     void SetGridColour( G4ThreeVector input )          {fGridColour = input;};
     void SetGridPosOffset( G4ThreeVector input )          {fGridOffset = input;};
     void AddGrid();
-    void AddApparatusSpiceTargetChamber(G4String, G4double);
+    void AddApparatusSpiceTargetChamber(G4String);
     void AddApparatus8piVacuumChamber();
     void AddApparatus8piVacuumChamberAuxMatShell(G4double thickness);
     void AddApparatusGriffinStructure(G4int selector);
@@ -241,31 +231,9 @@ private:
     G4String      fGenericTargetMaterial;
     G4ThreeVector fGenericTargetDimensions;
     G4ThreeVector fGenericTargetPosition;
-    
-    //spice target variables - explicitly named and not reused for debugging
-    G4bool        fSetSpiceTargetMaterial;
-    G4bool        fSetSpiceTargetThickness;
-    G4bool        fSetSpiceTargetDensity;
-    
-    G4bool        fSetSpiceTargetBackerMaterial;
-    G4bool        fSetSpiceTargetBackerThickness;
-    G4bool        fSetSpiceTargetBackerDensity;
-    G4String      fSpiceTargetBackerMaterial;
-    G4bool        fSetSpiceTargetProtectorMaterial;
-    G4bool        fSetSpiceTargetProtectorThickness;
-    G4bool        fSetSpiceTargetProtectorDensity;
-    G4String      fSpiceTargetProtectorMaterial;
-    
+        
     G4bool        fSetSpiceIn;
-
-public://accessed by PGA
-    G4double      fSpiceTargetThickness;
-    G4double 	  fSpiceTargetDensity;
-    G4double      fSpiceTargetBackerThickness;
-    G4double 	  fSpiceTargetBackerDensity;
-    G4double      fSpiceTargetProtectorThickness;
-    G4double 	  fSpiceTargetProtectorDensity;
-    G4String      fSpiceTargetMaterial;
+    
 private: 
     G4bool        fSetFieldBoxMaterial;
     G4bool        fSetFieldBoxDimensions;
@@ -278,12 +246,14 @@ private:
 
     G4String fMatWorldName;
 
-    ApparatusSpiceTarget* fApparatusSpiceTarget;
+    ApparatusLayeredTarget* fApparatusLayeredTarget;
     DetectorMessenger* fDetectorMessenger;
     
 
     G4ThreeVector fDescantRotation;
     G4String fDescantColor;
+    
+    G4ThreeVector fDetEffPosition;
 
 };
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -76,19 +76,12 @@ private:
     G4UIcmdWithAString*        fGenericTargetCmd;
     G4UIcmdWith3VectorAndUnit* fGenericTargetDimensionsCmd;
     G4UIcmdWith3VectorAndUnit* fGenericTargetPositionCmd;
+    
+    
+    G4UIcmdWithAString*        fLayeredTargetAddCmd;
 
     // Spice Target Apparatus
-    G4UIcmdWithAString*        fSpiceTargetCmd;
-    G4UIcmdWithADoubleAndUnit* fSpiceTargetDensityCmd;
-    G4UIcmdWithADoubleAndUnit* fSpiceTargetThicknessCmd;
-    G4UIcmdWithAString*        fSpiceTargetBackerCmd;
-    G4UIcmdWithADoubleAndUnit* fSpiceTargetBackerDensityCmd;
-    G4UIcmdWithADoubleAndUnit* fSpiceTargetBackerThicknessCmd;
-    G4UIcmdWithAString*        fSpiceTargetProtectorCmd;
-    G4UIcmdWithADoubleAndUnit* fSpiceTargetProtectorDensityCmd;
-    G4UIcmdWithADoubleAndUnit* fSpiceTargetProtectorThicknessCmd;
-    G4UIcmdWithABool*          fSpiceSourceCmd;
-    
+
     //field box
     G4UIcmdWithAString*        fFieldBoxMaterialCmd;
     G4UIcmdWith3VectorAndUnit* fFieldBoxDimensionsCmd;
@@ -144,7 +137,7 @@ private:
     G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinBackCmd;
     G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinBackDetectorCmd;
     //G4UIcmdWith3Vector*       fAddDetectionSystemGriffinPositionConfigCmd;
-    G4UIcmdWithAnInteger*       fAddDetectionSystemSpiceCmd;
+    G4UIcmdWithoutParameter*    fAddDetectionSystemSpiceCmd;
     G4UIcmdWithAString*         fAddMagnetSystemSpiceCmd;
     G4UIcmdWithAnInteger*       fAddDetectionSystemPacesCmd;
     G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinHevimetCmd ;
