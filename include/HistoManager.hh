@@ -40,15 +40,16 @@
 
 #include "G4SystemOfUnits.hh" // new version geant4.10 requires units
 
+
 const G4bool WRITEEKINHISTOS    = true;//bools needed to write histos
 const G4bool WRITEEDEPHISTOS    = true;
 const G4bool WRITETRACKLHISTOS  = true;
 
-const G4int MAXHISTO            = 5000;//max number of histos in root file
+const G4int MAXHISTO            = 500;//max number of histos in root file
 const G4int MAXNTCOL            = 15;
 const G4int MAXNUMDET           = 20;
-const G4int MAXNUMDETSPICE	= 10;
-const G4int MAXNUMSEGSPICE	= 12;
+const G4int MAXNUMDETSPICE	= 10;//10 rings
+const G4int MAXNUMSEGSPICE	= 12;//12 segments per ring
 const G4int MAXNUMDETPACES	= 5;
 const G4int MAXNUMDETGRIFFIN    = 16;
 const G4int MAXNUMCRYGRIFFIN    = 4;
@@ -58,23 +59,23 @@ const G4int NUMPARTICLETYPES    = 20;
 const G4int     EKINNBINS  = 10000;
 const G4double  EKINXMIN   = 0.5*keV;
 const G4double  EKINXMAX   = 10000.5*keV;
-const G4int     EKINNBINSSPICE  = 10000;//spice histos range different
+const G4int     EKINNBINSSPICE  = 10000;//spice histos range may be different
 const G4double  EKINXMINSPICE   = 0.5*keV;
 const G4double  EKINXMAXSPICE   = 10000.5*keV;
 
 // edep histo properties    ///////////////////////
 const G4int     EDEPNBINS  = 10000;//was 10000
-const G4double  EDEPXMIN   = 0.5*keV;
-const G4double  EDEPXMAX   = 10000.5*keV;//was 10000.5
-const G4int     EDEPNBINSSPICE  = 10000;//was 10000	//spice histos range different
-const G4double  EDEPXMINSPICE   = 0.*keV;
+const G4double  EDEPXMIN   = 0.0*keV;
+const G4double  EDEPXMAX   = 10000.0*keV;//was 10000.5
+const G4int     EDEPNBINSSPICE  = 2000;//was 10000
+const G4double  EDEPXMINSPICE   = 0.0*keV;
 const G4double  EDEPXMAXSPICE   = 2100.0*keV;//was 10000.5
 
 // trackl histo properties  ///////////////////////
 const G4int     TRACKLNBINS = 5000;
 const G4double  TRACKLXMIN  = 0.5*mm;
 const G4double  TRACKLXMAX  = 5000.5*mm;
-const G4int     TRACKLNBINSSPICE = 5000;//spice histos range different
+const G4int     TRACKLNBINSSPICE = 5000;
 const G4double  TRACKLXMINSPICE  = 0.5*mm;
 const G4double  TRACKLXMAXSPICE  = 5000.5*mm;
 
@@ -95,20 +96,23 @@ public:
     void Book();
     void Save();
     
-    //arrays allow histos to be made independently of GRIFFIN
+    //arrays allow histos to be made independently of GRIFFIN    
     //	sizeof() arrays appear double the elements, due to 2 bits per element
     short fPacesHistNumbers[MAXNUMDETPACES+2]; //+2 for edep and sum histos 
     short fSpiceHistNumbers[MAXNUMDETSPICE*MAXNUMSEGSPICE+2]; //+2 for edep and sum histos 
-    short fSegmentHisto[120];//this array will hold segment IDs to be transferred to reference for histos
-    short fAngleDistro[10]; //this variable will hold the histogran ID for the angular distributions from the cone
+    short fSpiceAngleHists[120];
+    short fAngleDistro[10]; //this variable will hold the histogran ID for various beam distribution histograms
     
     void MakeHisto(G4AnalysisManager* analysisManager, G4String filename,  G4String title, G4double xmin, G4double xmax, G4int nbins);
     void MakeHistoWithAxisTitles(G4AnalysisManager* analysisManager, G4String name, 
 					   G4String title, G4double xmin, G4double xmax, 
 					   G4int nbins, const G4String& unitName, const G4String& fcnName);
-    void Make2DHistoWithAxisTitles(G4AnalysisManager* analysisManager, const G4String& name, const G4String& title,
+    void Make2DHisto(G4AnalysisManager* analysisManager, const G4String& name, const G4String& title,
                  G4int nxbins, G4double xmin, G4double xmax, 
                  G4int nybins, G4double ymin, G4double ymax);
+    void Make2DHistoWithAxisTitles(G4AnalysisManager* analysisManager, const G4String& name, const G4String& title,
+                 G4int nxbins, G4double xmin, G4double xmax, 
+                 G4int nybins, G4double ymin, G4double ymax, const G4String& xunitName, const G4String& yunitName, const G4String& xfcnName, const G4String& yfcnName);
     void FillHisto(G4int ih, G4double e, G4double weight = 1.0);
     void Fill2DHisto(G4int ih, G4double xbin, G4double ybin, G4double weight = 1.0);
     void Normalize(G4int id, G4double fac);
@@ -149,6 +153,12 @@ public:
 	 G4bool   Testcan()    { return fTestcan;    } 
 	 G4double BeamEnergy() { return fBeamEnergy; }
 	 
+	 G4double fBeamEnergy, fBeamTheta, fBeamPhi;//changes on a per run basis - accessed by SPICE
+	 void SpiceResolution(G4bool val) { fSpiceRes = val; }
+	 G4bool SpiceResolution() {return fSpiceRes;}
+	 void SPICE_ERFC_Setup();
+	 G4double SPICE_ERFC();//Getter for decay-shaped resolution
+
 private:
     HistoManager();
     ~HistoManager();
@@ -167,7 +177,7 @@ private:
     G4int         fHistId[MAXHISTO];
     G4AnaH1*      fHistPt[MAXHISTO];
     G4AnaH2*      fHistPt2[MAXHISTO];
-    
+
     G4int         fNtColId[MAXNTCOL];
     G4int         fNtColIdHit[MAXNTCOL];
     G4int         fNtColIdStep[MAXNTCOL];
@@ -187,8 +197,13 @@ private:
     G4bool fTestcan;	 
     G4bool fSpice;
     G4bool fPaces;
-
-	 G4double fBeamEnergy;
+	 
+	 //Applying a resolution to SPCIE energies if desired
+	 G4bool fSpiceRes;
+	 G4double Amp[10000];//Bin amp (effective y)
+	 G4double Ampx[10000];
+	 G4double channel, c, AmpTot = 0.;//channel(effective x) and centroid
+	 
 };
 
 enum HISTONAME
@@ -196,50 +211,6 @@ enum HISTONAME
     kNullName = 0,
     kAstatsParticleTypeInEachStep,
     kAstatsParticleTypeInEachEvent,
-   /* kSpiceEdep,
-    kSpiceEdepSum,
-    kSpiceEdepDet0,
-    kSpiceEdepDet01,
-    kSpiceEdepDet02,
-    kSpiceEdepDet03,
-    kSpiceEdepDet04,
-    kSpiceEdepDet05,
-    kSpiceEdepDet06,
-    kSpiceEdepDet07,
-    kSpiceEdepDet08,
-    kSpiceEdepDet09, //max number to be reached
-    kSpiceEdepDet10,
-    kSpiceEdepDet11,
-    kSpiceEdepDet12,
-    kSpiceEdepDet13,
-    kSpiceEdepDet14,//these are no longer used
-    kSpiceEdepDet15,
-    kSpiceEdepDet16,
-    kSpiceEdepDet17,
-    kSpiceEdepDet18,
-    kSpiceEdepDet19,
-    kPacesCrystalEdep,		// This is probably the wrong number of detectors for paces.
-    kPacesCrystalEdepSum,
-    kPacesCrystalEdepDet0,
-    kPacesCrystalEdepDet1,
-    kPacesCrystalEdepDet2,
-    kPacesCrystalEdepDet3,
-    kPacesCrystalEdepDet4, // reduced to 5 total (zero-indexed) as number of detectors 22/6
-    kPacesCrystalEdepDet5,
-    kPacesCrystalEdepDet6,
-    kPacesCrystalEdepDet7,
-    kPacesCrystalEdepDet8,
-    kPacesCrystalEdepDet9,
-    kPacesCrystalEdepDet10,
-    kPacesCrystalEdepDet11,
-    kPacesCrystalEdepDet12,
-    kPacesCrystalEdepDet13,
-    kPacesCrystalEdepDet14,
-    kPacesCrystalEdepDet15,
-    kPacesCrystalEdepDet16,
-    kPacesCrystalEdepDet17,
-    kPacesCrystalEdepDet18,
-    kPacesCrystalEdepDet19, */
     kGridcellElectronEkinDet0,
     kGridcellElectronEkinDet1,
     kGridcellElectronEkinDet2,

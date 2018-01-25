@@ -45,7 +45,7 @@ class DetectorMessenger;
 #define CU_COL 1.0, 1.0, 0.0
 #define PEEK_COL 0.5, 0.5, 0.0
 #define KAPTON_COL 0.2, 0.7, 0.1
-#define PB_COL 0.0, 0.0, 0.0
+#define PB_COL 0.6, 0.1, 0.1
 #define NDFEB_COL 0.7,0.3,0.3
 #define DELRIN_COL 0.0, 0.0, 1.0
 #ifndef AL_COL
@@ -100,7 +100,6 @@ private:
 	G4LogicalVolume* fShieldCoverLog;
 	G4LogicalVolume* fColdFingerLog;
 	G4LogicalVolume* fS3CaseLogical;
-	G4LogicalVolume* fBeamPipeLog;
 	G4LogicalVolume* fConicalCollimatorLog;//11/8
 	G4LogicalVolume* fXRayInsertLog;
 	
@@ -140,7 +139,6 @@ private:
 	G4VPhysicalVolume* fShieldCoverPhys;
 	G4VPhysicalVolume* fColdFingerPhys;
 	G4VPhysicalVolume* fS3CasePhysical;
-	G4VPhysicalVolume* fBeamPipePhys;
 	G4VPhysicalVolume* fConicalCollimatorPhys;//11/8
 	G4VPhysicalVolume* fXRayInsertPhys;
 
@@ -182,9 +180,8 @@ private:
 	G4String fMagnetCoverMaterial;//
 	G4String fColdFingerMaterial;//
 	G4String fS3CableCaseMaterial;//
-	G4String fBeamPipeMaterial;//
 	G4String fConicalCollimatorMaterial;//11/8
-	G4String fXRayInsertMaterial;//
+        G4String fXRayInsertMaterial;//
 	//-------------------------
 	// Dimensions:
 	//-------------------------
@@ -446,7 +443,6 @@ private:
 	void BuildShieldCovering();
 	void BuildColdFinger();
 	void BuildS3CableHolder();
-	void BuildBeamPipe();
 	void BuildConicalCollimator();
 	void BuildXrayInsert();
 	
@@ -474,8 +470,7 @@ private:
 	void PlaceShieldCovering(G4LogicalVolume*);
 	void PlaceColdFinger(G4LogicalVolume*);
 	void PlaceS3CableHolder(G4LogicalVolume*);
-	void PlaceBeamPipe(G4LogicalVolume*);
-	void PlaceConicalCollimator(G4LogicalVolume*);
+        void PlaceConicalCollimator(G4LogicalVolume*);
 	void PlaceXrayInsert(G4LogicalVolume*);
 	
 	G4double fTargetZ;

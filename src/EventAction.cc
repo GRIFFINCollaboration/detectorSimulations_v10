@@ -35,11 +35,11 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "EventAction.hh"
-
+#include "Randomize.hh"
 #include "RunAction.hh"
 #include "HistoManager.hh"
-
-#include "Randomize.hh"
+#include <iostream>
+#include <fstream>
 
 #include "G4Event.hh"
 
@@ -50,6 +50,7 @@ EventAction::EventAction(RunAction* run)
       fRunAct(run),
       fPrintModulo(0)
 {
+    G4cout << "EVENT ACTION CONSTRUCTOR" << G4endl;
     fNumberOfHits = 0;
     fNumberOfSteps = 0;
     fPrintModulo = 1000;
@@ -58,15 +59,7 @@ EventAction::EventAction(RunAction* run)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-EventAction::~EventAction() { 
-    G4cout << "1 dep: " << MultiplicityArray[0] << "| 2 dep: " << MultiplicityArray[1] << "| 3 dep: " << MultiplicityArray[2] << 
-  "| 4 dep: " << MultiplicityArray[3] << "| 5 dep: " << MultiplicityArray[4] << G4endl;
-  
-  G4double ME = MultiplicityArray[1] + MultiplicityArray[2] + MultiplicityArray[3] + MultiplicityArray[4]; //multiple events
-  
-  G4double OS = ME/(MultiplicityArray[0] + ME); //multiple/all events
-  
-  G4cout << "Old style multiplicity: " << OS*100.0 << G4endl;//% figure for multiplicity
+EventAction::~EventAction() {	
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -95,13 +88,16 @@ void EventAction::EndOfEventAction(const G4Event*) {
     FillSpice() ; ///19/6
     FillPacesCryst() ; ///20/6	
     //G4cout << "fNumberOfHits = " << fNumberOfHits << G4endl;
-    for (G4int i = 0 ; i < fNumberOfHits; i++) {
-		HistoManager::Instance().FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i]);
-    }
-    for (G4int i = 0 ; i < fNumberOfSteps; i++) {
-		HistoManager::Instance().FillStepNtuple(fStepTrackerI[0][i], fStepTrackerI[1][i], fStepTrackerI[2][i], fStepTrackerI[3][i],  fStepTrackerI[4][i], fStepTrackerI[5][i], fStepTrackerI[6][i], fStepTrackerI[7][i], fStepTrackerI[8][i], fStepTrackerD[0][i]/keV, fStepTrackerD[1][i]/mm, fStepTrackerD[2][i]/mm, fStepTrackerD[3][i]/mm, fStepTrackerD[4][i]/second, fStepTrackerI[9][i]);
-    }
     
+    if(!HistoManager::Instance().Spice()){//Not used in SPICE, saves memory and speeds up simulation //'!SPICE' may be too heavy-handed
+      for (G4int i = 0 ; i < fNumberOfHits; i++) {
+		HistoManager::Instance().FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i]);
+      }
+      for (G4int i = 0 ; i < fNumberOfSteps; i++) {
+		HistoManager::Instance().FillStepNtuple(fStepTrackerI[0][i], fStepTrackerI[1][i], fStepTrackerI[2][i], fStepTrackerI[3][i],  fStepTrackerI[4][i], fStepTrackerI[5][i], fStepTrackerI[6][i], fStepTrackerI[7][i], fStepTrackerI[8][i], fStepTrackerD[0][i]/keV, fStepTrackerD[1][i]/mm, fStepTrackerD[2][i]/mm, fStepTrackerD[3][i]/mm, fStepTrackerD[4][i]/second, fStepTrackerI[9][i]);
+      }
+
+    }
     ClearVariables();
 }
 
@@ -342,62 +338,58 @@ void EventAction::FillGridCell() {
 }
 
 void EventAction::FillSpice() {
+//     G4cout << "FillSpice entered " << G4endl;
+    G4double energySumDet = 0;
+    G4int fSpiceMultiplicity = 0;
+    G4double SpiceEnergy,SpiceEnergyRaw;
+    for (G4int ring=0; ring < MAXNUMDETSPICE; ring++) {
+      for (G4int seg=0; seg < 12; seg++) {
+	if(fSpiceEnergyDet[ring][seg] > 70.*CLHEP::keV&&WRITEEDEPHISTOS) {
+		
+		SpiceEnergyRaw = fSpiceEnergyDet[ring][seg];// SpiceRawEnergy. No resolution applied
+		SpiceEnergy=SpiceEnergyRaw;
+		if(HistoManager::Instance().SpiceResolution()){
+			SpiceEnergy = ApplySpiceRes(SpiceEnergyRaw);// + 9.0*CLHEP::keV ;// + 2.1*CLHEP::keV;	  //fill decay histo
+			HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[8],SpiceEnergy*1000);
+		}
+		
+	  //fill energies across all segments
+	    HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[0],(SpiceEnergy)*1000.);//+4keV for Bismuth
+	  //fill standard energy spectra - no add-back
+
+	  //Segment based energies
+// 	  HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[MAXNUMSEGSPICE*ring+seg+2],SpiceEnergy);
+	  
+	  //2D all seg energies
+	  HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fAngleDistro[1], (G4double) MAXNUMSEGSPICE*ring+seg,SpiceEnergy*1000., 1.0);
+	  
+
+	  fSpiceMultiplicity++;//iterates every deposition per fill to track multiplicity per event
+	  energySumDet += SpiceEnergy;
+	  
+	  //Gated angular histos
+	  if(abs(SpiceEnergyRaw - HistoManager::Instance().fBeamEnergy) < 10.*keV){//gating kinematics on (raw) detected energy
+	    
+		//Mapping phi to overlay mirrored segments
+		G4int remainder = seg%3;
+		G4double PhiMap = ((int)seg/3)*CLHEP::pi/2;
+		PhiMap = HistoManager::Instance().fBeamPhi-PhiMap;
+		PhiMap = asin(sin(PhiMap));//if we went over 360
 	
-	//G4cout << "size of histo array: " << sizeof(HistoManager::Instance().SpiceHistNumbers) << G4endl;
-	G4double energySumDet = 0;
-	fSpiceMultiplicity = 0;
-	G4double Multiplicityenergy = 0.0;
-	for (G4int ring=0; ring < MAXNUMDETSPICE; ring++) {
-	  for (G4int seg=0; seg < 12; seg++) {
-	    if(fSpiceEnergyDet[ring][seg] > MINENERGYTHRES) {
-	      //fill energies in each detector
-	      if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[0], G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.002));
-	      //fill standard energy spectra
-	      if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[MAXNUMDETSPICE*ring+seg+2], G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.002));
-	      fSpiceMultiplicity += 1;
-	      Multiplicityenergy += fSpiceEnergyDet[ring][seg];//dont need smeared energies
-	      //add sum energies
-	      /*Resolution of parameters of a HPGe detector is implemented here, only for the sum as of 8/8
-	  G4double A1 = 0.95446 ;
-	  G4double B1 = 0.00335 ;
-	  G4double C1 = -7.4117e-7 ;
-	  G4double TX1 = ((energySumDet)/keV);
-	  G4double per_res1 = (sqrt(A1 + (B1*TX1) + (C1*TX1*TX1)))/2.363;
-	  G4double sigma1 = (per_res1/1000);
-	  energySumDet += fSpiceEnergyDet[ring][seg]; //no smearing
-	  G4cout << "Sigma1 = "<<sigma1<<G4endl;*/
-	      energySumDet += G4RandGauss::shoot(fSpiceEnergyDet[ring][seg],0.002);//2keV resolution for spice so far - not energy dependent
-	      //summing enery deposits per event for add-back method
-	    }
+	      //THETA vs. PHI
+	      HistoManager::Instance().Fill2DHisto(HistoManager::Instance().fSpiceAngleHists[MAXNUMSEGSPICE*ring+remainder], HistoManager::Instance().fBeamTheta,PhiMap, 1.);//PHI M<AP!!!!!!!!!!!!!
 	  }
-	}
-	if(energySumDet > MINENERGYTHRES) {//after exiting loops for all rings/segs, will input energy if > threshold
-	  //fill sum energies
-	  if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[1], energySumDet);
-	  }
-	  
-	  if(energySumDet > (BeamInputEnergy-0.015)){//0.6 = 3 sigma 
-	  if(fSpiceMultiplicity>0) HistoManager::Instance().FillHisto(HistoManager::Instance().fAngleDistro[0], fSpiceMultiplicity);
-	  switch(fSpiceMultiplicity) {
-	  case 1 : MultiplicityArray[0] += 1;
-             break;       
-	  case 2 : MultiplicityArray[1] += 1;
-	     break;
-	  case 3 : MultiplicityArray[2] += 1; 
-             break;       
-	  case 4 : MultiplicityArray[3] += 1;
-             break;
-	  case 5 : MultiplicityArray[4] += 1;
-             break;       
-  
-	  }}
-	  
-	//  G4cout << "1 dep: " << MultiplicityArray[0] << "| 2 dep: " << MultiplicityArray[1] << "| 3 dep: " << MultiplicityArray[2] << 
- // "| 4 dep: " << MultiplicityArray[3] << "| 5 dep: " << MultiplicityArray[4] << G4endl;
-	//  G4cout << "Total edep: " << MultiplicityArray[0] + MultiplicityArray[1]*2 + MultiplicityArray[2]*3 +MultiplicityArray[3]*4 +MultiplicityArray[4]*5 <<G4endl;
-  
+
+
+	}//end of filling histos with SPICE detections per individual seg
+      }//seg loop
+    }//ring loop
+    
+    //wiritng add-backed energies
+    if(energySumDet > MINENERGYTHRES) {//after exiting loops for all rings/segs, will input summed (add-back) energy if above threshold
+      if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fSpiceHistNumbers[1], energySumDet*1000.);
+    }
 }
-//if(WRITEEDEPHISTOS && (energySumDet > MINENERGYTHRES))     G4cout << "energysumDet " <<  energySumDet << G4endl;} ///////////////////////////////////////19/6
 
 void EventAction::FillPacesCryst() {
     G4double energySumDet = 0;
@@ -410,9 +402,14 @@ void EventAction::FillPacesCryst() {
         }
     }
     if(energySumDet > MINENERGYTHRES) {
-        if(WRITEEDEPHISTOS)     HistoManager::Instance().FillHisto(HistoManager::Instance().fPacesHistNumbers[1], energySumDet);
+        if(WRITEEDEPHISTOS && (energySumDet > MINENERGYTHRES))     HistoManager::Instance().FillHisto(HistoManager::Instance().fPacesHistNumbers[1], energySumDet);
+	
     }
-}////////////////////////////////////////////20/6
+}
+
+G4bool EventAction::SpiceTest(){//is SPICE inputted
+  return HistoManager::Instance().Spice();
+}
 
 void EventAction::AddHitTracker(G4String mnemonic, G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ) {
     G4bool newhit = true;
@@ -479,4 +476,30 @@ void EventAction::AddStepTracker(G4int eventNumber, G4int trackID, G4int parentI
             G4cout << "ERROR! Too many steps!" << G4endl;
         }
     }
+}
+
+
+G4double EventAction::ApplySpiceRes(G4double EnergyIn){//pre-calculated functions that scale with energy to give accurate resolution split
+  G4double GaussPick = G4UniformRand();//depending on result, will be part of one of two Gaussians, or a ERFC-bsaed decay
+//   std::cout << "Rand: " << GaussPick <<std::endl; 
+  G4double EnergyOut, ERFChold;
+  if(GaussPick < 37./100.){
+    
+      G4double Sigma1 = (0.7E-6*EnergyIn/CLHEP::keV + 0.0009);//include ->keV conversion
+  //     std::cout << "Sigma1: " << Sigma1 << " Energy: "<< EnergyIn/CLHEP::keV << std::endl;
+      EnergyOut = G4RandGauss::shoot(EnergyIn, Sigma1);
+  } else if(GaussPick > 77./100.){
+      ERFChold = HistoManager::Instance().SPICE_ERFC();
+      EnergyOut = ERFChold*(0.5E-6*EnergyIn + 0.0012)+EnergyIn/CLHEP::keV/1000.;//ERFC from (from http://radware.phy.ornl.gov/gf3/)
+      
+//        std::cout << "ERFC energy out: " << EnergyOut << std::endl;
+//        std::cout << "ERFC changed out: " << ERFChold*(0.5E-6*EnergyIn + 0.0012)+EnergyIn/CLHEP::keV/1000. << std::endl;
+  //     EnergyOut /= CLHEP::keV;
+  } else {
+      G4double Sigma2 = (1.8E-6*EnergyIn/CLHEP::keV + 0.00500);
+  //    std::cout << "Sigma2: " << Sigma2 << std::endl;
+      EnergyOut = G4RandGauss::shoot(EnergyIn, Sigma2);
+//             std::cout << "non - ERFC energy out: " << EnergyOut << std::endl;
+  }
+  return EnergyOut;
 }

@@ -42,6 +42,7 @@ class G4VPhysicsConstructor;
 class PhysicsListMessenger;
 class G4ProductionCuts;
 class G4Scintillation;
+class G4StepLimiter;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -62,6 +63,7 @@ public:
     virtual void ConstructProcess();
 
     void ConstructOp(G4bool);
+    void SpiceStepper(G4bool);
 
     void SetTargetCut(G4double val);
     void SetDetectorCut(G4double val);

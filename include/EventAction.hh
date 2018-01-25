@@ -89,16 +89,15 @@ public:
 
     void AddHitTracker(G4String mnemonic, G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int trackerZ);
     void AddStepTracker(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int trackerZ);
-
-
+    G4bool SpiceTest();
 private:
     RunAction*    fRunAct;
     HistoManager* fHistoManager;
 
     G4int     fPrintModulo;
     G4int     fEvtNb;
-
     G4double BeamInputEnergy;
+    
     void ClearVariables();
     void FillParticleType();
     void FillGriffinCryst();
@@ -110,7 +109,10 @@ private:
     void FillSpice() ; ///19/7
     void FillGridCell() ;
     void FillTest(); ///27/6
-
+    
+    G4double ApplySpiceRes(G4double);
+    G4int SPICEPhiRemainder(G4int);
+    G4int SPICEPhiMap(G4int);
     // Tracking info
     G4int    fHitTrackerI[NUMSTEPVARS][MAXHITS];
     G4double fHitTrackerD[NUMSTEPVARS][MAXHITS];
@@ -125,9 +127,6 @@ private:
  
     G4int    fPTrackID;
     G4int    fPParentID;
-
-    G4int    fSpiceMultiplicity;
-    G4int    MultiplicityArray[5];
     
     // Particle types in simulation
     G4int fParticleTypes[NUMPARTICLETYPES];

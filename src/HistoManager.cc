@@ -35,17 +35,17 @@
 #include "HistoManager.hh"
 #include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"
+#include "Randomize.hh"
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 HistoManager::HistoManager() {
     fFileName[0] = "g4out";
     fFactoryOn = false;
-
+   
     // Only fill one NTuple at a time. If fStepTrackerBool is true, then fHitTrackerBool should be false, or vise-versa.
     // There is no need to have the hit NTuple and the step NTuple.
     fHitTrackerBool = true;
     fStepTrackerBool = false;
-
     fMakeHistoIndex = 0;
     
     // histograms
@@ -59,7 +59,11 @@ HistoManager::HistoManager() {
         fNtColIdHit[k] = 0;
         fNtColIdStep[k] = 0;
     }
-
+    for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){//initialises part of array, used for checking file creation in event action
+      for (G4int i=0; i < 12; i++) {//12 segments
+	fSpiceHistNumbers[ring*MAXNUMDETSPICE+i+2]=0;
+      } 
+    }
 	 fGridCell = false;
  	 fGriffin  = false;
 	 fLaBr     = false;
@@ -71,6 +75,11 @@ HistoManager::HistoManager() {
 	 fPaces    = false;
 	 fDescant  = false;
 	 fTestcan  = false;
+	 
+	 fSpiceRes = false;
+	 
+	 G4cout << "Histo CONSTRUCTOR" << G4endl;
+	 fBeamTheta = 4.0;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -81,8 +90,7 @@ HistoManager::~HistoManager()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void HistoManager::Book() {
-    G4cout<<fBeamEnergy<<" <- Input beam energy ot histomanager"<<G4endl;
-    
+  G4cout << "HISTOMANAGER " << fBeamEnergy << G4endl;
     G4String name;
     G4String title;
     G4String detString;
@@ -118,11 +126,7 @@ void HistoManager::Book() {
 
     // Create directories
     analysisManager->SetHistoDirectoryName("histo");//subfolder in root file
-    /*if(fSpice){
-      for(G4int i=0; i < MAXNUMDETSPICE; i++){
-      analysisManager->SetHistoDirectoryName("RingNumber "+MAXNUMDETSPICE);//subfolder in root file
-    }}*/ //doesn't work
-    
+
     // Open an output file
     G4bool fileOpen = analysisManager->OpenFile(fFileName[0]); 
     if (!fileOpen) {
@@ -146,46 +150,6 @@ void HistoManager::Book() {
     xmin      = 0.;
     xmax      = 100.;
     MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-
-    name  = "Multiplicity of depositions";
-    title     = "Deposition multiplicity";
-    nbins     = 10000;
-    xmin      = 0.;
-    xmax      = 4.;
-    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-    fAngleDistro[0]=fMakeHistoIndex;
-    
-    name  = "x-y";
-    title     = "X-Y 2D distribution";
-    nbins = 100;
-    xmin      = -6.;
-    xmax      = 6.;
-    Make2DHistoWithAxisTitles(analysisManager, name,  title, nbins, xmin, xmax, nbins, xmin, xmax);
-    fAngleDistro[1]=fMakeHistoIndex;
-
-    name  = "z-distribution";
-    title     = "z-distro";
-    nbins     = 10000;
-    xmin      = -0.0206;
-    xmax      = -0.0198;
-    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-    fAngleDistro[2]=fMakeHistoIndex;
-    
-    name  = "x-distribution";
-    title     = "x-distro";
-    nbins     = 10000;
-    xmin      = -10.;
-    xmax      = 10.;
-    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-    fAngleDistro[3]=fMakeHistoIndex;
-    
-    name  = "y-distribution";
-    title     = "y-distro";
-    nbins     = 10000;
-    xmin      = -10.;
-    xmax      = 10.;
-    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-    fAngleDistro[4]=fMakeHistoIndex;
     
     if(fGridCell && WRITEEKINHISTOS) {
         for (G4int i=0; i < MAXNUMDET; i++) {
@@ -258,7 +222,6 @@ void HistoManager::Book() {
             MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
         }
     }
-
 
     if(WRITEEDEPHISTOS) {
         // Variables and title used for all detectors
@@ -407,50 +370,152 @@ void HistoManager::Book() {
 	  nbins     = EDEPNBINSSPICE;
 	  xmin      = EDEPXMINSPICE;
 	  xmax      = EDEPXMAXSPICE;
-	  title     = "Edep in crystal (M eV)";
 	  
-	  name  = "spice_edep"; //edep = energy deposition
-	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  title     = "Edep in crystal (keV)";
+	  name  = "FullEdep"; //edep = energy deposition
+	  MakeHisto(analysisManager, name,  title, xmin*1000., xmax*1000., nbins);
 	  fSpiceHistNumbers[0]=fMakeHistoIndex; //assigns array item the histo index, for reference by FillHisto()
 
-	  name  = "spice_edep_sum";// summed
-	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  name  = "Edep_Addback";// summed
+	  MakeHisto(analysisManager, name,  title, xmin*1000., xmax*1000., nbins);
 	  fSpiceHistNumbers[1]=fMakeHistoIndex;
 	  
-	  for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){
-	    detString = G4intToG4String(ring);
-	  for (G4int i=0; i < 12; i++) {//12 segments
-            segString = G4intToG4String(i);
+// 	  for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){
+// 	    detString = G4intToG4String(ring);
+// 	    for (G4int seg=0; seg < MAXNUMSEGSPICE; seg++) {//12 segments but 3 for changes
+// 	      segString = G4intToG4String(seg);
+// 	      
+// 	      name  = "R" + detString + "S" + segString;
+// 	      MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);//generates index
+// 	      
+// 	    fSpiceHistNumbers[ring*MAXNUMSEGSPICE+seg+2]=fMakeHistoIndex;
+// 	    }
+// 	  }
+	  
+	  name = "BeamEnergy";
+	  title ="Energy of Input Beam";
+	  MakeHisto(analysisManager, name, title, xmin, xmax, nbins);
+	  fAngleDistro[0]=fMakeHistoIndex;
+	  
+	  name = "AllSegEnergies";
+	  title = "Energy vs. Segment";
+	  Make2DHisto(analysisManager, name, title,
+                 120, 0., 120., nbins, 0., xmax*1000.);
+	  fAngleDistro[1]=fMakeHistoIndex;
+	  
+	  /*name  = "Multiplicity";
+	  title     = "Deposition multiplicity";
+	  nbins     = 1000;
+	  xmin      = 0.;
+	  xmax      = 4.;
+	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  fAngleDistro[2]=fMakeHistoIndex;*/
+	  
+	  name  = "x-y";
+	  title     = "X-Y 2D distribution";
+	  nbins = 100;
+	  xmin      = -6.;
+	  xmax      = 6.;
+	  Make2DHisto(analysisManager, name,  title, nbins, xmin, xmax, nbins, xmin, xmax);
+	  fAngleDistro[3]=fMakeHistoIndex;
 
-            name  = "spice_edep_det0" + detString + "phi" + segString;
-            MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	    
-	   fSpiceHistNumbers[ring*MAXNUMDETSPICE+i+2]=fMakeHistoIndex;
-	  }
+	  title  = "z-distribution";
+	  name     = "z-distro";
+	  MakeHisto(analysisManager, name,  title, -0.1, 0.1, 1000);
+	  fAngleDistro[4]=fMakeHistoIndex;
+	  
+	  
+	  for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){  
+	    for (G4int seg=0; seg < 3; seg++) {
+	      
+	    title  = "AngR" + std::to_string(ring) + "S" +std::to_string(seg);
+	    name     = "AngR" + std::to_string(ring) + "S" +std::to_string(seg);
+	    nbins     = 200;
+	    xmin      = 0.;//explicitly defined for clarity
+	    xmax      = CLHEP::pi;
+	    Make2DHisto(analysisManager, name, title,
+                 nbins/2, xmin, xmax, nbins, -xmax, xmax);
+
+	  
+	    fSpiceAngleHists[ring*MAXNUMSEGSPICE+seg]=fMakeHistoIndex;
+	    }
 	  }
 	  
+	  /*for (G4int ring=0; ring < MAXNUMDETSPICE; ring++){  
+	    for (G4int seg=0; seg < 12; seg++) {
+	      
+	    title  = "TESTR" + std::to_string(ring) + "S" +std::to_string(seg);
+	    name     = "TESTR" + std::to_string(ring) + "S" +std::to_string(seg);
+	    nbins     = 200;
+	    xmin      = 0.;//explicitly defined for clarity
+	    xmax      = CLHEP::pi;
+	    Make2DHisto(analysisManager, name, title,
+                 nbins/2, xmin, xmax, nbins, -xmax, xmax);
+
+	  
+	    fSpiceTest[ring*MAXNUMSEGSPICE+seg]=fMakeHistoIndex;
+	    }
+	  }*/
+	  
+	  /*title  = "Theta Error";
+	  name     = "ErrorTheta";
+	  nbins     = 314;
+	  xmin      = 0.;//explicitly defined for clarity
+	  xmax      = 3.14;
+	  MakeHisto(analysisManager, name, title, xmin, xmax, nbins);
+	  fSpiceAngleHists[100]=fMakeHistoIndex;*/
+	  
+	  SPICE_ERFC_Setup();
+	    //to view the ERFC
+	  name  = "ERFC";
+	  title     = "ERFC";
+	  nbins     = 1000;
+	  xmin      = -3.8;
+	  xmax      = 0.2;
+	  MakeHisto(analysisManager, name, title, xmin, xmax, nbins);
+	  fAngleDistro[7]=fMakeHistoIndex;
+	  G4double ERFCRand = 0.;
+	  for(int i = 0; i < 100000; i++){
+	    ERFCRand = G4UniformRand()*AmpTot;
+	    for(int j = 0;j<100000;j++){
+		c += Amp[j];
+	      if(c > ERFCRand){
+		FillHisto(fAngleDistro[7], (((double)j)/1000. - 80.)*0.01);
+		break;
+	      }
+	    }
+	    c=0.;	  
+	  }
+	  	    
+	  name  = "ERFC_Overlay";
+	  title     = "ERFC";
+	  nbins     = EDEPNBINSSPICE;
+	  xmin      = EDEPXMINSPICE*1000.;
+	  xmax      = EDEPXMAXSPICE*1000.;
+	  MakeHisto(analysisManager, name, title, xmin, xmax, nbins);
+	  fAngleDistro[8]=fMakeHistoIndex;
 	}//if(fSpice)
 
-		  if(fPaces) {// paces detector
+	if(fPaces) {// paces detector
 		    
-			 name  = "paces_crystal_edep";
-			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	    fPacesHistNumbers[0]=fMakeHistoIndex;
-	    
-			 name  = "paces_crystal_edep_sum";
-			 MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	    fPacesHistNumbers[1]=fMakeHistoIndex;
-	    
-			 for (G4int i=0; i < MAXNUMDETPACES; i++) {//[MAXNUMDET];
-            detString = G4intToG4String(i);
+	  name  = "paces_crystal_edep";
+	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  fPacesHistNumbers[0]=fMakeHistoIndex;
+	  
+	  name  = "paces_crystal_edep_sum";
+	  MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  fPacesHistNumbers[1]=fMakeHistoIndex;
+	  
+	  for (G4int i=0; i < MAXNUMDETPACES; i++) {//[MAXNUMDET];
+	    detString = G4intToG4String(i);
 
-            name  = "paces_crystal_edep_det" + detString;
-            MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
-	    
+	    name  = "paces_crystal_edep_det" + detString;
+	    MakeHisto(analysisManager, name,  title, xmin, xmax, nbins);
+	  
 	    fPacesHistNumbers[i+2]=fMakeHistoIndex;
-			 }
-		  }//if(fPaces)
-	 }//if(WRITEEDEPHISTOS)
+	  }
+	}//if(fPaces)
+      }//if(WRITEEDEPHISTOS)
 
 	 //title just at top of graph, string. 
 	 //Name is the reference to.
@@ -458,7 +523,8 @@ void HistoManager::Book() {
 
     ///////////////////////////////////////////////////////////////////
     // Create 1 ntuple
-    if(fHitTrackerBool) {
+    if(!fSpice){
+      if(fHitTrackerBool) {
         analysisManager->CreateNtuple("ntuple", "HitTracker");
         fNtColIdHit[0] = analysisManager->CreateNtupleIColumn("eventNumber");
         fNtColIdHit[1] = analysisManager->CreateNtupleIColumn("trackID");
@@ -479,10 +545,10 @@ void HistoManager::Book() {
 		  }
         analysisManager->FinishNtuple();
 		  G4cout<<"created ntuple HitTracker"<<G4endl;
-    }
+      }
 
 
-    if(fStepTrackerBool) {
+      if(fStepTrackerBool) {
         analysisManager->CreateNtuple("ntuple", "StepTracker");
         fNtColIdStep[0] = analysisManager->CreateNtupleIColumn("eventNumber");
         fNtColIdStep[1] = analysisManager->CreateNtupleIColumn("trackID");
@@ -502,8 +568,8 @@ void HistoManager::Book() {
 			 fNtColIdStep[14] = analysisManager->CreateNtupleIColumn("targetZ");
 		  }
         analysisManager->FinishNtuple();
+      }
     }
-
     fFactoryOn = true;
     G4cout << "\n----> Histogram Tree is opened in " << fFileName[1] << G4endl;
 }
@@ -523,7 +589,7 @@ void HistoManager::Save() {
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
+//fMakeHistoIndex is global in Histomanager so allowed in any scope below unaltered
 void HistoManager::MakeHisto(G4AnalysisManager* analysisManager, G4String name,  G4String title, G4double xmin, G4double xmax, G4int nbins) {
     fMakeHistoIndex++;
     if (fMakeHistoIndex >= MAXHISTO) {
@@ -536,8 +602,6 @@ void HistoManager::MakeHisto(G4AnalysisManager* analysisManager, G4String name, 
     fHistPt[fMakeHistoIndex] = analysisManager->GetH1(fHistId[fMakeHistoIndex]);
 
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void HistoManager::MakeHistoWithAxisTitles(G4AnalysisManager* analysisManager, G4String name, 
 					   G4String title, G4double xmin, G4double xmax, 
@@ -552,7 +616,7 @@ void HistoManager::MakeHistoWithAxisTitles(G4AnalysisManager* analysisManager, G
     fHistPt[fMakeHistoIndex] = analysisManager->GetH1(fHistId[fMakeHistoIndex]);
 }
 
-void HistoManager::Make2DHistoWithAxisTitles(G4AnalysisManager* analysisManager, const G4String& name, const G4String& title,
+void HistoManager::Make2DHisto(G4AnalysisManager* analysisManager, const G4String& name, const G4String& title,
                  G4int nxbins, G4double xmin, G4double xmax, 
                  G4int nybins, G4double ymin, G4double ymax) {
       fMakeHistoIndex++; //global in Histomanager so allowed in this scope unaltered
@@ -565,8 +629,23 @@ void HistoManager::Make2DHistoWithAxisTitles(G4AnalysisManager* analysisManager,
                  nybins, ymin, ymax);
     fHistPt2[fMakeHistoIndex] = analysisManager->GetH2(fHistId[fMakeHistoIndex]);
 }
+void HistoManager::Make2DHistoWithAxisTitles(G4AnalysisManager* analysisManager, const G4String& name, const G4String& title,
+                 G4int nxbins, G4double xmin, G4double xmax, 
+                 G4int nybins, G4double ymin, G4double ymax,
+                 const G4String& xunitName = "none", 
+                 const G4String& yunitName = "none",
+                 const G4String& xfcnName = "none", 
+                 const G4String& yfcnName = "none"){
+		fMakeHistoIndex++; //global in Histomanager so allowed in this scope unaltered
+      if (fMakeHistoIndex >= MAXHISTO) {
+        G4cout << "---> Exceeded maximum number of histograms. Increase MAXHISTO in HistoManager.hh" << G4endl;
+        exit(1);
+    }
 
-
+    fHistId[fMakeHistoIndex] = analysisManager->CreateH2(name, title, nxbins, xmin, xmax, 
+                 nybins, ymin, ymax, xunitName, yunitName, xfcnName, yfcnName);
+    fHistPt2[fMakeHistoIndex] = analysisManager->GetH2(fHistId[fMakeHistoIndex]);   
+}
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void HistoManager::FillHisto(G4int ih, G4double xbin, G4double weight) {
@@ -578,8 +657,6 @@ void HistoManager::FillHisto(G4int ih, G4double xbin, G4double weight) {
     if (fHistPt[ih]) fHistPt[ih]->fill(xbin, weight);
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 void HistoManager::Fill2DHisto(G4int ih, G4double xbin, G4double ybin, G4double weight) {
     if (ih >= MAXHISTO) {
         G4cout << "---> warning from HistoManager::FillHisto() : histo " << ih
@@ -588,6 +665,8 @@ void HistoManager::Fill2DHisto(G4int ih, G4double xbin, G4double ybin, G4double 
     }
     if (fHistPt2[ih]) fHistPt2[ih]->fill(xbin, ybin, weight);
 }
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void HistoManager::Normalize(G4int ih, G4double fac) {
     if (ih >= MAXHISTO) {
@@ -672,11 +751,40 @@ void HistoManager::PrintStatistic() {
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 G4String HistoManager::G4intToG4String(G4int value) {
     G4String theString;
     std::stringstream out;
     out << value;
     theString = out.str();
     return theString;
+}
+void HistoManager::SPICE_ERFC_Setup(){
+  //1000 bins between -0.5 and 0.5 containing decay function information for SPICE pre-amps
+  AmpTot = 0.;//channel(effective x) and centroid
+  
+  //making fixed ERFC func - accessed via a getter (local to this class) from EventAction
+  for(int i=0;i<10000;i++){//Full function from -80 to +20
+    channel = (double) i;
+    channel /= 100.;
+    channel -= 80;
+    c = 0.;
+    Amp[i] = exp((channel-c)/30.)*erfc(((channel-c)/(sqrt(2.)))+1./(sqrt(2.)*30.));
+    Ampx[i] = channel;//have a corresponding x-array to the Ampitudes
+    AmpTot += Amp[i];//Data now in array
+  }
+}
+
+G4double HistoManager::SPICE_ERFC(){
+  c=0.;
+  G4double ERFCRand = G4UniformRand()*AmpTot, control =0.;
+    for(int j = 0;j<10000;j++){
+	c += Amp[j];
+      if(c > ERFCRand){
+// 	std::cout << "mdg: " << Ampx[j] <<std::endl;
+	return Ampx[j];//(((double)j)/1000. - 80.)*0.01;
+	control = Ampx[j];//=(((double)j)/1000. - 80.)*0.01;
+	break;
+      }
+    }
+  return control;//stops warnings
 }

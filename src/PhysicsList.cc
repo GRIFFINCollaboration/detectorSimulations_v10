@@ -46,6 +46,7 @@
 #include "G4ProcessManager.hh"
 #include "G4ParticleTypes.hh"
 #include "G4ParticleTable.hh"
+#include "G4StepLimiter.hh"
 
 #include "G4Gamma.hh"
 #include "G4Electron.hh"
@@ -248,6 +249,25 @@ void PhysicsList::ConstructOp(G4bool constructOp)
             }
         }
         G4cout << "Done Building Optical Physics" << G4endl;
+     }
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void PhysicsList::SpiceStepper(G4bool step)
+{
+  if( step == false ) { G4cout << "No SPICE step" << G4endl; return; }
+  else if( step == true ) 
+    {
+        theParticleIterator->reset();
+        while( (*theParticleIterator)() )
+        {
+            G4ParticleDefinition* particle = theParticleIterator->value();
+            G4ProcessManager* pmanager = particle->GetProcessManager();
+            G4String particleName = particle->GetParticleName();
+	    pmanager->AddDiscreteProcess(new G4StepLimiter);//SPICE target step-sizes
+
+        }
+        G4cout << "SPICE stepper" << G4endl;
      }
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

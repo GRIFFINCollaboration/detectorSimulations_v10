@@ -99,50 +99,9 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     fGenericTargetPositionCmd->SetUnitCategory("Length");
     fGenericTargetPositionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
     
-    fSpiceTargetCmd = new G4UIcmdWithAString("/DetSys/app/spiceTarget",this);
-    fSpiceTargetCmd->SetGuidance("Select material of the spice target.");
-    fSpiceTargetCmd->SetParameterName("choice",false);
-    fSpiceTargetCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-	 
-    fSpiceTargetThicknessCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/app/SpiceTargetThickness",this);
-    fSpiceTargetThicknessCmd->SetGuidance("Set spice target thickness - mg/cm^2 unit.");
-    fSpiceTargetThicknessCmd->SetUnitCategory("Mass/Surface");
-    fSpiceTargetThicknessCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-	 
-    fSpiceTargetDensityCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/app/spiceTargetDensity",this);
-    fSpiceTargetDensityCmd->SetGuidance("Set spice target density - g/cm^3.");
-    fSpiceTargetDensityCmd->SetUnitCategory("Volumic Mass");
-    fSpiceTargetDensityCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
-    fSpiceTargetBackerCmd = new G4UIcmdWithAString("/DetSys/app/spiceTargetBacker",this);
-    fSpiceTargetBackerCmd->SetGuidance("Select material of the spice target backer.");
-    fSpiceTargetBackerCmd->SetParameterName("choice",false);
-    fSpiceTargetBackerCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-	 
-    fSpiceTargetBackerThicknessCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/app/SpiceTargetBackerThickness",this);
-    fSpiceTargetBackerThicknessCmd->SetGuidance("Set spice target backer thickness - mg/cm^2 unit.");
-    fSpiceTargetBackerThicknessCmd->SetUnitCategory("Mass/Surface");
-    fSpiceTargetBackerThicknessCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-	 
-    fSpiceTargetBackerDensityCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/app/spiceTargetBackerDensity",this);
-    fSpiceTargetBackerDensityCmd->SetGuidance("Set spice target backer density - g/cm^3.");
-    fSpiceTargetBackerDensityCmd->SetUnitCategory("Volumic Mass");
-    fSpiceTargetBackerDensityCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-    
-    fSpiceTargetProtectorCmd = new G4UIcmdWithAString("/DetSys/app/spiceTargetProtector",this);
-    fSpiceTargetProtectorCmd->SetGuidance("Select material of the spice target protector.");
-    fSpiceTargetProtectorCmd->SetParameterName("choice",false);
-    fSpiceTargetProtectorCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-	 
-    fSpiceTargetProtectorThicknessCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/app/SpiceTargetProtectorThickness",this);
-    fSpiceTargetProtectorThicknessCmd->SetGuidance("Set spice target protector thickness - mg/cm^2 unit.");
-    fSpiceTargetProtectorThicknessCmd->SetUnitCategory("Mass/Surface");
-    fSpiceTargetProtectorThicknessCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-	 
-    fSpiceTargetProtectorDensityCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/app/spiceTargetProtectorDensity",this);
-    fSpiceTargetProtectorDensityCmd->SetGuidance("Set spice target protector density - g/cm^3.");
-    fSpiceTargetProtectorDensityCmd->SetUnitCategory("Volumic Mass");
-    fSpiceTargetProtectorDensityCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    fLayeredTargetAddCmd = new G4UIcmdWithAString("/DetSys/app/LayeredTargetAddLayer",this);
+    fLayeredTargetAddCmd->SetGuidance("Add layer to target - material mg/cm3 mg/cm2.");
+    fLayeredTargetAddCmd->AvailableForStates(G4State_PreInit,G4State_Idle);   
     
     fFieldBoxMaterialCmd = new G4UIcmdWithAString("/DetSys/app/fieldBoxMaterial",this);
     fFieldBoxMaterialCmd->SetGuidance("Select material of the target.");
@@ -285,23 +244,23 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     fAddDetectionSystemTestcanCmd = new G4UIcmdWith3Vector("/DetSys/det/addTestcan",this);
     fAddDetectionSystemTestcanCmd->SetGuidance("Add Testcan Detection System");
     fAddDetectionSystemTestcanCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-    
-    fSetDetectionSystemDescantColorCmd = new G4UIcmdWithAString("/DetSys/det/setDescantColor", this);
-    fSetDetectionSystemDescantColorCmd->SetGuidance("Set color of next descant detector to be added via addDescantCart or addDescantSpher");
-    fSetDetectionSystemDescantColorCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-    fSetDetectionSystemDescantColorCmd->SetCandidates("white blue red green yellow");
-    
-    fSetDetectionSystemDescantRotationCmd = new G4UIcmdWith3Vector("/DetSys/det/setDescantRotation", this);
-    fSetDetectionSystemDescantRotationCmd->SetGuidance("Set rotation of next descant detector to be added via addDescantCart or addDescantSpher (alhpa beta gamma)");
-    fSetDetectionSystemDescantRotationCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-    
-    fAddDetectionSystemDescantCartCmd = new G4UIcmdWith3VectorAndUnit("/DetSys/det/addDescantCart", this);
-    fAddDetectionSystemDescantCartCmd->SetGuidance("Add single DESCANT detector at provided cartesian coordinates");
-    fAddDetectionSystemDescantCartCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
-    
-    fAddDetectionSystemDescantSpherCmd = new G4UIcmdWith3VectorAndUnit("/DetSys/det/addDescantSpher", this);
-    fAddDetectionSystemDescantSpherCmd->SetGuidance("Add single DESCANT detector at provided spherical coordinates");
-    fAddDetectionSystemDescantSpherCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+	 
+	 fSetDetectionSystemDescantColorCmd = new G4UIcmdWithAString("/DetSys/det/setDescantColor", this);
+	 fSetDetectionSystemDescantColorCmd->SetGuidance("Set color of next descant detector to be added via addDescantCart or addDescantSpher");
+	 fSetDetectionSystemDescantColorCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	 fSetDetectionSystemDescantColorCmd->SetCandidates("white blue red green yellow");
+	 
+	 fSetDetectionSystemDescantRotationCmd = new G4UIcmdWith3Vector("/DetSys/det/setDescantRotation", this);
+	 fSetDetectionSystemDescantRotationCmd->SetGuidance("Set rotation of next descant detector to be added via addDescantCart or addDescantSpher (alhpa beta gamma)");
+	 fSetDetectionSystemDescantRotationCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	 
+	 fAddDetectionSystemDescantCartCmd = new G4UIcmdWith3VectorAndUnit("/DetSys/det/addDescantCart", this);
+	 fAddDetectionSystemDescantCartCmd->SetGuidance("Add single DESCANT detector at provided cartesian coordinates");
+	 fAddDetectionSystemDescantCartCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+	 
+	 fAddDetectionSystemDescantSpherCmd = new G4UIcmdWith3VectorAndUnit("/DetSys/det/addDescantSpher", this);
+	 fAddDetectionSystemDescantSpherCmd->SetGuidance("Add single DESCANT detector at provided spherical coordinates");
+	 fAddDetectionSystemDescantSpherCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 	 
     fAddDetectionSystemGriffinForwardCmd = new G4UIcmdWithAnInteger("/DetSys/det/addGriffinForward",this);
     fAddDetectionSystemGriffinForwardCmd->SetGuidance("Add Detection System GriffinForward");
@@ -353,10 +312,14 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
     fAddDetectionSystemSceptarCmd->SetGuidance("Add Detection System Sceptar");
     fAddDetectionSystemSceptarCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 	 
-    fAddDetectionSystemSpiceCmd = new G4UIcmdWithAnInteger("/DetSys/det/addSpice",this);
+    fAddDetectionSystemSpiceCmd = new G4UIcmdWithoutParameter("/DetSys/det/addSpiceDetector",this);
     fAddDetectionSystemSpiceCmd->SetGuidance("Add Detection System Spice");
     fAddDetectionSystemSpiceCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
+   
+    fUseSpiceResolutionCmd = new G4UIcmdWithABool("/DetSys/det/UseSpiceResolution",this);
+    fUseSpiceResolutionCmd->SetGuidance("Apply a resolution to energy depositions");
+    fUseSpiceResolutionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    
     fAddDetectionSystemPacesCmd = new G4UIcmdWithAnInteger("/DetSys/det/addPaces",this);
     fAddDetectionSystemPacesCmd->SetGuidance("Add Detection System Paces");
     fAddDetectionSystemPacesCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
@@ -370,7 +333,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 DetectorMessenger::~DetectorMessenger()
-{
+{	
     delete fDetDir;
     delete fAppDir;
     delete fWorldDir;
@@ -383,15 +346,8 @@ DetectorMessenger::~DetectorMessenger()
     delete fGenericTargetCmd;
     delete fGenericTargetDimensionsCmd;
     delete fGenericTargetPositionCmd;
-    delete fSpiceTargetCmd;
-    delete fSpiceTargetDensityCmd;
-    delete fSpiceTargetThicknessCmd;
-    delete fSpiceTargetBackerCmd;
-    delete fSpiceTargetBackerDensityCmd;
-    delete fSpiceTargetBackerThicknessCmd;
-    delete fSpiceTargetProtectorCmd;
-    delete fSpiceTargetProtectorDensityCmd;
-    delete fSpiceTargetProtectorThicknessCmd;
+    delete fLayeredTargetAddCmd;
+    
     delete fFieldBoxMaterialCmd;
     delete fFieldBoxDimensionsCmd;
     delete fFieldBoxPositionCmd;
@@ -451,6 +407,7 @@ DetectorMessenger::~DetectorMessenger()
     delete fAddDetectionSystemGriffinSetExtensionSuppLocationCmd ;
     delete fAddDetectionSystemGriffinSetDeadLayerCmd ;
 
+    delete fUseSpiceResolutionCmd;
     delete fUseTIGRESSPositionsCmd;
 
 }
@@ -481,33 +438,6 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     if(command == fGenericTargetPositionCmd ) {
 	fDetector->SetGenericTargetPosition(fGenericTargetPositionCmd->GetNew3VectorValue(newValue));
     }
-    if(command == fSpiceTargetCmd ) {
-	fDetector->SetSpiceTargetMaterial(newValue);// can piggyback targetz value here too (fDetector->targetz)
-    }
-    if(command == fSpiceTargetDensityCmd ) {
-	fDetector->SetSpiceTargetDensity(fSpiceTargetDensityCmd->GetNewDoubleValue(newValue));
-    }
-    if(command == fSpiceTargetThicknessCmd ) {
-	fDetector->SetSpiceTargetThickness(fSpiceTargetThicknessCmd->GetNewDoubleValue(newValue));
-    }
-    if(command == fSpiceTargetBackerCmd ) {
-	fDetector->SetSpiceTargetBackerMaterial(newValue);
-    }
-    if(command == fSpiceTargetBackerDensityCmd ) {
-	fDetector->SetSpiceTargetBackerDensity(fSpiceTargetDensityCmd->GetNewDoubleValue(newValue));
-    }
-    if(command == fSpiceTargetBackerThicknessCmd ) {
-	fDetector->SetSpiceTargetBackerThickness(fSpiceTargetThicknessCmd->GetNewDoubleValue(newValue));
-    }
-    if(command == fSpiceTargetProtectorCmd ) {
-	fDetector->SetSpiceTargetProtectorMaterial(newValue);
-    }
-    if(command == fSpiceTargetProtectorDensityCmd ) {
-	fDetector->SetSpiceTargetProtectorDensity(fSpiceTargetDensityCmd->GetNewDoubleValue(newValue));
-    }
-    if(command == fSpiceTargetProtectorThicknessCmd ) {
-	fDetector->SetSpiceTargetProtectorThickness(fSpiceTargetThicknessCmd->GetNewDoubleValue(newValue));
-    }
     //  if(command == fFieldBoxMaterialCmd ) {
     //    fDetector->SetFieldBoxMaterial(newValue);
     //  }
@@ -535,7 +465,14 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     //  if(command == fAddBoxCmd ) {
     //    fDetector->AddBox();
     //  }
-
+    if(command == fLayeredTargetAddCmd ) {
+	G4String Material;
+	G4double areal;
+	const char* s = newValue;///string
+	std::istringstream is ((char*)s);///string
+	is>>Material>>areal;
+	fDetector->LayeredTargetAdd(Material, areal);
+    }
   if( command == fTabMagneticFieldCmd ) {
     G4String PathAndTableName;
     G4double z_offset, z_rotation;
@@ -563,7 +500,7 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
         fDetector->AddGrid();
     }
     if(command == fAddApparatusSpiceTargetChamberCmd) {
-        fDetector->AddApparatusSpiceTargetChamber(newValue, fDetector->fTargetZ); //removed f
+        fDetector->AddApparatusSpiceTargetChamber(newValue);
     }
     if(command == fAddApparatus8piVacuumChamberCmd ) {
         fDetector->AddApparatus8piVacuumChamber();
@@ -606,17 +543,16 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 
     if(command == fSetDetectionSystemDescantColorCmd ) {
 		fDetector->SetDetectionSystemDescantColor(newValue);
-	 }
-	 if(command == fSetDetectionSystemDescantRotationCmd ) {
-		fDetector->SetDetectionSystemDescantRotation(fSetDetectionSystemDescantRotationCmd->GetNew3VectorValue(newValue));
-	 }
-	 if(command == fAddDetectionSystemDescantCartCmd ) {
-		fDetector->AddDetectionSystemDescantCart(fAddDetectionSystemDescantCartCmd->GetNew3VectorValue(newValue));
-	 }
-	 if(command == fAddDetectionSystemDescantSpherCmd ) {
-		fDetector->AddDetectionSystemDescantSpher(fAddDetectionSystemDescantSpherCmd->GetNew3VectorRawValue(newValue), fAddDetectionSystemDescantSpherCmd->GetNewUnitValue(newValue));
-	 }
-
+    }
+    if(command == fSetDetectionSystemDescantRotationCmd ) {
+	  fDetector->SetDetectionSystemDescantRotation(fSetDetectionSystemDescantRotationCmd->GetNew3VectorValue(newValue));
+    }
+    if(command == fAddDetectionSystemDescantCartCmd ) {
+	  fDetector->AddDetectionSystemDescantCart(fAddDetectionSystemDescantCartCmd->GetNew3VectorValue(newValue));
+    }
+    if(command == fAddDetectionSystemDescantSpherCmd ) {
+	  fDetector->AddDetectionSystemDescantSpher(fAddDetectionSystemDescantSpherCmd->GetNew3VectorRawValue(newValue), fAddDetectionSystemDescantSpherCmd->GetNewUnitValue(newValue));
+    }
     if(command == fAddDetectionSystemTestcanCmd ) { 
         fDetector->AddDetectionSystemTestcan(fAddDetectionSystemTestcanCmd->GetNew3VectorValue(newValue));
     }
@@ -661,7 +597,10 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
         fDetector->AddDetectionSystemGriffinSetDeadLayer(fAddDetectionSystemGriffinSetDeadLayerCmd->GetNew3VectorValue(newValue ) ) ;
     }
     if(command == fAddDetectionSystemSpiceCmd ) {
-		fDetector->AddDetectionSystemSpice(fAddDetectionSystemSpiceCmd->GetNewIntValue(newValue)); 
+	fDetector->AddDetectionSystemSpice(10); 
+    }
+    if(command == fUseSpiceResolutionCmd ) {
+        fDetector->SetSpiceRes(fUseSpiceResolutionCmd->GetNewBoolValue(newValue));
     }
     if(command == fAddDetectionSystemPacesCmd ) {
         fDetector->AddDetectionSystemPaces(fAddDetectionSystemPacesCmd->GetNewIntValue(newValue));
