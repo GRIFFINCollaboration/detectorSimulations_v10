@@ -56,7 +56,7 @@ G4int ApparatusLayeredTarget::BuildTargetLayer(G4String LayerMaterial, G4double 
     } 
     
     G4double LayerMaterialDensity=material->GetDensity();
-    G4cout << "Target LayerMaterialDensity: " << LayerMaterialDensity << G4endl;
+    G4cout << "Target LayerMaterialDensity: " << LayerMaterialDensity/(g/cm3) <<" g/cm3"<< G4endl;
     G4double LayerThickness = ((LayerArealDensity*(mg/cm2))/LayerMaterialDensity);
     G4cout << "Target Thickness (um): " << LayerThickness/(um) << G4endl;
 
@@ -66,7 +66,7 @@ G4int ApparatusLayeredTarget::BuildTargetLayer(G4String LayerMaterial, G4double 
 
     std::stringstream ss;
     ss<<"TargetLayer"<<fTargetLayerLog.size();
-    G4Tubs* target = new G4Tubs(ss.str(), 0.0, fTargetRadius, LayerThickness/2.,0.0, 360*deg);
+    G4Tubs* target = new G4Tubs(ss.str(), 0.0, fTargetRadius, std::abs(LayerThickness)/2.,0.0, 360*deg);
     
     //logical volume
     std::stringstream SS;

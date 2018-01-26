@@ -1,0 +1,51 @@
+After a successful compilation, you can run the simulation in one of 3 ways:
+
+1) Macro mode
+./Griffinv10 spice.mac
+Execute a single macro file in bath mode.
+The detailed comments in spice.mac explain the various functions
+
+2) Visualisation mode
+./Griffinv10
+Open the GUI interface the run the following command in the "Session" box to open the SPICE visualisation
+/control/execute SPICE_vis.mac
+You may choose option in SPICE_vis.mac before running.
+Also after running the script addition commands from the scrip may be run in the "Session" box e.g. 
+/DetSys/gun/particle e-
+/DetSys/gun/efficiencyEnergy 800 keV
+/run/beamOn 2 ### Keep number low
+You can disable parts of the geometry in the gui "Scene tree" for clearer viewing
+
+3) Automated batch mode
+bash AutoEffCurve.sh
+To automatically generate an efficiency curve.
+First edit AutoEffCurve.sh to select energy points, lens, target and event number.
+Run 'bash AutoEffCurve.sh' to run geant4 and generate sequential root files,
+then run 'root MakeEfficiency.c' in the same folder as the previous output
+to generate and save the efficiency curve.
+If you have jRootAnalysisTools installed you can instead run MakeEfficiencyjRoot.c,
+which will use fits to provide more accurate results.
+
+Multi layered targets may be added as described in spice.mac
+These stack face to face from the beam position defined by /DetSys/gun/position
+(at the time the target layer command is called)
+Materials that are not defined within the MyMaterial framework within
+DetectorConstructionSuppressed.cc will seg-fault the program.
+You can use the visualiser to ensure the targets are positioned as expected
+
+Histograms are produced for SPICE showing the:
+Detected Energies
+Emission angle of detected electrons (for kinematic work)
+The emission position (to check the distribution settings, z is relative to /DetSys/gun/position)
+
+Be careful to ensure field file matches with the geometry used to create the chamber.
+These are two separate lines in all macros, that can be easily overlooked.
+
+You may wish to distribute emission along the (z) beam axis according
+to some non-uniform reaction distribution
+Used "/Detsys/gun/FileDistro data.dat" where data.dat is any plain text file
+containing white space delimited position and probability weight.
+Position should be in um and relative to /DetSys/gun/position 
+Weight does not need to be normalised.
+
+Occasionally the program enters a geometric error loop. It will exit.  

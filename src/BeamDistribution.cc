@@ -49,11 +49,11 @@ void BeamDistribution::LoadDistribution(G4String filename){//Reads in the data f
 		return;
 	}
 		
-	fDistStep=(xv[1]-xv[0])*mm;
+	fDistStep=(xv[1]-xv[0])*um;
 
 	double probstep=probsum;
 	for(unsigned int i=0;i<xv.size();i++){
-		fDistVec.push_back(xv[i]*mm-fDistStep*0.5);
+		fDistVec.push_back(xv[i]*um-fDistStep*0.5);
 		probstep-=pv[i];
 		fRelProbVec.push_back(probstep/probsum);
 	}
