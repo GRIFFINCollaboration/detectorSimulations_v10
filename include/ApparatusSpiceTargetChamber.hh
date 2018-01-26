@@ -95,7 +95,6 @@ private:
 	G4LogicalVolume* fMagnetLog;
 	G4LogicalVolume* fMagnetCoverLog;
 	G4LogicalVolume* fMclampChamberLog;
-	G4LogicalVolume* fMclampShieldLog;
 	G4LogicalVolume* fElectroBoxLog;
 	G4LogicalVolume* fShieldCoverLog;
 	G4LogicalVolume* fColdFingerLog;
@@ -438,7 +437,6 @@ private:
 	void BuildCollectorMagnet();
 	void BuildMagnetCovering();
 	void BuildMagnetClampChamber();
-	void BuildMagnetClampPhotonShield();
 	void BuildElectroBox();
 	void BuildShieldCovering();
 	void BuildColdFinger();
@@ -465,7 +463,6 @@ private:
 	void PlaceCollectorMagnet(G4int, G4LogicalVolume*);
 	void PlaceMagnetCovering(G4int, G4LogicalVolume*);
 	void PlaceMagnetClampChamber(G4int, G4LogicalVolume*);
-	void PlaceMagnetClampPhotonShield(G4int, G4LogicalVolume*);
 	void PlaceElectroBox(G4LogicalVolume*);
 	void PlaceShieldCovering(G4LogicalVolume*);
 	void PlaceColdFinger(G4LogicalVolume*);
