@@ -344,7 +344,7 @@ void EventAction::FillSpice() {
     G4double SpiceEnergy,SpiceEnergyRaw;
     for (G4int ring=0; ring < MAXNUMDETSPICE; ring++) {
       for (G4int seg=0; seg < 12; seg++) {
-	if(fSpiceEnergyDet[ring][seg] > 70.*CLHEP::keV&&WRITEEDEPHISTOS) {
+	if(fSpiceEnergyDet[ring][seg] > 20.*CLHEP::keV&&WRITEEDEPHISTOS) {
 		
 		SpiceEnergyRaw = fSpiceEnergyDet[ring][seg];// SpiceRawEnergy. No resolution applied
 		SpiceEnergy=SpiceEnergyRaw;
