@@ -1,5 +1,7 @@
 #include "DetectorConstruction.hh"
 #include "DetectorMessenger.hh"
+#include "PrimaryGeneratorMessenger.hh"//PGM
+#include "PrimaryGeneratorAction.hh"//PGA, for PGM object
 
 #include "G4Material.hh"
 
@@ -25,8 +27,10 @@
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
 
-#include "ApparatusSpiceTargetChamber.hh"
 #include <math.h>
+
+#include "HistoManager.hh"
+#include "ApparatusSpiceTargetChamber.hh"
 
 ////////////////////////////////////////////////
 // building and placing the different parts   //
@@ -41,8 +45,11 @@
 // define physical properties of ApparatusSpiceTargetChamber //
 //////////////////////////////////////////////////////
 
-ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo)//parameter chooses which lens is in place.
+ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo, G4double TargetPedestal)//parameter chooses which lens is in place.
 {
+	fTargetZ = TargetPedestal;
+	G4cout << TargetPedestal << " <- Beam Position in constructor" << G4endl;
+
 	fNumberOfMagnets = 4;
 	fNumberOfFrames = 3;
 
@@ -60,7 +67,6 @@ ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo)//parame
 	fTargetWheelGearMaterialB = "Aluminum";
 	fGearPlateMaterial = "Aluminum";
 	fTargetMountPlateMaterial = "Peek"; 
-	fBiasPlateMaterial = "Aluminum"; 
 	fGearStickMaterial = "Peek"; 
 	fElectroBoxMaterial = "Aluminum"; 
 	fSmallBoltMaterial = "Brass"; 
@@ -69,7 +75,8 @@ ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo)//parame
 	fMagnetCoverMaterial = "Peek";
 	fColdFingerMaterial = "Copper";
 	fS3CableCaseMaterial = "Delrin";
-	fBeamPipeMaterial = "Copper";
+	fConicalCollimatorMaterial = "WTa";//11/8
+	fXRayInsertMaterial="Copper";
 
 	//-----------------------------
 	// Dimensions of Target Chamber
@@ -113,12 +120,6 @@ ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo)//parame
 	fTargetRadius = 9*CLHEP::mm; //6*CLHEP::mm; // 4mm for old
 	fTargetOffset = 15*CLHEP::mm;
 	fCollimatorRadius = 9*CLHEP::mm;
-
-	// Bias Plate
-	fBiasPlateOuterRadius = 61*CLHEP::mm;
-	fBiasPlateThickness = 0.8*CLHEP::mm;
-	fBiasPlateOffsetZ = -0.2*CLHEP::mm;
-	fBiasPlateCut = 100*CLHEP::mm;
 
 	// Gears
 	fFirstGearRadius = 12.7*CLHEP::mm;
@@ -193,10 +194,11 @@ ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo)//parame
 	fPlateOneLength = 75*CLHEP::mm; 
 	fPlateOneHeight = 50*CLHEP::mm; // z-component
 	fPlateOneLowerHeight = 20*CLHEP::mm;
-	if(MedLo = "Med")  {//this works - seen output on terminal via simpel G4cout command
+
+	if(MedLo=="Med"||MedLo=="med"||MedLo=="MED"||MedLo=="MEL"||MedLo=="Medium"||MedLo=="medium"){
 		fPlateTwoThickness = 3.4*CLHEP::mm; // LEL is 5.0, MEL is 3.4
 		fPlateTwoLength = 55.0*CLHEP::mm; // LEL is 30.0, MEL is 55.0
-	} else if(MedLo = "Lo") {
+	} else {
 		fPlateTwoThickness = 5.0*CLHEP::mm; // LEL is 5.0, MEL is 3.4
 		fPlateTwoLength = 30.0*CLHEP::mm; // LEL is 30.0, MEL is 55.0
 	}
@@ -245,7 +247,6 @@ ApparatusSpiceTargetChamber::ApparatusSpiceTargetChamber(G4String MedLo)//parame
 	// individual offsets for visualisation
 	// -------------------------------------
 	fFrontDomeOffset = 0*CLHEP::mm;
-	//fTargetWheelOffset = 0*CLHEP::mm;
 	fMiddleRingOffset = 0*CLHEP::mm;
 	fBackDetAndAlBoxOffset = 0*CLHEP::mm;
 
@@ -287,7 +288,6 @@ ApparatusSpiceTargetChamber::~ApparatusSpiceTargetChamber()
 	delete fGearPlateTwoLog;
 	delete fGearStickLog;
 	delete fTargetMountPlateLog;
-	delete fBiasPlateLog;
 	delete fPhotonShieldLayerOneLog;
 	delete fPhotonShieldLayerTwoLog;
 	delete fPhotonShieldLayerThreeLog;
@@ -297,13 +297,10 @@ ApparatusSpiceTargetChamber::~ApparatusSpiceTargetChamber()
 	delete fDetectorBoltLog;
 	delete fMagnetLog;
 	delete fMclampChamberLog;
-	delete fMclampShieldLog;
 	delete fElectroBoxLog;
 	delete fShieldCoverLog;
 	delete fMagnetCoverLog;
 	delete fColdFingerLog;
-	delete fBeamPipeLog;
-
 	// physical volumes in ApparatusSpiceTargetChamber
 	delete fTargetChamberFrontRingPhys;
 	delete fTargetChamberFrontConePhys;
@@ -319,7 +316,6 @@ ApparatusSpiceTargetChamber::~ApparatusSpiceTargetChamber()
 	delete fGearPlateTwoPhys;
 	delete fGearStickPhys;
 	delete fTargetMountPlatePhys;
-	delete fBiasPlatePhys;
 	delete fPhotonShieldLayerOnePhys;
 	delete fPhotonShieldLayerTwoPhys;
 	delete fPhotonShieldLayerThreePhys;
@@ -334,7 +330,6 @@ ApparatusSpiceTargetChamber::~ApparatusSpiceTargetChamber()
 	delete fShieldCoverPhys;
 	delete fMagnetCoverPhys;
 	delete fColdFingerPhys;
-	delete fBeamPipePhys;
 
 } // end ~ApparatusSpiceTargetChamber
 
@@ -344,72 +339,81 @@ ApparatusSpiceTargetChamber::~ApparatusSpiceTargetChamber()
 
 void ApparatusSpiceTargetChamber::Build(G4LogicalVolume* expHallLog)
 {
-	BuildTargetChamberFrontRing();
+
+
+	// 	BuildTargetChamberFrontRing();
 	BuildTargetChamberSphere();
 	BuildTargetChamberCylinderDownstream();
 	BuildTargetWheel();
 	BuildTargetWheelExtension();
 	BuildTargetWheelRods();
-	BuildTargetFrame();
-	BuildCollimator();
 	BuildTargetWheelGears();
 	BuildTargetWheelGearPlates();
 	BuildGearStick();
 	BuildTargetMountPlate();
-	BuildBiasPlate();
 	BuildPhotonShield();
 	BuildPhotonShieldClamps();
 	BuildPhotonShieldClampBolts();
 	BuildCollectorMagnet();
 	BuildMagnetClampChamber();
-	BuildMagnetClampPhotonShield();
 	BuildElectroBox();
 	BuildShieldCovering();
 	BuildMagnetCovering();
 	BuildColdFinger();  
 	BuildS3CableHolder();
-	BuildBeamPipe();
+	BuildConicalCollimator();
+	BuildXrayInsert();
+	BuildCollimator();
 
-	PlaceTargetChamberFrontRing(expHallLog);
+	// 	PlaceTargetChamberFrontRing(expHallLog);
 	PlaceTargetChamberSphere(expHallLog);
-
 	PlaceTargetChamberCylinderDownstream(expHallLog); 
-
-	PlaceTargetWheel(expHallLog); 
-	PlaceTargetWheelExtension(expHallLog); 
-	PlaceCollimator(expHallLog);  
-
 	PlaceTargetWheelGears(expHallLog); 
 	PlaceTargetWheelGearPlates(expHallLog); 
 	PlaceGearStick(expHallLog); 
 	PlaceTargetMountPlate(expHallLog); 
-	PlaceBiasPlate(expHallLog); //commented out originally
-
-
 	PlacePhotonShield(expHallLog); 
 	PlaceShieldCovering(expHallLog);
 	PlacePhotonShieldClamps(expHallLog);
 	PlaceElectroBox(expHallLog);
 	PlaceColdFinger(expHallLog); 
-
 	PlaceS3CableHolder(expHallLog);
+	PlaceConicalCollimator(expHallLog);
+	PlaceXrayInsert(expHallLog);
 
-	PlaceBeamPipe(expHallLog); //commented out originally (blocked beam) as inner radius was 0
 
-	G4double fFrameDegrees[2] = {0*CLHEP::deg, -110*CLHEP::deg};
-	for(G4int i=0; i<2; i++) {
-		PlaceTargetFrame(fFrameDegrees[i], expHallLog);
+	if(ApparatusSpiceTargetChamber::fTargetZ < -4.00){
+		G4cout << "Building target pedestals" << G4endl;
+
+		PlaceTargetWheel(expHallLog); 
+		PlaceTargetWheelExtension(expHallLog);
+		PlaceCollimator(expHallLog); 
+
+		BuildTargetFrame();//First draft of target bool
+
+
+		G4double fFrameDegrees[2] = {0*deg, -110*deg};
+		for(G4int i=0; i<2; i++)
+			PlaceTargetFrame(fFrameDegrees[i], expHallLog);
+
+		G4double fRodDegrees[7] = {40*deg, -40*deg, -70*deg, -150*deg, 91.2*deg, 125.*deg, 158.8*deg};
+		G4double fRodRadius[7] = {10.624, 10.624, 10.624, 10.624, 18.166, 8.4, 18.166 };
+		for(G4int i=0; i<4; i++){
+			PlaceTargetWheelRods(fRodDegrees[i], fRodRadius[i], expHallLog);
+		}
+	}else{
+		//Th
+		PlaceTargetWheel(expHallLog); 
+		PlaceTargetWheelExtension(expHallLog);
+		PlaceCollimator(expHallLog); 
+
+		G4cout << "Target Pedestals not built due to beam position" << G4endl;
 	}
 
-	G4double fRodDegrees[7] = {40*CLHEP::deg, -40*CLHEP::deg, -70*CLHEP::deg, -150*CLHEP::deg, 91.2*CLHEP::deg, 125.*CLHEP::deg, 158.8*CLHEP::deg};
-	G4double fRodRadius[7] = {10.624, 10.624, 10.624, 10.624, 18.166, 8.4, 18.166 };
-	for(G4int i=0; i<7; i++)
-		PlaceTargetWheelRods(fRodDegrees[i], fRodRadius[i], expHallLog);
 
 	for(G4int copyID=0; copyID<fNumberOfMagnets; copyID++)    {
 		PlaceCollectorMagnet(copyID, expHallLog);
 		PlaceMagnetClampChamber(copyID, expHallLog);
-		PlaceMagnetClampPhotonShield(copyID, expHallLog);
 		PlacePhotonShieldClampBolts(copyID, expHallLog);
 		PlaceMagnetCovering(copyID, expHallLog);
 	}
@@ -436,25 +440,6 @@ void ApparatusSpiceTargetChamber::BuildTargetWheelRods() {
 	G4Material* sMaterial = G4Material::GetMaterial(fTargetWheelMaterial);
 	fRodLogical = new G4LogicalVolume(sRodTubs, sMaterial, "TargetRodsLog", 0, 0, 0);
 	fRodLogical->SetVisAttributes(sVisAtt);
-}
-
-void ApparatusSpiceTargetChamber::BuildBeamPipe() {
-	// Visualisation
-	G4VisAttributes* sVisAtt = new G4VisAttributes(G4Colour(AL_COL));
-	sVisAtt->SetVisibility(true);
-
-	// Dimensions
-	G4double sDimRadOuter = fPipeOuterRadius;
-	G4double sDimRadInner = fPipeInnerRadius;
-	G4double sDimHalfThick = fPipeZLength / 2.;
-
-	// Shapes
-	G4Tubs* sPipe = new G4Tubs("sPipe", sDimRadInner, sDimRadOuter, sDimHalfThick, 0, 360*CLHEP::deg);
-
-	// Logical
-	G4Material* sMaterial = G4Material::GetMaterial(fBeamPipeMaterial);
-	fBeamPipeLog = new G4LogicalVolume(sPipe, sMaterial, "BeamPipeLog", 0, 0, 0);
-	fBeamPipeLog->SetVisAttributes(sVisAtt);
 }
 
 void ApparatusSpiceTargetChamber::BuildTargetFrame() {
@@ -806,37 +791,6 @@ void ApparatusSpiceTargetChamber::BuildTargetMountPlate(){
 	fTargetMountPlateLog->SetVisAttributes(VisAtt);
 } // end BuildTargetMountPlate
 
-
-void ApparatusSpiceTargetChamber::BuildBiasPlate(){
-	// ** Visualisation
-	G4VisAttributes* VisAtt = new G4VisAttributes(G4Colour(AL_COL));
-	VisAtt->SetVisibility(true);
-
-	// ** Dimensions
-	G4double PlateOuterRadius = fBiasPlateOuterRadius;
-	G4double BiasPlateHalfThickness = fBiasPlateThickness/2.;
-	// Target Wheel Cut
-	G4double WheelRadius = fTargetWheelRadius;
-	G4double WheelHalfThickness = fTargetWheelThickness;
-	// Notch
-	G4double BoxLength = fBiasPlateCut/2.;
-
-	// ** Shapes
-	G4Tubs* BiasPlatePre = new G4Tubs("BiasPlatePre", 0, PlateOuterRadius, BiasPlateHalfThickness, 0, 360*CLHEP::deg);
-	G4Tubs* TargetWheel = new G4Tubs("TargetWheel", 0, WheelRadius, WheelHalfThickness, 0, 360*CLHEP::deg);
-	G4Box* NotchBox = new G4Box("NotchBox", BoxLength, BoxLength, BoxLength);	
-
-	G4double offset = fTargetWheelOffset / sqrt(2.);
-	G4ThreeVector move(offset, offset, 0);
-	G4SubtractionSolid* BiasPlatePre2 = new G4SubtractionSolid("BiasPlatePre2", BiasPlatePre, TargetWheel, 0, move);
-	G4ThreeVector move2(PlateOuterRadius, PlateOuterRadius, 0);
-	G4SubtractionSolid* BiasPlate = new G4SubtractionSolid("BiasPlate", BiasPlatePre2, NotchBox, 0, move2);
-
-	// ** Logical
-	G4Material* biasPlateMaterial = G4Material::GetMaterial(fBiasPlateMaterial);
-	fBiasPlateLog = new G4LogicalVolume(BiasPlate, biasPlateMaterial, "BiasPlateLog", 0, 0, 0);
-}
-
 void ApparatusSpiceTargetChamber::BuildPhotonShield()
 {
 	// ** Visualization
@@ -926,7 +880,7 @@ void ApparatusSpiceTargetChamber::BuildPhotonShield()
 	// PhotonShieldTemp_12 can be considered a template.  To segment the shield into layers I will create a cutting box
 	G4Box* PhotonShieldSlicer = new G4Box("PhotonShieldSlicer",50*CLHEP::mm, 50*CLHEP::mm, 50*CLHEP::mm);
 
-	// Cut out the first layar
+	// Cut out the first layer
 	G4ThreeVector slicer(0, 0, -(50+HalfLength-(fPhotonShieldLayerThreeThickness+fPhotonShieldLayerTwoThickness)));
 	G4SubtractionSolid* FirstLayer = new G4SubtractionSolid("FirstLayer", PhotonShieldTemp_6, PhotonShieldSlicer, 0, slicer);
 
@@ -955,17 +909,18 @@ void ApparatusSpiceTargetChamber::BuildPhotonShield()
 void ApparatusSpiceTargetChamber::BuildShieldCovering()
 {
 	// ** Visualization
-	G4VisAttributes* VisAtt = new G4VisAttributes(G4Colour(KAPTON_COL));
+	G4VisAttributes* VisAtt = new G4VisAttributes(G4Colour(0.0,0.2,0.8));
 	VisAtt->SetVisibility(true);
 
 	// ** Build Photon Shield Solid
-	//G4double InnerRadius = PhotonShieldInnerRadius; 
+	//G4double InnerRadius = fPhotonShieldInnerRadius; 
 	G4double FrontOuterRadius = fPhotonShieldFrontRadius;
 	G4double BackOuterRadius = fPhotonShieldBackRadius;
 	G4double HalfLength = fPhotonShieldLength/2.;  
-	G4Cons* PhotonShield = new G4Cons("PhotonShield", 0, BackOuterRadius, 0, FrontOuterRadius,	HalfLength, 0, 2*CLHEP::pi);
+	G4Cons* PhotonShield = new G4Cons("PhotonShield", (BackOuterRadius + 0.1*CLHEP::mm), (BackOuterRadius + 0.2*CLHEP::mm),(FrontOuterRadius + 0.1*CLHEP::mm),
+			(FrontOuterRadius + 0.2*CLHEP::mm), HalfLength, 0, 2*CLHEP::pi);//made smaller
 
-	// ------ 																							
+	/*// ------ 																							
 	// Photon Shield Clamps
 	// -- Dimensions  																							
 	G4double DetectorEndRadius = fPsDetClampRadius;
@@ -978,30 +933,33 @@ void ApparatusSpiceTargetChamber::BuildShieldCovering()
 	// -- Union
 	G4ThreeVector move(0, 0, HalfLength + TargetEndHalf - 0.01*CLHEP::mm);
 	G4UnionSolid* PhotonShield_2 = new G4UnionSolid("PhotonShield_2", PhotonShield, TargetClamp, 0, move);
+
+	G4UnionSolid* PhotonShield_3 = new G4UnionSolid("PhotonShield_3", PhotonShield_2, DetClamp, 0, move);	
 	move.setZ(-HalfLength);
-	G4UnionSolid* PhotonShield_3 = new G4UnionSolid("PhotonShield_3", PhotonShield_2, DetClamp, 0, move);
-	// ------
+	// ------*/
 
 
-	// ** Build Shield Covering
-	G4double theta = atan(2 * HalfLength / (BackOuterRadius - FrontOuterRadius));
-	G4double alpha = 90*CLHEP::deg - theta;
-	G4double CoverFrontRadius = FrontOuterRadius - (fShieldCoatingThickness / tan(theta)) +
+	/*	// ** Build Shield Covering
+		G4double theta = atan(2 * HalfLength / (BackOuterRadius - FrontOuterRadius));
+		G4double alpha = 90*CLHEP::deg - theta;
+		G4double CoverFrontRadius = FrontOuterRadius - (fShieldCoatingThickness / tan(theta)) +
 		(fShieldCoatingThickness * cos(alpha));
-	G4double CoverBackRadius = BackOuterRadius + (fShieldCoatingThickness / tan(theta)) +
+		G4double CoverBackRadius = BackOuterRadius + (fShieldCoatingThickness / tan(theta)) +
 		(fShieldCoatingThickness * cos(alpha));
 
-	G4Cons* ShieldCoverPre = new G4Cons("ShieldCoverPre", 0, CoverBackRadius, 0, CoverFrontRadius,	
-			HalfLength + fShieldCoatingThickness, 0, 2*CLHEP::pi);
+		G4Cons* ShieldCoverPre = new G4Cons("ShieldCoverPre", 0, CoverBackRadius, 0, CoverFrontRadius,	
+		HalfLength + fShieldCoatingThickness, 0, 2*CLHEP::pi);
 
 	// ** Deduct Shield from Cover
-	G4SubtractionSolid* ShieldCover = new G4SubtractionSolid("ShieldCover", ShieldCoverPre, PhotonShield_3);
+	G4SubtractionSolid* ShieldCover = new G4SubtractionSolid("ShieldCover", ShieldCoverPre, PhotonShield_3);//LOOP*/
+
 
 	// ------
 	// Magnet Clamps
 	// -- Dimensions
 	G4double ClampHalfThickness = fPlateOneThickness/2. + fPsClampThicknessBuffer;
 	G4Box* MagnetClamp = new G4Box("MagnetClamp", fPsClampLength/2., ClampHalfThickness, fPhotonShieldLength);
+
 	// -- Rotation & Translation
 	G4RotationMatrix* cutRot = new G4RotationMatrix; 
 	G4double transRadial = fPlateOneEdgeX + fPsClampLength/2. - fPsClampPsbuffer;
@@ -1013,7 +971,7 @@ void ApparatusSpiceTargetChamber::BuildShieldCovering()
 	transX = transRadial*cos((0*90.+45.)*CLHEP::deg);
 	transY = transRadial*sin((0*90.+45.)*CLHEP::deg);
 	trans.set(transX,transY,transZ);
-	G4SubtractionSolid* ShieldCover_2 = new G4SubtractionSolid("PhotonShield", ShieldCover,MagnetClamp,cutRot,trans);      
+	G4SubtractionSolid* ShieldCover_2 = new G4SubtractionSolid("PhotonShield", PhotonShield,MagnetClamp,cutRot,trans);      
 	cutRot->rotateZ(-90.*CLHEP::deg);
 	transX = transRadial*cos((1*90.+45.)*CLHEP::deg);
 	transY = transRadial*sin((1*90.+45.)*CLHEP::deg);
@@ -1194,12 +1152,6 @@ void ApparatusSpiceTargetChamber::BuildMagnetCovering()
 	G4VisAttributes* VisAtt = new G4VisAttributes(G4Colour(PEEK_COL));
 	VisAtt->SetVisibility(true);
 
-	// ** Build Plate One
-	G4Box* PlateOnePreCut = new G4Box("PlateOnePreCut", fPlateOneLength/2., 
-			fPlateOneThickness/2., fPlateOneHeight/2.);
-	G4Box* PlateOneCutBox = new G4Box("PlateOneCutBox", fPlateOneLength/2., 
-			fPlateOneThickness/2. + 1., fPlateOneHeight/2.);
-
 	// ( Cut box is rotated and moved, exact movement calculated below )
 	G4double AngleToCorner = atan(fPlateOneLength/fPlateOneHeight);
 	G4double HypotenuseToCorner = sqrt(pow(fPlateOneHeight/2., 2) + pow(fPlateOneLength/2., 2));
@@ -1221,46 +1173,31 @@ void ApparatusSpiceTargetChamber::BuildMagnetCovering()
 	G4ThreeVector TranslateCutBox(-TranslateCutX, 0, TranslateCutZ);
 	G4RotationMatrix* RotateCutBox = new G4RotationMatrix;
 	RotateCutBox->rotateY(fCuttingBoxAngle);
-	G4SubtractionSolid* PlateOne = new G4SubtractionSolid("PlateOne", PlateOnePreCut, PlateOneCutBox,
-			RotateCutBox, TranslateCutBox);
-
-	// ** Build Plate Two
-	G4Box* PlateTwo = new G4Box("PlateTwo", fPlateTwoLength/2., 
-			(fPlateTwoThickness + fPlateOneThickness/2.),
-			fPlateTwoHeight/2.);
 
 	// ** Combine Plates
 	G4ThreeVector TranslatePlateTwo(fPlateOneLength/2. - fPlateTwoLength/2., 0, 0);
-	G4UnionSolid* PlateCombo = new G4UnionSolid("PlateCombo", PlateOne, PlateTwo, 0, TranslatePlateTwo);
 
 	// ------------
 	// Photon Shield Clamp
 	// -- Dimensions
-	G4double ClampHalfThickness = fPlateOneThickness/2. + fPsClampThicknessBuffer;
 	G4double ClampHalfLength = (fPlateOneLength - fPlateTwoLength + fPsClampPsbuffer + fPsClampChamberBuffer)/2.;
 	G4double ClampHalfHeight = fPhotonShieldLength/2.;
-	// -- Shapes
-	G4Box* ClampMain = new G4Box("ClampMain", ClampHalfLength, ClampHalfThickness, ClampHalfHeight);
 	// -- Union
 	G4double xtrans = (fPlateOneLength + fPsClampLength)/2. - fPsClampLength + fPsClampPsbuffer;
 	G4double ztrans = -fPhotonShieldBackFacePos - fPlateOneHeight/2. - fDistanceFromTarget - fPhotonShieldLength/2.;
 	G4ThreeVector MoveClamp(-xtrans, 0, -ztrans);
-	G4UnionSolid* PlateAndClamp = new G4UnionSolid("PlateAndClamp", PlateCombo, ClampMain, 0, MoveClamp);
 	// --------------
 
 
 	// --------------
 	// Chamber Clamps
 	// -- Dimensions
-	ClampHalfThickness = fMclampChamberThickness/2.;
 	ClampHalfLength = fMclampChamberLength/2.;
 	ClampHalfHeight = fMclampChamberHeight/2.;
 	// -- Shape
-	G4Box* ClampMain2 = new G4Box("ClampMain", ClampHalfLength, ClampHalfThickness, ClampHalfHeight);
 	xtrans = -(ClampHalfLength + fPlateOneLength/2.) + 
 		(fMclampChamberLength - (fTargetChamberCylinderInnerRadius - (fPlateOneLength + fPlateOneEdgeX)));
 	G4ThreeVector MoveAgain(-xtrans, 0, -ClampHalfHeight + fPlateOneHeight/2.);
-	G4UnionSolid* TotalDeduction = new G4UnionSolid("TotalDeduction", PlateAndClamp, ClampMain2, 0, MoveAgain);
 	// ---------------
 
 
@@ -1287,12 +1224,9 @@ void ApparatusSpiceTargetChamber::BuildMagnetCovering()
 	G4UnionSolid* CoverCombo = new G4UnionSolid("CoverCombo", PlateOneCover, PlateTwoCover, 0, TranslatePlateTwo);
 
 	// ---------------------
-	// Deduct Magnet from Cover
-	G4SubtractionSolid* MagnetCover = new G4SubtractionSolid("MagnetCover", CoverCombo, TotalDeduction);
-
 	// ** Logical Volume
 	G4Material* magnetCoverMaterial = G4Material::GetMaterial(fMagnetCoverMaterial);
-	fMagnetCoverLog = new G4LogicalVolume(MagnetCover, magnetCoverMaterial, "MagnetCoverLog", 0, 0, 0);
+	fMagnetCoverLog = new G4LogicalVolume(CoverCombo, magnetCoverMaterial, "MagnetCoverLog", 0, 0, 0);
 	fMagnetCoverLog->SetVisAttributes(VisAtt);
 }
 
@@ -1325,69 +1259,6 @@ void ApparatusSpiceTargetChamber::BuildMagnetClampChamber(){
 	fMclampChamberLog->SetVisAttributes(VisAtt);
 } // end::BuildMagnetClampChamber()
 
-void ApparatusSpiceTargetChamber::BuildMagnetClampPhotonShield(){
-	// ** Visualisation
-	G4VisAttributes* VisAtt = new G4VisAttributes(G4Colour(AL_COL));
-	VisAtt->SetVisibility(true);
-
-	// ** Dimensions
-	G4double ClampHalfThickness = fPlateOneThickness/2. + fPsClampThicknessBuffer;
-	G4double ClampHalfLength = (fPlateOneLength - fPlateTwoLength + fPsClampPsbuffer + fPsClampChamberBuffer)/2.;
-	G4double ClampHalfHeight = fPhotonShieldLength/2.;
-
-	// ** Shapes
-	G4Box* ClampMain = new G4Box("ClampMain", ClampHalfLength, ClampHalfThickness, ClampHalfHeight);
-
-	// ------------------------
-	// Rebuild Magnets
-	// ** Build Plate One
-	G4Box* PlateOnePreCut = new G4Box("PlateOnePreCut", fPlateOneLength/2., 
-			fPlateOneThickness/2., fPlateOneHeight/2.);
-	G4Box* PlateOneCutBox = new G4Box("PlateOneCutBox", fPlateOneLength/2., 
-			fPlateOneThickness/2. + 1., fPlateOneHeight/2.);
-
-	// ( Cut box is rotated and moved, exact movement calculated below )
-	G4double AngleToCorner = atan(fPlateOneLength/fPlateOneHeight);
-	G4double HypotenuseToCorner = sqrt(pow(fPlateOneHeight/2., 2) + pow(fPlateOneLength/2., 2));
-	G4double AngleDifference, TranslateCutX, TranslateCutZ;
-	if(AngleToCorner < fCuttingBoxAngle)
-	{
-		AngleDifference = fCuttingBoxAngle - AngleToCorner;
-		TranslateCutX = (HypotenuseToCorner * sin(AngleDifference)) + fPlateOneLength/2.;
-		TranslateCutZ = (HypotenuseToCorner * cos(AngleDifference)) - fPlateOneHeight/2.
-			+ fPlateOneLowerHeight;
-	} else if(AngleToCorner > fCuttingBoxAngle) {
-		AngleDifference = AngleToCorner - fCuttingBoxAngle;
-		TranslateCutX = fPlateOneLength/2. - (HypotenuseToCorner * sin(AngleDifference));
-		TranslateCutZ = (HypotenuseToCorner * cos(AngleDifference)) - fPlateOneHeight/2.
-			+ fPlateOneLowerHeight;
-	}
-	G4ThreeVector TranslateCutBox(-TranslateCutX, 0, TranslateCutZ);
-	G4RotationMatrix* RotateCutBox = new G4RotationMatrix;
-	RotateCutBox->rotateY(fCuttingBoxAngle);
-	G4SubtractionSolid* PlateOne = new G4SubtractionSolid("PlateOne", PlateOnePreCut, PlateOneCutBox,
-			RotateCutBox, TranslateCutBox);
-
-	// ** Build Plate Two
-	G4Box* PlateTwo = new G4Box("PlateTwo", fPlateTwoLength/2., 
-			(fPlateTwoThickness + fPlateOneThickness/2.),
-			fPlateTwoHeight/2.);
-
-	// ** Combine Plates
-	G4ThreeVector TranslatePlateTwo(fPlateOneLength/2. - fPlateTwoLength/2., 0, 0);
-	G4UnionSolid* PlateCombo = new G4UnionSolid("PlateCombo", PlateOne, PlateTwo, 0, TranslatePlateTwo);
-	// ---------------------------------
-
-	G4double xtrans = (fPlateOneLength + fPsClampLength)/2. - fPsClampLength + fPsClampPsbuffer;
-	G4double ztrans = -fPhotonShieldBackFacePos - fPlateOneHeight/2. - fDistanceFromTarget - fPhotonShieldLength/2.;
-	G4ThreeVector trans(xtrans, 0, ztrans);
-	G4SubtractionSolid* MagnetClamp = new G4SubtractionSolid("MagnetClamp", ClampMain, PlateCombo, 0, trans);
-
-	// ** Logical
-	G4Material* clampMaterial = G4Material::GetMaterial(fMagnetClampMaterial);
-	fMclampShieldLog = new G4LogicalVolume(MagnetClamp, clampMaterial, "MagnetClampShieldLog", 0, 0, 0);
-	fMclampShieldLog->SetVisAttributes(VisAtt);
-} // end::BuildMagnetClampPhotonShield()
 
 void ApparatusSpiceTargetChamber::BuildElectroBox()
 {
@@ -1456,6 +1327,76 @@ void ApparatusSpiceTargetChamber::BuildS3CableHolder()
 	fS3CaseLogical = new G4LogicalVolume(sBox, sMaterial, "s3CaseLog", 0, 0, 0);
 	fS3CaseLogical->SetVisAttributes(sVisAtt);
 }
+void ApparatusSpiceTargetChamber::BuildConicalCollimator() {
+
+	// ** Dimensions
+
+
+	// ** shapes
+	G4Tubs* solid_mid_cyl = new G4Tubs("mid_cyl", 3.15*mm, 4.5*mm, 20.25*mm, 0, 360*CLHEP::deg);
+	G4Tubs* solid_inner_cyl = new G4Tubs("inner_cyl", 2.9*mm, 3.15*mm, 7.75*mm, 0, 360*CLHEP::deg);
+	G4Tubs* solid_outer_cyl = new G4Tubs("outer_cyl", 4.5*mm, 4.9*mm, 14.25*mm, 0, 360*CLHEP::deg);
+	G4Tubs* edge1 = new G4Tubs("edges", 4.9*mm, 6.9*mm, 1.0*mm, -20.*CLHEP::deg, 40.*CLHEP::deg);
+	G4Tubs* edge2 = new G4Tubs("edges", 4.9*mm, 6.9*mm, 1.0*mm, 70.*CLHEP::deg, 40.*CLHEP::deg);
+	G4Tubs* edge3 = new G4Tubs("edges", 4.9*mm, 6.9*mm, 1.0*mm, 160.*CLHEP::deg, 40.*CLHEP::deg);
+	G4Tubs* edge4 = new G4Tubs("edges", 4.9*mm, 6.9*mm, 1.0*mm, 250.*CLHEP::deg, 40.*CLHEP::deg);
+
+	G4ThreeVector sTrans1(0., 0., -12.5*mm);
+	G4ThreeVector sTrans2(0., 0., -6.*mm);
+	G4ThreeVector sTrans3(0, 0, -19.25*mm);
+
+	G4RotationMatrix* sRotate = new G4RotationMatrix;
+	G4UnionSolid* midandinner = new G4UnionSolid("Mid+Outer", solid_mid_cyl, solid_inner_cyl, sRotate, sTrans1);
+	G4UnionSolid* threecyl = new G4UnionSolid("ThreeCyl", midandinner, solid_outer_cyl, sRotate, sTrans2);
+	G4UnionSolid* threecyl1edge = new G4UnionSolid("threecyl1edge", threecyl, edge1, sRotate, sTrans3);
+	G4UnionSolid* threecyl2 = new G4UnionSolid("Threecyl2", threecyl1edge, edge2, sRotate, sTrans3);
+	G4UnionSolid* threecyl3 = new G4UnionSolid("ThreeCyl3", threecyl2, edge3, sRotate, sTrans3);
+	G4UnionSolid* threecyl4edge = new G4UnionSolid("ThreeCyl4edge", threecyl3, edge4, sRotate, sTrans3);
+
+	// ** Logical
+	G4Material* sMaterial = G4Material::GetMaterial(this->fConicalCollimatorMaterial);
+	fConicalCollimatorLog = new G4LogicalVolume(threecyl4edge,         //its solid
+			sMaterial,          //its material
+			"threecyl4edge");           //its name
+
+}
+
+void ApparatusSpiceTargetChamber::BuildXrayInsert(){
+	G4VisAttributes* sVisAtt = new G4VisAttributes(G4Colour(CU_COL));
+	sVisAtt->SetVisibility(true);
+
+	// ** shapes
+	G4Tubs* solid_insert_cyl = new G4Tubs("insert_cyl", 3.68*mm, 8.5*mm, 1.5*mm, 0, 360*CLHEP::deg);
+	G4Tubs* solid_insert_edges = new G4Tubs("insert_edge", 4.55*mm, 8.5*mm, 1.8*mm, 25.*CLHEP::deg, 40.*CLHEP::deg);
+	G4Tubs* solid_insert_holes = new G4Tubs("insert_hole", 0.*mm, 2.*mm, 5.*mm, 0, 360*CLHEP::deg);
+
+	G4RotationMatrix* sRotate1 = new G4RotationMatrix;
+	G4ThreeVector sTrans4(0., 0., -3.3*mm);
+	G4UnionSolid* cyland1 = new G4UnionSolid("cyl+edge1", solid_insert_cyl, solid_insert_edges, sRotate1, sTrans4);
+	sRotate1->rotateZ(90.*CLHEP::deg);
+	G4UnionSolid* cyland2 = new G4UnionSolid("cyl+edge2", cyland1, solid_insert_edges, sRotate1, sTrans4);
+	sRotate1->rotateZ(90.*CLHEP::deg);
+	G4UnionSolid* cyland3 = new G4UnionSolid("cyl+edge3", cyland2, solid_insert_edges, sRotate1, sTrans4);
+	sRotate1->rotateZ(90.*CLHEP::deg);
+	G4UnionSolid* cyland4 = new G4UnionSolid("cyl+edge4", cyland3, solid_insert_edges, sRotate1, sTrans4);
+
+	sRotate1->rotateZ(45.*CLHEP::deg);
+	G4ThreeVector sTrans5(0., 8.5*mm, 3.3*mm);
+	G4SubtractionSolid* c4hole4edge1 = new G4SubtractionSolid("c4hole4", cyland4, solid_insert_holes, sRotate1, sTrans5);
+	sTrans5 = G4ThreeVector(0., -8.5*mm, 3.3*mm);
+	G4SubtractionSolid* c4hole4edge2 = new G4SubtractionSolid("c4hole4", c4hole4edge1, solid_insert_holes, sRotate1, sTrans5);
+	sTrans5 = G4ThreeVector(8.5*mm, 0., 3.3*mm);
+	G4SubtractionSolid* c4hole4edge3 = new G4SubtractionSolid("c4hole4", c4hole4edge2, solid_insert_holes, sRotate1, sTrans5);
+	sTrans5 = G4ThreeVector(-8.5*mm, 0., 3.3*mm);
+	G4SubtractionSolid* c4hole4complete = new G4SubtractionSolid("c4hole4", c4hole4edge3, solid_insert_holes, sRotate1, sTrans5);
+
+	// ** Logical  
+	G4Material* sMaterial = G4Material::GetMaterial(this->fXRayInsertMaterial);
+	fXRayInsertLog = new G4LogicalVolume(c4hole4complete,         //its solid
+			sMaterial,          //its material
+			"c4hole4");           //its name
+	fXRayInsertLog->SetVisAttributes(sVisAtt);
+}
 
 // **************************************************************************************************
 // **************************************************************************************************
@@ -1478,15 +1419,6 @@ void ApparatusSpiceTargetChamber::PlaceTargetFrame(G4double d, G4LogicalVolume* 
 	fFramePhysical = new G4PVPlacement(sRotate, sTranslate, fFrameLogical, "TargetFrame", expHallLog, false, 0);
 }
 
-void ApparatusSpiceTargetChamber::PlaceBeamPipe(G4LogicalVolume* expHallLog) {
-	G4double sOffset = fPhotonShieldBackFacePos - (fPipeZLength / 2.) - (fPsDetClampThickness);
-	G4ThreeVector move(0,0,sOffset);
-
-	G4RotationMatrix* rotate = new G4RotationMatrix;
-
-	fBeamPipePhys = new G4PVPlacement(rotate,move, fBeamPipeLog, "BeamPipe", expHallLog,false,0);
-}
-
 void ApparatusSpiceTargetChamber::PlaceTargetWheelRods(G4double a, G4double r, G4LogicalVolume* expHallLog) {
 	G4double sOffset = fTargetWheelOffset; 
 	G4double sOffsetAdj = sOffset - r;
@@ -1506,7 +1438,8 @@ void ApparatusSpiceTargetChamber::PlaceCollimator(G4LogicalVolume* expHallLog) {
 	G4double sOffset = fTargetWheelOffset; 
 	G4double sOffsetAdj = sOffset - 15.2;
 
-	G4double sPosZ = -7.75*CLHEP::mm; 
+	// 	G4double sPosZ = -7.75*CLHEP::mm; 
+	G4double sPosZ = -0.5*CLHEP::mm; 
 	G4double sPosY = (sOffset-sOffsetAdj)*sin(-55*CLHEP::deg);
 	G4double sPosX = sOffset + (sOffset-sOffsetAdj)*cos(-55*CLHEP::deg);
 
@@ -1567,7 +1500,7 @@ void ApparatusSpiceTargetChamber::PlaceTargetWheel(G4LogicalVolume* expHallLog)
 	rotate->rotateZ((0)*CLHEP::deg); 
 
 	G4double offset = fTargetWheelOffset;
-	G4double ZPosition =  fTargetWheelThickness/2. + fTargetWheelOffset; 
+	G4double ZPosition =  fTargetWheelThickness/2.; 
 
 	G4ThreeVector move(offset, 0, ZPosition);
 	fTargetWheelPhys = new G4PVPlacement(rotate, move, fTargetWheelLog,
@@ -1640,18 +1573,6 @@ void ApparatusSpiceTargetChamber::PlaceTargetMountPlate(G4LogicalVolume* expHall
 			"TargetMountPlate", expHallLog,
 			false,0);
 } // end PlaceTargetMountPlate()
-
-void ApparatusSpiceTargetChamber::PlaceBiasPlate(G4LogicalVolume* expHallLog)
-{
-	G4RotationMatrix* rotate = new G4RotationMatrix;  
-	rotate->rotateZ(45*CLHEP::deg); 
-
-	G4double ZOffset = fBiasPlateOffsetZ - fBiasPlateThickness/2. + fTargetWheelOffset;
-	G4ThreeVector move(0,0,ZOffset);
-	fBiasPlatePhys = new G4PVPlacement(rotate, move, fBiasPlateLog,
-			"BiasPlate", expHallLog, 
-			false,0);
-} // end:PlaceBiasPlate()
 
 void ApparatusSpiceTargetChamber::PlacePhotonShield(G4LogicalVolume* expHallLog)
 {
@@ -1798,24 +1719,6 @@ void ApparatusSpiceTargetChamber::PlaceMagnetClampChamber(G4int copyID, G4Logica
 			false,0);
 } // end::PlaceMagnetClampChamber()
 
-void ApparatusSpiceTargetChamber::PlaceMagnetClampPhotonShield(G4int copyID, G4LogicalVolume* expHallLog)
-{
-	G4double XPosition = fPlateOneEdgeX 
-		+ (fPlateOneLength - fPlateTwoLength
-				+ fPsClampPsbuffer + fPsClampChamberBuffer)/2.
-		- fPsClampPsbuffer;
-	G4double ZPosition = fPhotonShieldBackFacePos + fPhotonShieldLength/2. + fMiddleRingOffset;
-
-	G4RotationMatrix* rotation;
-	rotation = RotateMagnets(copyID);
-
-	G4ThreeVector move = TranslateMagnets(copyID, XPosition, ZPosition);
-
-	fMclampShieldPhys = new G4PVPlacement(rotation, move, fMclampShieldLog,
-			"MagnetClampShield", expHallLog, 
-			false, 0);
-
-} // end::PlaceMagnetClampPhotonShield()
 
 void ApparatusSpiceTargetChamber::PlaceElectroBox(G4LogicalVolume* expHallLog)
 {
@@ -1852,7 +1755,38 @@ void ApparatusSpiceTargetChamber::PlaceS3CableHolder(G4LogicalVolume* expHallLog
 
 	fS3CasePhysical = new G4PVPlacement(sRotate, sTranslate, fS3CaseLogical, "s3CableCase", expHallLog, false, 0);
 }
+void ApparatusSpiceTargetChamber::PlaceConicalCollimator(G4LogicalVolume* expHallLog) {
+	G4ThreeVector pos1 = G4ThreeVector(0, 0, -44.*mm);//addition to the photon shield
+	G4RotationMatrix* sRotate = new G4RotationMatrix;
+	sRotate->rotateY(180*deg);
+	fConicalCollimatorPhys = new G4PVPlacement(sRotate,                       //no rotation
+			pos1,                    //at position
+			fConicalCollimatorLog,             //its logical volume
+			"ConicalCollimator",                //its name
+			expHallLog,                //its mother  volume
+			false,                   //no boolean operation
+			false,                       //copy number
+			0);          //overlaps checking
 
+}
+
+void ApparatusSpiceTargetChamber::PlaceXrayInsert(G4LogicalVolume* expHallLog){
+
+	G4double ZPosition = fPhotonShieldBackFacePos + fMiddleRingOffset -fPsDetClampThickness -5.1*mm;
+	G4ThreeVector move(0, 0, ZPosition);
+
+	G4RotationMatrix* sRotate = new G4RotationMatrix;
+	sRotate->rotateY(180*deg);
+	sRotate->rotateZ(45*deg);
+	fXRayInsertPhys = new G4PVPlacement(sRotate,                       //rotation
+			move,                    //at position
+			fXRayInsertLog,             //its logical volume
+			"XrayClamp",                //its name
+			expHallLog,                //its mother  volume
+			false,                   //no boolean operation
+			false,                       //copy number
+			0);          //overlaps checking
+}
 ////////////////////////////////////////////////////////////////////
 //Translations and Rotations of Magnets (same for all parts)      //
 ////////////////////////////////////////////////////////////////////
@@ -1879,4 +1813,3 @@ G4ThreeVector ApparatusSpiceTargetChamber::TranslateMagnets(G4int copyID, G4doub
 	}
 	return G4ThreeVector(XPosition, YPosition, ZPosition);
 }
-

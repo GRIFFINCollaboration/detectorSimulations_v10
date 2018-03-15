@@ -3,6 +3,11 @@ detectorSimulations_v10
 
 The detectorSimulations_v10 package contains the Geant4 simulations for GRIFFIN, TIGRESS, and all of their auxiliary detectors.  Please note that in order to respect our non-disclosure agreements, all source containing third party IP have been omitted from this repo, and can be obtained from your colleagues directly at the lab.
 
+# Release
+
+version | DOI
+--------|------
+1.0.0   | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1123461.svg)](https://doi.org/10.5281/zenodo.1123461)
 
 # Setup
 

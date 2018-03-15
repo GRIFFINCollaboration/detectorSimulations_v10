@@ -24,64 +24,52 @@
 // ********************************************************************
 //
 //
-// $Id: PrimaryGeneratorMessenger.hh,v 1.1 2010-10-18 15:56:17 maire Exp $
+// $Id: DetectorConstruction.hh,v 1.1 2010-10-18 15:56:17 maire Exp $
 // GEANT4 tag $Name: geant4-09-04-patch-02 $
 //
-//
+// 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef PRIMARYGENERATORMESSENGER_HH
-#define PRIMARYGENERATORMESSENGER_HH
+#ifndef ApparatusGenericTarget_h
+#define ApparatusGenericTarget_h 1
 
-#include "G4UImessenger.hh"
+#include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
-#include "G4SystemOfUnits.hh"
-class PrimaryGeneratorAction;
 
-class G4UIdirectory;
-class G4UIcmdWithADouble;
-class G4UIcmdWithADoubleAndUnit;
-class G4UIcmdWith3Vector;
-class G4UIcmdWith3VectorAndUnit;
-class G4UIcmdWithAString;
-class G4UIcommand;
-class G4UIcmdWithAnInteger;
-class G4UIcmdWithABool;
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-class PrimaryGeneratorMessenger: public G4UImessenger
+class ApparatusGenericTarget
 {
-public:
-    PrimaryGeneratorMessenger(PrimaryGeneratorAction*);
-    virtual ~PrimaryGeneratorMessenger();
+  public:
+    ApparatusGenericTarget();
+    ~ApparatusGenericTarget();
 
-public:
-    void SetNewValue(G4UIcommand*, G4String);
+  private:
+    // Logical volumes        
+    G4LogicalVolume* fTargetLog;    
 
-private:
-    PrimaryGeneratorAction*        fAction;
+    // Assembly volumes
+    G4AssemblyVolume* fAssembly;
 
-    G4UIcmdWithAnInteger*          fNumberOfDecayingLaBrDetectorsCmd;
-    G4UIcmdWithADoubleAndUnit*     fEfficiencyEnergyCmd;
-    G4UIcmdWith3Vector*            fEfficiencyDirectionCmd;
-    G4UIcmdWith3VectorAndUnit*     fEfficiencyPositionCmd;
-    G4UIcmdWithAString*            fEfficiencyParticleCmd;
-    G4UIcmdWith3Vector*            fEfficiencyPolarizationCmd;
-    G4UIcmdWithADoubleAndUnit*     fConeRadiusCmd;//SPICE cone radius
-    G4UIcmdWithADoubleAndUnit*     fConeZValueCmd;//SPICE cone with values
-    G4UIcmdWithADoubleAndUnit*     fConeRValueCmd;
-    G4UIcmdWithADoubleAndUnit*     fConeAngleCmd;
-    G4UIcmdWithADoubleAndUnit*     fConeMinAngleCmd;
-    G4UIcmdWithADoubleAndUnit*     fBeamSpotSigmaCmd;
-    G4UIcmdWithAnInteger* 	   fBeamDistroCmd;
-    G4UIcmdWithAString* 	   fBeamFileCmd;
-    G4UIcmdWithAString*		   fSourceBeamCmd;
+  private: 
+    G4String fTargetMaterial;
+    G4double fTargetLengthX;   
+    G4double fTargetLengthY;
+    G4double fTargetLengthZ;
+
+  public: 
+    G4int Build(G4String, G4double, G4double, G4double); 
+    G4int PlaceApparatus(G4LogicalVolume*, G4ThreeVector, G4RotationMatrix*); 
+
+  private: 
+    G4Box* BuildTarget();
+    
+  private: 
+    G4int BuildTargetVolume();           
+        
+  private:
+    G4ThreeVector GetDirectionXYZ(G4double, G4double);
 };
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
 

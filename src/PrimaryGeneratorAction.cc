@@ -37,7 +37,8 @@
 #include "PrimaryGeneratorMessenger.hh" // for command-based data input
 
 #include "Global.hh"
-#include "DetectorConstruction.hh" //for detector based information
+#include "globals.hh"
+#include "G4ThreeVector.hh"
 
 #include "G4Event.hh"
 #include "G4ParticleGun.hh"
@@ -47,20 +48,22 @@
 #include "G4Geantino.hh"
 #include "Randomize.hh"
 
-//#include <stdlib.h> //for abs
+#include "DetectorConstruction.hh" //for detector based information
+#include "HistoManager.hh"
+#include "BeamDistribution.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* DC)
 : G4VUserPrimaryGeneratorAction(),
-	fParticleGun(0),
+	fParticleGun(NULL),
 	fDetector(DC)
-
 {
 	G4int nParticle = 1;
 	fParticleGun  = new G4ParticleGun(nParticle); //In our code, the gun is called fParticleGun
 	//create a messenger for this class
 	fGunMessenger = new PrimaryGeneratorMessenger(this);
+	fSourceNeeded = false;
 
 	//these 3 lines initialise the Gun, basic values
 	fParticleGun->SetParticleEnergy(0*eV);
@@ -75,11 +78,12 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* DC)
 	fEffPositionBool = false;
 	fEffParticleBool = false;
 	fEffPolarization = false;
-	fEffBeam = false;
+	LaBrinit(); //sets up default variables - messy having them all declared here
 
-	fDistToSiliFromParticleCreation = 107.50685;
+	fBeamSpotSigma = 0.*mm;
 
-	LaBrInit(); //sets up default variables - messy having them all declared here
+	fTargetDistro=false;
+	fNeedFileDistro = false;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -88,6 +92,7 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 {
 	delete fParticleGun;
 	delete fGunMessenger;
+	delete fBeamDistribution;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -192,58 +197,70 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			}
 		}
 		else {
-
 			effPart = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
 		}
 
-		G4ThreeVector thisEffPosition = G4ThreeVector(0.0*mm,0.0*mm,0.0*mm);//in constructor?? //19/7
-		if(fEffPositionBool) thisEffPosition = fEffPosition;
 
+		//////////
+		//ORIGIN CONTROLS 
+		//////////        
+
+		G4double x = 0.*mm;
+		G4double y = 0.*mm;
+		G4double z = 0.*mm;
+		if(fEffPositionBool){
+			x = fEffPosition.x();
+			y = fEffPosition.y();
+			z = fEffPosition.z();	
+		}
+
+		// If we want to simulate a realistic beam spot, instead of perfect pencil beam.
+		if(fBeamSpotSigma>0){
+			x = G4RandGauss::shoot(x,fBeamSpotSigma)*mm;
+			y = G4RandGauss::shoot(y,fBeamSpotSigma)*mm;
+		}
+
+		if(fTargetDistro){
+			z = fLayerStart+G4UniformRand()*fLayerLength;
+		}else if(fNeedFileDistro){
+			z += fBeamDistribution->GetRandom();
+		}
+
+		G4ThreeVector thisEffPosition = G4ThreeVector(x,y,z);//in constructor
+
+		//////////
 		//DIRECTION CONTROLS (directly forced, beam, or cone)
+		//////////
 		G4double effRandCosTheta, effRandSinTheta, effRandPhi;
 		G4ThreeVector effdirection;
 		if(fEffDirectionBool) { 
 			effdirection = fEffDirection;
-			// If we want to simulate a realistic beam spot, instead of perfect pencil beam.
-			if(fEffBeam) {// following SetEfficiencyBeamRadius command
-				//G4cout << "Rando " << G4endl;
-				G4double xMonte = 10000.0*m; //monte for monte-carlo, effective errors to a central beam, creates a distribution
-				G4double yMonte = 10000.0*m;// why these values?
-				G4double zMonte = 0.0*m;//SPICE should have z/y errors?? as x along beam axis
-				G4ThreeVector vecMonte;
 
-				G4double directionTheta = fEffDirection.theta();
-				G4double directionPhi = fEffDirection.phi();
+			if(fConeAngleBool){
+				//min max input order doesnt actually matter
+				G4double cmin =cos(fAngleMinInit);
+				G4double cmax =cos(fAngleInit);
+				G4double CosTheta = G4UniformRand()*abs(cmax-cmin);
+				if(cmin<cmax)CosTheta+=cmin;
+				else CosTheta+=cmax;
 
-				while( pow(xMonte,2) + pow(yMonte,2) > pow(fEffBeamRadius,2) ) {//xmonte^2 + ymonte^2 > BeamRadius^2
-					xMonte = (2.*G4UniformRand()-1.0)*fEffBeamRadius;
-					yMonte = (2.*G4UniformRand()-1.0)*fEffBeamRadius;
-				}
+				// 	      G4cout<<asin(SinTheta)<<G4endl;
+				G4double SinTheta = sqrt(1. - pow(CosTheta, 2.0));
+				G4double Phi      = (2.0*CLHEP::pi)*G4UniformRand();
 
-				vecMonte = G4ThreeVector(xMonte,yMonte,zMonte); //rotate# funcs are CLHEP functions
-				vecMonte.rotateY(directionTheta);
-				vecMonte.rotateZ(directionPhi);
+				effdirection = G4ThreeVector(SinTheta*cos(Phi), SinTheta*sin(Phi), CosTheta);
+				// G4cout<<effdirection<<G4endl;
 
-				thisEffPosition = thisEffPosition + vecMonte;
-			}
-
-			if(fConeRadiusBool){// following SetConeRadius command - emits here in 2pi (Not conal as no x-y limits placed
-				// G4cout << "Conal " << G4endl;
-				effdirection = SetCone(fConeRadius);//unit direction in -Z due to SPICE's downstream detector
-				//  G4cout << "Direction " << effdirection << G4endl << " Cone radius " << fConeRadius << "mm"<< G4endl;
-			}
-		}
-		else {
-			//G4cout << "Rando no " << G4endl; //may offer the solution, an altered 2pi rando. Using 4pi for efficiency
+			}	  
+		}else {
+			//G4cout<<"Random "<< G4endl; //may offer the solution, an altered 2pi rando. Using 4pi for efficiency
 			// random direction if no preference provided
-			effRandCosTheta = 2.*G4UniformRand()-1.0; //cos(theta) = 2cos^2(0.5theta)-1 
-			effRandSinTheta = sqrt( 1. - effRandCosTheta*effRandCosTheta ); //(1 - cos^2(theta))^0.5
+			effRandCosTheta = 2.*G4UniformRand()-1.0; //cos(theta) = 2cos^2(0.5theta)-1 ??
+			effRandSinTheta = sqrt( 1. - effRandCosTheta*effRandCosTheta ); //from sin^2(theta)+cos^2(theta)=1
 			effRandPhi      = (360.*deg)*G4UniformRand();
 			effdirection = G4ThreeVector(effRandSinTheta*cos(effRandPhi), effRandSinTheta*sin(effRandPhi), effRandCosTheta);
 			//converts from Spherical polar(physics def.) to cartesian via (rsin(theta)cos(phi),rsin(theta)cos(phi),rcos(theta)) r=1,unit length
 		}
-		//std::cout<<thisEffPosition<<effPart<<effdirection<<fEffEnergy<<std::endl; //gives beam starting pos as expected
-		//effpart is mem location, but all the same indicating just the electron //effdirection is random as expected
 
 		//after running through if-statements above we now have particle type definition, position, mom. direction, and the energy (or their initialised values)
 		fParticleGun->SetParticleDefinition(effPart);
@@ -263,24 +280,23 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	fParticleGun->GeneratePrimaryVertex(anEvent);
 }
 
-G4ThreeVector PrimaryGeneratorAction::SetCone(G4double ConeRadius) {
-	//G4cout << "Set Cone loop " << G4endl;
-	G4double xCone=0.0, yCone=0.0;//107.5mm from particle creation to SiLi, 47mm SiLi radius ->23 deg cone, 23/90 = 0.26237 for angleratio
-	G4ThreeVector coneDirection;
-	G4double xSign, ySign;
-	xSign = G4UniformRand(); ySign = G4UniformRand(); 
-	xCone = G4UniformRand()*(ConeRadius);//Random x up to ConeRadius
-	yCone = G4UniformRand()*(sqrt(pow(ConeRadius,2)-pow(xCone,2)));//Random y from whatever is left
-	xCone=atan(xCone/fDistToSiliFromParticleCreation);//a length at this point, need an angle ratio
-	yCone=atan(yCone/fDistToSiliFromParticleCreation);
-	if (xSign>0.5) xCone=-xCone;//50/50 chance of +or- (sign set here) direction for cone
-	if (ySign>0.5) yCone=-yCone;
-	coneDirection = G4ThreeVector(xCone,yCone,-1.0);
+void PrimaryGeneratorAction::PassEfficiencyPosition( G4ThreeVector  num){fDetector->PassEfficiencyPosition(num);}
 
-	return coneDirection;
+void PrimaryGeneratorAction::PrepareBeamFile(G4String filename){
+	fBeamDistribution = new BeamDistribution(filename);
+	if(fBeamDistribution->Good())fNeedFileDistro = true;
 }
 
-void PrimaryGeneratorAction::LaBrInit() {
+
+void PrimaryGeneratorAction::SetLayeredTargetBeamDistro(G4int layer){
+	fTargetDistro=true;
+	fLayerStart=fDetector->LayeredTargetLayerStart(layer);
+	fLayerLength=fDetector->LayeredTargetLayerStart(layer+1);
+	fLayerLength-=fLayerStart;
+}
+
+
+void PrimaryGeneratorAction::LaBrinit() {
 	//default LaBr properties
 	G4double triangleThetaAngle = 54.735610317245360*deg;
 	// theta

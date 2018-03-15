@@ -45,7 +45,7 @@ class DetectorMessenger;
 #define CU_COL 1.0, 1.0, 0.0
 #define PEEK_COL 0.5, 0.5, 0.0
 #define KAPTON_COL 0.2, 0.7, 0.1
-#define PB_COL 0.0, 0.0, 0.0
+#define PB_COL 0.6, 0.1, 0.1
 #define NDFEB_COL 0.7,0.3,0.3
 #define DELRIN_COL 0.0, 0.0, 1.0
 #ifndef AL_COL
@@ -58,7 +58,7 @@ class DetectorMessenger;
 class ApparatusSpiceTargetChamber
 {
 public:
-	ApparatusSpiceTargetChamber(G4String);
+	ApparatusSpiceTargetChamber(G4String, G4double);
 	~ApparatusSpiceTargetChamber();
 
 public:
@@ -95,13 +95,13 @@ private:
 	G4LogicalVolume* fMagnetLog;
 	G4LogicalVolume* fMagnetCoverLog;
 	G4LogicalVolume* fMclampChamberLog;
-	G4LogicalVolume* fMclampShieldLog;
 	G4LogicalVolume* fElectroBoxLog;
 	G4LogicalVolume* fShieldCoverLog;
 	G4LogicalVolume* fColdFingerLog;
 	G4LogicalVolume* fS3CaseLogical;
-	G4LogicalVolume* fBeamPipeLog;
-
+	G4LogicalVolume* fConicalCollimatorLog;//11/8
+	G4LogicalVolume* fXRayInsertLog;
+	
 private:
 	////////////////////////////////////////////
 	// Physical Volumes used in ApparatusSpiceTargetChamber
@@ -138,7 +138,8 @@ private:
 	G4VPhysicalVolume* fShieldCoverPhys;
 	G4VPhysicalVolume* fColdFingerPhys;
 	G4VPhysicalVolume* fS3CasePhysical;
-	G4VPhysicalVolume* fBeamPipePhys;
+	G4VPhysicalVolume* fConicalCollimatorPhys;//11/8
+	G4VPhysicalVolume* fXRayInsertPhys;
 
 private:
 	////////////////////////////////////////////
@@ -178,8 +179,8 @@ private:
 	G4String fMagnetCoverMaterial;//
 	G4String fColdFingerMaterial;//
 	G4String fS3CableCaseMaterial;//
-	G4String fBeamPipeMaterial;//
-
+	G4String fConicalCollimatorMaterial;//11/8
+        G4String fXRayInsertMaterial;//
 	//-------------------------
 	// Dimensions:
 	//-------------------------
@@ -363,7 +364,35 @@ private:
 	G4double fPipeOuterRadius;
 	G4double fPipeZLength;
 	G4double fPipeZOffset;
-
+	
+	// --------------------------------
+	// Dimensions of Conical Collimator
+	// --------------------------------
+	G4double fMidInnerRadius;
+	G4double fMidOuterRadius;
+	G4double fMidZLength;
+	G4double fOuterCylOuterRadius;
+	G4double fOuterCylInnerRadius;
+	G4double fOuterCylZLength;
+	G4double fInnerCylOuterRadius;
+	G4double fInnerCylInnerRadius;
+	G4double fInnerCylZLength;
+	G4double fEdgeInnerRadius;
+	G4double fEdgeOuterRadius;
+	G4double fEdgeZLength;
+	
+	// --------------------------
+	// Dimensions of X-ray Insert
+	// --------------------------
+	G4double fInsertCylOuterRadius;
+	G4double fInsertCylInnerRadius;
+	G4double fInsertCylZLength;
+	G4double fInsertEdgeInnerRadius;
+	G4double fInsertEdgeOuterRadius;
+	G4double fInsertEdgeZLength;
+	G4double fInsertHoleRadius;
+	G4double fInsertHoleLength;
+	
 	//-----------------------------
 	// copy numbers
 	//-----------------------------
@@ -408,13 +437,13 @@ private:
 	void BuildCollectorMagnet();
 	void BuildMagnetCovering();
 	void BuildMagnetClampChamber();
-	void BuildMagnetClampPhotonShield();
 	void BuildElectroBox();
 	void BuildShieldCovering();
 	void BuildColdFinger();
 	void BuildS3CableHolder();
-	void BuildBeamPipe();
-
+	void BuildConicalCollimator();
+	void BuildXrayInsert();
+	
 	void PlaceTargetChamberFrontRing(G4LogicalVolume*);
 	void PlaceTargetChamberSphere(G4LogicalVolume*);
 	void PlaceTargetChamberCylinderDownstream(G4LogicalVolume*);
@@ -434,13 +463,15 @@ private:
 	void PlaceCollectorMagnet(G4int, G4LogicalVolume*);
 	void PlaceMagnetCovering(G4int, G4LogicalVolume*);
 	void PlaceMagnetClampChamber(G4int, G4LogicalVolume*);
-	void PlaceMagnetClampPhotonShield(G4int, G4LogicalVolume*);
 	void PlaceElectroBox(G4LogicalVolume*);
 	void PlaceShieldCovering(G4LogicalVolume*);
 	void PlaceColdFinger(G4LogicalVolume*);
 	void PlaceS3CableHolder(G4LogicalVolume*);
-	void PlaceBeamPipe(G4LogicalVolume*);
-
+        void PlaceConicalCollimator(G4LogicalVolume*);
+	void PlaceXrayInsert(G4LogicalVolume*);
+	
+	G4double fTargetZ;
+	
 	// functions
 	G4RotationMatrix* RotateMagnets(G4int);
 	G4ThreeVector TranslateMagnets(G4int, G4double, G4double);

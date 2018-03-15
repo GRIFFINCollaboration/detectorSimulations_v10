@@ -54,7 +54,7 @@ class DetectionSystem8pi;
 class DetectionSystemDescant;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class ApparatusDescantStructure;
-
+class ApparatusLayeredTarget;
 class DetectionSystemDescant;
 
 class DetectionSystemSceptar;
@@ -72,8 +72,12 @@ class DetectionSystemAncillaryBGO;
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
+    
+  
     DetectorConstruction();
     ~DetectorConstruction();
+    
+    void PassEfficiencyPosition( G4ThreeVector num ) {fDetEffPosition = num;}
 
     G4int fGriffinDetectorsMapIndex;
     G4int fGriffinDetectorsMap[16];
@@ -83,10 +87,14 @@ public:
     void SetWorldVis( G4bool );
     //    void SetWorldMagneticField( G4ThreeVector );
 
-    //    void SetGenericTargetMaterial( G4String );
-    //    void SetGenericTargetDimensions( G4ThreeVector );
-    //    void SetGenericTargetPosition( G4ThreeVector );
-    //    void SetGenericTarget( );
+    //Gneeric Target
+    void SetGenericTargetMaterial( G4String );
+    void SetGenericTargetDimensions( G4ThreeVector );
+    void SetGenericTargetPosition( G4ThreeVector );
+    void SetGenericTarget( );
+    
+    G4double LayeredTargetLayerStart(int);
+ 
     //    void SetFieldBoxMaterial( G4String );
     //    void SetFieldBoxDimensions( G4ThreeVector );
     //    void SetFieldBoxPosition( G4ThreeVector );
@@ -99,6 +107,8 @@ public:
     //        void SetBoxColour( G4ThreeVector input )           {boxColour = input;};
     //        void AddBox();
 
+    void LayeredTargetAdd(G4String, G4double);
+    
     void SetTabMagneticField(G4String, G4double, G4double);
     // Grid Functions
     void SetGridMat( G4String input )                  {fGridMat = input;};
@@ -107,7 +117,6 @@ public:
     void SetGridColour( G4ThreeVector input )          {fGridColour = input;};
     void SetGridPosOffset( G4ThreeVector input )          {fGridOffset = input;};
     void AddGrid();
-
     void AddApparatusSpiceTargetChamber(G4String);
     void AddApparatus8piVacuumChamber();
     void AddApparatus8piVacuumChamberAuxMatShell(G4double thickness);
@@ -172,8 +181,10 @@ public:
     G4double GetLanthanumBromideRoll(G4int i);
     G4double GetLanthanumBromideCrystalRadialPosition();
 
-
+    void SetSpiceRes(G4bool);
+    G4bool GetSpiceIn(){return fSetSpiceIn;};
     void UseTIGRESSPositions( G4bool input )                  {fUseTigressPositions = input;};
+    
 private:
 
     //    MagneticField* worldMagField;
@@ -220,7 +231,10 @@ private:
     G4String      fGenericTargetMaterial;
     G4ThreeVector fGenericTargetDimensions;
     G4ThreeVector fGenericTargetPosition;
-
+        
+    G4bool        fSetSpiceIn;
+    
+private: 
     G4bool        fSetFieldBoxMaterial;
     G4bool        fSetFieldBoxDimensions;
     G4bool        fSetFieldBoxPosition;
@@ -232,10 +246,14 @@ private:
 
     G4String fMatWorldName;
 
+    ApparatusLayeredTarget* fApparatusLayeredTarget;
     DetectorMessenger* fDetectorMessenger;
+    
 
     G4ThreeVector fDescantRotation;
     G4String fDescantColor;
+    
+    G4ThreeVector fDetEffPosition;
 
 };
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

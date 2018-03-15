@@ -35,8 +35,11 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "EventAction.hh"
-
+#include "Randomize.hh"
 #include "RunAction.hh"
+
+#include <iostream>
+#include <fstream>
 
 #include "G4Event.hh"
 
@@ -53,7 +56,8 @@ EventAction::EventAction(RunAction* run)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-EventAction::~EventAction() { }
+EventAction::~EventAction() {	
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -108,7 +112,6 @@ void EventAction::ClearVariables() {
 		}
 	}
 }
-
 
 void EventAction::AddHitTracker(G4String mnemonic, G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ) {
 	G4bool newhit = true;

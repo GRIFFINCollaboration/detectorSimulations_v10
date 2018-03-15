@@ -68,9 +68,6 @@
 
 #include "G4FieldManager.hh"
 #include "G4UniformMagField.hh"
-//#include "MagneticField.hh"
-//#include "Field.hh"
-//#include "GlobalField.hh"
 #include "G4TransportationManager.hh"
 #include "NonUniformMagneticField.hh"
 
@@ -80,13 +77,12 @@
 #include "DetectionSystemPaces.hh"
 #include "DetectionSystemSodiumIodide.hh"
 #include "DetectionSystemLanthanumBromide.hh"
-//#include "ApparatusGenericTarget.hh"
+#include "ApparatusGenericTarget.hh"
+#include "ApparatusLayeredTarget.hh"
 #include "ApparatusSpiceTargetChamber.hh"
 #include "Apparatus8piVacuumChamber.hh"
 #include "Apparatus8piVacuumChamberAuxMatShell.hh"
 #include "ApparatusGriffinStructure.hh"
-
-//#include "ApparatusFieldBox.hh"
 
 #include "DetectionSystemBox.hh" // New file
 #include "DetectionSystemGrid.hh"
@@ -96,9 +92,6 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 DetectorConstruction::DetectorConstruction() :
-  // Fields
-  //    expHallMagField( 0 ),
-  //    defaultMaterial( 0 ),
   fSolidWorld(NULL),
   fLogicWorld(NULL),
   fPhysiWorld(NULL)
@@ -120,8 +113,6 @@ DetectorConstruction::DetectorConstruction() :
 
   //  builtDetectors = false;
 
-  // ensure the global field is initialized
-  //  (void)GlobalField::getObject();
 
   fMatWorldName = "G4_AIR";
 
@@ -131,7 +122,7 @@ DetectorConstruction::DetectorConstruction() :
   fSetGenericTargetPosition   = false;
 
   // Field Box
-  fSetFieldBoxMaterial= false;
+  fSetFieldBoxMaterial= false;//think this has been removed 17/8
   fSetFieldBoxDimensions= false;
   fSetFieldBoxPosition= false;
   fSetFieldBoxMagneticField= false;
@@ -156,7 +147,7 @@ DetectorConstruction::DetectorConstruction() :
   // create commands for interactive definition
 
   fDetectorMessenger = new DetectorMessenger(this);
-
+ 
   // ensure the global field is initialized
   //(void)GlobalField::getObject();
 
@@ -172,11 +163,15 @@ DetectorConstruction::DetectorConstruction() :
   fDescantRotation.setX(M_PI);
   fDescantRotation.setY(0.);
   fDescantRotation.setZ(0.);
+  
+  fApparatusLayeredTarget=0;
+  
+  fSetSpiceIn = false;	  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-DetectorConstruction::~DetectorConstruction() {
+DetectorConstruction::~DetectorConstruction() {	
   delete fDetectorMessenger;
 }
 
@@ -245,39 +240,106 @@ void DetectorConstruction::SetWorldVis( G4bool vis ) {
   UpdateGeometry(); // auto update
 }
 
-void DetectorConstruction::SetTabMagneticField(G4String PathAndTableName, G4double zOffset, G4double zRotation)
+//void DetectorConstruction::SetWorldMagneticField( G4ThreeVector vec )
+//{
+//    //expHallMagField->SetFieldValue(G4ThreeVector(vec.x(),vec.y(),vec.z()));
+//}
+void DetectorConstruction::LayeredTargetAdd(G4String Material, G4double Areal)
 {
-	new NonUniformMagneticField(PathAndTableName, zOffset, zRotation);///addition of field for SPICE
+	if(!fApparatusLayeredTarget)fApparatusLayeredTarget=new ApparatusLayeredTarget(fDetEffPosition.z());
+	if(fApparatusLayeredTarget->BuildTargetLayer(Material,Areal)){
+		if(fLogicWorld == NULL) {
+		          Construct();
+		}  
+		fApparatusLayeredTarget->PlaceTarget(fLogicWorld);
+	}
+}
+
+
+void DetectorConstruction::SetTabMagneticField(G4String PathAndTableName, G4double z_offset, G4double z_rotation)
+{
+  //const char * c = PathAndTableName.c_str();///conversion attempt using .c_str() (a string member function)
+ new NonUniformMagneticField(PathAndTableName,z_offset,z_rotation);///addition of field for SPICE
 }
 
 void DetectorConstruction::UpdateGeometry() {
-	G4RunManager::GetRunManager()->DefineWorldVolume(Construct());
+  G4RunManager::GetRunManager()->DefineWorldVolume(Construct());
 }
+
+void DetectorConstruction::SetGenericTargetMaterial( G4String name )
+{
+  DetectorConstruction::fSetGenericTargetMaterial = true;
+  DetectorConstruction::fGenericTargetMaterial = name;
+  DetectorConstruction::SetGenericTarget();
+}
+
+void DetectorConstruction::SetGenericTargetDimensions( G4ThreeVector vec )
+{
+  DetectorConstruction::fSetGenericTargetDimensions = true;
+  DetectorConstruction::fGenericTargetDimensions = vec;
+  DetectorConstruction::SetGenericTarget();
+}
+
+void DetectorConstruction::SetGenericTargetPosition( G4ThreeVector vec )
+{
+  DetectorConstruction::fSetGenericTargetPosition = true;
+  DetectorConstruction::fGenericTargetPosition = vec;
+  DetectorConstruction::SetGenericTarget();
+}
+
+void DetectorConstruction::SetGenericTarget()
+{
+  if( fSetGenericTargetMaterial ) {
+    if( fSetGenericTargetDimensions ) {
+	if( fSetGenericTargetPosition ) {
+	  G4String name = fGenericTargetMaterial;
+	  G4double vecX = fGenericTargetDimensions.x()/mm;
+	  G4double vecY = fGenericTargetDimensions.y()/mm;
+	  G4double vecZ = fGenericTargetDimensions.z()/mm;
+	  
+	  ApparatusGenericTarget* pApparatusGenericTarget = new ApparatusGenericTarget();
+	  pApparatusGenericTarget->Build(name, vecX, vecY, vecZ);
+	  G4RotationMatrix* rotate = new G4RotationMatrix;
+	  pApparatusGenericTarget->PlaceApparatus(fLogicWorld, fGenericTargetPosition, rotate);
+	}
+    }
+  }
+}
+
+
+G4double DetectorConstruction::LayeredTargetLayerStart(int layer){
+	if(fApparatusLayeredTarget){
+		return fApparatusLayeredTarget->LayerStart(layer);
+	}
+	return fDetEffPosition.z();
+}
+
 
 void DetectorConstruction::AddGrid() {
-	if(fLogicWorld == NULL) {
-		Construct();
-	}
-
-	if(fGridSize != 0.0*mm)
-	{
+  if(fLogicWorld == NULL) {
+	 Construct();
+  }
+  
+  if(fGridSize != 0.0*mm)
+    {
 		DetectionSystemGrid* pGrid = new DetectionSystemGrid(	fGridDimensions.x(),
-				fGridDimensions.y(),
-				fGridDimensions.z(),
-				fGridSize,
-				fGridMat,
-				fGridColour,
-				fGridOffset) ;
+																				fGridDimensions.y(),
+																				fGridDimensions.z(),
+																				fGridSize,
+																				fGridMat,
+																				fGridColour,
+																				fGridOffset) ;
 		pGrid->Build();
 		pGrid->PlaceDetector( fLogicWorld );
-	}
+    }
 }
 
-void DetectorConstruction::AddApparatusSpiceTargetChamber(G4String MedLo)//parameter sets lens, thus field for SPICE
+void DetectorConstruction::AddApparatusSpiceTargetChamber(G4String MedLo)//parameter sets lens for SPICE - should be matched with field
 {
-	//Create Target Chamber
-	ApparatusSpiceTargetChamber* pApparatusSpiceTargetChamber = new ApparatusSpiceTargetChamber(MedLo);
-	pApparatusSpiceTargetChamber->Build( fLogicWorld );	
+   //Create Target Chamber
+   ApparatusSpiceTargetChamber* fApparatusSpiceTargetChamber = new ApparatusSpiceTargetChamber(MedLo,fDetEffPosition.z());
+   fApparatusSpiceTargetChamber->Build( fLogicWorld );
+   fSetSpiceIn = true;
 }
 
 void DetectorConstruction::AddApparatus8piVacuumChamber() {
@@ -312,23 +374,6 @@ void DetectorConstruction::AddApparatusGriffinStructure(G4int selector) {
 	pApparatusGriffinStructure->Place(fLogicWorld, selector);
 }
 
-//void DetectorConstruction::AddDetectionSystemGammaTracking(G4int ndet)
-//{
-//  // Describe Placement
-//  G4ThreeVector direction = G4ThreeVector(0,0,1);
-//  G4ThreeVector move = 0.0 * direction;
-//  G4RotationMatrix* rotate = new G4RotationMatrix;
-//  rotate->rotateX(0.0);
-//  rotate->rotateY(0.0);
-//  rotate->rotateZ(0.0);
-
-//  G4int detectorNumber = 0;
-
-//    DetectionSystemGammaTracking* pGammaTracking = new DetectionSystemGammaTracking() ;
-//    pGammaTracking->Build() ;
-
-//  pGammaTracking->PlaceDetector( fLogicWorld, move, rotate, detectorNumber );
-//}
 
 void DetectorConstruction::AddDetectionSystemSodiumIodide(G4int ndet) {
 	if(fLogicWorld == NULL) {
@@ -570,9 +615,7 @@ void DetectorConstruction::AddDetectionSystemGriffinForwardDetector(G4int ndet) 
 	fGriffinDetectorsMap[fGriffinDetectorsMapIndex] = detNum;
 	fGriffinDetectorsMapIndex++;
 
-
 	DetectionSystemGriffin* pGriffinDLS = new DetectionSystemGriffin(config, 1, fGriffinFwdBackPosition, fHevimetSelector ); // Select Forward (0) or Back (1)
-
 
 	pGriffinDLS->BuildDeadLayerSpecificCrystal(detNum-1);
 
@@ -731,24 +774,21 @@ void DetectorConstruction::AddDetectionSystemTestcan(G4ThreeVector input) {
 }
 
 void DetectorConstruction::AddDetectionSystemSpice(G4int nRings) {
-	if(fLogicWorld == NULL) {
-		Construct();
-	}
-	DetectionSystemSpice* pSpice = new DetectionSystemSpice() ;
-	pSpice->Build(); 
-	pSpice->PlaceDetectorMount(fLogicWorld);
-	pSpice->PlaceAnnularClamps(fLogicWorld);   
-	pSpice->PlaceGuardRing(fLogicWorld);
-	pSpice->PlaceDetector(fLogicWorld, nRings); //adds the detector rings/segments
+  if(fLogicWorld == NULL) {
+	Construct();
+  }
+  DetectionSystemSpice* pSpice = new DetectionSystemSpice() ;
+  pSpice->Build(); 
+  pSpice->PlaceDetector(fLogicWorld, nRings); //adds the detector rings/segments, als oincludes functions for other builds
 }
 
 void DetectorConstruction::AddDetectionSystemPaces(G4int ndet) {
-	if(fLogicWorld == NULL) {
-		Construct();
-	}
+  if(fLogicWorld == NULL) {
+	 Construct();
+  }
+  
+  DetectionSystemPaces* pPaces = new DetectionSystemPaces() ;
+  pPaces->Build() ;
 
-	DetectionSystemPaces* pPaces = new DetectionSystemPaces() ;
-	pPaces->Build() ;
-
-	pPaces->PlaceDetector( fLogicWorld, ndet ) ;
+  pPaces->PlaceDetector(fLogicWorld, ndet) ;
 }
