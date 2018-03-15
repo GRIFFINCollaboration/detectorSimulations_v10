@@ -33,7 +33,6 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "RunAction.hh"
-#include "HistoManager.hh"
 
 #include "G4Run.hh"
 #include "G4RunManager.hh"
@@ -43,31 +42,36 @@
 
 RunAction::RunAction()
     : G4UserRunAction()
-{}
+{
+	fHistoManager = new HistoManager;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 RunAction::~RunAction()
-{}
+{
+	delete fHistoManager;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void RunAction::BeginOfRunAction(const G4Run* aRun)
 { 
-    G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;
-    
-    HistoManager::Instance().Book();
+	if(G4Threading::G4GetThreadId() <= 0) {
+		G4cout<<"### Run "<<aRun->GetRunID()<<" start."<<G4endl;
+	}
+	fHistoManager->Book();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void RunAction::EndOfRunAction(const G4Run* aRun)
 {
-    G4int NbOfEvents = aRun->GetNumberOfEvent();
-    if (NbOfEvents == 0) return;
+	G4int NbOfEvents = aRun->GetNumberOfEvent();
+	if(NbOfEvents == 0) return;
 
-    //HistoManager::Instance().PrintStatistic();
-    HistoManager::Instance().Save();
+	//fHistoManager->PrintStatistic();
+	fHistoManager->Save();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

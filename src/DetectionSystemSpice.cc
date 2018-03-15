@@ -20,8 +20,9 @@
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
 
+#include "G4SystemOfUnits.hh" // new version geant4.10 requires units
+
 #include "DetectionSystemSpice.hh"
-#include "HistoManager.hh" // for spice histogram array when placing detector
 
 DetectionSystemSpice::DetectionSystemSpice() :
 	// LogicalVolumes

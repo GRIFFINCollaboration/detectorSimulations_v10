@@ -84,10 +84,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
     G4double ekin = aStep->GetPreStepPoint()->GetKineticEnergy();
 
     G4Track* theTrack = aStep->GetTrack();
-    G4double stepl = 0.;
-    if (theTrack->GetDefinition()->GetPDGCharge() != 0.)
-        stepl = aStep->GetStepLength();
-
     fStepNumber = theTrack->GetCurrentStepNumber();
 
     // Track particle type in EVERY step
@@ -128,7 +124,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		processType = -1;
 	 }
 
-    fEventAction->AddParticleType(particleType);
     evntNb =  fEventAction->GetEventNumber();
 
     //G4cout << "Found Edep = " << edep/keV << " keV in " << volname << G4endl;
@@ -154,7 +149,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
     found = volname.find("germaniumBlock1");
     if (edep != 0 && found!=G4String::npos) {
         SetDetAndCryNumberForGriffinComponent(volname);
-        fEventAction->AddGriffinCrystDet(edep,stepl,fDet-1,fCry-1);
         mnemonic.replace(0,3,"GRG");
         mnemonic.replace(3,2,G4intToG4String(fDet));
         mnemonic.replace(5,1,GetCrystalColour(fCry));
@@ -166,7 +160,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
     found = volname.find("backQuarterSuppressor");
     if (edep != 0 && found!=G4String::npos) {
         SetDetAndCryNumberForGriffinComponent(volname);
-        fEventAction->AddGriffinSuppressorBackDet(edep,stepl,fDet-1,fCry-1);
         mnemonic.replace(0,3,"GRS");
         mnemonic.replace(3,2,G4intToG4String(fDet));
         mnemonic.replace(5,1,GetCrystalColour(fCry));
@@ -178,7 +171,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
     found = volname.find("leftSuppressorExtension");
     if (edep != 0 && found!=G4String::npos) {
         SetDetAndCryNumberForGriffinComponent(volname);
-        fEventAction->AddGriffinSuppressorLeftExtensionDet(edep,stepl,fDet-1,fCry-1);
         mnemonic.replace(0,3,"GRS");
         mnemonic.replace(3,2,G4intToG4String(fDet));
         mnemonic.replace(5,1,GetCrystalColour(fCry));
@@ -190,7 +182,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
     found = volname.find("rightSuppressorExtension");
     if (edep != 0 && found!=G4String::npos) {
         SetDetAndCryNumberForGriffinComponent(volname);
-        fEventAction->AddGriffinSuppressorRightExtensionDet(edep,stepl,fDet-1,fCry-1);
         mnemonic.replace(0,3,"GRS");
         mnemonic.replace(3,2,G4intToG4String(fDet));
         mnemonic.replace(5,1,GetCrystalColour(fCry));
@@ -202,7 +193,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
     found = volname.find("leftSuppressorCasing");
     if (edep != 0 && found!=G4String::npos) {
         SetDetAndCryNumberForGriffinComponent(volname);
-        fEventAction->AddGriffinSuppressorLeftSideDet(edep,stepl,fDet-1,fCry-1);
         mnemonic.replace(0,3,"GRS");
         mnemonic.replace(3,2,G4intToG4String(fDet));
         mnemonic.replace(5,1,GetCrystalColour(fCry));
@@ -214,7 +204,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
     found = volname.find("rightSuppressorCasing");
     if (edep != 0 && found!=G4String::npos) {
         SetDetAndCryNumberForGriffinComponent(volname);
-        fEventAction->AddGriffinSuppressorRightSideDet(edep,stepl,fDet-1,fCry-1);
         mnemonic.replace(0,3,"GRS");
         mnemonic.replace(3,2,G4intToG4String(fDet));
         mnemonic.replace(5,1,GetCrystalColour(fCry));
@@ -227,7 +216,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
     found = volname.find("germaniumDlsBlock1");
     if (edep != 0 && found!=G4String::npos) {
         SetDetAndCryNumberForDeadLayerSpecificGriffinCrystal(volname);
-        fEventAction->AddGriffinCrystDet(edep,stepl,fDet-1,fCry-1);
         mnemonic.replace(0,3,"GRG");
         mnemonic.replace(3,2,G4intToG4String(fDet));
         mnemonic.replace(5,1,GetCrystalColour(fCry));
@@ -240,7 +228,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
     found = volname.find("lanthanumBromideCrystalBlock");
     if (edep != 0 && found!=G4String::npos) {
         SetDetNumberForGenericDetector(volname);
-        fEventAction->AddLaBrCrystDet(edep,stepl,fDet-1);
         mnemonic.replace(0,3,"LAB");
         mnemonic.replace(3,2,G4intToG4String(fDet));
         mnemonic.replace(5,1,GetCrystalColour(fCry));
@@ -252,7 +239,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
     found = volname.find("ancillaryBgoBlock");
     if (edep != 0 && found!=G4String::npos) {
         SetDetNumberForAncillaryBGODetector(volname);
-        fEventAction->AncillaryBgoDet(edep,stepl,fDet-1);
         mnemonic.replace(0,3,"ABG");
         mnemonic.replace(3,2,G4intToG4String(fDet));
         mnemonic.replace(5,1,GetCrystalColour(fCry));
@@ -275,14 +261,12 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
     found = volname.find("siDetSpiceRing");
   if (edep != 0 && found!=G4String::npos) {
       SetDetAndCryNumberForSpiceDetector(volname);
-      fEventAction->SpiceDet(edep,stepl,fDet, fCry);//bringing in fCry as well, watch for fDet-1/fCry-1 input like others if necessary
       mnemonic.replace(0,3,"SPI");
       mnemonic.replace(3,2,G4intToG4String(fDet));
       mnemonic.replace(5,1,GetCrystalColour(fCry));
       systemID = 10;
 	// ntuple
       fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry, fDet, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);//-1 on cry/det
-      //fEventAction->AddStepTracker(evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry, fDet, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
 
     
   }
@@ -291,7 +275,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
   found = volname.find("pacesSiliconBlockLog");
   if (edep != 0 && found!=G4String::npos) {
       SetDetNumberForGenericDetector(volname);
-      fEventAction->AddPacesCrystDet(edep,stepl,fDet-1);//following spice, worth removing this?
       mnemonic.replace(0,3,"PCS");
       mnemonic.replace(3,2,G4intToG4String(fDet));
       mnemonic.replace(5,1,GetCrystalColour(fCry));
@@ -316,7 +299,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
         else if(fDet == 8) fDet = 12;
         else if(fDet == 9) fDet = 11;
         else if(fDet == 10) fDet = 15;
-        fEventAction->SceptarDet(edep,stepl,fDet-1);
         mnemonic.replace(0,3,"SCP");
         mnemonic.replace(3,2,G4intToG4String(fDet));
         mnemonic.replace(5,1,GetCrystalColour(fCry));
@@ -336,7 +318,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
         else if(fDet == 8) fDet = 17;
         else if(fDet == 9) fDet = 16;
         else if(fDet == 10) fDet = 20;
-        fEventAction->SceptarDet(edep,stepl,fDet-1);
         mnemonic.replace(0,3,"SCP");
         mnemonic.replace(3,2,G4intToG4String(fDet));
         mnemonic.replace(5,1,GetCrystalColour(fCry));
@@ -348,7 +329,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
     found = volname.find("8piGermaniumBlockLog");
     if (edep != 0 && found!=G4String::npos) {
         SetDetNumberForGenericDetector(volname);
-        fEventAction->Add8piCrystDet(edep,stepl,fDet-1);
         mnemonic.replace(0,3,"8PI");
         mnemonic.replace(3,2,G4intToG4String(fDet));
         mnemonic.replace(5,1,GetCrystalColour(fCry));
@@ -392,9 +372,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
     found = volname.find("gridcellLog");
     if (ekin != 0 && found!=G4String::npos) {
         SetDetNumberForGenericDetector(volname);
-        if(particleType == 1)fEventAction->AddGridCellGamma(ekin,stepl,fDet-1);
-        if(particleType == 2)fEventAction->AddGridCellElectron(ekin,stepl,fDet-1);
-        if(particleType == 5)fEventAction->AddGridCellNeutron(ekin,stepl,fDet-1);
         mnemonic.replace(0,3,"GRD");
         mnemonic.replace(3,2,G4intToG4String(fDet));
         mnemonic.replace(5,1,GetCrystalColour(fCry));
