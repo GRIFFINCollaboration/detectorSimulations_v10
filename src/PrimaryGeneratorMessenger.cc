@@ -125,60 +125,58 @@ PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newValue) {
-    if(command == fNumberOfDecayingLaBrDetectorsCmd) {
-        fAction->SetNumberOfDecayingLaBrDetectors(fNumberOfDecayingLaBrDetectorsCmd->GetNewIntValue(newValue));
-		  return;
-    }
-    if(command == fEfficiencyEnergyCmd ) {
-        fAction->SetEfficiencyEnergy(fEfficiencyEnergyCmd->GetNewDoubleValue(newValue));
-	G4cout << fEfficiencyEnergyCmd->GetNewDoubleValue(newValue) << " <- Input beam energy to PGM" << G4endl;
-	fAction->SendBeamEnergyToHist(fEfficiencyEnergyCmd->GetNewDoubleValue(newValue));
-		  return;
-    }
-    if( command == fEfficiencyDirectionCmd ) {
-        fAction->SetEfficiencyDirection(fEfficiencyDirectionCmd->GetNew3VectorValue(newValue));
-		  return;
-    }
-    if( command == fEfficiencyPositionCmd ) {
-        fAction->SetEfficiencyPosition(fEfficiencyPositionCmd->GetNew3VectorValue(newValue));
-		  return;
-    }
-    if( command == fEfficiencyParticleCmd ) {
-        fAction->SetEfficiencyParticle(newValue);
-		  return;
-    }
-    if( command == fEfficiencyPolarizationCmd ) {
-        fAction->SetEfficiencyPolarization(fEfficiencyPolarizationCmd->GetNew3VectorValue(newValue));
-		  return;
-    }
-    if( command == fConeAngleCmd ) {
-        fAction->SetConeMaxAngle(fConeAngleCmd->GetNewDoubleValue(newValue));
-	G4cout << "Cone Beam via Angle selected" << G4endl;
-		  return;
-    }
-    if( command == fConeMinAngleCmd ) {
-        fAction->SetConeMinAngle(fConeMinAngleCmd->GetNewDoubleValue(newValue));
-	G4cout << "Cone Beam minimum angle supplied" << G4endl;
-		  return;
-    }
-    if( command == fBeamSpotSigmaCmd ) {
-        fAction->SetBeamSpotSigma(fBeamSpotSigmaCmd->GetNewDoubleValue(newValue));
-	G4cout << "Beam Spot sigma supplied" << G4endl;
-		  return;
-    }  
-    
-    if( command == fBeamDistroCmd ) {
-	fAction->SetLayeredTargetBeamDistro(fBeamDistroCmd->GetNewIntValue(newValue));
-    }
-    if( command == fBeamFileCmd ) {
-	G4cout << "Beam Distribution from file "<<newValue<<" selected "<< G4endl;
-	fAction->PrepareBeamFile(newValue);
-    }
-    if( command == fSourceBeamCmd ) {
-	fAction->SetSourceNeeded(true);
-	G4cout << "Source beam chosen"<< G4endl;
-	fAction->SetSourceName(newValue);
-    }  
+	if(command == fNumberOfDecayingLaBrDetectorsCmd) {
+		fAction->SetNumberOfDecayingLaBrDetectors(fNumberOfDecayingLaBrDetectorsCmd->GetNewIntValue(newValue));
+		return;
+	}
+	if(command == fEfficiencyEnergyCmd ) {
+		fAction->SetEfficiencyEnergy(fEfficiencyEnergyCmd->GetNewDoubleValue(newValue));
+		return;
+	}
+	if(command == fEfficiencyDirectionCmd) {
+		fAction->SetEfficiencyDirection(fEfficiencyDirectionCmd->GetNew3VectorValue(newValue));
+		return;
+	}
+	if(command == fEfficiencyPositionCmd) {
+		fAction->SetEfficiencyPosition(fEfficiencyPositionCmd->GetNew3VectorValue(newValue));
+		return;
+	}
+	if(command == fEfficiencyParticleCmd) {
+		fAction->SetEfficiencyParticle(newValue);
+		return;
+	}
+	if(command == fEfficiencyPolarizationCmd) {
+		fAction->SetEfficiencyPolarization(fEfficiencyPolarizationCmd->GetNew3VectorValue(newValue));
+		return;
+	}
+	if(command == fConeAngleCmd) {
+		fAction->SetConeMaxAngle(fConeAngleCmd->GetNewDoubleValue(newValue));
+		G4cout<<"Cone Beam via Angle selected"<<G4endl;
+		return;
+	}
+	if(command == fConeMinAngleCmd) {
+		fAction->SetConeMinAngle(fConeMinAngleCmd->GetNewDoubleValue(newValue));
+		G4cout<<"Cone Beam minimum angle supplied"<<G4endl;
+		return;
+	}
+	if(command == fBeamSpotSigmaCmd) {
+		fAction->SetBeamSpotSigma(fBeamSpotSigmaCmd->GetNewDoubleValue(newValue));
+		G4cout<<"Beam Spot sigma supplied"<<G4endl;
+		return;
+	}  
+
+	if(command == fBeamDistroCmd) {
+		fAction->SetLayeredTargetBeamDistro(fBeamDistroCmd->GetNewIntValue(newValue));
+	}
+	if(command == fBeamFileCmd) {
+		G4cout<<"Beam Distribution from file "<<newValue<<" selected "<< G4endl;
+		fAction->PrepareBeamFile(newValue);
+	}
+	if(command == fSourceBeamCmd) {
+		fAction->SetSourceNeeded(true);
+		G4cout<<"Source beam chosen"<< G4endl;
+		fAction->SetSourceName(newValue);
+	}  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

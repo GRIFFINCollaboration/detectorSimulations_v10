@@ -78,7 +78,6 @@ public:
     void SetConeMaxAngle( G4double num1 ) {fAngleInit = num1; fConeAngleBool = true; fEffDirectionBool = true;};
     void SetConeMinAngle( G4double num1 ) {fAngleMinInit = num1;};
     void SetBeamSpotSigma( G4double num1 ) {fBeamSpotSigma = num1;};
-    void SendBeamEnergyToHist(G4double);
     void PassTarget(G4double);
     void PrepareBeamFile(G4String);
     void SetLayeredTargetBeamDistro(G4int layer);

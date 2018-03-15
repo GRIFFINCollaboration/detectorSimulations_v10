@@ -39,6 +39,7 @@
 
 #include "G4UserRunAction.hh"
 #include "globals.hh"
+#include "HistoManager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -53,7 +54,9 @@ public:
     virtual void BeginOfRunAction(const G4Run*);
     virtual void   EndOfRunAction(const G4Run*);
     
+	 HistoManager* GetHistoManager() { return fHistoManager; }
 private:
+	 HistoManager* fHistoManager;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

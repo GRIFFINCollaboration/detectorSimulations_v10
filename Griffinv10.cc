@@ -62,69 +62,65 @@ int main(int argc,char** argv)
     // Choose the Random engine
     //
     G4Random::setTheEngine(new CLHEP::RanecuEngine);
-    G4int seed = time( NULL );
+	 // G4long is at least 32 bits. 
+    G4long seed = time( NULL );
     G4Random::setTheSeed( seed );
 
     // Construct the default run manager
-    //
-    //#ifdef G4MULTITHREADED
-    //  G4cout << "RUNNING MULTITHREADED" << G4endl;
-    //  G4int nThreads = 2;
-    //  G4MTRunManager * runManager = new G4MTRunManager;
-	 //	runManager->SetNumberOfThreads(nThreads);
-    //#else
-	 G4RunManager * runManager = new G4RunManager;
-	 //#endif
+#ifdef G4MULTITHREADED
+	 G4cout<<"RUNNING MULTITHREADED"<<G4endl;
+	 G4int nThreads = 2;
+	 G4MTRunManager* runManager = new G4MTRunManager;
+	 runManager->SetNumberOfThreads(nThreads);
+#else
+	 G4cout<<"NOT RUNNING MULTITHREADED"<<G4endl;
+	 G4RunManager* runManager = new G4RunManager;
+#endif
 
-    // Set mandatory initialization classes
-    //
-    DetectorConstruction* detector = new DetectorConstruction;
-    runManager->SetUserInitialization(detector);
-    runManager->SetUserInitialization(new PhysicsList);
-    runManager->SetUserInitialization(new ActionInitialization(detector));
+	 // Set mandatory initialization classes
+	 //
+	 DetectorConstruction* detector = new DetectorConstruction;
+	 runManager->SetUserInitialization(detector);
+	 runManager->SetUserInitialization(new PhysicsList);
+	 runManager->SetUserInitialization(new ActionInitialization(detector));
 
-    // Initialize G4 kernel
-    // Do this at run time so the physics list can be changed!
-    // runManager->Initialize();
+	 // Initialize G4 kernel
+	 // Do this at run time so the physics list can be changed!
+	 // runManager->Initialize();
 
-    // Get the pointer to the User Interface manager
-    //
-    G4UImanager* UImanager = G4UImanager::GetUIpointer();
+	 // Get the pointer to the User Interface manager
+	 //
+	 G4UImanager* UImanager = G4UImanager::GetUIpointer();
 
 #ifdef G4VIS_USE
-    G4VisManager* visManager = new G4VisExecutive;
-    visManager->Initialize();
+	 G4VisManager* visManager = new G4VisExecutive;
+	 visManager->Initialize();
 #endif
 
-    if (argc!=1)   // batch mode
-    {
-        G4String command = "/control/execute ";
-        G4String fileName = argv[1];
-        UImanager->ApplyCommand(command+fileName);
-    }
-    else
-    {  // interactive mode : define visualization and UI terminal
+	 if(argc != 1) { // batch mode
+		 G4String command = "/control/execute ";
+		 G4String fileName = argv[1];
+		 UImanager->ApplyCommand(command+fileName);
+	 } else { // interactive mode : define visualization and UI terminal
+#ifdef G4UI_USE
+		 G4UIExecutive* ui = new G4UIExecutive(argc, argv);
+#endif
+		 UImanager->ApplyCommand("/control/execute visGL.mac");
 
 #ifdef G4UI_USE
-        G4UIExecutive* ui = new G4UIExecutive(argc, argv);
+		 ui->SessionStart();
+		 delete ui;
 #endif
-        UImanager->ApplyCommand("/control/execute visGL.mac");
-
-
-#ifdef G4UI_USE
-        ui->SessionStart();
-        delete ui;
-#endif
+	 }
 
 #ifdef G4VIS_USE
-        delete visManager;
+		 delete visManager;
 #endif
-    }
 
-    // Job termination
-    delete runManager;
+	 // Job termination
+	 delete runManager;
 
-    return 0;
+	 return 0;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
