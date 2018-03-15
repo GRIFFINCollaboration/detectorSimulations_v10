@@ -227,10 +227,11 @@ void PhysicsList::ConstructOp(G4bool constructOp)
             fScintProcess->AddSaturation(emSaturation);
         }
 
-        theParticleIterator->reset();
-        while( (*theParticleIterator)() )
+		  auto aParticleIterator = GetParticleIterator();
+        aParticleIterator->reset();
+        while( (*aParticleIterator)() )
         {
-            G4ParticleDefinition* particle = theParticleIterator->value();
+            G4ParticleDefinition* particle = aParticleIterator->value();
             G4ProcessManager* pmanager = particle->GetProcessManager();
             G4String particleName = particle->GetParticleName();
 
@@ -258,10 +259,11 @@ void PhysicsList::SpiceStepper(G4bool step)
   if( step == false ) { G4cout << "No SPICE step" << G4endl; return; }
   else if( step == true ) 
     {
-        theParticleIterator->reset();
-        while( (*theParticleIterator)() )
+		  auto aParticleIterator = GetParticleIterator();
+        aParticleIterator->reset();
+        while( (*aParticleIterator)() )
         {
-            G4ParticleDefinition* particle = theParticleIterator->value();
+            G4ParticleDefinition* particle = aParticleIterator->value();
             G4ProcessManager* pmanager = particle->GetProcessManager();
             G4String particleName = particle->GetParticleName();
 	    pmanager->AddDiscreteProcess(new G4StepLimiter);//SPICE target step-sizes

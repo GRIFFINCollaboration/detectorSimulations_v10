@@ -37,7 +37,7 @@
 #include "G4TheoFSGenerator.hh"
 #include "G4ExcitationHandler.hh"
 #include "G4Evaporation.hh"
-#include "G4FermiBreakUp.hh"
+//#include "G4FermiBreakUp.hh"
 #include "G4StatMF.hh"
 #include "G4GeneratorPrecompoundInterface.hh"
 #include "G4PreCompoundModel.hh"
@@ -101,12 +101,12 @@ void PhysListHadron::ConstructProcess()
     G4TheoFSGenerator* theTheoModel = new G4TheoFSGenerator;
     // all models for treatment of thermal nucleus
     G4Evaporation* theEvaporation = new G4Evaporation;
-    G4FermiBreakUp* theFermiBreakUp = new G4FermiBreakUp;
+    //G4FermiBreakUp* theFermiBreakUp = new G4FermiBreakUp;
     G4StatMF* theMF = new G4StatMF;
     // Evaporation logic
     G4ExcitationHandler* theHandler = new G4ExcitationHandler;
     theHandler->SetEvaporation(theEvaporation);
-    theHandler->SetFermiModel(theFermiBreakUp);
+    //theHandler->SetFermiModel(theFermiBreakUp);
     theHandler->SetMultiFragmentation(theMF);
     theHandler->SetMaxAandZForFermiBreakUp(12, 6);
     theHandler->SetMinEForMultiFrag(5*MeV);
@@ -138,6 +138,7 @@ void PhysListHadron::ConstructProcess()
     fTheElasticProcess.RegisterMe(new G4HadronElastic());
 
     // Hadron elastic process for all particles except neutrons and generic ions
+	 auto aParticleIterator = GetParticleIterator();
     aParticleIterator->reset();
     while ((*aParticleIterator)() ) {
         G4ParticleDefinition* particle = aParticleIterator->value();
