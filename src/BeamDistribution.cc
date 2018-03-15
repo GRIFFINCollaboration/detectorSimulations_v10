@@ -35,7 +35,7 @@ void BeamDistribution::LoadDistribution(G4String filename){//Reads in the data f
 
 	double x,prob;
 	std::vector<double> xv,pv;
-	double probsum;
+	double probsum = 0.;
 
 	while(distrodata>>x>>prob){
 		xv.push_back(x);
