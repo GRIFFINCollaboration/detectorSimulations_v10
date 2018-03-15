@@ -180,7 +180,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	}
 
 	else if(fEffEnergy != 0.0) {
-		G4ParticleDefinition* effPart;
+		G4ParticleDefinition* effPart = NULL;
 		if(fEffParticleBool) {
 
 			if(fEffParticle == "electron" || fEffParticle == "e-") {

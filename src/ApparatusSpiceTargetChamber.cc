@@ -1110,7 +1110,9 @@ void ApparatusSpiceTargetChamber::BuildCollectorMagnet()
 	// ( Cut box is rotated and moved, exact movement calculated below )
 	G4double AngleToCorner = atan(fPlateOneLength/fPlateOneHeight);
 	G4double HypotenuseToCorner = sqrt(pow(fPlateOneHeight/2., 2) + pow(fPlateOneLength/2., 2));
-	G4double AngleDifference, TranslateCutX, TranslateCutZ;
+	G4double AngleDifference = 0.;
+	G4double TranslateCutX = 0.;
+	G4double TranslateCutZ = 0.;
 	if(AngleToCorner < fCuttingBoxAngle)	{
 		AngleDifference = fCuttingBoxAngle - AngleToCorner;
 		TranslateCutX = (HypotenuseToCorner * sin(AngleDifference)) + fPlateOneLength/2.;
@@ -1155,7 +1157,9 @@ void ApparatusSpiceTargetChamber::BuildMagnetCovering()
 	// ( Cut box is rotated and moved, exact movement calculated below )
 	G4double AngleToCorner = atan(fPlateOneLength/fPlateOneHeight);
 	G4double HypotenuseToCorner = sqrt(pow(fPlateOneHeight/2., 2) + pow(fPlateOneLength/2., 2));
-	G4double AngleDifference, TranslateCutX, TranslateCutZ;
+	G4double AngleDifference = 0.;
+	G4double TranslateCutX = 0.;
+	G4double TranslateCutZ = 0.;
 	if(AngleToCorner < fCuttingBoxAngle)
 	{
 		AngleDifference = fCuttingBoxAngle - AngleToCorner;
