@@ -141,8 +141,6 @@ DetectorConstruction::DetectorConstruction() :
 
   fCustomDetectorNumber 		= 1 ; // detNum
   fCustomDetectorPosition  = 1 ; // posNum
-  fCustomDetectorVal				= 0 ; // Unused for now (Oct 2013)
-
 
   // create commands for interactive definition
 
@@ -154,10 +152,12 @@ DetectorConstruction::DetectorConstruction() :
   //expHallMagField = new MagneticField(); // Global field is set to zero
 
   fGriffinDetectorsMapIndex = 0;
-  for(G4int i = 0; i < 16; i++)
-    {
-		fGriffinDetectorsMap[i] = 0;
-    }
+  for(G4int i = 0; i < 16; ++i) {
+	  fGriffinDetectorsMap[i] = 0;
+	  for(G4int j = 0; j < 3; ++j) {
+		  fGriffinDeadLayer[i][j] = -1;
+	  }
+  }
 
   fDescantColor = "white";
   fDescantRotation.setX(M_PI);
@@ -192,7 +192,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
   G4Material* matWorld = G4Material::GetMaterial(fMatWorldName);
 
   if( !matWorld ) {
-	 G4cout << " ----> Material " << fMatWorldName << " not found, cannot build world! " << G4endl;
+	 G4cout<<" ----> Material "<<fMatWorldName<<" not found, cannot build world! "<<G4endl;
 	 return 0;
   }
 
@@ -526,15 +526,20 @@ void DetectorConstruction::AddDetectionSystemGriffinCustomDetector(G4int) {
 	// NOTE: ndet served no purpose in this case but I left it in just in case this needs to be modified later. The position of a detector placed using this function must be set using
 	// SetDeadLayer.
 
-	DetectionSystemGriffin* pGriffinCustom = new DetectionSystemGriffin( fExtensionSuppressorLocation , fDetectorShieldSelect, fDetectorRadialDistance, fHevimetSelector ); // Select Forward (0) or Back (1)
+	DetectionSystemGriffin* pGriffinCustom = new DetectionSystemGriffin(fExtensionSuppressorLocation, fDetectorShieldSelect, fDetectorRadialDistance, fHevimetSelector); // Select Forward (0) or Back (1)
+
+	for(G4int crystal = 0; crystal < 3; ++crystal) {
+	if(fGriffinDeadLayer[fCustomDetectorNumber-1][crystal] >= 0.) {
+		pGriffinCustom->SetDeadLayer(fCustomDetectorNumber-1, crystal, fGriffinDeadLayer[fCustomDetectorNumber-1][crystal]);
+	}
 
 	pGriffinCustom->BuildDeadLayerSpecificCrystal(fCustomDetectorNumber-1);
 
-	pGriffinCustom->PlaceDeadLayerSpecificCrystal( fLogicWorld, fCustomDetectorNumber-1, fCustomDetectorPosition-1, fUseTigressPositions ) ;
+	pGriffinCustom->PlaceDeadLayerSpecificCrystal(fLogicWorld, fCustomDetectorNumber-1, fCustomDetectorPosition-1, fUseTigressPositions);
 
 	pGriffinCustom->BuildEverythingButCrystals();
 
-	pGriffinCustom->PlaceEverythingButCrystals( fLogicWorld, fCustomDetectorNumber-1, fCustomDetectorPosition-1, fUseTigressPositions ) ;
+	pGriffinCustom->PlaceEverythingButCrystals(fLogicWorld, fCustomDetectorNumber-1, fCustomDetectorPosition-1, fUseTigressPositions);
 }
 
 void DetectorConstruction::AddDetectionSystemGriffinCustom(G4int ndet) {
@@ -573,12 +578,26 @@ void DetectorConstruction::AddDetectionSystemGriffinSetExtensionSuppLocation( G4
 	fExtensionSuppressorLocation = detectorPos ;
 }
 
-void DetectorConstruction::AddDetectionSystemGriffinSetDeadLayer( G4ThreeVector params ) {
+void DetectorConstruction::AddDetectionSystemGriffinSetPosition(G4ThreeVector params) {
+	G4int detNum = static_cast<G4int>(params.x());
+	G4int detPos = static_cast<G4int>(params.y());
+	if(detNum < 1 || detNum > 16 || detPos < 1 || detPos > 16) {
+		G4cout<<"Warning, can't set detector "<<detNum<<" to position "<<detPos<<", indices out of range!"<<G4endl;
+		return;
+	}
+	fCustomDetectorNumber    = detNum;
+	fCustomDetectorPosition  = detPos;
+}
 
-	fCustomDetectorNumber 		= (G4int)params.x(); // detNum
-	fCustomDetectorPosition  = (G4int)params.y(); // posNum
-	fCustomDetectorVal			  = (G4int)params.z(); // Unused at the moment.
-
+void DetectorConstruction::AddDetectionSystemGriffinSetDeadLayer(G4ThreeVector params) {
+	/// x = detector number, y = crystal number, z = dead layer thickness
+	G4int detNum = static_cast<G4int>(params.x());
+	G4int cryNum = static_cast<G4int>(params.y());
+	if(detNum < 0 || detNum > 15 || cryNum < 0 || cryNum > 3) {
+		G4cout<<"Warning, can't set dead layer for detector "<<detNum<<", crystal "<<cryNum<<", indices out of range!"<<G4endl;
+		return;
+	}
+	fGriffinDeadLayer[detNum][cryNum] = params.z();
 }
 
 void DetectorConstruction::AddDetectionSystemGriffinForward(G4int ndet) {
@@ -708,8 +727,8 @@ void DetectorConstruction::AddDetectionSystemDescantAuxPorts(G4ThreeVector input
 	G4double radialpos = input.y()*cm;
 	G4int leadShield = G4bool(input.z());
 
-	if( leadShield ) G4cout << "Building DESCANT detectors WITH lead shielding" << G4endl;
-	if( !leadShield )G4cout << "Building DESCANT detectors WITHOUT lead shielding" << G4endl;
+	if(leadShield) G4cout<<"Building DESCANT detectors WITH lead shielding"<<G4endl;
+	if(!leadShield)G4cout<<"Building DESCANT detectors WITHOUT lead shielding"<<G4endl;
 
 	DetectionSystemDescant *  pDetectionSystemDescant = new DetectionSystemDescant(leadShield) ;
 	pDetectionSystemDescant->Build() ;

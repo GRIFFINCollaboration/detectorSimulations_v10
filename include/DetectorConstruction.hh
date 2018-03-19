@@ -224,7 +224,7 @@ private:
     void DefineSuppressedParameters();
     void DefineMaterials();
 
-    G4double fCoords[20][5];
+    G4double      fCoords[20][5];
     G4bool        fSetGenericTargetMaterial;
     G4bool        fSetGenericTargetDimensions;
     G4bool        fSetGenericTargetPosition;
@@ -234,7 +234,6 @@ private:
         
     G4bool        fSetSpiceIn;
     
-private: 
     G4bool        fSetFieldBoxMaterial;
     G4bool        fSetFieldBoxDimensions;
     G4bool        fSetFieldBoxPosition;
@@ -249,6 +248,7 @@ private:
     ApparatusLayeredTarget* fApparatusLayeredTarget;
     DetectorMessenger* fDetectorMessenger;
     
+	 G4double fGriffinDeadLayer[16][4];
 
     G4ThreeVector fDescantRotation;
     G4String fDescantColor;
