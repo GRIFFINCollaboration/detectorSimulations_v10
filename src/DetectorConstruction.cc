@@ -528,9 +528,11 @@ void DetectorConstruction::AddDetectionSystemGriffinCustomDetector(G4int) {
 
 	DetectionSystemGriffin* pGriffinCustom = new DetectionSystemGriffin(fExtensionSuppressorLocation, fDetectorShieldSelect, fDetectorRadialDistance, fHevimetSelector); // Select Forward (0) or Back (1)
 
+	// check for each crystal if a custom dead layer has been specified
 	for(G4int crystal = 0; crystal < 3; ++crystal) {
-	if(fGriffinDeadLayer[fCustomDetectorNumber-1][crystal] >= 0.) {
-		pGriffinCustom->SetDeadLayer(fCustomDetectorNumber-1, crystal, fGriffinDeadLayer[fCustomDetectorNumber-1][crystal]);
+		if(fGriffinDeadLayer[fCustomDetectorNumber-1][crystal] >= 0.) {
+			pGriffinCustom->SetDeadLayer(fCustomDetectorNumber-1, crystal, fGriffinDeadLayer[fCustomDetectorNumber-1][crystal]);
+		}
 	}
 
 	pGriffinCustom->BuildDeadLayerSpecificCrystal(fCustomDetectorNumber-1);

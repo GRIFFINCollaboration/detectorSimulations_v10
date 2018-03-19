@@ -596,10 +596,7 @@ void SteppingAction::SetDetNumberForAncillaryBGODetector(G4String volname) {
 }
 
 G4int SteppingAction::FindTrueGriffinDetector(G4int detval) {
-    G4int trueDet;
-    trueDet = fDetector->fGriffinDetectorsMap[detval-1];
-
-    return trueDet;
+    return fDetector->GriffinDetectorsMap(detval-1);
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
