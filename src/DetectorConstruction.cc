@@ -165,79 +165,89 @@ DetectorConstruction::DetectorConstruction() :
   fDescantRotation.setZ(0.);
   
   fApparatusLayeredTarget=0;
-  
-  fSetSpiceIn = false;	  
+
+  fGridCell = false;
+  fGriffin  = false;
+  fLaBr     = false;
+  fAncBgo   = false;
+  fNaI      = false;
+  fSceptar  = false;
+  fEightPi  = false;
+  fSpice    = false;
+  fPaces    = false;
+  fDescant  = false;
+  fTestcan  = false;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 DetectorConstruction::~DetectorConstruction() {	
-  delete fDetectorMessenger;
+	delete fDetectorMessenger;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 G4VPhysicalVolume* DetectorConstruction::Construct() {
 
-  // Replaced by ConstructDetectionSystems
+	// Replaced by ConstructDetectionSystems
 
-  // Experimental hall (world volume)
-  // search the world material by its name
+	// Experimental hall (world volume)
+	// search the world material by its name
 
-  G4GeometryManager::GetInstance()->OpenGeometry();
-  G4PhysicalVolumeStore::GetInstance()->Clean();
-  G4LogicalVolumeStore::GetInstance()->Clean();
-  G4SolidStore::GetInstance()->Clean();
+	G4GeometryManager::GetInstance()->OpenGeometry();
+	G4PhysicalVolumeStore::GetInstance()->Clean();
+	G4LogicalVolumeStore::GetInstance()->Clean();
+	G4SolidStore::GetInstance()->Clean();
 
-  G4Material* matWorld = G4Material::GetMaterial(fMatWorldName);
+	G4Material* matWorld = G4Material::GetMaterial(fMatWorldName);
 
-  if( !matWorld ) {
-	 G4cout<<" ----> Material "<<fMatWorldName<<" not found, cannot build world! "<<G4endl;
-	 return 0;
-  }
+	if( !matWorld ) {
+		G4cout<<" ----> Material "<<fMatWorldName<<" not found, cannot build world! "<<G4endl;
+		return 0;
+	}
 
-  fSolidWorld = new G4Box("World", fWorldSizeX/2,fWorldSizeY/2,fWorldSizeZ/2);
+	fSolidWorld = new G4Box("World", fWorldSizeX/2,fWorldSizeY/2,fWorldSizeZ/2);
 
-  fLogicWorld = new G4LogicalVolume(fSolidWorld,		//its solid
-												matWorld,	//its material
-												"World");		//its name
+	fLogicWorld = new G4LogicalVolume(fSolidWorld,		//its solid
+			matWorld,	//its material
+			"World");		//its name
 
-  fPhysiWorld = new G4PVPlacement(   0,                  //no rotation
-												 G4ThreeVector(),	//at (0,0,0)
-												 fLogicWorld,         //its logical volume
-												 "World",            //its name
-												 0,                  //its mother  volume
-												 false,              //no boolean operation
-												 0);                 //copy number
+	fPhysiWorld = new G4PVPlacement(   0,                  //no rotation
+			G4ThreeVector(),	//at (0,0,0)
+			fLogicWorld,         //its logical volume
+			"World",            //its name
+			0,                  //its mother  volume
+			false,              //no boolean operation
+			0);                 //copy number
 
-  // Visualization Attributes
+	// Visualization Attributes
 
-  fLogicWorld->SetVisAttributes (G4VisAttributes::Invisible); // The following block of code works too.
+	fLogicWorld->SetVisAttributes (G4VisAttributes::Invisible); // The following block of code works too.
 
-  //  G4VisAttributes* worldVisAtt = new G4VisAttributes(G4Colour(0.0,1.0,1.0));
-  //  worldVisAtt->SetForceWireframe(true);
-  //  worldVisAtt->SetVisibility(worldVis);
-  //  fLogicWorld->SetVisAttributes(worldVisAtt);
-  //  fLogicWorld = fLogicWorld;
+	//  G4VisAttributes* worldVisAtt = new G4VisAttributes(G4Colour(0.0,1.0,1.0));
+	//  worldVisAtt->SetForceWireframe(true);
+	//  worldVisAtt->SetVisibility(worldVis);
+	//  fLogicWorld->SetVisAttributes(worldVisAtt);
+	//  fLogicWorld = fLogicWorld;
 
-  return fPhysiWorld;
+	return fPhysiWorld;
 }
 
 void DetectorConstruction::SetWorldMaterial( G4String name ) {
-  fMatWorldName = name;
-  UpdateGeometry(); // auto update
+	fMatWorldName = name;
+	UpdateGeometry(); // auto update
 }
 
 void DetectorConstruction::SetWorldDimensions( G4ThreeVector vec ) {
-  fWorldSizeX = vec.x() ;
-  fWorldSizeY = vec.y() ;
-  fWorldSizeZ = vec.z() ;
-  UpdateGeometry(); // auto update
+	fWorldSizeX = vec.x() ;
+	fWorldSizeY = vec.y() ;
+	fWorldSizeZ = vec.z() ;
+	UpdateGeometry(); // auto update
 }
 
 void DetectorConstruction::SetWorldVis( G4bool vis ) {
-  fWorldVis = vis;
-  UpdateGeometry(); // auto update
+	fWorldVis = vis;
+	UpdateGeometry(); // auto update
 }
 
 //void DetectorConstruction::SetWorldMagneticField( G4ThreeVector vec )
@@ -249,7 +259,7 @@ void DetectorConstruction::LayeredTargetAdd(G4String Material, G4double Areal)
 	if(!fApparatusLayeredTarget)fApparatusLayeredTarget=new ApparatusLayeredTarget(fDetEffPosition.z());
 	if(fApparatusLayeredTarget->BuildTargetLayer(Material,Areal)){
 		if(fLogicWorld == NULL) {
-		          Construct();
+			Construct();
 		}  
 		fApparatusLayeredTarget->PlaceTarget(fLogicWorld);
 	}
@@ -258,52 +268,52 @@ void DetectorConstruction::LayeredTargetAdd(G4String Material, G4double Areal)
 
 void DetectorConstruction::SetTabMagneticField(G4String PathAndTableName, G4double z_offset, G4double z_rotation)
 {
-  //const char * c = PathAndTableName.c_str();///conversion attempt using .c_str() (a string member function)
- new NonUniformMagneticField(PathAndTableName,z_offset,z_rotation);///addition of field for SPICE
+	//const char * c = PathAndTableName.c_str();///conversion attempt using .c_str() (a string member function)
+	new NonUniformMagneticField(PathAndTableName,z_offset,z_rotation);///addition of field for SPICE
 }
 
 void DetectorConstruction::UpdateGeometry() {
-  G4RunManager::GetRunManager()->DefineWorldVolume(Construct());
+	G4RunManager::GetRunManager()->DefineWorldVolume(Construct());
 }
 
 void DetectorConstruction::SetGenericTargetMaterial( G4String name )
 {
-  DetectorConstruction::fSetGenericTargetMaterial = true;
-  DetectorConstruction::fGenericTargetMaterial = name;
-  DetectorConstruction::SetGenericTarget();
+	DetectorConstruction::fSetGenericTargetMaterial = true;
+	DetectorConstruction::fGenericTargetMaterial = name;
+	DetectorConstruction::SetGenericTarget();
 }
 
 void DetectorConstruction::SetGenericTargetDimensions( G4ThreeVector vec )
 {
-  DetectorConstruction::fSetGenericTargetDimensions = true;
-  DetectorConstruction::fGenericTargetDimensions = vec;
-  DetectorConstruction::SetGenericTarget();
+	DetectorConstruction::fSetGenericTargetDimensions = true;
+	DetectorConstruction::fGenericTargetDimensions = vec;
+	DetectorConstruction::SetGenericTarget();
 }
 
 void DetectorConstruction::SetGenericTargetPosition( G4ThreeVector vec )
 {
-  DetectorConstruction::fSetGenericTargetPosition = true;
-  DetectorConstruction::fGenericTargetPosition = vec;
-  DetectorConstruction::SetGenericTarget();
+	DetectorConstruction::fSetGenericTargetPosition = true;
+	DetectorConstruction::fGenericTargetPosition = vec;
+	DetectorConstruction::SetGenericTarget();
 }
 
 void DetectorConstruction::SetGenericTarget()
 {
-  if( fSetGenericTargetMaterial ) {
-    if( fSetGenericTargetDimensions ) {
-	if( fSetGenericTargetPosition ) {
-	  G4String name = fGenericTargetMaterial;
-	  G4double vecX = fGenericTargetDimensions.x()/mm;
-	  G4double vecY = fGenericTargetDimensions.y()/mm;
-	  G4double vecZ = fGenericTargetDimensions.z()/mm;
-	  
-	  ApparatusGenericTarget* pApparatusGenericTarget = new ApparatusGenericTarget();
-	  pApparatusGenericTarget->Build(name, vecX, vecY, vecZ);
-	  G4RotationMatrix* rotate = new G4RotationMatrix;
-	  pApparatusGenericTarget->PlaceApparatus(fLogicWorld, fGenericTargetPosition, rotate);
+	if( fSetGenericTargetMaterial ) {
+		if( fSetGenericTargetDimensions ) {
+			if( fSetGenericTargetPosition ) {
+				G4String name = fGenericTargetMaterial;
+				G4double vecX = fGenericTargetDimensions.x()/mm;
+				G4double vecY = fGenericTargetDimensions.y()/mm;
+				G4double vecZ = fGenericTargetDimensions.z()/mm;
+
+				ApparatusGenericTarget* pApparatusGenericTarget = new ApparatusGenericTarget();
+				pApparatusGenericTarget->Build(name, vecX, vecY, vecZ);
+				G4RotationMatrix* rotate = new G4RotationMatrix;
+				pApparatusGenericTarget->PlaceApparatus(fLogicWorld, fGenericTargetPosition, rotate);
+			}
+		}
 	}
-    }
-  }
 }
 
 
@@ -316,30 +326,29 @@ G4double DetectorConstruction::LayeredTargetLayerStart(int layer){
 
 
 void DetectorConstruction::AddGrid() {
-  if(fLogicWorld == NULL) {
-	 Construct();
-  }
-  
-  if(fGridSize != 0.0*mm)
-    {
+	if(fLogicWorld == NULL) {
+		Construct();
+	}
+
+	if(fGridSize != 0.0*mm)
+	{
 		DetectionSystemGrid* pGrid = new DetectionSystemGrid(	fGridDimensions.x(),
-																				fGridDimensions.y(),
-																				fGridDimensions.z(),
-																				fGridSize,
-																				fGridMat,
-																				fGridColour,
-																				fGridOffset) ;
+				fGridDimensions.y(),
+				fGridDimensions.z(),
+				fGridSize,
+				fGridMat,
+				fGridColour,
+				fGridOffset) ;
 		pGrid->Build();
 		pGrid->PlaceDetector( fLogicWorld );
-    }
+	}
 }
 
 void DetectorConstruction::AddApparatusSpiceTargetChamber(G4String MedLo)//parameter sets lens for SPICE - should be matched with field
 {
-   //Create Target Chamber
-   ApparatusSpiceTargetChamber* fApparatusSpiceTargetChamber = new ApparatusSpiceTargetChamber(MedLo,fDetEffPosition.z());
-   fApparatusSpiceTargetChamber->Build( fLogicWorld );
-   fSetSpiceIn = true;
+	//Create Target Chamber
+	ApparatusSpiceTargetChamber* fApparatusSpiceTargetChamber = new ApparatusSpiceTargetChamber(MedLo,fDetEffPosition.z());
+	fApparatusSpiceTargetChamber->Build( fLogicWorld );
 }
 
 void DetectorConstruction::AddApparatus8piVacuumChamber() {
@@ -421,6 +430,7 @@ void DetectorConstruction::AddDetectionSystemSodiumIodide(G4int ndet) {
 
 		pSodiumIodide->PlaceDetector( fLogicWorld, move, rotate, detectorNumber ) ;
 	}
+	fNaI = true;
 }
 
 void DetectorConstruction::AddDetectionSystemLanthanumBromide(G4ThreeVector input) {
@@ -438,6 +448,7 @@ void DetectorConstruction::AddDetectionSystemLanthanumBromide(G4ThreeVector inpu
 	{
 		pDetectionSystemLanthanumBromide->PlaceDetector(fLogicWorld, detectorNumber, radialpos);
 	}
+	fLaBr = true;
 }
 
 void DetectorConstruction::AddDetectionSystemAncillaryBGO(G4ThreeVector input) {
@@ -452,10 +463,10 @@ void DetectorConstruction::AddDetectionSystemAncillaryBGO(G4ThreeVector input) {
 	DetectionSystemAncillaryBGO* pDetectionSystemAncillaryBGO = new DetectionSystemAncillaryBGO();
 	pDetectionSystemAncillaryBGO->Build();
 
-	for(G4int detectorNumber = 0; detectorNumber < ndet; detectorNumber++)
-	{
+	for(G4int detectorNumber = 0; detectorNumber < ndet; detectorNumber++) {
 		pDetectionSystemAncillaryBGO->PlaceDetector(fLogicWorld, detectorNumber, radialpos, hevimetopt);
 	}
+	fAncBgo = true;
 }
 
 
@@ -542,6 +553,8 @@ void DetectorConstruction::AddDetectionSystemGriffinCustomDetector(G4int) {
 	pGriffinCustom->BuildEverythingButCrystals();
 
 	pGriffinCustom->PlaceEverythingButCrystals(fLogicWorld, fCustomDetectorNumber-1, fCustomDetectorPosition-1, fUseTigressPositions);
+
+	fGriffin = true;
 }
 
 void DetectorConstruction::AddDetectionSystemGriffinCustom(G4int ndet) {
@@ -566,6 +579,8 @@ void DetectorConstruction::AddDetectionSystemGriffinCustom(G4int ndet) {
 		pGriffinCustom->PlaceEverythingButCrystals( fLogicWorld, detNum-1, posNum-1, fUseTigressPositions ) ;
 
 	}
+
+	fGriffin = true;
 }
 
 void DetectorConstruction::AddDetectionSystemGriffinShieldSelect( G4int ShieldSelect ){
@@ -623,6 +638,8 @@ void DetectorConstruction::AddDetectionSystemGriffinForward(G4int ndet) {
 		pGriffinDLS->BuildEverythingButCrystals();
 		pGriffinDLS->PlaceEverythingButCrystals( fLogicWorld, detNum-1, posNum-1, fUseTigressPositions ) ;
 	}
+
+	fGriffin = true;
 }
 
 void DetectorConstruction::AddDetectionSystemGriffinForwardDetector(G4int ndet) {
@@ -645,6 +662,8 @@ void DetectorConstruction::AddDetectionSystemGriffinForwardDetector(G4int ndet) 
 	pGriffinDLS->BuildEverythingButCrystals();
 
 	pGriffinDLS->PlaceEverythingButCrystals( fLogicWorld, detNum-1, posNum-1, fUseTigressPositions ) ;
+
+	fGriffin = true;
 }
 
 void DetectorConstruction::AddDetectionSystemGriffinBack(G4int ndet) {
@@ -668,8 +687,9 @@ void DetectorConstruction::AddDetectionSystemGriffinBack(G4int ndet) {
 		pGriffinDLS->PlaceDeadLayerSpecificCrystal( fLogicWorld, detNum-1, posNum-1, fUseTigressPositions ) ;
 		pGriffinDLS->BuildEverythingButCrystals();
 		pGriffinDLS->PlaceEverythingButCrystals( fLogicWorld, detNum-1, posNum-1, fUseTigressPositions ) ;
-
 	}
+
+	fGriffin = true;
 }
 
 void DetectorConstruction::AddDetectionSystemGriffinBackDetector(G4int ndet) {
@@ -690,6 +710,8 @@ void DetectorConstruction::AddDetectionSystemGriffinBackDetector(G4int ndet) {
 	pGriffinDLS->PlaceDeadLayerSpecificCrystal( fLogicWorld, detNum-1, posNum-1, fUseTigressPositions ) ;
 	pGriffinDLS->BuildEverythingButCrystals();
 	pGriffinDLS->PlaceEverythingButCrystals( fLogicWorld, detNum-1, posNum-1, fUseTigressPositions ) ;
+
+	fGriffin = true;
 }
 
 void DetectorConstruction::AddDetectionSystemGriffinHevimet(G4int input) {
@@ -706,6 +728,8 @@ void DetectorConstruction::AddDetectionSystemSceptar(G4int ndet) {
 	DetectionSystemSceptar* pSceptar = new DetectionSystemSceptar() ;
 	pSceptar->Build() ;
 	pSceptar->PlaceDetector( fLogicWorld, ndet ) ;
+
+	fSceptar = true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -717,6 +741,8 @@ void DetectorConstruction::AddDetectionSystemDescant(G4int ndet) {
 	DetectionSystemDescant* pDetectionSystemDescant = new DetectionSystemDescant(true) ;
 	pDetectionSystemDescant->Build() ;
 	pDetectionSystemDescant->PlaceDetector( fLogicWorld, ndet ) ;
+
+	fDescant = true;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -739,6 +765,8 @@ void DetectorConstruction::AddDetectionSystemDescantAuxPorts(G4ThreeVector input
 	{
 		pDetectionSystemDescant->PlaceDetectorAuxPorts(fLogicWorld, detectorNumber, radialpos);
 	}
+
+	fDescant = true;
 }
 
 void DetectorConstruction::SetDetectionSystemDescantRotation(G4ThreeVector input) {
@@ -760,6 +788,8 @@ void DetectorConstruction::AddDetectionSystemDescantCart(G4ThreeVector input) {
 	DetectionSystemDescant* pDetectionSystemDescant = new DetectionSystemDescant(true) ;
 	pDetectionSystemDescant->Build() ;
 	pDetectionSystemDescant->PlaceDetector( fLogicWorld, fDescantColor, input, fDescantRotation ) ;
+
+	fDescant = true;
 }
 
 void DetectorConstruction::AddDetectionSystemDescantSpher(G4ThreeVector input, G4double unit) {
@@ -767,6 +797,8 @@ void DetectorConstruction::AddDetectionSystemDescantSpher(G4ThreeVector input, G
 	//convert from degree to rad
 	sphericalVector.setRThetaPhi(input.x()*unit, input.y()/180.*M_PI, input.z()/180.*M_PI);
 	AddDetectionSystemDescantCart(sphericalVector);
+
+	fDescant = true;
 }
 
 void DetectorConstruction::AddApparatusDescantStructure() {
@@ -792,24 +824,29 @@ void DetectorConstruction::AddDetectionSystemTestcan(G4ThreeVector input) {
 	DetectionSystemTestcan* pDetectionSystemTestcan = new DetectionSystemTestcan(length, radius);
 	pDetectionSystemTestcan->Build();
 	pDetectionSystemTestcan->PlaceDetector(fLogicWorld);
+
+	fTestcan = true;
 }
 
 void DetectorConstruction::AddDetectionSystemSpice(G4int nRings) {
-  if(fLogicWorld == NULL) {
-	Construct();
-  }
-  DetectionSystemSpice* pSpice = new DetectionSystemSpice() ;
-  pSpice->Build(); 
-  pSpice->PlaceDetector(fLogicWorld, nRings); //adds the detector rings/segments, als oincludes functions for other builds
+	if(fLogicWorld == NULL) {
+		Construct();
+	}
+	DetectionSystemSpice* pSpice = new DetectionSystemSpice() ;
+	pSpice->Build(); 
+	pSpice->PlaceDetector(fLogicWorld, nRings); //adds the detector rings/segments, als oincludes functions for other builds
+	fSpice = true;
 }
 
 void DetectorConstruction::AddDetectionSystemPaces(G4int ndet) {
-  if(fLogicWorld == NULL) {
-	 Construct();
-  }
-  
-  DetectionSystemPaces* pPaces = new DetectionSystemPaces() ;
-  pPaces->Build() ;
+	if(fLogicWorld == NULL) {
+		Construct();
+	}
 
-  pPaces->PlaceDetector(fLogicWorld, ndet) ;
+	DetectionSystemPaces* pPaces = new DetectionSystemPaces() ;
+	pPaces->Build() ;
+
+	pPaces->PlaceDetector(fLogicWorld, ndet) ;
+
+	fPaces = true;
 }

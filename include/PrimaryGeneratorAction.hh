@@ -42,14 +42,14 @@
 #include "G4ThreeVector.hh"
 #include "G4SystemOfUnits.hh"
 
+#include "PrimaryGeneratorMessenger.hh"
+#include "DetectorConstruction.hh"
+#include "HistoManager.hh"
+#include "BeamDistribution.hh"
 
 class G4ParticleGun;
 class G4Event;
 
-class PrimaryGeneratorMessenger;
-class DetectorConstruction;
-class HistoManager;
-class BeamDistribution;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
@@ -57,34 +57,34 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 private:    
     G4ParticleGun*                fParticleGun;  //pointer a to G4 class
     DetectorConstruction*         fDetector;     //pointer to the geometry
+    HistoManager*                 fHistoManager; //pointer to the histo manager
     PrimaryGeneratorMessenger*    fGunMessenger; //messenger of this class
-    BeamDistribution*		  fBeamDistribution;//pointer to the BeamDistribution class
+    BeamDistribution*		       fBeamDistribution;//pointer to the BeamDistribution class
 
 public:
-    PrimaryGeneratorAction(DetectorConstruction*);
+    PrimaryGeneratorAction(HistoManager*);
     virtual ~PrimaryGeneratorAction();
     virtual void GeneratePrimaries(G4Event*);
     
 
-    void SetNumberOfDecayingLaBrDetectors( G4int num ) {fNumberOfDecayingLaBrDetectors = num;} ;
-    void SetEfficiencyEnergy( G4double num ) {fEffEnergy = num;} ;
-    void SetEfficiencyDirection( G4ThreeVector num ) {fEffDirection = num; fEffDirectionBool = true;} ;
+    void SetNumberOfDecayingLaBrDetectors(G4int num) { fNumberOfDecayingLaBrDetectors = num; }
+    void SetEfficiencyEnergy(G4double num) { fEffEnergy = num; fHistoManager->BeamEnergy(num); }
+    void SetEfficiencyDirection(G4ThreeVector num) { fEffDirection = num; fEffDirectionBool = true; }
     
-    void PassEfficiencyPosition( G4ThreeVector num );
-    void SetEfficiencyPosition( G4ThreeVector num ) {fEffPosition = num; fEffPositionBool = true;PassEfficiencyPosition(fEffPosition);}
+    void PassEfficiencyPosition(G4ThreeVector num);
+    void SetEfficiencyPosition(G4ThreeVector num) { fEffPosition = num; fEffPositionBool = true; PassEfficiencyPosition(fEffPosition); }
     
-    void SetEfficiencyParticle( G4String val ) {fEffParticle = val; fEffParticleBool = true;} ;
-    void SetEfficiencyPolarization( G4ThreeVector num ) {fEffPolarizationVector = num; fEffPolarization = true;} ;
-    void SetConeMaxAngle( G4double num1 ) {fAngleInit = num1; fConeAngleBool = true; fEffDirectionBool = true;};
-    void SetConeMinAngle( G4double num1 ) {fAngleMinInit = num1;};
-    void SetBeamSpotSigma( G4double num1 ) {fBeamSpotSigma = num1;};
+    void SetEfficiencyParticle(G4String val) { fEffParticle = val; fEffParticleBool = true; }
+    void SetEfficiencyPolarization(G4ThreeVector num ) { fEffPolarizationVector = num; fEffPolarization = true; }
+    void SetConeMaxAngle(G4double num1) { fAngleInit = num1; fConeAngleBool = true; fEffDirectionBool = true; }
+    void SetConeMinAngle(G4double num1) { fAngleMinInit = num1; }
+    void SetBeamSpotSigma(G4double num1) { fBeamSpotSigma = num1; }
     void PassTarget(G4double);
     void PrepareBeamFile(G4String);
     void SetLayeredTargetBeamDistro(G4int layer);
  
-    
-    void SetSourceNeeded(G4bool needed){fSourceNeeded = needed;};
-    void SetSourceName(G4String input){fSourceName = input;};
+    void SetSourceNeeded(G4bool needed) { fSourceNeeded = needed; }
+    void SetSourceName(G4String input) { fSourceName = input; }
     
 private:
     //variables

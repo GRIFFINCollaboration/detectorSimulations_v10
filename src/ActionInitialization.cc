@@ -51,25 +51,29 @@ ActionInitialization::~ActionInitialization()
 void ActionInitialization::BuildForMaster() const
 {
     // Actions
-    SetUserAction(new RunAction());
+	 // the master doesn't create any tree or histograms, so we pass a null
+	 // pointer instead of a pointer to a HistoManager
+    SetUserAction(new RunAction(nullptr));
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void ActionInitialization::Build() const
 {
-    // Actions
-    //
-    SetUserAction(new PrimaryGeneratorAction(fDetector));
+	// Actions
+	//
+	auto histManager = new HistoManager(fDetector);
 
-    RunAction* runAction = new RunAction();
-    SetUserAction(runAction);
+	SetUserAction(new PrimaryGeneratorAction(histManager));
 
-    EventAction* eventAction = new EventAction(runAction);
-    SetUserAction(eventAction);
+	RunAction* runAction = new RunAction(histManager);
+	SetUserAction(runAction);
 
-    SteppingAction* steppingAction = new SteppingAction(fDetector, eventAction);
-    SetUserAction(steppingAction);
+	EventAction* eventAction = new EventAction(runAction, histManager);
+	SetUserAction(eventAction);
+
+	SteppingAction* steppingAction = new SteppingAction(fDetector, eventAction);
+	SetUserAction(steppingAction);
 }  
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
