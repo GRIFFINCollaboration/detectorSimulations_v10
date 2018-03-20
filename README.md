@@ -97,7 +97,8 @@ Whenever an electron or positron is emitted, you can choose to simulate kinemati
 | ``` /DetSys/det/SetCustomShieldsPresent 0/1 ``` | Selects whether or not the detector suppressors are included | True |
 | ``` /DetSys/det/SetCustomRadialDistance double unit ``` | Selects the radial distance for the detector from the origin |  |
 | ``` /DetSys/det/SetCustomExtensionSuppressorLocation 0/1 ``` | Selects a position for the extension suppressors. Either forward (0) or back (1) | Forward (0) |
-| ``` /DetSys/det/SetCustomDeadLayer det_num pos_num null ``` | Sets the dead layer and position for the detector placed in the next call to addGriffinCustom |  |
+| ``` /DetSys/det/SetCustomPosition det_num pos_num null ``` | Sets the position for the detector placed in the next call to addGriffinCustom |  |
+| ``` /DetSys/det/SetCustomDeadLayer det_num cry_num dead_layer ``` | Sets the dead layer for the crystal specified (used in any following calls to addGriffinCustom) |  |
 | ``` /DetSys/det/includeGriffinHevimet 0/1 ``` | Includes the Hevimet for a Griffin detector | False |
 | ``` /DetSys/det/addGriffinCustom int ``` | Adds a detection system using the paramaters specified |  |
 
