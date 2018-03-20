@@ -61,6 +61,8 @@ public:
     G4int PlaceDeadLayerSpecificCrystal(G4LogicalVolume* exp_hall_log, G4int detector_number, G4int position_number, G4bool posTigress);
     G4int PlaceEverythingButCrystals(G4LogicalVolume* exp_hall_log, G4int detector_number, G4int position_number, G4bool posTigress);
 
+	 void SetDeadLayer(G4int detNum, G4int cryNum, G4double deadLayer) { fGriffinDeadLayers[detNum][cryNum] = deadLayer; }
+
 private:
     G4String fSdName0;
     G4String fSdName1;
@@ -455,8 +457,6 @@ private:
     // internal methods
     void BuildOneDetector();
     //    void PlaceDetector(G4int detectorNumber);
-
-
 };
 
 #endif

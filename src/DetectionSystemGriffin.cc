@@ -237,7 +237,7 @@ G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* expHal
                                                       - tan(fBentEndAngle));
 
     // Replacement for suppressorExtensionAngle: must totally recalculate
-    G4double shellSuppressorExtensionAngle = atan(((fSuppressorBackRadius
+	 G4double shellSuppressorExtensionAngle = atan(((fSuppressorBackRadius
                                                         + fBentEndLength +(fBGOCanSeperation
                                                                                   + fSideBGOThickness + fSuppressorShellThickness*2.0)
                                                         / tan(fBentEndAngle)
@@ -255,53 +255,49 @@ G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* expHal
 
     G4double extensionRadialShift = extensionBackShift*tan(fBentEndAngle);
 
-    if(fIncludeSideSuppressors)
-    {
+	 if(fIncludeSideSuppressors) {
+		 G4RotationMatrix* rotateSideSuppressor[8];
+		 G4ThreeVector moveInnerSuppressor[8];
 
-        G4RotationMatrix* rotateSideSuppressor[8];
-        G4ThreeVector moveInnerSuppressor[8];
+		 x0 = fSideBGOThickness/2.0 + fSuppressorShellThickness + fDetectorTotalWidth/2.0 +fBGOCanSeperation;
+		 y0 = (fDetectorTotalWidth/2.0 +fBGOCanSeperation + fSideBGOThickness/2.0)/2.0;
+		 z0 = (shellSideSuppressorLength/2.0 -fCanFaceThickness/2.0 + fBentEndLength
+				 +(fBGOCanSeperation + fBGOChoppedTip)/tan(fBentEndAngle) + fShift
+				 + fAppliedBackShift - fSuppressorShellThickness/2.0 + distFromOriginDet);
 
-        x0 = fSideBGOThickness/2.0 + fSuppressorShellThickness + fDetectorTotalWidth/2.0 +fBGOCanSeperation;
-        y0 = (fDetectorTotalWidth/2.0 +fBGOCanSeperation + fSideBGOThickness/2.0)/2.0;
-        z0 = (shellSideSuppressorLength/2.0 -fCanFaceThickness/2.0 + fBentEndLength
-              +(fBGOCanSeperation + fBGOChoppedTip)/tan(fBentEndAngle) + fShift
-              + fAppliedBackShift - fSuppressorShellThickness/2.0 + distFromOriginDet);
+		 for(i=0; i<4; i++) {
+			 rotateSideSuppressor[2*i] = new G4RotationMatrix;
+			 rotateSideSuppressor[2*i]->rotateZ(M_PI/2.0);
+			 rotateSideSuppressor[2*i]->rotateY(M_PI/2.0);
+			 rotateSideSuppressor[2*i]->rotateX(M_PI/2.0-M_PI/2.0*i);
+			 rotateSideSuppressor[2*i]->rotateX(alpha);
+			 rotateSideSuppressor[2*i]->rotateY(beta);
+			 rotateSideSuppressor[2*i]->rotateZ(gamma);
 
-        for(i=0; i<4; i++) {
+			 x = x0*cos((i-1)*M_PI/2.0) + y0*sin((i-1)*M_PI/2);
+			 y = -x0*sin((i-1)*M_PI/2.0) + y0*cos((i-1)*M_PI/2);
+			 z = z0;
 
-            rotateSideSuppressor[2*i] = new G4RotationMatrix;
-            rotateSideSuppressor[2*i]->rotateZ(M_PI/2.0);
-            rotateSideSuppressor[2*i]->rotateY(M_PI/2.0);
-            rotateSideSuppressor[2*i]->rotateX(M_PI/2.0-M_PI/2.0*i);
-            rotateSideSuppressor[2*i]->rotateX(alpha);
-            rotateSideSuppressor[2*i]->rotateY(beta);
-            rotateSideSuppressor[2*i]->rotateZ(gamma);
+			 moveInnerSuppressor[i*2] = G4ThreeVector(DetectionSystemGriffin::TransX(x,y,z,theta,phi),DetectionSystemGriffin::TransY(x,y,z,theta,phi),DetectionSystemGriffin::TransZ(x,z,theta));
 
-            x = x0*cos((i-1)*M_PI/2.0) + y0*sin((i-1)*M_PI/2);
-            y = -x0*sin((i-1)*M_PI/2.0) + y0*cos((i-1)*M_PI/2);
-            z = z0;
+			 fRightSuppressorCasingAssembly->MakeImprint(expHallLog, moveInnerSuppressor[2*i], rotateSideSuppressor[2*i], fCopyNumber++, fSurfCheck);
 
-            moveInnerSuppressor[i*2] = G4ThreeVector(DetectionSystemGriffin::TransX(x,y,z,theta,phi),DetectionSystemGriffin::TransY(x,y,z,theta,phi),DetectionSystemGriffin::TransZ(x,z,theta));
+			 rotateSideSuppressor[2*i+1] = new G4RotationMatrix;
+			 rotateSideSuppressor[2*i+1]->rotateY(-M_PI/2.0);
+			 rotateSideSuppressor[2*i+1]->rotateX(-M_PI/2.0*(i+2));
+			 rotateSideSuppressor[2*i+1]->rotateX(alpha);
+			 rotateSideSuppressor[2*i+1]->rotateY(beta);
+			 rotateSideSuppressor[2*i+1]->rotateZ(gamma);
 
-            fRightSuppressorCasingAssembly->MakeImprint(expHallLog, moveInnerSuppressor[2*i], rotateSideSuppressor[2*i], fCopyNumber++, fSurfCheck);
+			 x = x0*sin(i*M_PI/2.0) + y0*cos(i*M_PI/2);
+			 y = x0*cos(i*M_PI/2.0) - y0*sin(i*M_PI/2);
+			 z = z0;
 
-            rotateSideSuppressor[2*i+1] = new G4RotationMatrix;
-            rotateSideSuppressor[2*i+1]->rotateY(-M_PI/2.0);
-            rotateSideSuppressor[2*i+1]->rotateX(-M_PI/2.0*(i+2));
-            rotateSideSuppressor[2*i+1]->rotateX(alpha);
-            rotateSideSuppressor[2*i+1]->rotateY(beta);
-            rotateSideSuppressor[2*i+1]->rotateZ(gamma);
+			 moveInnerSuppressor[i*2+1] = G4ThreeVector(DetectionSystemGriffin::TransX(x,y,z,theta,phi),DetectionSystemGriffin::TransY(x,y,z,theta,phi),DetectionSystemGriffin::TransZ(x,z,theta));
 
-            x = x0*sin(i*M_PI/2.0) + y0*cos(i*M_PI/2);
-            y = x0*cos(i*M_PI/2.0) - y0*sin(i*M_PI/2);
-            z = z0;
-
-            moveInnerSuppressor[i*2+1] = G4ThreeVector(DetectionSystemGriffin::TransX(x,y,z,theta,phi),DetectionSystemGriffin::TransY(x,y,z,theta,phi),DetectionSystemGriffin::TransZ(x,z,theta));
-
-            fLeftSuppressorCasingAssembly->MakeImprint(expHallLog, moveInnerSuppressor[2*i+1], rotateSideSuppressor[2*i+1], fCopyNumberTwo++, fSurfCheck);
-        }
-
-    }
+			 fLeftSuppressorCasingAssembly->MakeImprint(expHallLog, moveInnerSuppressor[2*i+1], rotateSideSuppressor[2*i+1], fCopyNumberTwo++, fSurfCheck);
+		 }
+	 }
 
     // now we add the side pieces of suppressor that extend out in front of the can when it's in the back position
     fCopyNumber = fRightSuppressorExtensionCopyNumber + detectorNumber*4;

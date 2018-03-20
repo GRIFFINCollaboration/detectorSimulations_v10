@@ -147,6 +147,7 @@ private:
 	G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinShieldSelectCmd ;
 	G4UIcmdWithADoubleAndUnit*  fAddDetectionSystemGriffinSetRadialDistanceCmd ;
 	G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinSetExtensionSuppLocationCmd ;
+	G4UIcmdWith3Vector*         fAddDetectionSystemGriffinSetPositionCmd ;
 	G4UIcmdWith3Vector*         fAddDetectionSystemGriffinSetDeadLayerCmd ;
 	G4UIcmdWithABool*           fUseTIGRESSPositionsCmd;
 };

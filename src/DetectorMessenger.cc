@@ -278,35 +278,39 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
 	fAddDetectionSystemGriffinBackDetectorCmd->SetGuidance("Add GriffinBack Detector");
 	fAddDetectionSystemGriffinBackDetectorCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-	fAddDetectionSystemGriffinCustomDetectorCmd = new G4UIcmdWithAnInteger( "/DetSys/det/addGriffinCustomDetector", this ) ;
-	fAddDetectionSystemGriffinCustomDetectorCmd->SetGuidance( "Adds a detector using the paramaters specified") ;
-	fAddDetectionSystemGriffinCustomDetectorCmd->AvailableForStates( G4State_PreInit, G4State_Idle ) ;
+	fAddDetectionSystemGriffinCustomDetectorCmd = new G4UIcmdWithAnInteger( "/DetSys/det/addGriffinCustomDetector", this);
+	fAddDetectionSystemGriffinCustomDetectorCmd->SetGuidance( "Adds a detector using the paramaters specified");
+	fAddDetectionSystemGriffinCustomDetectorCmd->AvailableForStates( G4State_PreInit, G4State_Idle);
 
-	fAddDetectionSystemGriffinCustomCmd = new G4UIcmdWithAnInteger( "/DetSys/det/addGriffinCustom", this ) ;
-	fAddDetectionSystemGriffinCustomCmd->SetGuidance( "Adds a detection system using the paramaters specified" ) ;
-	fAddDetectionSystemGriffinCustomCmd->AvailableForStates( G4State_PreInit, G4State_Idle ) ;
+	fAddDetectionSystemGriffinCustomCmd = new G4UIcmdWithAnInteger( "/DetSys/det/addGriffinCustom", this);
+	fAddDetectionSystemGriffinCustomCmd->SetGuidance( "Adds a detection system using the paramaters specified");
+	fAddDetectionSystemGriffinCustomCmd->AvailableForStates( G4State_PreInit, G4State_Idle);
 
 	//////// Commands that are required for addGriffinCustom
-	fAddDetectionSystemGriffinShieldSelectCmd = new G4UIcmdWithAnInteger( "/DetSys/det/SetCustomShieldsPresent", this );
-	fAddDetectionSystemGriffinShieldSelectCmd->SetGuidance( "Selects whether or not the detector suppressors are included" ) ;
-	fAddDetectionSystemGriffinShieldSelectCmd->AvailableForStates( G4State_PreInit, G4State_Idle ) ;
+	fAddDetectionSystemGriffinShieldSelectCmd = new G4UIcmdWithAnInteger( "/DetSys/det/SetCustomShieldsPresent", this);
+	fAddDetectionSystemGriffinShieldSelectCmd->SetGuidance( "Selects whether or not the detector suppressors are included");
+	fAddDetectionSystemGriffinShieldSelectCmd->AvailableForStates( G4State_PreInit, G4State_Idle);
 
-	fAddDetectionSystemGriffinSetRadialDistanceCmd = new G4UIcmdWithADoubleAndUnit( "/DetSys/det/SetCustomRadialDistance", this ) ;
-	fAddDetectionSystemGriffinSetRadialDistanceCmd->SetGuidance( "Selects the radial distance for the detector from the origin") ;
-	fAddDetectionSystemGriffinSetRadialDistanceCmd->AvailableForStates( G4State_PreInit, G4State_Idle ) ;
+	fAddDetectionSystemGriffinSetRadialDistanceCmd = new G4UIcmdWithADoubleAndUnit( "/DetSys/det/SetCustomRadialDistance", this);
+	fAddDetectionSystemGriffinSetRadialDistanceCmd->SetGuidance( "Selects the radial distance for the detector from the origin");
+	fAddDetectionSystemGriffinSetRadialDistanceCmd->AvailableForStates( G4State_PreInit, G4State_Idle);
 
-	fAddDetectionSystemGriffinSetExtensionSuppLocationCmd = new G4UIcmdWithAnInteger( "/DetSys/det/SetCustomExtensionSuppressorLocation", this ) ;
-	fAddDetectionSystemGriffinSetExtensionSuppLocationCmd->SetGuidance( "Selects a position for the extension suppressors. Either forward (0) or back (1)." ) ;
-	fAddDetectionSystemGriffinSetExtensionSuppLocationCmd->AvailableForStates( G4State_PreInit, G4State_Idle ) ;
+	fAddDetectionSystemGriffinSetExtensionSuppLocationCmd = new G4UIcmdWithAnInteger( "/DetSys/det/SetCustomExtensionSuppressorLocation", this);
+	fAddDetectionSystemGriffinSetExtensionSuppLocationCmd->SetGuidance( "Selects a position for the extension suppressors. Either forward (0) or back (1).");
+	fAddDetectionSystemGriffinSetExtensionSuppLocationCmd->AvailableForStates( G4State_PreInit, G4State_Idle);
 
-	fAddDetectionSystemGriffinSetDeadLayerCmd = new G4UIcmdWith3Vector( "/DetSys/det/SetCustomDeadLayer", this ) ;
-	fAddDetectionSystemGriffinSetDeadLayerCmd->SetGuidance( "Sets the dead layer and position for the detector placed in the next call to addGriffinCustom." ) ;
-	fAddDetectionSystemGriffinSetDeadLayerCmd->AvailableForStates( G4State_PreInit, G4State_Idle ) ;
+	fAddDetectionSystemGriffinSetPositionCmd = new G4UIcmdWith3Vector( "/DetSys/det/SetCustomPosition", this);
+	fAddDetectionSystemGriffinSetPositionCmd->SetGuidance( "Sets the position and number for the detector placed in the next call to addGriffinCustom.");
+	fAddDetectionSystemGriffinSetPositionCmd->AvailableForStates( G4State_PreInit, G4State_Idle);
+
+	fAddDetectionSystemGriffinSetDeadLayerCmd = new G4UIcmdWith3Vector( "/DetSys/det/SetCustomDeadLayer", this);
+	fAddDetectionSystemGriffinSetDeadLayerCmd->SetGuidance( "Sets the dead layer for the specified crystal.");
+	fAddDetectionSystemGriffinSetDeadLayerCmd->AvailableForStates( G4State_PreInit, G4State_Idle);
 	////////
 
-	fAddDetectionSystemGriffinHevimetCmd = new G4UIcmdWithAnInteger( "/DetSys/det/includeGriffinHevimet", this ) ;
-	fAddDetectionSystemGriffinHevimetCmd->SetGuidance( "Includes the Hevimet for a Griffin detector." ) ;
-	fAddDetectionSystemGriffinHevimetCmd->AvailableForStates( G4State_PreInit, G4State_Idle ) ;
+	fAddDetectionSystemGriffinHevimetCmd = new G4UIcmdWithAnInteger( "/DetSys/det/includeGriffinHevimet", this);
+	fAddDetectionSystemGriffinHevimetCmd->SetGuidance( "Includes the Hevimet for a Griffin detector.");
+	fAddDetectionSystemGriffinHevimetCmd->AvailableForStates( G4State_PreInit, G4State_Idle);
 
 	fAddDetectionSystemSceptarCmd = new G4UIcmdWithAnInteger("/DetSys/det/addSceptar",this);
 	fAddDetectionSystemSceptarCmd->SetGuidance("Add Detection System Sceptar");
@@ -393,14 +397,15 @@ DetectorMessenger::~DetectorMessenger()
 	delete fAddDetectionSystemGriffinForwardDetectorCmd;
 	delete fAddDetectionSystemGriffinBackCmd;
 	delete fAddDetectionSystemGriffinBackDetectorCmd;
-	delete fAddDetectionSystemGriffinCustomDetectorCmd ;
-	delete fAddDetectionSystemGriffinCustomCmd ;
-	delete fAddDetectionSystemGriffinHevimetCmd ;
+	delete fAddDetectionSystemGriffinCustomDetectorCmd;
+	delete fAddDetectionSystemGriffinCustomCmd;
+	delete fAddDetectionSystemGriffinHevimetCmd;
 
-	delete fAddDetectionSystemGriffinShieldSelectCmd ;
-	delete fAddDetectionSystemGriffinSetRadialDistanceCmd ;
-	delete fAddDetectionSystemGriffinSetExtensionSuppLocationCmd ;
-	delete fAddDetectionSystemGriffinSetDeadLayerCmd ;
+	delete fAddDetectionSystemGriffinShieldSelectCmd;
+	delete fAddDetectionSystemGriffinSetRadialDistanceCmd;
+	delete fAddDetectionSystemGriffinSetExtensionSuppLocationCmd;
+	delete fAddDetectionSystemGriffinSetPositionCmd;
+	delete fAddDetectionSystemGriffinSetDeadLayerCmd;
 
 	delete fUseTIGRESSPositionsCmd;
 }
@@ -409,56 +414,56 @@ DetectorMessenger::~DetectorMessenger()
 
 void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 {
-	if(command == fWorldMaterialCmd ) {
+	if(command == fWorldMaterialCmd) {
 		fDetector->SetWorldMaterial(newValue);
 		return;
 	}
-	if(command == fWorldDimensionsCmd ) {
+	if(command == fWorldDimensionsCmd) {
 		fDetector->SetWorldDimensions(fWorldDimensionsCmd->GetNew3VectorValue(newValue));
 	}
-	if(command == fWorldVisCmd ) {
+	if(command == fWorldVisCmd) {
 		fDetector->SetWorldVis(fWorldVisCmd->GetNewBoolValue(newValue));
 	}
-	if(command == fUpdateCmd ) {
+	if(command == fUpdateCmd) {
 		fDetector->UpdateGeometry();
 	}
-	if(command == fGenericTargetCmd ) {
+	if(command == fGenericTargetCmd) {
 		fDetector->SetGenericTargetMaterial(newValue);
 	}
-	if(command == fGenericTargetDimensionsCmd ) {
+	if(command == fGenericTargetDimensionsCmd) {
 		fDetector->SetGenericTargetDimensions(fGenericTargetDimensionsCmd->GetNew3VectorValue(newValue));
 	}
-	if(command == fGenericTargetPositionCmd ) {
+	if(command == fGenericTargetPositionCmd) {
 		fDetector->SetGenericTargetPosition(fGenericTargetPositionCmd->GetNew3VectorValue(newValue));
 	}
-	//  if(command == fFieldBoxMaterialCmd ) {
+	//  if(command == fFieldBoxMaterialCmd) {
 	//    fDetector->SetFieldBoxMaterial(newValue);
 	//  }
-	//  if(command == fFieldBoxDimensionsCmd ) {
+	//  if(command == fFieldBoxDimensionsCmd) {
 	//    fDetector->SetFieldBoxDimensions(fFieldBoxDimensionsCmd->GetNew3VectorValue(newValue));
 	//  }
-	//  if(command == fFieldBoxPositionCmd ) {
+	//  if(command == fFieldBoxPositionCmd) {
 	//    fDetector->SetFieldBoxPosition(fFieldBoxPositionCmd->GetNew3VectorValue(newValue));
 	//  }
-	//  if(command == fFieldBoxMagneticFieldCmd ) {
+	//  if(command == fFieldBoxMagneticFieldCmd) {
 	//    fDetector->SetFieldBoxMagneticField(fFieldBoxMagneticFieldCmd->GetNew3VectorValue(newValue));
 	//  }
-	//  if(command == fAddBoxMatCmd ) {
+	//  if(command == fAddBoxMatCmd) {
 	//    fDetector->SetBoxMat(newValue);
 	//  }
-	//  if(command == fAddBoxThicknessCmd ) {
+	//  if(command == fAddBoxThicknessCmd) {
 	//    fDetector->SetBoxThickness(fAddBoxThicknessCmd->GetNewDoubleValue(newValue));
 	//  }
-	//  if(command == fAddBoxInnerDimensionsCmd ) {
+	//  if(command == fAddBoxInnerDimensionsCmd) {
 	//    fDetector->SetBoxInnerDimensions(fAddBoxInnerDimensionsCmd->GetNew3VectorValue(newValue));
 	//  }
-	//  if(command == fAddBoxColourCmd ) {
+	//  if(command == fAddBoxColourCmd) {
 	//    fDetector->SetBoxColour(fAddBoxColourCmd->GetNew3VectorValue(newValue));
 	//  }
-	//  if(command == fAddBoxCmd ) {
+	//  if(command == fAddBoxCmd) {
 	//    fDetector->AddBox();
 	//  }
-	if(command == fLayeredTargetAddCmd ) {
+	if(command == fLayeredTargetAddCmd) {
 		G4String Material;
 		G4double areal;
 		const char* s = newValue;///string
@@ -466,136 +471,139 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 		is>>Material>>areal;
 		fDetector->LayeredTargetAdd(Material, areal);
 	}
-	if( command == fTabMagneticFieldCmd ) {
+	if( command == fTabMagneticFieldCmd) {
 		G4String PathAndTableName;
 		G4double z_offset, z_rotation;
 		const char* s = newValue;///string
 		std::istringstream is ((char*)s);///string
 		is>>PathAndTableName>>z_offset>>z_rotation;
-		fDetector->SetTabMagneticField(PathAndTableName, z_offset, z_rotation ); // z in mm, angle in degree  
+		fDetector->SetTabMagneticField(PathAndTableName, z_offset, z_rotation); // z in mm, angle in degree  
 	}
-	if(command == fAddGridMatCmd ) {
+	if(command == fAddGridMatCmd) {
 		fDetector->SetGridMat(newValue);
 	}
-	if(command == fAddGridSizeCmd ) {
+	if(command == fAddGridSizeCmd) {
 		fDetector->SetGridSize(fAddGridSizeCmd->GetNewDoubleValue(newValue));
 	}
-	if(command == fAddGridDimensionsCmd ) {
+	if(command == fAddGridDimensionsCmd) {
 		fDetector->SetGridDimensions(fAddGridDimensionsCmd->GetNew3VectorValue(newValue));
 	}
-	if(command == fAddGridColourCmd ) {
+	if(command == fAddGridColourCmd) {
 		fDetector->SetGridColour(fAddGridColourCmd->GetNew3VectorValue(newValue));
 	}
-	if(command == fAddGridPosOffsetCmd ) {
+	if(command == fAddGridPosOffsetCmd) {
 		fDetector->SetGridPosOffset(fAddGridPosOffsetCmd->GetNew3VectorValue(newValue));
 	}
-	if(command == fAddGridCmd ) {
+	if(command == fAddGridCmd) {
 		fDetector->AddGrid();
 	}
 	if(command == fAddApparatusSpiceTargetChamberCmd) {
 		fDetector->AddApparatusSpiceTargetChamber(newValue);
 	}
-	if(command == fAddApparatus8piVacuumChamberCmd ) {
+	if(command == fAddApparatus8piVacuumChamberCmd) {
 		fDetector->AddApparatus8piVacuumChamber();
 	}
-	if(command == fAddApparatus8piVacuumChamberAuxMatShellCmd ) {
+	if(command == fAddApparatus8piVacuumChamberAuxMatShellCmd) {
 		fDetector->AddApparatus8piVacuumChamberAuxMatShell(fAddApparatus8piVacuumChamberAuxMatShellCmd->GetNewDoubleValue(newValue));
 	}
-	if(command == fAddApparatusGriffinStructureCmd ) {
+	if(command == fAddApparatusGriffinStructureCmd) {
 		fDetector->AddApparatusGriffinStructure(fAddApparatusGriffinStructureCmd->GetNewIntValue(newValue));
 	}
-	//  if(command == fAddDetectionSystemGammaTrackingCmd ) {
+	//  if(command == fAddDetectionSystemGammaTrackingCmd) {
 	//    fDetector->AddDetectionSystemGammaTracking(fAddDetectionSystemGammaTrackingCmd->GetNewIntValue(newValue));
 	//  }
-	//  if(command == fAddDetectionSystemSodiumIodideCmd ) {
+	//  if(command == fAddDetectionSystemSodiumIodideCmd) {
 	//    fDetector->AddDetectionSystemSodiumIodide(fAddDetectionSystemSodiumIodideCmd->GetNewIntValue(newValue));
 	//  }
-	if(command == fAddDetectionSystemLanthanumBromideCmd ) {
+	if(command == fAddDetectionSystemLanthanumBromideCmd) {
 		fDetector->AddDetectionSystemLanthanumBromide(fAddDetectionSystemLanthanumBromideCmd->GetNew3VectorValue(newValue));
 	}
-	if(command == fAddDetectionSystemAncillaryBGOCmd ) {
+	if(command == fAddDetectionSystemAncillaryBGOCmd) {
 		fDetector->AddDetectionSystemAncillaryBGO(fAddDetectionSystemAncillaryBGOCmd->GetNew3VectorValue(newValue));
 	}
-	if(command == fAddDetectionSystem8piCmd ) {
+	if(command == fAddDetectionSystem8piCmd) {
 		fDetector->AddDetectionSystem8pi(fAddDetectionSystem8piCmd->GetNewIntValue(newValue));
 	}
-	if(command == fAddDetectionSystem8piDetectorCmd ) {
+	if(command == fAddDetectionSystem8piDetectorCmd) {
 		fDetector->AddDetectionSystem8piDetector(fAddDetectionSystem8piDetectorCmd->GetNewIntValue(newValue));
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	if(command == fAddDetectionSystemDescantCmd ) {
+	if(command == fAddDetectionSystemDescantCmd) {
 		fDetector->AddDetectionSystemDescant(fAddDetectionSystemDescantCmd->GetNewIntValue(newValue));
 	}
-	if(command == fAddDetectionSystemDescantAuxPortsCmd )  {
+	if(command == fAddDetectionSystemDescantAuxPortsCmd)  {
 		fDetector->AddDetectionSystemDescantAuxPorts(fAddDetectionSystemDescantAuxPortsCmd->GetNew3VectorValue(newValue));
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	if(command == fAddApparatusDescantStructureCmd ) {
+	if(command == fAddApparatusDescantStructureCmd) {
 		fDetector->AddApparatusDescantStructure();
 	}
 
-	if(command == fSetDetectionSystemDescantColorCmd ) {
+	if(command == fSetDetectionSystemDescantColorCmd) {
 		fDetector->SetDetectionSystemDescantColor(newValue);
 	}
-	if(command == fSetDetectionSystemDescantRotationCmd ) {
+	if(command == fSetDetectionSystemDescantRotationCmd) {
 		fDetector->SetDetectionSystemDescantRotation(fSetDetectionSystemDescantRotationCmd->GetNew3VectorValue(newValue));
 	}
-	if(command == fAddDetectionSystemDescantCartCmd ) {
+	if(command == fAddDetectionSystemDescantCartCmd) {
 		fDetector->AddDetectionSystemDescantCart(fAddDetectionSystemDescantCartCmd->GetNew3VectorValue(newValue));
 	}
-	if(command == fAddDetectionSystemDescantSpherCmd ) {
+	if(command == fAddDetectionSystemDescantSpherCmd) {
 		fDetector->AddDetectionSystemDescantSpher(fAddDetectionSystemDescantSpherCmd->GetNew3VectorRawValue(newValue), fAddDetectionSystemDescantSpherCmd->GetNewUnitValue(newValue));
 	}
-	if(command == fAddDetectionSystemTestcanCmd ) { 
+	if(command == fAddDetectionSystemTestcanCmd) { 
 		fDetector->AddDetectionSystemTestcan(fAddDetectionSystemTestcanCmd->GetNew3VectorValue(newValue));
 	}
 
-	if(command == fAddDetectionSystemSceptarCmd ) {
+	if(command == fAddDetectionSystemSceptarCmd) {
 		fDetector->AddDetectionSystemSceptar(fAddDetectionSystemSceptarCmd->GetNewIntValue(newValue));
 	}
-	if(command == fAddDetectionSystemGriffinForwardCmd ) {
+	if(command == fAddDetectionSystemGriffinForwardCmd) {
 		fDetector->AddDetectionSystemGriffinForward(fAddDetectionSystemGriffinForwardCmd->GetNewIntValue(newValue));
 	}
-	if(command == fAddDetectionSystemGriffinForwardDetectorCmd ) {
+	if(command == fAddDetectionSystemGriffinForwardDetectorCmd) {
 		fDetector->AddDetectionSystemGriffinForwardDetector(fAddDetectionSystemGriffinForwardDetectorCmd->GetNewIntValue(newValue));
 	}
-	if(command == fAddDetectionSystemGriffinBackCmd ) {
+	if(command == fAddDetectionSystemGriffinBackCmd) {
 		fDetector->AddDetectionSystemGriffinBack(fAddDetectionSystemGriffinBackCmd->GetNewIntValue(newValue));
 	}
-	if(command == fAddDetectionSystemGriffinBackDetectorCmd ) {
+	if(command == fAddDetectionSystemGriffinBackDetectorCmd) {
 		fDetector->AddDetectionSystemGriffinBackDetector(fAddDetectionSystemGriffinBackDetectorCmd->GetNewIntValue(newValue));
 	}
-	//  if(command == fAddDetectionSystemGriffinPositionConfigCmd ) {
+	//  if(command == fAddDetectionSystemGriffinPositionConfigCmd) {
 	//    fDetector->AddDetectionSystemGriffinPositionConfig(fAddDetectionSystemGriffinPositionConfigCmd->GetNew3VectorValue(newValue));
 	//	}
-	if(command == fAddDetectionSystemGriffinCustomDetectorCmd ) {
+	if(command == fAddDetectionSystemGriffinCustomDetectorCmd) {
 		fDetector->AddDetectionSystemGriffinCustomDetector(fAddDetectionSystemGriffinCustomDetectorCmd->GetNewIntValue(newValue));
 	}
-	if(command == fAddDetectionSystemGriffinCustomCmd ) {
+	if(command == fAddDetectionSystemGriffinCustomCmd) {
 		fDetector->AddDetectionSystemGriffinCustom(fAddDetectionSystemGriffinCustomCmd->GetNewIntValue(newValue));
 	}
-	if(command == fAddDetectionSystemGriffinHevimetCmd ) {
+	if(command == fAddDetectionSystemGriffinHevimetCmd) {
 		fDetector->AddDetectionSystemGriffinHevimet(fAddDetectionSystemGriffinHevimetCmd->GetNewIntValue(newValue));
 	}
-	if(command == fAddDetectionSystemGriffinShieldSelectCmd ) {
-		fDetector->AddDetectionSystemGriffinShieldSelect(fAddDetectionSystemGriffinShieldSelectCmd->GetNewIntValue(newValue)) ;
+	if(command == fAddDetectionSystemGriffinShieldSelectCmd) {
+		fDetector->AddDetectionSystemGriffinShieldSelect(fAddDetectionSystemGriffinShieldSelectCmd->GetNewIntValue(newValue));
 	}
-	if(command == fAddDetectionSystemGriffinSetRadialDistanceCmd ) {
-		fDetector->AddDetectionSystemGriffinSetRadialDistance(fAddDetectionSystemGriffinSetRadialDistanceCmd->GetNewDoubleValue(newValue)) ;
+	if(command == fAddDetectionSystemGriffinSetRadialDistanceCmd) {
+		fDetector->AddDetectionSystemGriffinSetRadialDistance(fAddDetectionSystemGriffinSetRadialDistanceCmd->GetNewDoubleValue(newValue));
 	}
-	if(command == fAddDetectionSystemGriffinSetExtensionSuppLocationCmd ) {
-		fDetector->AddDetectionSystemGriffinSetExtensionSuppLocation(fAddDetectionSystemGriffinSetExtensionSuppLocationCmd->GetNewIntValue(newValue)) ;
+	if(command == fAddDetectionSystemGriffinSetExtensionSuppLocationCmd) {
+		fDetector->AddDetectionSystemGriffinSetExtensionSuppLocation(fAddDetectionSystemGriffinSetExtensionSuppLocationCmd->GetNewIntValue(newValue));
 	}
-	if(command == fAddDetectionSystemGriffinSetDeadLayerCmd ) {
-		fDetector->AddDetectionSystemGriffinSetDeadLayer(fAddDetectionSystemGriffinSetDeadLayerCmd->GetNew3VectorValue(newValue ) ) ;
+	if(command == fAddDetectionSystemGriffinSetPositionCmd) {
+		fDetector->AddDetectionSystemGriffinSetPosition(fAddDetectionSystemGriffinSetPositionCmd->GetNew3VectorValue(newValue));
 	}
-	if(command == fAddDetectionSystemSpiceCmd ) {
+	if(command == fAddDetectionSystemGriffinSetDeadLayerCmd) {
+		fDetector->AddDetectionSystemGriffinSetDeadLayer(fAddDetectionSystemGriffinSetDeadLayerCmd->GetNew3VectorValue(newValue));
+	}
+	if(command == fAddDetectionSystemSpiceCmd) {
 		fDetector->AddDetectionSystemSpice(10); 
 	}
-	if(command == fAddDetectionSystemPacesCmd ) {
+	if(command == fAddDetectionSystemPacesCmd) {
 		fDetector->AddDetectionSystemPaces(fAddDetectionSystemPacesCmd->GetNewIntValue(newValue));
 	}
-	if(command == fUseTIGRESSPositionsCmd ) {
+	if(command == fUseTIGRESSPositionsCmd) {
 		fDetector->UseTIGRESSPositions(fUseTIGRESSPositionsCmd->GetNewBoolValue(newValue));
 	}
 }
