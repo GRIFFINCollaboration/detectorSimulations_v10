@@ -84,12 +84,9 @@ int main(int argc,char** argv)
 	 runManager->SetUserInitialization(new PhysicsList);
 	 runManager->SetUserInitialization(new ActionInitialization(detector));
 
-	 // Initialize G4 kernel
-	 // Do this at run time so the physics list can be changed!
-	 // runManager->Initialize();
+	 // We don't initialize the G4 kernel at run time so the physics list can be changed!
 
 	 // Get the pointer to the User Interface manager
-	 //
 	 G4UImanager* UImanager = G4UImanager::GetUIpointer();
 
 #ifdef G4VIS_USE

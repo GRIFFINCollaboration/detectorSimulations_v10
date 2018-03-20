@@ -48,15 +48,14 @@ class G4Run;
 class RunAction : public G4UserRunAction
 {
 public:
-    RunAction();
-    virtual ~RunAction();
+	RunAction(HistoManager*);
+	virtual ~RunAction();
 
-    virtual void BeginOfRunAction(const G4Run*);
-    virtual void   EndOfRunAction(const G4Run*);
-    
-	 HistoManager* GetHistoManager() { return fHistoManager; }
+	virtual void BeginOfRunAction(const G4Run*);
+	virtual void   EndOfRunAction(const G4Run*);
+
 private:
-	 HistoManager* fHistoManager;
+	HistoManager* fHistoManager;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

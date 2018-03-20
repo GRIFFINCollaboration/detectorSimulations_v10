@@ -82,27 +82,14 @@ public:
 	void SetWorldMaterial( G4String );
 	void SetWorldDimensions( G4ThreeVector );
 	void SetWorldVis( G4bool );
-	//    void SetWorldMagneticField( G4ThreeVector );
 
-	//Gneeric Target
+	//Generic Target
 	void SetGenericTargetMaterial( G4String );
 	void SetGenericTargetDimensions( G4ThreeVector );
 	void SetGenericTargetPosition( G4ThreeVector );
 	void SetGenericTarget( );
 
 	G4double LayeredTargetLayerStart(int);
-
-	//    void SetFieldBoxMaterial( G4String );
-	//    void SetFieldBoxDimensions( G4ThreeVector );
-	//    void SetFieldBoxPosition( G4ThreeVector );
-	//    void SetFieldBoxMagneticField( G4ThreeVector );
-	//    void SetFieldBox( );
-
-	//    void SetBoxMat( G4String input )                   {boxMat = input;};
-	//        void SetBoxThickness( G4double input )             {boxThickness = input;};
-	//        void SetBoxInnerDimensions( G4ThreeVector input )  {boxInnerDimensions = input;};
-	//        void SetBoxColour( G4ThreeVector input )           {boxColour = input;};
-	//        void AddBox();
 
 	void LayeredTargetAdd(G4String, G4double);
 
@@ -130,7 +117,6 @@ public:
 
 	void UpdateGeometry();
 
-	//    void AddDetectionSystemGammaTracking(G4int ndet);
 	void AddDetectionSystemSodiumIodide(G4int ndet);
 	void AddDetectionSystemLanthanumBromide(G4ThreeVector input);
 	void AddDetectionSystemAncillaryBGO(G4ThreeVector input);
@@ -179,8 +165,20 @@ public:
 	G4double GetLanthanumBromideRoll(G4int i);
 	G4double GetLanthanumBromideCrystalRadialPosition();
 
-	void SetSpiceRes(G4bool);
-	G4bool GetSpiceIn(){return fSetSpiceIn;};
+	G4bool   GridCell()   { return fGridCell;   }
+	G4bool   Griffin()    { return fGriffin;    }
+	G4bool   LaBr()       { return fLaBr;       }
+	G4bool   AncBgo()     { return fAncBgo;     }
+	G4bool   NaI()        { return fNaI;        }
+	G4bool   Sceptar()    { return fSceptar;    }
+	G4bool   EightPi()    { return fEightPi;    }
+	G4bool   Spice()      { return fSpice;      }
+	G4bool   Paces()      { return fPaces;      }
+	G4bool   Descant()    { return fDescant;    }
+	G4bool   Testcan()    { return fTestcan;    }
+
+	void SpiceRes(G4bool val) { fSpiceRes = val; }
+	bool SpiceRes() { return fSpiceRes; }
 	void UseTIGRESSPositions( G4bool input )                  {fUseTigressPositions = input;};
 
 private:
@@ -230,7 +228,7 @@ private:
 	G4ThreeVector fGenericTargetDimensions;
 	G4ThreeVector fGenericTargetPosition;
 
-	G4bool        fSetSpiceIn;
+	G4bool        fSpiceRes;
 
 	G4bool        fSetFieldBoxMaterial;
 	G4bool        fSetFieldBoxDimensions;
@@ -253,6 +251,18 @@ private:
 
 	G4ThreeVector fDetEffPosition;
 
+	//booleans which control which histograms are created (these are set by the detector construction)
+	G4bool fGridCell;
+	G4bool fGriffin;
+	G4bool fLaBr;
+	G4bool fAncBgo;
+	G4bool fNaI;
+	G4bool fSceptar;
+	G4bool fEightPi;
+	G4bool fDescant;
+	G4bool fTestcan;
+	G4bool fSpice;
+	G4bool fPaces;
 };
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

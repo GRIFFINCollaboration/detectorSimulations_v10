@@ -320,6 +320,10 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
 	fAddDetectionSystemSpiceCmd->SetGuidance("Add Detection System Spice");
 	fAddDetectionSystemSpiceCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+	fUseSpiceResolutionCmd = new G4UIcmdWithABool("/DetSys/det/UseSpiceResolution",this);
+	fUseSpiceResolutionCmd->SetGuidance("Apply a resolution to energy depositions");
+	fUseSpiceResolutionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
 	fAddDetectionSystemPacesCmd = new G4UIcmdWithAnInteger("/DetSys/det/addPaces",this);
 	fAddDetectionSystemPacesCmd->SetGuidance("Add Detection System Paces");
 	fAddDetectionSystemPacesCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
@@ -407,6 +411,7 @@ DetectorMessenger::~DetectorMessenger()
 	delete fAddDetectionSystemGriffinSetPositionCmd;
 	delete fAddDetectionSystemGriffinSetDeadLayerCmd;
 
+	delete fUseSpiceResolutionCmd;
 	delete fUseTIGRESSPositionsCmd;
 }
 
@@ -599,6 +604,9 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	}
 	if(command == fAddDetectionSystemSpiceCmd) {
 		fDetector->AddDetectionSystemSpice(10); 
+	}
+	if(command == fUseSpiceResolutionCmd ) {
+		fDetector->SpiceRes(fUseSpiceResolutionCmd->GetNewBoolValue(newValue));
 	}
 	if(command == fAddDetectionSystemPacesCmd) {
 		fDetector->AddDetectionSystemPaces(fAddDetectionSystemPacesCmd->GetNewIntValue(newValue));

@@ -40,17 +40,16 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-RunAction::RunAction()
+RunAction::RunAction(HistoManager* histoManager)
     : G4UserRunAction()
 {
-	fHistoManager = new HistoManager;
+	fHistoManager = histoManager;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 RunAction::~RunAction()
 {
-	delete fHistoManager;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -60,7 +59,9 @@ void RunAction::BeginOfRunAction(const G4Run* aRun)
 	if(G4Threading::G4GetThreadId() <= 0) {
 		G4cout<<"### Run "<<aRun->GetRunID()<<" start."<<G4endl;
 	}
-	fHistoManager->Book();
+	if(fHistoManager != nullptr) {
+		fHistoManager->Book();
+	}
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -70,8 +71,10 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 	G4int NbOfEvents = aRun->GetNumberOfEvent();
 	if(NbOfEvents == 0) return;
 
-	//fHistoManager->PrintStatistic();
-	fHistoManager->Save();
+	if(fHistoManager != nullptr) {
+		//fHistoManager->PrintStatistic();
+		fHistoManager->Save();
+	}
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
