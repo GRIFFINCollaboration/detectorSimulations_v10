@@ -1,4 +1,0 @@
-This is an example simulation of the full GRIFFIN array including the new GRIFFIN structure. The simulation is of only a single 60Co decay, eg /beamOn 1. 
-The purpose of this simulation is to output a visulization of the geometry. See vis_example.png
-
--Evan Rand
