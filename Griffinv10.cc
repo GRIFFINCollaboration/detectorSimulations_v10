@@ -57,14 +57,13 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-int main(int argc,char** argv)
+int main(int argc, char** argv)
 {
     // Choose the Random engine
-    //
     G4Random::setTheEngine(new CLHEP::RanecuEngine);
 	 // G4long is at least 32 bits. 
-    G4long seed = time( NULL );
-    G4Random::setTheSeed( seed );
+    G4long seed = time(NULL);
+    G4Random::setTheSeed(seed);
 
     // Construct the default run manager
 #ifdef G4MULTITHREADED
@@ -78,7 +77,6 @@ int main(int argc,char** argv)
 #endif
 
 	 // Set mandatory initialization classes
-	 //
 	 DetectorConstruction* detector = new DetectorConstruction;
 	 runManager->SetUserInitialization(detector);
 	 runManager->SetUserInitialization(new PhysicsList);
