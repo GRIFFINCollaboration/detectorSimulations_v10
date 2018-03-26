@@ -68,7 +68,7 @@ void HistoManager::Book() {
 	// The choice of analysis technology is done via selection of a namespace
 	// in HistoManager.hh
 	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-	analysisManager->SetVerboseLevel(2);//uncommented 23/6
+	//analysisManager->SetVerboseLevel(2);
 	G4String extension = analysisManager->GetFileType();
 	fFileName[1] = fFileName[0] + "." + extension; // creating root output file in build folder
 
@@ -100,7 +100,6 @@ void HistoManager::Book() {
 		fNtColIdHit[13] = analysisManager->CreateNtupleDColumn("time");
 		fNtColIdHit[14] = analysisManager->CreateNtupleIColumn("targetZ");
 		analysisManager->FinishNtuple();
-		G4cout<<"created ntuple HitTracker"<<G4endl;
 	}
 
 
@@ -129,7 +128,6 @@ void HistoManager::Book() {
 	}
 
 	fFactoryOn = true;
-	G4cout<<"----> Histogram Tree is opened in "<<fFileName[1]<<G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

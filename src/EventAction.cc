@@ -259,14 +259,11 @@ void EventAction::FillParticleType() {///this works
 			for(G4int j = 0; j< fParticleTypes[i]; j++) { // loop over the number of time we saw it
 				fHistoManager->FillHistogram(kAstatsParticleTypeInEachStep, i);
 			}
+			numParticleTypes++;
 		}
 	}
 
 	// Fill the number of particle types in the event
-	for(G4int i = 0; i < NUMPARTICLETYPES; i++) {
-		if(fParticleTypes[i] != 0)
-			numParticleTypes++;
-	}
 	fHistoManager->FillHistogram(kAstatsParticleTypeInEachEvent, numParticleTypes);
 }
 
@@ -406,14 +403,12 @@ void EventAction::FillGridCell() {
 }
 
 void EventAction::FillSpice() {
-	//     G4cout << "FillSpice entered " << G4endl;
 	G4double energySumDet = 0;
 	G4int fSpiceMultiplicity = 0;
 	G4double SpiceEnergy,SpiceEnergyRaw;
 	for(G4int ring=0; ring < MAXNUMDETSPICE; ring++) {
 		for(G4int seg=0; seg < 12; seg++) {
 			if(fSpiceEnergyDet[ring][seg] > 20.*CLHEP::keV&&WRITEEDEPHISTOS) {
-
 				SpiceEnergyRaw = fSpiceEnergyDet[ring][seg];// SpiceRawEnergy. No resolution applied
 				SpiceEnergy=SpiceEnergyRaw;
 				if(fHistoManager->GetDetectorConstruction()->SpiceRes()){

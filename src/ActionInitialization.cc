@@ -50,10 +50,13 @@ ActionInitialization::~ActionInitialization()
 
 void ActionInitialization::BuildForMaster() const
 {
-    // Actions
-	 // the master doesn't create any tree or histograms, so we pass a null
-	 // pointer instead of a pointer to a HistoManager
-    SetUserAction(new RunAction(nullptr));
+	// Actions
+	// the master only need a HistoManager to handle histograms, so we pass a null
+	// pointer instead of a pointer to a HistoManager unless we use SPICE
+	// That was the idea, but at this point spice hasn't been created yet, so we can't
+	// do this!!!
+	auto histManager = new HistoManager(fDetector);
+	SetUserAction(new RunAction(histManager));
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

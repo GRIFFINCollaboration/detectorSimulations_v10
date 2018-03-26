@@ -103,7 +103,7 @@ int main(int argc, char** argv)
 #ifdef G4UI_USE
 		 G4UIExecutive* ui = new G4UIExecutive(argc, argv);
 #endif
-		 UImanager->ApplyCommand("/control/execute visGL.mac");
+		 UImanager->ApplyCommand("/control/execute vis.mac");
 
 #ifdef G4UI_USE
 		 ui->SessionStart();
