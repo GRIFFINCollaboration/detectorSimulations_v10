@@ -270,8 +270,8 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 		fParticleGun->SetParticleEnergy(fEffEnergy);
 
 		if(fDetector->Spice()) {
-			fHistoManager->Fill2DHistogram(fHistoManager->AngleDistro(3), thisEffPosition.x(), thisEffPosition.y(), 1.0);
-			fHistoManager->FillHistogram(fHistoManager->AngleDistro(4), thisEffPosition.z() - zZero);
+			fHistoManager->Fill2DHistogram(fHistoManager->AngleDistro(2), thisEffPosition.x(), thisEffPosition.y(), 1.0);
+			fHistoManager->FillHistogram(fHistoManager->AngleDistro(3), thisEffPosition.z() - zZero);
 			fHistoManager->FillHistogram(fHistoManager->AngleDistro(0), fEffEnergy);
 			fHistoManager->BeamEnergy(fEffEnergy);
 			fHistoManager->BeamTheta(acos(effdirection.z()/effdirection.mag()));
