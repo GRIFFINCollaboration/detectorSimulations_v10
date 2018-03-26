@@ -78,7 +78,6 @@ private:
     G4UIcmdWithADoubleAndUnit*     fBeamSpotSigmaCmd;
     G4UIcmdWithAnInteger* 	   fBeamDistroCmd;
     G4UIcmdWithAString* 	   fBeamFileCmd;
-    G4UIcmdWithAString*		   fSourceBeamCmd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

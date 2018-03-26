@@ -15,9 +15,9 @@ do
 
 	### Dont change ###
 	echo "/run/initialize" > spiceauto.mac 
-	echo "/process/em/fluo true" >> spiceauto.mac 
-	echo "/process/em/auger true" >> spiceauto.mac 
-	echo "/process/em/pixe true" >> spiceauto.mac 
+	echo "/process/em/fluo false" >> spiceauto.mac 
+	echo "/process/em/auger false" >> spiceauto.mac 
+	echo "/process/em/pixe false" >> spiceauto.mac 
 	echo "/DetSys/world/material Vacuum" >> spiceauto.mac 
 	echo "/DetSys/gun/particle e-" >> spiceauto.mac 
 	echo "/DetSys/gun/efficiencyEnergy $E keV" >> spiceauto.mac 

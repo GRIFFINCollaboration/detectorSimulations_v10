@@ -63,7 +63,6 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(HistoManager* histoManager)
 	fParticleGun  = new G4ParticleGun(nParticle); //In our code, the gun is called fParticleGun
 	//create a messenger for this class
 	fGunMessenger = new PrimaryGeneratorMessenger(this);
-	fSourceNeeded = false;
 
 	//these 3 lines initialise the Gun, basic values
 	fParticleGun->SetParticleEnergy(0*eV);
@@ -99,6 +98,7 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
+	//G4cout<<G4endl<<fParticleGun->GetParticleDefinition()->GetParticleName()<<G4endl;
 	if(fNumberOfDecayingLaBrDetectors != 0) {
 		G4double crystalRadius    = 2.54*cm;
 		G4double crystalLength    = 5.08*cm;
@@ -179,25 +179,25 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 		fParticleGun->SetParticleEnergy(thisEnergy);
 	}
 
-	else if(fEffEnergy != 0.0) {
-		G4ParticleDefinition* effPart = NULL;
+	else  {
+			// Changed so that most grsi "/Detsys/gun/" commands still effect gun when using
+			// Underlying geant4 commands such as '/gun/particle ion" & "/gun/ion"
 		if(fEffParticleBool) {
-
+			G4ParticleDefinition* effPart;
 			if(fEffParticle == "electron" || fEffParticle == "e-") {
 				effPart = G4ParticleTable::GetParticleTable()->FindParticle("e-");
 			}
 			else if(fEffParticle == "positron" || fEffParticle == "e+") {
 				effPart = G4ParticleTable::GetParticleTable()->FindParticle("e+");
 			}
-			else if (fEffParticle == "gamma" || fEffParticle == "photon"){
-				effPart = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
-			}
 			else if (fEffParticle == "neutron"){
 				effPart = G4ParticleTable::GetParticleTable()->FindParticle("neutron");
 			}
-		}
-		else {
-			effPart = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
+// 			else if (fEffParticle == "gamma" || fEffParticle == "photon"){
+			else{
+				effPart = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
+			}
+			fParticleGun->SetParticleDefinition(effPart);
 		}
 
 
@@ -264,7 +264,6 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 		}
 
 		//after running through if-statements above we now have particle type definition, position, mom. direction, and the energy (or their initialised values)
-		fParticleGun->SetParticleDefinition(effPart);
 		fParticleGun->SetParticlePosition(thisEffPosition);
 		fParticleGun->SetParticleMomentumDirection(effdirection);
 		fParticleGun->SetParticleEnergy(fEffEnergy);

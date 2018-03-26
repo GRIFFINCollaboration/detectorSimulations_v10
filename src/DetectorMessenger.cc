@@ -83,6 +83,11 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
 	fWorldMagneticFieldCmd->SetGuidance("Set world magnetic field - x y z unit.");
 	fWorldMagneticFieldCmd->SetUnitCategory("Magnetic flux density");
 	fWorldMagneticFieldCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	
+	fWorldStepLimit = new G4UIcmdWithADoubleAndUnit("/DetSys/world/StepLimit",this);
+	fWorldStepLimit->SetGuidance("Set user step limit for the world volume.");
+	fWorldStepLimit->SetUnitCategory("Length");
+	fWorldStepLimit->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 	fGenericTargetCmd = new G4UIcmdWithAString("/DetSys/app/genericTarget",this);
 	fGenericTargetCmd->SetGuidance("Select material of the target.");
@@ -320,6 +325,10 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
 	fAddDetectionSystemSpiceCmd->SetGuidance("Add Detection System Spice");
 	fAddDetectionSystemSpiceCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+	fAddDetectionSystemTrificCmd = new G4UIcmdWithAString("/DetSys/det/addTrificDetector",this);
+	fAddDetectionSystemTrificCmd->SetGuidance("Add Detection System Trific");
+	fAddDetectionSystemTrificCmd->AvailableForStates(G4State_PreInit,G4State_Idle);	
+	
 	fUseSpiceResolutionCmd = new G4UIcmdWithABool("/DetSys/det/UseSpiceResolution",this);
 	fUseSpiceResolutionCmd->SetGuidance("Apply a resolution to energy depositions");
 	fUseSpiceResolutionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
@@ -344,6 +353,7 @@ DetectorMessenger::~DetectorMessenger()
 	delete fWorldDimensionsCmd;
 	delete fWorldVisCmd;
 	delete fWorldMagneticFieldCmd;
+	delete fWorldStepLimit;
 	delete fDetSysDir;
 	delete fUpdateCmd;
 	delete fGenericTargetCmd;
@@ -395,6 +405,7 @@ DetectorMessenger::~DetectorMessenger()
 
 	delete fAddDetectionSystemSceptarCmd;
 	delete fAddDetectionSystemSpiceCmd;
+	delete fAddDetectionSystemTrificCmd;
 	delete fAddDetectionSystemPacesCmd;
 
 	delete fAddDetectionSystemGriffinForwardCmd;
@@ -431,6 +442,9 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	}
 	if(command == fUpdateCmd) {
 		fDetector->UpdateGeometry();
+	}
+	if(command == fWorldStepLimit ) {
+		fDetector->SetWorldStepLimit(fWorldStepLimit->GetNewDoubleValue(newValue));
 	}
 	if(command == fGenericTargetCmd) {
 		fDetector->SetGenericTargetMaterial(newValue);
@@ -602,8 +616,17 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	if(command == fAddDetectionSystemGriffinSetDeadLayerCmd) {
 		fDetector->AddDetectionSystemGriffinSetDeadLayer(fAddDetectionSystemGriffinSetDeadLayerCmd->GetNew3VectorValue(newValue));
 	}
-	if(command == fAddDetectionSystemSpiceCmd) {
-		fDetector->AddDetectionSystemSpice(10); 
+	if(command == fAddDetectionSystemSpiceCmd ) {
+		fDetector->AddDetectionSystemSpice(); 
+	}
+	if(command == fAddDetectionSystemTrificCmd ) {
+		//Done as a string because Torr isnt a default unit 
+		G4double torr;
+		const char* s = newValue;///string
+		std::istringstream is ((char*)s);///string
+		is>>torr;
+		if(torr>1)fDetector->AddDetectionSystemTrific(torr);
+		else fDetector->AddDetectionSystemTrific(760.0);
 	}
 	if(command == fUseSpiceResolutionCmd ) {
 		fDetector->SpiceRes(fUseSpiceResolutionCmd->GetNewBoolValue(newValue));

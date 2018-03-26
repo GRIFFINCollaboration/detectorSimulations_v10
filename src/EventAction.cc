@@ -80,15 +80,7 @@ void EventAction::BeginOfEventAction(const G4Event* evt) {
 void EventAction::EndOfEventAction(const G4Event*) {
 	if(fHistoManager != nullptr) {
 		if(fHistoManager->GetDetectorConstruction()->Spice()) {
-			FillParticleType();
-			FillGriffinCryst();
-			Fill8piCryst();
-			FillLaBrCryst();
-			FillAncillaryBgo();
-			FillSceptar();
-			FillGridCell();
 			FillSpice();
-			FillPacesCryst();
 		} else {
 			for(G4int i = 0; i < fNumberOfHits; i++) {
 				fHistoManager->FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i]);
@@ -199,208 +191,15 @@ void EventAction::ClearVariables() {
 	}
 
 	if(fHistoManager->GetDetectorConstruction()->Spice()) {
-		for(G4int i = 0; i < NUMPARTICLETYPES; i++) {
-			fParticleTypes[i]   = 0;
-		}
-		for(G4int iii = 0; iii < MAXNUMDETPACES; iii++) {
-			fPacesCrystEnergyDet[iii]  = 0;
-			fPacesCrystTrackDet[iii]   = 0;
-		}
-		for(G4int i = 0; i < MAXNUMDETSPICE; i++){
+		for(G4int i = 0; i < 10; i++){
 			for(G4int j=0; j<12; j++) {
 				fSpiceEnergyDet[i][j] = 0;
 				fSpiceTrackDet[i][j]  = 0;
 			}
 		}
-		for(G4int i = 0; i < MAXNUMDET; i++) {
-			fEightPiCrystEnergyDet[i] = 0;
-			fEightPiCrystTrackDet[i]  = 0;
-
-			fLaBrCrystEnergyDet[i]  = 0;
-			fLaBrCrystTrackDet[i]   = 0;
-
-			fAncillaryBgoEnergyDet[i]  = 0;
-			fAncillaryBgoTrackDet[i]   = 0;
-
-			fSceptarEnergyDet[i]  = 0;
-			fSceptarTrackDet[i]   = 0;
-
-			fGridCellElectronEKinDet[i]  = 0;
-			fGridCellElectronTrackDet[i] = 0;
-			fGridCellGammaEKinDet[i]     = 0;
-			fGridCellGammaTrackDet[i]    = 0;
-			fGridCellNeutronEKinDet[i]   = 0;
-			fGridCellNeutronTrackDet[i]  = 0;
-		}
-
-		for(G4int i = 0; i < MAXNUMDETGRIFFIN; i++) {
-			for(G4int j = 0; j < MAXNUMCRYGRIFFIN; j++) {
-				fGriffinCrystEnergyDet[i][j]                 = 0;
-				fGriffinCrystTrackDet[i][j]                  = 0;
-				fGriffinSuppressorBackEnergyDet[i][j]        = 0;
-				fGriffinSuppressorBackTrackDet[i][j]         = 0;
-				fGriffinSuppressorLeftExtensionEnergyDet[i][j]  = 0;
-				fGriffinSuppressorLeftExtensionTrackDet[i][j]   = 0;
-				fGriffinSuppressorLeftSideEnergyDet[i][j]       = 0;
-				fGriffinSuppressorLeftSideTrackDet[i][j]        = 0;
-				fGriffinSuppressorRightExtensionEnergyDet[i][j] = 0;
-				fGriffinSuppressorRightExtensionTrackDet[i][j]  = 0;
-				fGriffinSuppressorRightSideEnergyDet[i][j]      = 0;
-				fGriffinSuppressorRightSideTrackDet[i][j]       = 0;
-			}
-		}  // NOTE: Clear the variables from the new Fill___Cryst functions as last EndofEvent action
 	}
 }
 
-void EventAction::FillParticleType() {///this works
-	G4int numParticleTypes = 0;
-	for(G4int i = 0; i < NUMPARTICLETYPES; i++) {
-		if(fParticleTypes[i] != 0) { // if particle type 'i' has non-zero counts
-			for(G4int j = 0; j< fParticleTypes[i]; j++) { // loop over the number of time we saw it
-				fHistoManager->FillHistogram(kAstatsParticleTypeInEachStep, i);
-			}
-			numParticleTypes++;
-		}
-	}
-
-	// Fill the number of particle types in the event
-	fHistoManager->FillHistogram(kAstatsParticleTypeInEachEvent, numParticleTypes);
-}
-
-void EventAction::FillGriffinCryst()
-{
-	G4double  energySum = 0;
-	G4double  energySumDet = 0;
-	G4bool suppressorBackFired[MAXNUMDETGRIFFIN] = {0};
-	G4bool suppressorExtensionFired[MAXNUMDETGRIFFIN] = {0};
-	G4bool suppressorSideFired[MAXNUMDETGRIFFIN] = {0};
-	G4bool suppressorFired = false;
-
-	// Fill Griffin Histos
-	for(G4int i=0; i < MAXNUMDETGRIFFIN; i++) {
-		energySumDet = 0;
-		// Find if any suppressors were fired
-		for(G4int j=0; j < MAXNUMCRYGRIFFIN; j++) {
-			if(fGriffinSuppressorBackEnergyDet[i][j] > MINENERGYTHRES) {
-				suppressorBackFired[i] = true;
-			}
-			if(fGriffinSuppressorLeftExtensionEnergyDet[i][j] > MINENERGYTHRES) {
-				suppressorExtensionFired[i] = true;
-			}
-			if(fGriffinSuppressorRightExtensionEnergyDet[i][j] > MINENERGYTHRES) {
-				suppressorExtensionFired[i] = true;
-			}
-			if(fGriffinSuppressorLeftSideEnergyDet[i][j] > MINENERGYTHRES) {
-				suppressorSideFired[i] = true;
-			}
-			if(fGriffinSuppressorRightSideEnergyDet[i][j] > MINENERGYTHRES) {
-				suppressorSideFired[i] = true;
-			}
-			if(!suppressorFired && ( suppressorBackFired[i] || suppressorExtensionFired[i] || suppressorSideFired[i] ) ) {
-				suppressorFired = true;
-			}
-		}
-
-		for(G4int j=0; j < MAXNUMCRYGRIFFIN; j++) {
-			if(fGriffinCrystEnergyDet[i][j] > MINENERGYTHRES) {
-				// fill energies in each crystal
-				if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram((kGriffinCrystalUnsupEdepDet0Cry0+(MAXNUMDETGRIFFIN*j))+i, fGriffinCrystEnergyDet[i][j]);
-				if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kGriffinCrystalUnsupEdepCry, fGriffinCrystEnergyDet[i][j]);
-				if(!suppressorBackFired[i] && !suppressorExtensionFired[i] && !suppressorSideFired[i]) { // Suppressor fired?
-					if(WRITEEDEPHISTOS) fHistoManager->FillHistogram((kGriffinCrystalSupEdepDet0Cry0+(MAXNUMDETGRIFFIN*j))+i, fGriffinCrystEnergyDet[i][j]);
-					if(WRITEEDEPHISTOS) fHistoManager->FillHistogram(kGriffinCrystalSupEdepCry, fGriffinCrystEnergyDet[i][j]);
-				}
-				energySumDet += fGriffinCrystEnergyDet[i][j];
-			}
-		}
-		if(energySumDet > MINENERGYTHRES) {
-			// fill energies in each detector
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kGriffinCrystalUnsupEdepDet0+i, energySumDet);
-			// fill standard energy and track spectra
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kGriffinCrystalUnsupEdep, energySumDet);
-			if(!suppressorBackFired[i] && !suppressorExtensionFired[i] && !suppressorSideFired[i]) {
-				// fill energies in each detector
-				if(WRITEEDEPHISTOS) fHistoManager->FillHistogram(kGriffinCrystalSupEdepDet0+i, energySumDet);
-				// fill standard energy and track spectra
-				if(WRITEEDEPHISTOS) fHistoManager->FillHistogram(kGriffinCrystalSupEdep, energySumDet);
-			}
-		}
-		energySum += energySumDet;
-	}
-
-	if(energySum > MINENERGYTHRES) {
-		if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kGriffinCrystalUnsupEdepSum, energySum);
-		if(!suppressorFired) {
-			if(WRITEEDEPHISTOS) fHistoManager->FillHistogram(kGriffinCrystalSupEdepSum, energySum);
-		}
-	}
-}
-
-void EventAction::Fill8piCryst() {
-	G4double energySumDet = 0;
-	for(G4int j=0; j < MAXNUMDET; j++) {
-		if(fEightPiCrystEnergyDet[j] > MINENERGYTHRES) {
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kEightpiCrystalEdep, fEightPiCrystEnergyDet[j]);
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kEightpiCrystalEdepDet0+j, fEightPiCrystEnergyDet[j]);
-			energySumDet += fEightPiCrystEnergyDet[j];
-		}
-	}
-	if(energySumDet > MINENERGYTHRES) {
-		if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kEightpiCrystalEdepSum, energySumDet);
-	}
-}
-
-
-void EventAction::FillLaBrCryst() {
-	G4double energySumDet = 0;
-	for(G4int j=0; j < MAXNUMDET; j++) {
-		if(fLaBrCrystEnergyDet[j] > MINENERGYTHRES) {
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kLabrCrystalEdep, fLaBrCrystEnergyDet[j]);
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kLabrCrystalEdepDet0+j, fLaBrCrystEnergyDet[j]);
-			energySumDet += fLaBrCrystEnergyDet[j];
-		}
-	}
-	if(energySumDet > MINENERGYTHRES) {
-		if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kLabrCrystalEdepSum, energySumDet);
-	}
-}
-
-void EventAction::FillAncillaryBgo() {
-	G4double energySumDet = 0;
-	for(G4int j=0; j < MAXNUMDET; j++) {
-		if(fAncillaryBgoEnergyDet[j] > MINENERGYTHRES) {
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kAncillaryBgoCrystalEdep, fAncillaryBgoEnergyDet[j]);
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kAncillaryBgoCrystalEdepDet0+j, fAncillaryBgoEnergyDet[j]);
-			energySumDet += fAncillaryBgoEnergyDet[j];
-		}
-	}
-	if(energySumDet > MINENERGYTHRES) {
-		if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kAncillaryBgoCrystalEdepSum, energySumDet);
-	}
-}
-
-void EventAction::FillSceptar() {
-	G4double energySumDet = 0;
-	for(G4int j=0; j < MAXNUMDET; j++) {
-		if(fSceptarEnergyDet[j] > MINENERGYTHRES) {
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kSceptarEdep, fSceptarEnergyDet[j]);
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kSceptarEdepDet0+j, fSceptarEnergyDet[j]);
-			energySumDet += fSceptarEnergyDet[j];
-		}
-	}
-	if(energySumDet > MINENERGYTHRES) {
-		if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kSceptarEdepSum, energySumDet);
-	}
-
-}
-
-void EventAction::FillGridCell() {
-	for(G4int j=0; j < MAXNUMDET; j++) {
-		if(WRITEEKINHISTOS && fGridCellElectronEKinDet[j] > MINENERGYTHRES)  fHistoManager->FillHistogram(kGridcellElectronEkinDet0+j, fGridCellElectronEKinDet[j]);
-		if(WRITEEKINHISTOS && fGridCellGammaEKinDet[j] > MINENERGYTHRES)     fHistoManager->FillHistogram(kGridcellGammaEkinDet0+j, fGridCellGammaEKinDet[j]);
-		if(WRITEEKINHISTOS && fGridCellNeutronEKinDet[j] > MINENERGYTHRES)   fHistoManager->FillHistogram(kGridcellNeutronEkinDet0+j, fGridCellNeutronEKinDet[j]);
-	}
-}
 
 void EventAction::FillSpice() {
 	G4double energySumDet = 0;
@@ -451,21 +250,6 @@ void EventAction::FillSpice() {
 	}
 }
 
-void EventAction::FillPacesCryst() {
-	G4double energySumDet = 0;
-	for(G4int j=0; j < MAXNUMDETPACES; j++) {
-		if(fPacesCrystEnergyDet[j] > MINENERGYTHRES) {
-
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(fHistoManager->PacesHistNumbers(0), fPacesCrystEnergyDet[j]);
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(fHistoManager->PacesHistNumbers(j+2), fPacesCrystEnergyDet[j]);
-			energySumDet += fPacesCrystEnergyDet[j];
-		}
-	}
-	if(energySumDet > MINENERGYTHRES) {
-		if(WRITEEDEPHISTOS && (energySumDet > MINENERGYTHRES))     fHistoManager->FillHistogram(fHistoManager->PacesHistNumbers(1), energySumDet);
-
-	}
-}
 
 G4bool EventAction::SpiceTest(){//is SPICE inputted
 	return fHistoManager->GetDetectorConstruction()->Spice();

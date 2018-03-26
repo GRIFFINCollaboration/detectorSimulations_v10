@@ -59,6 +59,7 @@ class DetectionSystemDescant;
 
 class DetectionSystemSceptar;
 class DetectionSystemSpice;
+class DetectionSystemTrific;
 class DetectionSystemPaces;
 class DetectionSystemSodiumIodide;
 class DetectionSystemLanthanumBromide;
@@ -82,6 +83,7 @@ public:
 	void SetWorldMaterial( G4String );
 	void SetWorldDimensions( G4ThreeVector );
 	void SetWorldVis( G4bool );
+	void SetWorldStepLimit( G4double );
 
 	//Generic Target
 	void SetGenericTargetMaterial( G4String );
@@ -153,7 +155,8 @@ public:
 
 	void AddDetectionSystemSceptar(G4int ndet);
 	void AddDetectionSystemPaces(G4int ndet);
-	void AddDetectionSystemSpice(G4int nRings);
+	void AddDetectionSystemSpice();
+	void AddDetectionSystemTrific(G4double);
 
 	G4double GetLanthanumBromideCrystalRadius();
 	G4double GetLanthanumBromideCrystalLength();

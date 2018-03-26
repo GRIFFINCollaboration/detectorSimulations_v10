@@ -1,6 +1,6 @@
 ### After running ./Griffinv10
 ### Run the following command in the "Session" box
-### /control/execute SPICE_vis.mac 
+### /control/execute SPICE_vis.mac
 
 ### Required
 /run/initialize
@@ -9,34 +9,39 @@
 ### Remember target position will effect /DetSys/app/addSpiceTargetChamber
 /DetSys/gun/position 0.0 0.0 -8. mm 
 #/DetSys/gun/position 0.0 0.0 -0.5 mm
+#/DetSys/gun/direction 0.0 1.0 -1.0
 
 ### Choose Apparatus To Build
-/DetSys/app/addSpiceTargetChamber Med
-#/DetSys/app/addSpiceTargetChamber Low
+#/DetSys/app/addSpiceTargetChamber Med
+/DetSys/app/addSpiceTargetChamber Low
 /DetSys/det/addSpiceDetector
 
 ### Required
 /vis/open OGL
 
-### Some optimised viewer position settings
-/vis/viewer/set/viewpointThetaPhi 70 20 deg
-/vis/viewer/zoomTo 4
-/vis/viewer/pan -250.0 -30.0 mm ### Correct for SPICE bulk off center
-
 ### Choose Drawing Style
-#/vis/viewer/set/style surface ### Optional - You will not be able to see inside, use the GUI to hide parts.
-/vis/viewer/set/style wireframe ### Optional - Draw only wireframe so you can see through
-
-### Optional - To visualise the (effect of) magnetic field
-/DetSys/world/TabMagneticField MagneticField3D.MED.TABLE -1 -45
-/vis/scene/add/magneticField ### Doesnt seem to work at the same time as tracks.
+/vis/viewer/set/style surface ### Optional - You will not be able to see inside, use the GUI to hide parts.
+#/vis/viewer/set/style wireframe ### Optional - Draw only wireframe so you can see through
 
 ### Required
 /vis/drawVolume 
 
+### Some optimised viewer position settings for seeing the target area
+#/vis/viewer/set/viewpointThetaPhi 70 20 deg
+#/vis/viewer/zoomTo 4
+#/vis/viewer/pan -250.0 -30.0 mm ### Correct for SPICE bulk off center
+
+### Optional - To visualise the (effect of) magnetic field
+/DetSys/world/TabMagneticField MagneticField3D.MED.TABLE -1 -45
+/vis/scene/add/magneticField 20 ### Doesnt seem to work at the same time as tracks.
+
 ### Optional - Actually make events and see tracks
-/vis/scene/endOfEventAction accumulate #View all electron trajectories in visualisation
-/vis/scene/add/trajectories smooth #Optional - To visualise the whole flight of the particles in a simulation
-/DetSys/gun/particle e-
-/DetSys/gun/efficiencyEnergy 500 keV
-/run/beamOn 10 ### Keep number low
+#/vis/scene/endOfEventAction accumulate #View all electron trajectories in visualisation
+#/vis/scene/add/trajectories smooth #Optional - To visualise the whole flight of the particles in a simulation
+#/DetSys/phys/SpiceStepper 1
+#/DetSys/world/StepLimit 10 mm
+
+
+#/DetSys/gun/particle e-
+#/DetSys/gun/efficiencyEnergy 500 keV
+#/run/beamOn 1 ### Keep number low
