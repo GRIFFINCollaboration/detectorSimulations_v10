@@ -528,10 +528,10 @@ void DetectionSystemGriffin::BuildOneDetector() {
     // Include BGOs?
     if(fBGOSelector == 1) {
         ConstructNewSuppressorCasingWithShells() ;
-    } else if (fBGOSelector == 0) {
-        G4cout << "Not building BGO " << G4endl ;
+    } else if(fBGOSelector == 0) {
+        G4cout<<"Not building BGO "<<G4endl ;
     } else {
-        G4cout << "Error 234235" << G4endl ;
+        G4cout<<"Error 234235"<<G4endl ;
         exit(1);
     }
 
@@ -565,14 +565,12 @@ void DetectionSystemGriffin::BuildEverythingButCrystals() {
     ConstructDetector();
 
     // Include BGOs?
-    if (fBGOSelector == 1) {
+    if(fBGOSelector == 1) {
         ConstructNewSuppressorCasingWithShells();
-    }
-    else if (fBGOSelector == 0) {
-        G4cout << "Not building BGO " << G4endl;
-    }
-    else {
-        G4cout << "Error 234235" << G4endl;
+    } else if(fBGOSelector == 0) {
+        G4cout<<"Not building BGO "<<G4endl;
+    } else {
+        G4cout<<"Error 234235"<<G4endl;
         exit(1);
     }
 
@@ -603,12 +601,12 @@ void DetectionSystemGriffin::BuildDeadLayerSpecificCrystal(G4int det) {
 void DetectionSystemGriffin::ConstructComplexDetectorBlock() {
     G4Material* materialGe = G4Material::GetMaterial("G4_Ge");
     if(!materialGe) {
-        G4cout << " ----> Material G4_Ge not found, cannot build the detector shell! " << G4endl;
+        G4cout<<" ----> Material G4_Ge not found, cannot build the detector shell! "<<G4endl;
         exit(1);
     }
     G4Material* materialVacuum = G4Material::GetMaterial("Vacuum");
     if(!materialVacuum) {
-        G4cout << " ----> Material Vacuum not found, cannot build the detector shell! " << G4endl;
+        G4cout<<" ----> Material Vacuum not found, cannot build the detector shell! "<<G4endl;
         exit(1);
     }
 
@@ -657,12 +655,12 @@ void DetectionSystemGriffin::ConstructComplexDetectorBlock() {
 void DetectionSystemGriffin::ConstructComplexDetectorBlockWithDeadLayer() {
     G4Material* materialGe = G4Material::GetMaterial("G4_Ge");
     if(!materialGe) {
-        G4cout << " ----> Material G4_Ge not found, cannot build the detector shell! " << G4endl;
+        G4cout<<" ----> Material G4_Ge not found, cannot build the detector shell! "<<G4endl;
         exit(1);
     }
     G4Material* materialVacuum = G4Material::GetMaterial("Vacuum");
     if(!materialVacuum) {
-        G4cout << " ----> Material Vacuum not found, cannot build the detector shell! " << G4endl;
+        G4cout<<" ----> Material Vacuum not found, cannot build the detector shell! "<<G4endl;
         exit(1);
     }
 
@@ -752,12 +750,12 @@ void DetectionSystemGriffin::ConstructComplexDetectorBlockWithDetectorSpecificDe
 
     G4Material* materialGe = G4Material::GetMaterial("G4_Ge");
     if(!materialGe) {
-		  G4cout << " ----> Material G4_Ge not found, cannot build the detector shell! " << G4endl;
+		  G4cout<<" ----> Material G4_Ge not found, cannot build the detector shell! "<<G4endl;
         exit(1);
     }
     G4Material* materialVacuum = G4Material::GetMaterial("Vacuum");
     if(!materialVacuum) {
-		  G4cout << " ----> Material Vacuum not found, cannot build the detector shell! " << G4endl;
+		  G4cout<<" ----> Material Vacuum not found, cannot build the detector shell! "<<G4endl;
         exit(1);
     }
 
@@ -851,7 +849,7 @@ void DetectionSystemGriffin::BuildelectrodeMatElectrodes() {
 
     G4Material* electrodeMat = G4Material::GetMaterial(fElectrodeMaterial);
     if(!electrodeMat) {
-        G4cout << " ----> Electrode material " << fElectrodeMaterial << " not found, cannot build the detector shell! " << G4endl;
+        G4cout<<" ----> Electrode material "<<fElectrodeMaterial<<" not found, cannot build the detector shell! "<<G4endl;
         exit(1);
     }
 
@@ -907,12 +905,12 @@ void DetectionSystemGriffin::ConstructDetector()  {
 
     G4Material* structureMat = G4Material::GetMaterial(fStructureMaterial);
     if(!structureMat) {
-        G4cout << " ----> Structure material " << fStructureMaterial << " not found, cannot build the detector shell! " << G4endl;
+        G4cout<<" ----> Structure material "<<fStructureMaterial<<" not found, cannot build the detector shell! "<<G4endl;
         exit(1);
     }
     G4Material* liquidN2Material = G4Material::GetMaterial("LiquidN2");
     if(!liquidN2Material) {
-        G4cout << " ----> Material LiquidN2 not found, cannot build the detector shell! " << G4endl;
+        G4cout<<" ----> Material LiquidN2 not found, cannot build the detector shell! "<<G4endl;
         exit(1);
     }
     // first we make the can's front face
@@ -1223,17 +1221,17 @@ void DetectionSystemGriffin::ConstructColdFinger() {
 
     G4Material* materialAir = G4Material::GetMaterial("Air");
     if(!materialAir) {
-        G4cout << " ----> Material Air not found, cannot build the detector shell! " << G4endl;
+        G4cout<<" ----> Material Air not found, cannot build the detector shell! "<<G4endl;
         exit(1);
     }
     G4Material* structureMat = G4Material::GetMaterial(fStructureMaterial);
     if(!structureMat) {
-        G4cout << " ----> Structure material " << fStructureMaterial << " not found, cannot build the detector shell! " << G4endl;
+        G4cout<<" ----> Structure material "<<fStructureMaterial<<" not found, cannot build the detector shell! "<<G4endl;
         exit(1);
     }
     G4Material* electrodeMat = G4Material::GetMaterial(fElectrodeMaterial);
     if(!electrodeMat) {
-        G4cout << " ----> Electrode material " << fElectrodeMaterial << " not found, cannot build the detector shell! " << G4endl;
+        G4cout<<" ----> Electrode material "<<fElectrodeMaterial<<" not found, cannot build the detector shell! "<<G4endl;
         exit(1);
     }
 
@@ -1660,12 +1658,12 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells() {
 
     G4Material* structureMat = G4Material::GetMaterial(fStructureMaterial);
     if(!structureMat) {
-        G4cout << " ----> Structure material " << fStructureMaterial << " not found, cannot build the detector shell! " << G4endl;
+        G4cout<<" ----> Structure material "<<fStructureMaterial<<" not found, cannot build the detector shell! "<<G4endl;
         exit(1);
     }
     G4Material* materialBGO = G4Material::GetMaterial(fBGOMaterial);
     if(!materialBGO) {
-        G4cout << " ----> BGO material " << fBGOMaterial << " not found, cannot build the detector shell! " << G4endl;
+        G4cout<<" ----> BGO material "<<fBGOMaterial<<" not found, cannot build the detector shell! "<<G4endl;
         exit(1);
     }
 
@@ -1714,7 +1712,7 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells() {
 
         G4Material* backMaterial = G4Material::GetMaterial(fBackSuppressorMaterial);
         if(!backMaterial) {
-            G4cout << " ----> Back suppressor material " << fBackSuppressorMaterial << " not found, cannot build the detector shell! " << G4endl;
+            G4cout<<" ----> Back suppressor material "<<fBackSuppressorMaterial<<" not found, cannot build the detector shell! "<<G4endl;
             exit(1);
         }
 
@@ -1992,7 +1990,7 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingDetectorSpecificDeadLay
 
     G4Material* materialBGO = G4Material::GetMaterial(fBGOMaterial);
     if(!materialBGO) {
-        G4cout << " ----> BGO material " << fBGOMaterial << " not found, cannot build the detector shell! " << G4endl;
+        G4cout<<" ----> BGO material "<<fBGOMaterial<<" not found, cannot build the detector shell! "<<G4endl;
         exit(1);
     }
 
@@ -2014,7 +2012,7 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingDetectorSpecificDeadLay
         G4Material* backMaterial = G4Material::GetMaterial(fBackSuppressorMaterial);
 
         if(!backMaterial) {
-            G4cout << " ----> Back suppressor material " << fBackSuppressorMaterial << " not found, cannot build the detector shell! " << G4endl;
+            G4cout<<" ----> Back suppressor material "<<fBackSuppressorMaterial<<" not found, cannot build the detector shell! "<<G4endl;
             exit(1);
         }
 
@@ -2149,7 +2147,7 @@ G4UnionSolid* DetectionSystemGriffin::InterCrystalelectrodeMatFront() {
 void DetectionSystemGriffin::ConstructNewHeavyMet() {
     G4Material* materialHevimetal = G4Material::GetMaterial("Hevimetal");
     if(!materialHevimetal) {
-        G4cout << " ----> Material Hevimetal not found, cannot build the detector shell! " << G4endl;
+        G4cout<<" ----> Material Hevimetal not found, cannot build the detector shell! "<<G4endl;
         exit(1);
     }
 
