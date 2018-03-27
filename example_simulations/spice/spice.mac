@@ -7,9 +7,9 @@
 #############################################
 
 ###### Physics List (Add only, do not remove) ######
-/process/em/fluo true
-/process/em/auger true
-/process/em/pixe true
+/process/em/fluo false # atomic dexcitations
+/process/em/auger false # auger electrons
+/process/em/pixe false # particle induced X-ray emission
 ######Physics List END######################################################
 
 ###### Verbosities ######
@@ -30,19 +30,21 @@
 
 ###### SPICE Steps ######
 /DetSys/phys/SpiceStepper 0
-### boolean for smaller step-size within targets
-### true 10 um step-size
-### false 0.1 mm step-size (default)
+### boolean for enabling user step size limits
+###
+### Max step in LayeredTarget will be 10 um
+### Step value can be changed in ApparatusLayeredTarget constructor (in ApparatusLayeredTarget.cc)
 ### 
-### Step value can be changed in ApparatusSpiceTarget constructor (in ApparatusSpiceTarget.cc)
-### 
+#/DetSys/world/StepLimit 10 mm
+### Set the maximum world volume step size for electrons
+### Useful for visualizing tracks in field, mostly pointless and slow otherwise
+###
 ### A step in GEANT4 refers to the maximum distance, or portion of time,
-### in which a particle can move before it can decay or interact. 
-### Smaller steps mainly used when calibrating the resolution to new experimental data
+### in which a particle can move before it can decay or interact.
 ######################## SPICE Steps END ##############################
 
 ###### SPICE Resolution ######
-/DetSys/det/UseSpiceResolution 1
+/DetSys/det/UseSpiceResolution 0
 ### true Apply artificial detector response broadening resolution
 ### false report the detector energy exactly (default)
 ###
@@ -56,7 +58,7 @@
 /DetSys/gun/particle e- ### particle type in gun
 
 ### Particle Energy ###
-/DetSys/gun/efficiencyEnergy 1000 keV
+/DetSys/gun/efficiencyEnergy 500 keV
 ### Particle Energy End ###
 
 ### Particle Origin ###
@@ -65,7 +67,7 @@
 #/DetSys/gun/position 0.0 0.0 -0.5 mm ### Position of target wheel
 ###
 ### Reads in a file specifying a distribution in Z (relative to /DetSys/gun/position)
-/Detsys/gun/FileDistro dist.dat
+#/Detsys/gun/FileDistro dist.dat
 ### see SPICE_help.txt for details
 ###
 ### Set beamspot xy sigma 0.5 mm equates to 90% through 2 mm
@@ -74,7 +76,7 @@
 
 ### Particle Direction ###
 ### By default particles will be emitted isotropically in 4pi
-### If that is desited comment out all direction options options
+### If that is desired comment out all direction options options
 ###
 ### A point-like beam in a given direction
 #/DetSys/gun/direction 0.0 0.0 -1.0
@@ -91,16 +93,16 @@
 ###### Construct SPICE ######
 ###### Pick one(!) ######
 #### low-energy lens set-up ####
-/DetSys/app/addSpiceTargetChamber Low #defining different chamber geometry due to lens
-/DetSys/det/addSpiceDetector
-/DetSys/world/TabMagneticField MagneticField3D.LOW.TABLE -1 -45 #adding low-energy lens mag. field
-#### medium-energy lens set-up ####
-#/DetSys/app/addSpiceTargetChamber Med #defining different chamber geometry due to lens
+#/DetSys/app/addSpiceTargetChamber Low #defining different chamber geometry due to lens
 #/DetSys/det/addSpiceDetector
-#/DetSys/world/TabMagneticField MagneticField3D.MED.TABLE -1 -45 #adding medium-energy lens mag. field
+#/DetSys/world/TabMagneticField MagneticField3D.LOW.TABLE -1 -45 #adding low-energy lens mag. field
+#### medium-energy lens set-up ####
+/DetSys/app/addSpiceTargetChamber Med #defining different chamber geometry due to lens
+/DetSys/det/addSpiceDetector
+/DetSys/world/TabMagneticField MagneticField3D.MED.TABLE -1 -45 #adding medium-energy lens mag. field
 ###
 ### For clarification of lens parameters: -1 is the position offset, -45 is the rotation in z
-### If beam Z position set by /DetSys/gun/position is < -4. mm 
+### If beam Z position currently set by /DetSys/gun/position is < -4. mm 
 ### then the target pedestals will be constructed in the SPICE geometry
 ### Note: no S3 currently, no coincidence measurements
 ######### Construct SPICE END #########
@@ -121,7 +123,7 @@
 ### You may enter negative areal densities to build downstream rather than upstream
 ### Ensure ALL layers are negative in that case
 ###
-/DetSys/app/LayeredTargetAddLayer Gold 1.
+#/DetSys/app/LayeredTargetAddLayer Gold 1.
 #/DetSys/app/LayeredTargetAddLayer G4_Al 5.
 #/DetSys/app/LayeredTargetAddLayer G4_Al 5.
 ###
@@ -135,6 +137,6 @@
 
 
 ###### BEAM-ON ######
-/run/beamOn 50000 #always final command
+/run/beamOn 1000000 #always final command
 ### The number of primary electron events to generate
 ###### BEAM-ON END ######

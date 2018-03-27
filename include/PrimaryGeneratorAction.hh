@@ -82,9 +82,7 @@ public:
     void PassTarget(G4double);
     void PrepareBeamFile(G4String);
     void SetLayeredTargetBeamDistro(G4int layer);
- 
-    void SetSourceNeeded(G4bool needed) { fSourceNeeded = needed; }
-    void SetSourceName(G4String input) { fSourceName = input; }
+
     
 private:
     //variables
@@ -109,9 +107,7 @@ private:
     G4double fLayerStart;
     G4double fLayerLength;
     G4bool fNeedFileDistro;
-    
-    G4bool fSourceNeeded;
-    G4String fSourceName;
+
     
     //functions
     void LaBrinit();

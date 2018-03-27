@@ -259,16 +259,10 @@ void PhysicsList::SpiceStepper(G4bool step)
   if( step == false ) { G4cout << "No SPICE step" << G4endl; return; }
   else if( step == true ) 
     {
-		  auto aParticleIterator = GetParticleIterator();
-        aParticleIterator->reset();
-        while( (*aParticleIterator)() )
-        {
-            G4ParticleDefinition* particle = aParticleIterator->value();
-            G4ProcessManager* pmanager = particle->GetProcessManager();
-            G4String particleName = particle->GetParticleName();
-	    pmanager->AddDiscreteProcess(new G4StepLimiter);//SPICE target step-sizes
+        G4ProcessManager* pmanager = G4Electron::Electron()->GetProcessManager();
+	pmanager->AddDiscreteProcess(new G4StepLimiter);
+	//Electrons will now use user defined maxstep set by LogicVolume->SetUserLimits(new G4UserLimits(1.*mm));
 
-        }
         G4cout << "SPICE stepper" << G4endl;
      }
 }

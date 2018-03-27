@@ -54,6 +54,7 @@
 #include "G4Colour.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4RunManager.hh"
+#include "G4UserLimits.hh"
 
 
 //#include "DetectionSystemGammaTracking.hh"
@@ -74,6 +75,7 @@
 #include "DetectionSystemGriffin.hh"
 #include "DetectionSystemSceptar.hh"
 #include "DetectionSystemSpice.hh"
+#include "DetectionSystemTrific.hh"
 #include "DetectionSystemPaces.hh"
 #include "DetectionSystemSodiumIodide.hh"
 #include "DetectionSystemLanthanumBromide.hh"
@@ -248,6 +250,13 @@ void DetectorConstruction::SetWorldDimensions( G4ThreeVector vec ) {
 void DetectorConstruction::SetWorldVis( G4bool vis ) {
 	fWorldVis = vis;
 	UpdateGeometry(); // auto update
+}
+
+void DetectorConstruction::SetWorldStepLimit( G4double step ) {
+	if(fLogicWorld == NULL) {
+			Construct();
+	}
+	fLogicWorld->SetUserLimits(new G4UserLimits(step));
 }
 
 //void DetectorConstruction::SetWorldMagneticField( G4ThreeVector vec )
@@ -828,14 +837,24 @@ void DetectorConstruction::AddDetectionSystemTestcan(G4ThreeVector input) {
 	fTestcan = true;
 }
 
-void DetectorConstruction::AddDetectionSystemSpice(G4int nRings) {
-	if(fLogicWorld == NULL) {
-		Construct();
-	}
-	DetectionSystemSpice* pSpice = new DetectionSystemSpice() ;
-	pSpice->Build(); 
-	pSpice->PlaceDetector(fLogicWorld, nRings); //adds the detector rings/segments, als oincludes functions for other builds
-	fSpice = true;
+void DetectorConstruction::AddDetectionSystemSpice() {
+  if(fLogicWorld == NULL) {
+	Construct();
+  }
+  DetectionSystemSpice* pSpice = new DetectionSystemSpice() ;
+  pSpice->BuildPlace(fLogicWorld); 
+  
+  fSpice = true;
+  //HistoManager::Instance().Spice(true);//boolean needed to make SPICE histograms
+}
+
+void DetectorConstruction::AddDetectionSystemTrific(G4double Torr) {
+  if(fLogicWorld == NULL) {
+	Construct();
+  }
+  DetectionSystemTrific* pTrific = new DetectionSystemTrific(Torr) ;
+  pTrific->BuildPlace(fLogicWorld); 
+  
 }
 
 void DetectorConstruction::AddDetectionSystemPaces(G4int ndet) {

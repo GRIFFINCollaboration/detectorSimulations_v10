@@ -70,6 +70,7 @@ private:
 	G4UIcmdWith3VectorAndUnit* fWorldDimensionsCmd;
 	G4UIcmdWithABool*          fWorldVisCmd;
 	G4UIcmdWith3VectorAndUnit* fWorldMagneticFieldCmd;
+	G4UIcmdWithADoubleAndUnit* fWorldStepLimit;
 	G4UIcmdWithoutParameter*   fUpdateCmd;
 
 	// Generic Target Apparatus
@@ -138,6 +139,7 @@ private:
 	G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinBackDetectorCmd;
 	//G4UIcmdWith3Vector*       fAddDetectionSystemGriffinPositionConfigCmd;
 	G4UIcmdWithoutParameter*    fAddDetectionSystemSpiceCmd;
+	G4UIcmdWithAString*         fAddDetectionSystemTrificCmd;
 	G4UIcmdWithAString*         fAddMagnetSystemSpiceCmd;
 	G4UIcmdWithAnInteger*       fAddDetectionSystemPacesCmd;
 	G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinHevimetCmd ;

@@ -257,20 +257,37 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
         fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry-1, fDet-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
     }
 
-  //SPICE energy ///19/6 deposits/////////////////////////////////////////////////////////////////////////////////
-    found = volname.find("siDetSpiceRing");
+  //SPICE energy /////////////////////////////////////////////////////////////////////////////////
+    found = volname.find("SiSegmentPhys");
   if (edep != 0 && found!=G4String::npos) {
       SetDetAndCryNumberForSpiceDetector(volname);
+	G4double stepl = 0.;
+	if (theTrack->GetDefinition()->GetPDGCharge() != 0.)
+		stepl = aStep->GetStepLength();
+      fEventAction->SpiceDet(edep,stepl,fDet, fCry);
       mnemonic.replace(0,3,"SPI");
       mnemonic.replace(3,2,G4intToG4String(fDet));
       mnemonic.replace(5,1,GetCrystalColour(fCry));
       systemID = 10;
 	// ntuple
-      fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry, fDet, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);//-1 on cry/det
+      //fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry, fDet, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);//-1 on cry/det
 
-    
+  }
+  
+  //TRIFIC energy ////////////////////////////////////////////////////////////////////////////////////
+
+    found = volname.find("TrificGasCell");
+  if (edep != 0 && found!=G4String::npos) { 
+	SetDetAndCryNumberForTrificDetector(volname);
+// 	G4cout << "Edep in " << volname << G4endl;
+      systemID = 10;//??
+      mnemonic.replace(0,3,"GRX");
+      mnemonic.replace(3,2,G4intToG4String(fDet));
+      mnemonic.replace(5,1,GetCrystalColour(fCry));
+//       fEventAction->AddHitTracker(mnemonic, evntNb, trackID, parentID, fStepNumber, particleType, processType, systemID, fCry, fDet, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
   }
 
+  
  //PACES energy ///20/6 deposits/////////////////////////////////////////////////////////////////////////////////
   found = volname.find("pacesSiliconBlockLog");
   if (edep != 0 && found!=G4String::npos) {
@@ -540,27 +557,21 @@ void SteppingAction::SetDetNumberForGenericDetector(G4String volname) {
     //G4cout << "Stepping Action :: Found electron ekin in " << volname << " fDet = " << fDet << G4endl;
 }
 
+
 void SteppingAction::SetDetAndCryNumberForSpiceDetector(G4String volname)
 {
-    // the volume name contains five underscores : av_xxx_impr_SegmentID_siDetSpiceRing_RingID_etc...
-    G4String dummy="";                          
-    size_t UnderScoreIndex[6];
-    size_t old = -1 ;  //was -1
-    for (int i = 0 ; i < 6 ; i++ ){
-    UnderScoreIndex[i] = volname.find_first_of("_",old+1);
-    old = UnderScoreIndex[i] ;
-    }
-
-   dummy = volname.substr (UnderScoreIndex[2]+1,UnderScoreIndex[3]-UnderScoreIndex[2]-1); // select the substring between the underscores 
-   fCry = atoi(dummy.c_str()) -1 ; // subtract one : In spice we start counting ring or sectors from zero 
-   
-   dummy = volname.substr (UnderScoreIndex[4]+1,UnderScoreIndex[5]-UnderScoreIndex[4]-1);
-   fDet = atoi(dummy.c_str()); // ring 
-
-   // G4cout << " (Stepping action) in " << volname <<  " segment = " << fCry << " ring = " << fDet << G4endl;
-   // G4cout << " in " << volname <<  " segment = " << fCry << " ring = " << fDet << G4endl;
-    //G4cin.get();
+   G4String dummy=volname.substr(volname.find("SiSegmentPhys")+13,3);
+   fCry = atoi(dummy)%12; // sector
+   fDet = atoi(dummy)/12; // ring 
 }
+
+void SteppingAction::SetDetAndCryNumberForTrificDetector(G4String volname)
+{
+   G4String dummy=volname.substr(volname.find("TrificGasCell")+13,3);
+   fCry = 0;
+   fDet = atoi(dummy); // ring 
+}
+
 
 void SteppingAction::SetDetNumberForAncillaryBGODetector(G4String volname) {
     const char *cstr = volname.c_str();
