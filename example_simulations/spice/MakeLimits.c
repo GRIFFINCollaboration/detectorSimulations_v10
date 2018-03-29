@@ -23,12 +23,12 @@ void MakeLimits(){
 		gROOT->cd();
 		
 		//Load the two histograms
-		TH2 *echan = (TH2*)Einp.Get("histo/AllSegEnergies");
+		TH2 *echan = (TH2*)Einp.Get("AllSegEnergies");
 		if(!echan)continue;
 		
 		// Gets the number of simm events from the file
 		// This means you could decrease statistics for certain energy ranges 
-		TH1 *be = (TH1*)Einp.Get("histo/BeamEnergy");
+		TH1 *be = (TH1*)Einp.Get("BeamEnergy");
 		if(be)SIMEVENTS=be->GetEntries();
 		
 		TH1* shadhist[2][10];
