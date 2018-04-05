@@ -224,6 +224,8 @@ private:
 	// --------------------------
 	// Dimensions of Target Wheel
 	// --------------------------
+	G4double fTargetWheelRotation;
+	
 	G4double fTargetWheelRadius;
 	G4double fTargetWheelThickness;
 	G4double fTargetWheelIndentRadius;
@@ -281,7 +283,18 @@ private:
 	// Gear Stick
 	G4double fGearStickLength;
 	G4double fGearStickRadius;
-
+	// Targets
+	G4double fBunnyTargetThickness;
+	G4double fBunnyRodLength;
+	
+	G4double fEvapTargetThickness;
+	G4double fEvapTargetRadius;
+	G4double fEvapTargetInner;
+	G4double fEvapTargetTabWidth;
+	G4double fEvapTargetTabExtra;
+	G4double fEvapTargetTabIndent;
+	G4double fEvapTargetScrewRad;
+	G4double fEvapTargetScrewHeight;
 	
 	//----------------------------
 	// Dimensions of Photon Shield
@@ -395,18 +408,17 @@ private:
 	// --------------------------------
 	// Dimensions of Conical Collimator
 	// --------------------------------
-	G4double fMidInnerRadius;
-	G4double fMidOuterRadius;
-	G4double fMidZLength;
-	G4double fOuterCylOuterRadius;
-	G4double fOuterCylInnerRadius;
-	G4double fOuterCylZLength;
-	G4double fInnerCylOuterRadius;
-	G4double fInnerCylInnerRadius;
-	G4double fInnerCylZLength;
-	G4double fEdgeInnerRadius;
-	G4double fEdgeOuterRadius;
-	G4double fEdgeZLength;
+	G4double fConicalInnerRad1;
+	G4double fConicalInnerRad2;
+	G4double fConicalOuterRad1;
+	G4double fConicalOuterRad2;
+	G4double fConicalLength1;
+	G4double fConicalLength2;
+	G4double fConicalLength3;
+	G4double fConicalTabRad;
+	G4double fConicalTabHeight;
+	G4double fConicalTabWidth;
+
 	
 	// --------------------------
 	// Dimensions of X-ray Insert
@@ -414,11 +426,48 @@ private:
 	G4double fInsertCylOuterRadius;
 	G4double fInsertCylInnerRadius;
 	G4double fInsertCylZLength;
-	G4double fInsertEdgeInnerRadius;
-	G4double fInsertEdgeOuterRadius;
 	G4double fInsertEdgeZLength;
+	
 	G4double fInsertHoleRadius;
-// 	G4double fInsertHoleLength;
+	
+	G4double fInsertConeZLength;
+	G4double fInsertConeR1;
+	G4double fInsertConeR2;
+	G4double fInsertEdgeAngle;
+	
+	// --------------------------
+	// Dimensions of Source 
+	// --------------------------
+	
+	G4double fEffSourceHolderHeight;
+	G4double fEffSourceHolderRad;
+	G4double fEffSourceHolderInner;
+	G4double fEffSourceHoldPocket;
+	G4double fEffSourceHoldPocketRad;
+	G4double fEffSourceScrewRad;
+	G4double fEffSourceScrewHeight;
+
+	G4double fMEezagSourceHeight;
+	G4double fMEezagSourceRad;
+	G4double fMEezagSourceWall;
+	G4double fMEezagSourceRim;
+	G4double fMEezagSourceZ;
+	G4double fMEezagSourceActiveZ;
+	G4double fMEezagSourceAcrylicLength;
+	
+	G4double fBracketSideLength;
+	G4double fBracketBackLength;
+	G4double fBracketDepth;
+	G4double fBracketBackWidth;
+	G4double fBracketSideWidth;
+	G4double fBracketoffset;
+	G4double fBracketAngle;
+	G4double fBracketScrewRad;
+	G4double fBracketScrewHeight;
+		
+	// --------------------------
+	// Construction option bools
+	// --------------------------
 
 	bool BuildMEL;
 	bool Empty;
@@ -439,10 +488,10 @@ private:
 	void BuildTargetChamberCylinderDownstream(bool);
 	void BuildTargetWheel();
 	void BuildTargetWheelSimple();
-	void BuildTargetWheelRods();
 	void BuildTargetWheelGears();
 	void BuildTargetWheelGearPlates();
-	void BuildTargetFrame();
+	void BuildBunnyTarget();
+	void BuildEvapTarget();
 	void BuildCollimator();
 	void BuildGearStick();
 	void BuildBiasPlate();
@@ -461,15 +510,19 @@ private:
 	void BuildXrayInsert();
 	
 	void BuildPlaceEfficiencySource(G4LogicalVolume*);
+	void BuildMEezagSource(G4LogicalVolume*);
+	void BuildPlaceSource(G4LogicalVolume*);
 	
 	void PlaceTargetChamberFrontRing(G4LogicalVolume*);
 	void PlaceTargetChamberSphere(G4LogicalVolume*);
 	void PlaceTargetChamberCylinderDownstream(G4LogicalVolume*);
 	void PlaceTargetWheel(G4LogicalVolume*);
-	void PlaceTargetWheelRods(G4double, G4double, G4LogicalVolume*);
 	void PlaceTargetWheelGears(G4LogicalVolume*);
 	void PlaceTargetWheelGearPlates(G4LogicalVolume*);
-	void PlaceTargetFrame(G4double, G4LogicalVolume*);
+	void PlaceBunnyTargets(G4LogicalVolume*);
+	void PlaceBunnyTarget(G4int, G4LogicalVolume*);
+	void PlaceEvapTargets(G4LogicalVolume*);
+	void PlaceEvapTarget(G4int, G4LogicalVolume*);
 	void PlaceCollimator(G4LogicalVolume*);
 	void PlaceGearStick(G4LogicalVolume*);
 	void PlaceTargetMountPlate(G4LogicalVolume*);

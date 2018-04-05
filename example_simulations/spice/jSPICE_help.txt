@@ -1,3 +1,10 @@
+ALWAYS CHECK
+SPICE construction options, field settings and target/gun positions.
+These are three separate lines in all macros, that can be easily overlooked.
+They must match.
+Print statements in the program will confirm the location the target/gun should be for the selected SPICE options.
+
+
 After a successful compilation, you can run the simulation in one the following ways:
 
 1) Macro mode
@@ -8,11 +15,11 @@ The file IonSPICE.mac gives an example of using the radioactive decay package in
 
 2) Visualisation mode
 ./Griffinv10
-Open the GUI interface the run the following command in the "Session" box to open the SPICE visualisation
+This will Open the GUI interface and execute vis.mac
+You may then run the following command in the "Session" box to open the SPICE visualisation
 /control/execute SPICE_vis.mac
 You may choose option in SPICE_vis.mac before running.
 Also after running the script addition commands from the script may be run in the "Session" box e.g. 
-/DetSys/gun/particle e-
 /DetSys/gun/efficiencyEnergy 800 keV
 /run/beamOn 2 ### Keep number low
 You can disable parts of the geometry in the gui "Scene tree" for clearer viewing
@@ -35,13 +42,13 @@ It is recommended to use additional points in AutoEffCurve.sh as the individual 
 efficiency curves have far sharper features than the whole detector.
 
 5) Automated spectrum batch mode 
-As as quick alternative to the radioactive ions shown in IonSPICE.mac 
+As a quick alternative to the radioactive ions shown in IonSPICE.mac 
 You can edit AutoSource.sh to manually define an distribution of electron energies
 "bash AutoSource.sh" will sort and sum the output histogram files to a single spectrum
 
 
 TARGETS:
-Multi layered targets may be added as described in spice.mac
+Multi-layered targets may be added as described in spice.mac
 These stack face to face from the beam position defined by /DetSys/gun/position
 (at the time the target layer command is called)
 Materials that are not defined within the MyMaterial framework within
@@ -54,9 +61,6 @@ Detected Energies
 Emission angle of detected electrons (for kinematic work)
 The emission position (to check the distribution settings, z is relative to /DetSys/gun/position)
 
-Be careful to ensure field file matches with the geometry used to create the chamber.
-These are two separate lines in all macros, that can be easily overlooked.
-
 DISTRIBUTION:
 You may wish to distribute emission along the (z) beam axis according
 to some non-uniform reaction distribution
@@ -65,4 +69,5 @@ containing white space delimited position and probability weight.
 Position should be in um and relative to /DetSys/gun/position 
 Weight does not need to be normalised.
 
-Occasionally the program enters a geometric error loop. It will exit.  
+Occasionally the program enters a geometric error loop.
+This is not critical and should pass.
