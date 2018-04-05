@@ -1,5 +1,6 @@
 #include "DetectorConstruction.hh"
 #include "DetectorMessenger.hh"
+#include "ApparatusSpiceTargetChamber.hh"
 
 #include "G4Material.hh"
 
@@ -51,7 +52,9 @@ DetectionSystemSpice::DetectionSystemSpice()
 	this->fDetectorMountLipRadius = 48.3*mm;
 	this->fDetectorMountLipThickness = 1*mm;
 	this->fDetectorMountAngularOffset = 0*deg;
-	this->fDetectorToTargetDistance = 118.6*mm;
+	
+	
+	this->fDetectorToTargetDistance = ApparatusSpiceTargetChamber::fTargetChamberDistanceFromTarget +117.6*mm;
 	this->fDetectorThickness = 6*mm;
 
 	// ---------------------------

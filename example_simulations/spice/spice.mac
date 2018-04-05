@@ -1,12 +1,12 @@
 ### Fully commented example SPICE macro
-### A 'cleaner' macro is also provided
 ### Comment out commands as appropriate
 
 ###### Initialiser REQUIRED ######
 /run/initialize ### set up run
 #############################################
 
-###### Physics List (Add only, do not remove) ######
+###### Physics List ######
+#/DetSys/phys/SelectPhysics emlivermore
 /process/em/fluo false # atomic dexcitations
 /process/em/auger false # auger electrons
 /process/em/pixe false # particle induced X-ray emission
@@ -31,7 +31,6 @@
 ###### SPICE Steps ######
 /DetSys/phys/SpiceStepper 0
 ### boolean for enabling user step size limits
-###
 ### Max step in LayeredTarget will be 10 um
 ### Step value can be changed in ApparatusLayeredTarget constructor (in ApparatusLayeredTarget.cc)
 ### 
@@ -43,9 +42,10 @@
 ### in which a particle can move before it can decay or interact.
 ######################## SPICE Steps END ##############################
 
+
 ###### SPICE Resolution ######
 /DetSys/det/UseSpiceResolution 0
-### true Apply artificial detector response broadening resolution
+### true Apply artificial detector response broadening resolution to histograms
 ### false report the detector energy exactly (default)
 ###
 ### Uses the ApplySpiceRes() subroutine within the FillSpice() subrioutine of EventAction.cc
@@ -65,6 +65,7 @@
 ### Choose one of the two options
 /DetSys/gun/position 0.0 0.0 -8. mm ### Position of pedestal 'bunny ear' targets
 #/DetSys/gun/position 0.0 0.0 -0.5 mm ### Position of target wheel
+#/DetSys/gun/position 0.0 0.0 -8.2 mm ### Position of "efficiency source"
 ###
 ### Reads in a file specifying a distribution in Z (relative to /DetSys/gun/position)
 #/Detsys/gun/FileDistro dist.dat
@@ -91,33 +92,37 @@
 ###### Particle Generator END ######
 
 ###### Construct SPICE ######
-###### Pick one(!) ######
-#### low-energy lens set-up ####
-#/DetSys/app/addSpiceTargetChamber Low #defining different chamber geometry due to lens
-#/DetSys/det/addSpiceDetector
-#/DetSys/world/TabMagneticField MagneticField3D.LOW.TABLE -1 -45 #adding low-energy lens mag. field
-#### medium-energy lens set-up ####
-/DetSys/app/addSpiceTargetChamber Med #defining different chamber geometry due to lens
+### /DetSys/app/addSpiceTargetChamber takes a string of options for the setup geometry
+### The default setup is the Z=0 evaporator target wheel with LEL
+### Print out statements will confirm the selected options
+###
+### Concatenate any of the following options:
+### MEL = Build the Medium Energy Lens
+### Empty = Build the empty lens. You should comment out /DetSys/world/TabMagneticField
+### Eff = Build the on-wheel source holder and source used in efficiency calibrations
+### Source = Build the non-target-wheel metal source holder wheel
+### Col = Add the additional collimator to the photon shield
+### Light = Build only the core components needed for electron simulations.
+###
+/DetSys/app/addSpiceTargetChamber MedLiteColEff
 /DetSys/det/addSpiceDetector
 /DetSys/world/TabMagneticField MagneticField3D.MED.TABLE -1 -45 #adding medium-energy lens mag. field
-###
-### For clarification of lens parameters: -1 is the position offset, -45 is the rotation in z
-### If beam Z position currently set by /DetSys/gun/position is < -4. mm 
-### then the target pedestals will be constructed in the SPICE geometry
-### Note: no S3 currently, no coincidence measurements
+#/DetSys/world/TabMagneticField MagneticField3D.LOW.TABLE -1 -45 #adding low-energy lens mag. field
+### ENSURE FIELD MATCHES SELECTED OPTIONS
+### Clarification of lens parameters: -1 is the position offset, -45 is the rotation in z
 ######### Construct SPICE END #########
 
 
 ###### Target Construction ######
-### Adds sucessive layers to a target
+### Adds successive layers to a target
 ### Layers are added face to face building upstream (-z)
-### The zeroth layer's upstream face will be flush with
+### The zeroth layer's downstream face will be flush with
 ### the current beam position as defined by '/DetSys/gun/position'.
 ###
 ### Inputs: Material name, areal density mg/cm2
 ### Length (thickness) will be calculated from inputs
 ###
-### Simulation does not require a target
+### Simulation does NOT require a target
 ### A 'LayeredTarget' may consist of a single layer
 ###
 ### You may enter negative areal densities to build downstream rather than upstream
@@ -127,7 +132,7 @@
 #/DetSys/app/LayeredTargetAddLayer G4_Al 5.
 #/DetSys/app/LayeredTargetAddLayer G4_Al 5.
 ###
-### When using a LayeredTarget you may want the beam/gun particle emission
+### When using a LayeredTarget you specify the beam/gun particle emission
 ### distributed through a target layer.
 ### Enter the index of the layer, starting at 0.
 #/Detsys/gun/TargetLayer 1 

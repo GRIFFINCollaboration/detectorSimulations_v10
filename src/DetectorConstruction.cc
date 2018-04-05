@@ -353,10 +353,10 @@ void DetectorConstruction::AddGrid() {
 	}
 }
 
-void DetectorConstruction::AddApparatusSpiceTargetChamber(G4String MedLo)//parameter sets lens for SPICE - should be matched with field
+void DetectorConstruction::AddApparatusSpiceTargetChamber(G4String Options)//parameter sets lens for SPICE - should be matched with field
 {
 	//Create Target Chamber
-	ApparatusSpiceTargetChamber* fApparatusSpiceTargetChamber = new ApparatusSpiceTargetChamber(MedLo,fDetEffPosition.z());
+	ApparatusSpiceTargetChamber* fApparatusSpiceTargetChamber = new ApparatusSpiceTargetChamber(Options);
 	fApparatusSpiceTargetChamber->Build( fLogicWorld );
 }
 
