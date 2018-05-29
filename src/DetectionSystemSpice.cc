@@ -218,7 +218,7 @@ G4int DetectionSystemSpice::BuildPlaceSiliconWafer(G4LogicalVolume* ExpHallLog)
 
 	for(int sec=0;sec<this->fSiDetPhiSegments;sec++){
 		std::stringstream temp;
-		temp << "SiSegmentPhys" <<r*12+sec;
+		temp<<"SiSegmentPhys_"<<r<<"_"<<sec;
 		new G4PVPlacement(rotsec[sec],G4ThreeVector(0,0,0), fSiSegmentLog, temp.str(),  siDetMotherLog, false, 0);
 	}	
   }

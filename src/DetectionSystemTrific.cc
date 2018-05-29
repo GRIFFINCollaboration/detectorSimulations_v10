@@ -260,7 +260,7 @@ void DetectionSystemTrific::PlacePCBs(G4LogicalVolume*  TrificGasVol){
 	for(int i=0;i<24;i++){
 		G4ThreeVector move(0,0,Zpos);
 		std::stringstream temp;
-		temp << "TrificGasCell" <<i;
+		temp << "TrificGasCell_" <<i;
 		new G4PVPlacement(0, move, fGasCell, temp.str(), TrificGasVol, false, 0);
 // 		fGridPCB->MakeImprint(TrificGasVol, move, rotate, i);
 		Zpos+=fGridSpacing;

@@ -61,6 +61,7 @@ void RunAction::BeginOfRunAction(const G4Run* aRun)
 	}
 	if(fHistoManager != nullptr) {
 		fHistoManager->Book();
+		fHistoManager->GetDetectorConstruction()->SetProperties();
 	}
 }
 
