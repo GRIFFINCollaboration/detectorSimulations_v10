@@ -59,104 +59,107 @@ SteppingAction::~SteppingAction() { }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void SteppingAction::UserSteppingAction(const G4Step* aStep) {
-    G4bool trackSteps   = false;
-    G4int particleType  = 0;
-    G4int processType   = 0;
-    G4int evntNb;
+	G4bool trackSteps   = false;
+	G4int particleType  = 0;
+	G4int processType   = 0;
+	G4int evntNb;
 
-    G4String particleName;
-    G4String mnemonic = "XXX00XX00X";
+	G4String particleName;
+	G4String mnemonic = "XXX00XX00X";
 
-    // Get volume of the current step
-    G4VPhysicalVolume* volume = aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume();
+	// Get volume of the current step
+	G4VPhysicalVolume* volume = aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume();
 
-    // collect energy and track length step by step
-    // As it's called more than once, get the Track and assign to variable
-    G4double edep = aStep->GetTotalEnergyDeposit();
-    G4double ekin = aStep->GetPreStepPoint()->GetKineticEnergy();
+	// collect energy and track length step by step
+	// As it's called more than once, get the Track and assign to variable
+	G4double edep = aStep->GetTotalEnergyDeposit();
+	G4double ekin = aStep->GetPreStepPoint()->GetKineticEnergy();
 
-    G4Track* theTrack = aStep->GetTrack();
-    G4int stepNumber = theTrack->GetCurrentStepNumber();
+	G4Track* theTrack = aStep->GetTrack();
+	G4int stepNumber = theTrack->GetCurrentStepNumber();
 
-    // Track particle type in EVERY step
-    //G4cout << "Particle name = " << aStep->GetTrack()->GetParticleDefinition()->GetParticleName() << G4endl;
-    particleName = aStep->GetTrack()->GetParticleDefinition()->GetParticleName();
-    if (particleName == "gamma")         particleType = 1;
-    else if (particleName == "e-")       particleType = 2;
-    else if (particleName == "e+")       particleType = 3;
-    else if (particleName == "proton")   particleType = 4;
-    else if (particleName == "neutron")  particleType = 5;
-    else if (particleName == "deuteron") particleType = 6;
-    else if (particleName == "C12")      particleType = 7;
-    else particleType = 0;
+	// Track particle type in EVERY step
+	//G4cout << "Particle name = " << aStep->GetTrack()->GetParticleDefinition()->GetParticleName() << G4endl;
+	particleName = aStep->GetTrack()->GetParticleDefinition()->GetParticleName();
+	if (particleName == "gamma")         particleType = 1;
+	else if (particleName == "e-")       particleType = 2;
+	else if (particleName == "e+")       particleType = 3;
+	else if (particleName == "proton")   particleType = 4;
+	else if (particleName == "neutron")  particleType = 5;
+	else if (particleName == "deuteron") particleType = 6;
+	else if (particleName == "C12")      particleType = 7;
+	else particleType = 0;
 
-	 const G4VProcess* process = aStep->GetPostStepPoint()->GetProcessDefinedStep();
-	 G4int targetZ = -1;
-	 if(process != NULL && process->GetProcessType() == fHadronic) {
+	const G4VProcess* process = aStep->GetPostStepPoint()->GetProcessDefinedStep();
+	G4int targetZ = -1;
+	if(process != NULL && process->GetProcessType() == fHadronic) {
 		G4HadronicProcess* hadrProcess = (G4HadronicProcess*) process;
 		const G4Isotope* target = NULL;
 		target = hadrProcess->GetTargetIsotope();
 		if(target != NULL) {
-		  //	G4cout<<particleName<<", "<<process->GetProcessName()<<" on "<<target->GetName()<<G4endl;
-		  targetZ = target->GetZ();
+			//	G4cout<<particleName<<", "<<process->GetProcessName()<<" on "<<target->GetName()<<G4endl;
+			targetZ = target->GetZ();
 		}
-	 }
+	}
 
-    // this can be modified to add more processes
-	 if(theTrack->GetCreatorProcess() != NULL) {
+	// this can be modified to add more processes
+	if(theTrack->GetCreatorProcess() != NULL) {
 		G4String processName = theTrack->GetCreatorProcess()->GetProcessName();
 		//G4cout<<"found secondary, particle "<<particleName<<", creation process "<<process<<G4endl;
-      if (processName == "RadioactiveDecay")      processType = 1;
-      else if (processName == "eIoni")            processType = 2;
-      else if (processName == "msc")              processType = 3;
-      else if (processName == "Scintillation")    processType = 4;
-      else if (processName == "Cerenkov")         processType = 5;
-      else  processType = 0;
-	 } else {
+		if (processName == "RadioactiveDecay")      processType = 1;
+		else if (processName == "eIoni")            processType = 2;
+		else if (processName == "msc")              processType = 3;
+		else if (processName == "Scintillation")    processType = 4;
+		else if (processName == "Cerenkov")         processType = 5;
+		else  processType = 0;
+	} else {
 		processType = -1;
-	 }
+	}
 
-    evntNb =  fEventAction->GetEventNumber();
+	evntNb =  fEventAction->GetEventNumber();
 
-    // Get initial momentum direction & energy of particle
-    G4int trackID = theTrack->GetTrackID();
-    G4int parentID = theTrack->GetParentID();
+	// Get initial momentum direction & energy of particle
+	G4int trackID = theTrack->GetTrackID();
+	G4int parentID = theTrack->GetParentID();
 
-    G4StepPoint* point1 = aStep->GetPreStepPoint();
-    G4StepPoint* point2 = aStep->GetPostStepPoint();
+	G4StepPoint* point1 = aStep->GetPreStepPoint();
+	G4StepPoint* point2 = aStep->GetPostStepPoint();
 
-    G4ThreeVector pos1 = point1->GetPosition();
-    G4ThreeVector pos2 = point2->GetPosition();
+	G4ThreeVector pos1 = point1->GetPosition();
+	G4ThreeVector pos2 = point2->GetPosition();
 
-    //G4double time1 = point1->GetGlobalTime();
-    G4double time2 = point2->GetGlobalTime();
+	//G4double time1 = point1->GetGlobalTime();
+	G4double time2 = point2->GetGlobalTime();
 
-	 // check if this volume has its properties set, i.e. it's an active detector
-	 if(fDetector->HasProperties(volume)) {
-		 DetectorProperties prop = fDetector->GetProperties(volume);
+	// check if this volume has its properties set, i.e. it's an active detector
+	if((edep > 0 || (fDetector->GridCell() && ekin > 0)) && fDetector->HasProperties(volume)) {
+		DetectorProperties prop = fDetector->GetProperties(volume);
 
-		 if(fDetector->GridCell()) {
-			 G4String volumeName = volume->GetName();
-			 if(volumeName.find("gridcellLog") != G4String::npos) {
-				 // use ekin as edep
-				 edep = ekin;
-				 // Now kill the track!
-				 theTrack->SetTrackStatus(fStopAndKill);
-			 }
-		 }
-		 if(fDetector->Spice()) {
-			 G4double stepl = 0.;
-			 if(theTrack->GetDefinition()->GetPDGCharge() != 0.) {
-				 stepl = aStep->GetStepLength();
-			 }
-			 fEventAction->SpiceDet(edep, stepl, prop.detectorNumber, prop.crystalNumber);
-		 }
+		if(fDetector->GridCell()) {
+			G4String volumeName = volume->GetName();
+			if(volumeName.find("gridcellLog") != G4String::npos) {
+				// use ekin as edep
+				edep = ekin;
+				// Now kill the track!
+				theTrack->SetTrackStatus(fStopAndKill);
+			}
+		}
+		if(fDetector->Spice()) {
+			G4double stepl = 0.;
+			if(theTrack->GetDefinition()->GetPDGCharge() != 0.) {
+				stepl = aStep->GetStepLength();
+			}
+			fEventAction->SpiceDet(edep, stepl, prop.detectorNumber, prop.crystalNumber);
+		}
 
-		 fEventAction->AddHitTracker(prop.mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, prop.systemID, prop.crystalNumber-1, prop.detectorNumber-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+		// check edep again in case we use the grid cell but haven't hit it
+		if(edep <= 0) return;
 
-		 if(trackSteps) {
-			 fEventAction->AddStepTracker(evntNb, trackID, parentID, stepNumber, particleType, processType, prop.systemID, prop.crystalNumber-1, prop.detectorNumber-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
-		 }
-	 }// if(fDetector->HasProperties(volume))
+		fEventAction->AddHitTracker(prop.mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, prop.systemID, prop.crystalNumber-1, prop.detectorNumber-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+
+		if(trackSteps) {
+			fEventAction->AddStepTracker(evntNb, trackID, parentID, stepNumber, particleType, processType, prop.systemID, prop.crystalNumber-1, prop.detectorNumber-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+		}
+	}// if(fDetector->HasProperties(volume))
 }
 
