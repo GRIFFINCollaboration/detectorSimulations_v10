@@ -159,7 +159,7 @@ DetectorConstruction::DetectorConstruction() :
   fGriffinDetectorsMapIndex = 0;
   for(G4int i = 0; i < 16; ++i) {
 	  fGriffinDetectorsMap[i] = 0;
-	  for(G4int j = 0; j < 3; ++j) {
+	  for(G4int j = 0; j < 4; ++j) {
 		  fGriffinDeadLayer[i][j] = -1;
 	  }
   }
@@ -944,7 +944,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		std::string tmpString = volumeName.substr(volumeName.find("germaniumBlock1")+16);
 		// replace all '_' with spaces so we can just use istringstream::operator>>
 		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
-		std::cout<<volumeName<<" => "<<tmpString<<std::endl;
 		// create istringstream from the stripped and converted stream, and read detector and crystal number
 		std::istringstream is(tmpString);
 		is>>result.detectorNumber>>result.crystalNumber;
@@ -968,7 +967,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		std::string tmpString = volumeName.substr(volumeName.find("germaniumDlsBlock1")+19);
 		// replace all '_' with spaces so we can just use istringstream::operator>>
 		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
-		std::cout<<volumeName<<" => "<<tmpString<<std::endl;
 		// create istringstream from the stripped and converted stream, and read detector and crystal number
 		std::istringstream is(tmpString);
 		is>>result.detectorNumber>>result.crystalNumber;
@@ -993,7 +991,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		std::string tmpString = volumeName.substr(volumeName.find("SiSegmentPhys")+13);
 		// replace all '_' with spaces so we can just use istringstream::operator>>
 		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
-		std::cout<<volumeName<<" => "<<tmpString<<std::endl;
 		// create istringstream from the stripped and converted stream, and read detector and crystal number
 		std::istringstream is(tmpString);
 		is>>result.detectorNumber>>result.crystalNumber;
@@ -1014,7 +1011,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		std::string tmpString = volumeName.substr(volumeName.find("TrificGasCell")+13);
 		// replace all '_' with spaces so we can just use istringstream::operator>>
 		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
-		std::cout<<volumeName<<" => "<<tmpString<<std::endl;
 		// create istringstream from the stripped and converted stream, and read detector and crystal number
 		std::istringstream is(tmpString);
 		is>>result.detectorNumber;
@@ -1038,14 +1034,12 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 	std::string tmpString = volumeName.substr(3);
 	// replace all '_' with spaces so we can just use istringstream::operator>>
 	std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
-	std::cout<<volumeName<<" => "<<tmpString<<std::endl;
 	std::istringstream is(tmpString);
 	G4int assemblyNumber;
 	is>>assemblyNumber;
 
 	// create new string that starts with the imprint number ('_' have been replace by ' ') and use stringstream to read it
 	tmpString = tmpString.substr(tmpString.find(" impr ")+6);
-	std::cout<<volumeName<<" => "<<tmpString<<std::endl;
 	is.str(tmpString);
 	G4int imprintNumber;
 	is>>imprintNumber;
@@ -1054,7 +1048,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 	// and the crystal number is the imprint number (fNumberOfAssemblyVols was hard-coded to be 13 in the constructor)
 	result.detectorNumber = static_cast<G4int>(ceil((assemblyNumber-5.)/13.));
 	result.crystalNumber = imprintNumber;
-	std::cout<<"assembly "<<assemblyNumber<<", imprint "<<imprintNumber<<" => detector "<<result.detectorNumber<<", crystal "<<result.crystalNumber<<std::endl;
 	if(volumeName.find("backQuarterSuppressor") != G4String::npos) {
 		// build mnemonic
 		mnemonic.replace(0,3,"GRS");
@@ -1124,7 +1117,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 	// and the crystal number is the imprint number minus 3 times the detector number minus one
 	result.detectorNumber = static_cast<G4int>(ceil(imprintNumber/3.0));
 	result.crystalNumber = imprintNumber - (result.detectorNumber-1)*3;
-	std::cout<<"assembly "<<assemblyNumber<<", imprint "<<imprintNumber<<" => detector "<<result.detectorNumber<<", crystal "<<result.crystalNumber<<std::endl;
 	if(volumeName.find("ancillaryBgoBlock") != G4String::npos) {
 		// build mnemonic
 		mnemonic.replace(0,3,"ABG");
@@ -1140,7 +1132,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 	// for "generic" detectors the detector number is the imprint number
 	result.detectorNumber = imprintNumber;
 	result.crystalNumber = 0;
-	std::cout<<"assembly "<<assemblyNumber<<", imprint "<<imprintNumber<<" => detector "<<result.detectorNumber<<", crystal "<<result.crystalNumber<<std::endl;
 	if(volumeName.find("lanthanumBromideCrystalBlock") != G4String::npos) {
 		// build mnemonic
 		mnemonic.replace(0,3,"LAB");

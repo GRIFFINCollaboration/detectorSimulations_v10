@@ -215,16 +215,16 @@ G4int ApparatusGriffinStructure::Build() {
     fAssemblyRing = new G4AssemblyVolume();
     fAssemblyRod = new G4AssemblyVolume();
 
-    G4cout << "BuildSquarePiece" << G4endl;
+    //G4cout << "BuildSquarePiece" << G4endl;
     BuildSquarePiece();
 
-    G4cout << "BuildTrianglePiece" << G4endl;
+    //G4cout << "BuildTrianglePiece" << G4endl;
     BuildTrianglePiece();
 
-    G4cout << "BuildLargeRingFrame" << G4endl;
+    //G4cout << "BuildLargeRingFrame" << G4endl;
     BuildLargeRingFrame();
 
-    G4cout << "BuildRodPiece" << G4endl;
+    //G4cout << "BuildRodPiece" << G4endl;
     BuildRodPiece();
 
     return 1;
