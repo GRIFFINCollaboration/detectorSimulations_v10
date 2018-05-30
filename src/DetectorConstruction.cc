@@ -206,7 +206,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 
 	G4Material* matWorld = G4Material::GetMaterial(fMatWorldName);
 
-	if( !matWorld ) {
+	if(!matWorld) {
 		G4cout<<" ----> Material "<<fMatWorldName<<" not found, cannot build world! "<<G4endl;
 		return 0;
 	}
@@ -217,7 +217,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 			matWorld,	//its material
 			"World");		//its name
 
-	fPhysiWorld = new G4PVPlacement(   0,                  //no rotation
+	fPhysiWorld = new G4PVPlacement(  0,                  //no rotation
 			G4ThreeVector(),	//at (0,0,0)
 			fLogicWorld,         //its logical volume
 			"World",            //its name
@@ -238,31 +238,31 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 	return fPhysiWorld;
 }
 
-void DetectorConstruction::SetWorldMaterial( G4String name ) {
+void DetectorConstruction::SetWorldMaterial(G4String name) {
 	fMatWorldName = name;
 	UpdateGeometry(); // auto update
 }
 
-void DetectorConstruction::SetWorldDimensions( G4ThreeVector vec ) {
+void DetectorConstruction::SetWorldDimensions(G4ThreeVector vec) {
 	fWorldSizeX = vec.x() ;
 	fWorldSizeY = vec.y() ;
 	fWorldSizeZ = vec.z() ;
 	UpdateGeometry(); // auto update
 }
 
-void DetectorConstruction::SetWorldVis( G4bool vis ) {
+void DetectorConstruction::SetWorldVis(G4bool vis) {
 	fWorldVis = vis;
 	UpdateGeometry(); // auto update
 }
 
-void DetectorConstruction::SetWorldStepLimit( G4double step ) {
+void DetectorConstruction::SetWorldStepLimit(G4double step) {
 	if(fLogicWorld == NULL) {
 			Construct();
 	}
 	fLogicWorld->SetUserLimits(new G4UserLimits(step));
 }
 
-//void DetectorConstruction::SetWorldMagneticField( G4ThreeVector vec )
+//void DetectorConstruction::SetWorldMagneticField(G4ThreeVector vec)
 //{
 //    //expHallMagField->SetFieldValue(G4ThreeVector(vec.x(),vec.y(),vec.z()));
 //}
@@ -288,21 +288,21 @@ void DetectorConstruction::UpdateGeometry() {
 	G4RunManager::GetRunManager()->DefineWorldVolume(Construct());
 }
 
-void DetectorConstruction::SetGenericTargetMaterial( G4String name )
+void DetectorConstruction::SetGenericTargetMaterial(G4String name)
 {
 	DetectorConstruction::fSetGenericTargetMaterial = true;
 	DetectorConstruction::fGenericTargetMaterial = name;
 	DetectorConstruction::SetGenericTarget();
 }
 
-void DetectorConstruction::SetGenericTargetDimensions( G4ThreeVector vec )
+void DetectorConstruction::SetGenericTargetDimensions(G4ThreeVector vec)
 {
 	DetectorConstruction::fSetGenericTargetDimensions = true;
 	DetectorConstruction::fGenericTargetDimensions = vec;
 	DetectorConstruction::SetGenericTarget();
 }
 
-void DetectorConstruction::SetGenericTargetPosition( G4ThreeVector vec )
+void DetectorConstruction::SetGenericTargetPosition(G4ThreeVector vec)
 {
 	DetectorConstruction::fSetGenericTargetPosition = true;
 	DetectorConstruction::fGenericTargetPosition = vec;
@@ -311,9 +311,9 @@ void DetectorConstruction::SetGenericTargetPosition( G4ThreeVector vec )
 
 void DetectorConstruction::SetGenericTarget()
 {
-	if( fSetGenericTargetMaterial ) {
-		if( fSetGenericTargetDimensions ) {
-			if( fSetGenericTargetPosition ) {
+	if(fSetGenericTargetMaterial) {
+		if(fSetGenericTargetDimensions) {
+			if(fSetGenericTargetPosition) {
 				G4String name = fGenericTargetMaterial;
 				G4double vecX = fGenericTargetDimensions.x()/mm;
 				G4double vecY = fGenericTargetDimensions.y()/mm;
@@ -352,7 +352,7 @@ void DetectorConstruction::AddGrid() {
 				fGridColour,
 				fGridOffset) ;
 		pGrid->Build();
-		pGrid->PlaceDetector( fLogicWorld );
+		pGrid->PlaceDetector(fLogicWorld);
 	}
 }
 
@@ -360,7 +360,7 @@ void DetectorConstruction::AddApparatusSpiceTargetChamber(G4String Options)//par
 {
 	//Create Target Chamber
 	ApparatusSpiceTargetChamber* fApparatusSpiceTargetChamber = new ApparatusSpiceTargetChamber(Options);
-	fApparatusSpiceTargetChamber->Build( fLogicWorld );
+	fApparatusSpiceTargetChamber->Build(fLogicWorld);
 }
 
 void DetectorConstruction::AddApparatus8piVacuumChamber() {
@@ -370,7 +370,7 @@ void DetectorConstruction::AddApparatus8piVacuumChamber() {
 	}
 
 	Apparatus8piVacuumChamber* pApparatus8piVacuumChamber = new Apparatus8piVacuumChamber();
-	pApparatus8piVacuumChamber->Build( fLogicWorld );
+	pApparatus8piVacuumChamber->Build(fLogicWorld);
 }
 
 void DetectorConstruction::AddApparatus8piVacuumChamberAuxMatShell(G4double thickness) {
@@ -380,7 +380,7 @@ void DetectorConstruction::AddApparatus8piVacuumChamberAuxMatShell(G4double thic
 	}
 
 	Apparatus8piVacuumChamberAuxMatShell* pApparatus8piVacuumChamberAuxMatShell = new Apparatus8piVacuumChamberAuxMatShell();
-	pApparatus8piVacuumChamberAuxMatShell->Build( fLogicWorld, thickness );
+	pApparatus8piVacuumChamberAuxMatShell->Build(fLogicWorld, thickness);
 }
 
 void DetectorConstruction::AddApparatusGriffinStructure(G4int selector) {
@@ -440,7 +440,7 @@ void DetectorConstruction::AddDetectionSystemSodiumIodide(G4int ndet) {
 		rotate->rotateY(0);
 		rotate->rotateZ(phi+0.5*M_PI);
 
-		pSodiumIodide->PlaceDetector( fLogicWorld, move, rotate, detectorNumber ) ;
+		pSodiumIodide->PlaceDetector(fLogicWorld, move, rotate, detectorNumber) ;
 	}
 	fNaI = true;
 }
@@ -552,7 +552,7 @@ void DetectorConstruction::AddDetectionSystemGriffinCustomDetector(G4int) {
 	DetectionSystemGriffin* pGriffinCustom = new DetectionSystemGriffin(fExtensionSuppressorLocation, fDetectorShieldSelect, fDetectorRadialDistance, fHevimetSelector); // Select Forward (0) or Back (1)
 
 	// check for each crystal if a custom dead layer has been specified
-	for(G4int crystal = 0; crystal < 3; ++crystal) {
+	for(G4int crystal = 0; crystal < 4; ++crystal) {
 		if(fGriffinDeadLayer[fCustomDetectorNumber-1][crystal] >= 0.) {
 			pGriffinCustom->SetDeadLayer(fCustomDetectorNumber-1, crystal, fGriffinDeadLayer[fCustomDetectorNumber-1][crystal]);
 		}
@@ -577,33 +577,33 @@ void DetectorConstruction::AddDetectionSystemGriffinCustom(G4int ndet) {
 	G4int detNum;
 	G4int posNum;
 
-	for( detNum = 1; detNum <= ndet; detNum++ ) {
+	for(detNum = 1; detNum <= ndet; detNum++) {
 		posNum = detNum;
 
 		fGriffinDetectorsMap[fGriffinDetectorsMapIndex] = detNum;
 		fGriffinDetectorsMapIndex++;
 
-		DetectionSystemGriffin* pGriffinCustom = new DetectionSystemGriffin( fExtensionSuppressorLocation,  fDetectorShieldSelect ,  fDetectorRadialDistance, fHevimetSelector ) ; // Select Forward (0) or Back (1)
+		DetectionSystemGriffin* pGriffinCustom = new DetectionSystemGriffin(fExtensionSuppressorLocation, fDetectorShieldSelect, fDetectorRadialDistance, fHevimetSelector) ; // Select Forward (0) or Back (1)
 
 		pGriffinCustom->BuildDeadLayerSpecificCrystal(detNum-1);
-		pGriffinCustom->PlaceDeadLayerSpecificCrystal( fLogicWorld, detNum-1, posNum-1, fUseTigressPositions ) ;
+		pGriffinCustom->PlaceDeadLayerSpecificCrystal(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 		pGriffinCustom->BuildEverythingButCrystals();
-		pGriffinCustom->PlaceEverythingButCrystals( fLogicWorld, detNum-1, posNum-1, fUseTigressPositions ) ;
+		pGriffinCustom->PlaceEverythingButCrystals(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 
 	}
 
 	fGriffin = true;
 }
 
-void DetectorConstruction::AddDetectionSystemGriffinShieldSelect( G4int ShieldSelect ){
+void DetectorConstruction::AddDetectionSystemGriffinShieldSelect(G4int ShieldSelect){
 	fDetectorShieldSelect = ShieldSelect ;
 }
 
-void DetectorConstruction::AddDetectionSystemGriffinSetRadialDistance( G4double detectorDist ){
+void DetectorConstruction::AddDetectionSystemGriffinSetRadialDistance(G4double detectorDist){
 	fDetectorRadialDistance = detectorDist ;
 }
 
-void DetectorConstruction::AddDetectionSystemGriffinSetExtensionSuppLocation( G4int detectorPos ){
+void DetectorConstruction::AddDetectionSystemGriffinSetExtensionSuppLocation(G4int detectorPos){
 	fExtensionSuppressorLocation = detectorPos ;
 }
 
@@ -637,7 +637,7 @@ void DetectorConstruction::AddDetectionSystemGriffinForward(G4int ndet) {
 	G4int detNum;
 	G4int posNum;
 	G4int config  = 0;
-	for( detNum = 1; detNum <= ndet; detNum++ ) {
+	for(detNum = 1; detNum <= ndet; detNum++) {
 		posNum = detNum;
 
 		fGriffinDetectorsMap[fGriffinDetectorsMapIndex] = detNum;
@@ -646,9 +646,9 @@ void DetectorConstruction::AddDetectionSystemGriffinForward(G4int ndet) {
 		DetectionSystemGriffin* pGriffinDLS = new DetectionSystemGriffin(config, 1, fGriffinFwdBackPosition, fHevimetSelector); // Select Forward (0) or Back (1)
 
 		pGriffinDLS->BuildDeadLayerSpecificCrystal(detNum-1);
-		pGriffinDLS->PlaceDeadLayerSpecificCrystal( fLogicWorld, detNum-1, posNum-1, fUseTigressPositions ) ;
+		pGriffinDLS->PlaceDeadLayerSpecificCrystal(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 		pGriffinDLS->BuildEverythingButCrystals();
-		pGriffinDLS->PlaceEverythingButCrystals( fLogicWorld, detNum-1, posNum-1, fUseTigressPositions ) ;
+		pGriffinDLS->PlaceEverythingButCrystals(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 	}
 
 	fGriffin = true;
@@ -665,15 +665,15 @@ void DetectorConstruction::AddDetectionSystemGriffinForwardDetector(G4int ndet) 
 	fGriffinDetectorsMap[fGriffinDetectorsMapIndex] = detNum;
 	fGriffinDetectorsMapIndex++;
 
-	DetectionSystemGriffin* pGriffinDLS = new DetectionSystemGriffin(config, 1, fGriffinFwdBackPosition, fHevimetSelector ); // Select Forward (0) or Back (1)
+	DetectionSystemGriffin* pGriffinDLS = new DetectionSystemGriffin(config, 1, fGriffinFwdBackPosition, fHevimetSelector); // Select Forward (0) or Back (1)
 
 	pGriffinDLS->BuildDeadLayerSpecificCrystal(detNum-1);
 
-	pGriffinDLS->PlaceDeadLayerSpecificCrystal( fLogicWorld, detNum-1, posNum-1, fUseTigressPositions ) ;
+	pGriffinDLS->PlaceDeadLayerSpecificCrystal(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 
 	pGriffinDLS->BuildEverythingButCrystals();
 
-	pGriffinDLS->PlaceEverythingButCrystals( fLogicWorld, detNum-1, posNum-1, fUseTigressPositions ) ;
+	pGriffinDLS->PlaceEverythingButCrystals(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 
 	fGriffin = true;
 }
@@ -687,18 +687,18 @@ void DetectorConstruction::AddDetectionSystemGriffinBack(G4int ndet) {
 	G4int posNum;
 	G4int config  = 1;
 
-	for( detNum = 1; detNum <= ndet; detNum++ ) {
+	for(detNum = 1; detNum <= ndet; detNum++) {
 		posNum = detNum;
 
 		fGriffinDetectorsMap[fGriffinDetectorsMapIndex] = detNum;
 		fGriffinDetectorsMapIndex++;
 
-		DetectionSystemGriffin* pGriffinDLS = new DetectionSystemGriffin(config, 1, fGriffinFwdBackPosition, fHevimetSelector ); // Select Forward (0) or Back (1)
+		DetectionSystemGriffin* pGriffinDLS = new DetectionSystemGriffin(config, 1, fGriffinFwdBackPosition, fHevimetSelector); // Select Forward (0) or Back (1)
 
 		pGriffinDLS->BuildDeadLayerSpecificCrystal(detNum-1);
-		pGriffinDLS->PlaceDeadLayerSpecificCrystal( fLogicWorld, detNum-1, posNum-1, fUseTigressPositions ) ;
+		pGriffinDLS->PlaceDeadLayerSpecificCrystal(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 		pGriffinDLS->BuildEverythingButCrystals();
-		pGriffinDLS->PlaceEverythingButCrystals( fLogicWorld, detNum-1, posNum-1, fUseTigressPositions ) ;
+		pGriffinDLS->PlaceEverythingButCrystals(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 	}
 
 	fGriffin = true;
@@ -719,9 +719,9 @@ void DetectorConstruction::AddDetectionSystemGriffinBackDetector(G4int ndet) {
 	DetectionSystemGriffin* pGriffinDLS = new DetectionSystemGriffin(config, 1, fGriffinFwdBackPosition, fHevimetSelector); // Select Forward (0) or Back (1)
 
 	pGriffinDLS->BuildDeadLayerSpecificCrystal(detNum-1);
-	pGriffinDLS->PlaceDeadLayerSpecificCrystal( fLogicWorld, detNum-1, posNum-1, fUseTigressPositions ) ;
+	pGriffinDLS->PlaceDeadLayerSpecificCrystal(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 	pGriffinDLS->BuildEverythingButCrystals();
-	pGriffinDLS->PlaceEverythingButCrystals( fLogicWorld, detNum-1, posNum-1, fUseTigressPositions ) ;
+	pGriffinDLS->PlaceEverythingButCrystals(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 
 	fGriffin = true;
 }
@@ -739,7 +739,7 @@ void DetectorConstruction::AddDetectionSystemSceptar(G4int ndet) {
 
 	DetectionSystemSceptar* pSceptar = new DetectionSystemSceptar() ;
 	pSceptar->Build() ;
-	pSceptar->PlaceDetector( fLogicWorld, ndet ) ;
+	pSceptar->PlaceDetector(fLogicWorld, ndet) ;
 
 	fSceptar = true;
 }
@@ -752,7 +752,7 @@ void DetectorConstruction::AddDetectionSystemDescant(G4int ndet) {
 
 	DetectionSystemDescant* pDetectionSystemDescant = new DetectionSystemDescant(true) ;
 	pDetectionSystemDescant->Build() ;
-	pDetectionSystemDescant->PlaceDetector( fLogicWorld, ndet ) ;
+	pDetectionSystemDescant->PlaceDetector(fLogicWorld, ndet) ;
 
 	fDescant = true;
 }
@@ -799,7 +799,7 @@ void DetectorConstruction::AddDetectionSystemDescantCart(G4ThreeVector input) {
 
 	DetectionSystemDescant* pDetectionSystemDescant = new DetectionSystemDescant(true) ;
 	pDetectionSystemDescant->Build() ;
-	pDetectionSystemDescant->PlaceDetector( fLogicWorld, fDescantColor, input, fDescantRotation ) ;
+	pDetectionSystemDescant->PlaceDetector(fLogicWorld, fDescantColor, input, fDescantRotation) ;
 
 	fDescant = true;
 }
@@ -820,9 +820,9 @@ void DetectorConstruction::AddApparatusDescantStructure() {
 
 	ApparatusDescantStructure* pApparatusDescantStructure = new ApparatusDescantStructure() ;
 	pApparatusDescantStructure->Build() ;
-	pApparatusDescantStructure->PlaceDescantStructure( fLogicWorld );
+	pApparatusDescantStructure->PlaceDescantStructure(fLogicWorld);
 
-	//pApparatusDescantStructure->PlaceDetector( fLogicWorld, ndet ) ;
+	//pApparatusDescantStructure->PlaceDetector(fLogicWorld, ndet) ;
 }
 
 void DetectorConstruction::AddDetectionSystemTestcan(G4ThreeVector input) {
