@@ -96,6 +96,11 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+bool operator==(const DetectorProperties& lhs, const DetectorProperties& rhs)
+{
+	return (lhs.systemID == rhs.systemID && lhs.detectorNumber == rhs.detectorNumber && lhs.crystalNumber == rhs.crystalNumber);
+}
+
 DetectorConstruction::DetectorConstruction() :
   fSolidWorld(NULL),
   fLogicWorld(NULL),
@@ -877,6 +882,7 @@ void DetectorConstruction::SetProperties() {
 	// loop over all existing daughters of the world volume
 	// check if their properties are set and if not, set them
 	if(fLogicWorld == NULL) return;
+	G4cout<<fLogicWorld->GetNoDaughters()<<" daughter volumes"<<std::endl;
 	for(int i = 0; i < fLogicWorld->GetNoDaughters(); ++i) {
 		if(!HasProperties(fLogicWorld->GetDaughter(i)) && CheckVolumeName(fLogicWorld->GetDaughter(i)->GetName())) {
 			fPropertiesMap[fLogicWorld->GetDaughter(i)] = ParseVolumeName(fLogicWorld->GetDaughter(i)->GetName());
@@ -892,12 +898,11 @@ void DetectorConstruction::Print() {
 
 	SetProperties();
 
-	std::cout<<fLogicWorld->GetNoDaughters()<<" daughter volumes:"<<std::endl;
 	for(int i = 0; i < fLogicWorld->GetNoDaughters(); ++i) {
 		std::cout<<i<<": "<<fLogicWorld->GetDaughter(i)<<" - "<<fLogicWorld->GetDaughter(i)->GetName();
 		if(HasProperties(fLogicWorld->GetDaughter(i))) {
 			auto prop = GetProperties(fLogicWorld->GetDaughter(i));
-			std::cout<<" - '"<<prop.mnemonic<<"', "<<prop.detectorNumber<<", "<<prop.crystalNumber<<", "<<prop.systemID;
+			std::cout<<" - "<<prop.detectorNumber<<", "<<prop.crystalNumber<<", "<<prop.systemID;
 		}
 		std::cout<<std::endl;
 	}
@@ -935,9 +940,6 @@ bool DetectorConstruction::CheckVolumeName(G4String volumeName) {
 
 DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 	DetectorProperties result;
-	//                   0123456789
-	G4String mnemonic = "XXX00XX00X";
-
 	// GRIFFIN detectors have the detector and crystal number in their names
 	if(volumeName.find("germaniumBlock1") != G4String::npos) {
 		// strip "germaniumBlock1_" (16 characters) and everything before from the string
@@ -950,14 +952,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
 		++result.detectorNumber;//start from 1 instead of 0
 		++result.crystalNumber;//start from 1 instead of 0
-		// build mnemonic
-		mnemonic.replace(0,3,"GRG");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		mnemonic.replace(5,1,CrystalColour(result.crystalNumber));
-		mnemonic.replace(6,1,"G");
-		result.mnemonic = mnemonic;
 		result.systemID = 1000;
 		return result;
 	}
@@ -973,14 +967,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
 		++result.detectorNumber;//start from 1 instead of 0
 		++result.crystalNumber;//start from 1 instead of 0
-		// build mnemonic
-		mnemonic.replace(0,3,"GRG");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		mnemonic.replace(5,1,CrystalColour(result.crystalNumber));
-		mnemonic.replace(6,1,"G");
-		result.mnemonic = mnemonic;
 		result.systemID = 1000;
 		return result;
 	}
@@ -994,13 +980,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		// create istringstream from the stripped and converted stream, and read detector and crystal number
 		std::istringstream is(tmpString);
 		is>>result.detectorNumber>>result.crystalNumber;
-		// build mnemonic
-		mnemonic.replace(0,3,"SPI");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		mnemonic.replace(5,1,CrystalColour(result.crystalNumber));
-		result.mnemonic = mnemonic;
 		result.systemID = 10;
 		return result;
 	}
@@ -1014,12 +993,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		// create istringstream from the stripped and converted stream, and read detector and crystal number
 		std::istringstream is(tmpString);
 		is>>result.detectorNumber;
-		// build mnemonic
-		mnemonic.replace(0,3,"GRX");//?? this indicates that trific is part of griffin??
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		result.mnemonic = mnemonic;
 		result.systemID = 10;//?? why the same as SiSegmentPhys??
 		return result;
 	}
@@ -1049,66 +1022,26 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 	result.detectorNumber = static_cast<G4int>(ceil((assemblyNumber-5.)/13.));
 	result.crystalNumber = imprintNumber;
 	if(volumeName.find("backQuarterSuppressor") != G4String::npos) {
-		// build mnemonic
-		mnemonic.replace(0,3,"GRS");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		mnemonic.replace(5,1,CrystalColour(result.crystalNumber));
-		mnemonic.replace(6,1,"E");
-		result.mnemonic = mnemonic;
 		result.systemID = 1050;
 		return result;
 	}
 
 	if(volumeName.find("leftSuppressorExtension") != G4String::npos) {
-		// build mnemonic
-		mnemonic.replace(0,3,"GRS");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		mnemonic.replace(5,1,CrystalColour(result.crystalNumber));
-		mnemonic.replace(6,1,"A");
-		result.mnemonic = mnemonic;
 		result.systemID = 1010;
 		return result;
 	}
 
 	if(volumeName.find("rightSuppressorExtension") != G4String::npos) {
-		// build mnemonic
-		mnemonic.replace(0,3,"GRS");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		mnemonic.replace(5,1,CrystalColour(result.crystalNumber));
-		mnemonic.replace(6,1,"B");
-		result.mnemonic = mnemonic;
 		result.systemID = 1020;
 		return result;
 	}
 
 	if(volumeName.find("leftSuppressorCasing") != G4String::npos) {
-		// build mnemonic
-		mnemonic.replace(0,3,"GRS");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		mnemonic.replace(5,1,CrystalColour(result.crystalNumber));
-		mnemonic.replace(6,1,"C");
-		result.mnemonic = mnemonic;
 		result.systemID = 1030;
 		return result;
 	}
 
 	if(volumeName.find("rightSuppressorCasing") != G4String::npos) {
-		// build mnemonic
-		mnemonic.replace(0,3,"GRS");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		mnemonic.replace(5,1,CrystalColour(result.crystalNumber));
-		mnemonic.replace(6,1,"D");
-		result.mnemonic = mnemonic;
 		result.systemID = 1040;
 		return result;
 	}
@@ -1118,13 +1051,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 	result.detectorNumber = static_cast<G4int>(ceil(imprintNumber/3.0));
 	result.crystalNumber = imprintNumber - (result.detectorNumber-1)*3;
 	if(volumeName.find("ancillaryBgoBlock") != G4String::npos) {
-		// build mnemonic
-		mnemonic.replace(0,3,"ABG");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		mnemonic.replace(5,1,CrystalColour(result.crystalNumber));
-		result.mnemonic = mnemonic;
 		result.systemID = 3000;
 		return result;
 	}
@@ -1133,34 +1059,16 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 	result.detectorNumber = imprintNumber;
 	result.crystalNumber = 0;
 	if(volumeName.find("lanthanumBromideCrystalBlock") != G4String::npos) {
-		// build mnemonic
-		mnemonic.replace(0,3,"LAB");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		result.mnemonic = mnemonic;
 		result.systemID = 2000;
 		return result;
 	}
 
 	if(volumeName.find("sodiumIodideCrystalBlock") != G4String::npos) {
-		// build mnemonic
-		mnemonic.replace(0,3,"NAI");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		result.mnemonic = mnemonic;
 		result.systemID = 4000;
 		return result;
 	}
 
 	if(volumeName.find("pacesSiliconBlockLog") != G4String::npos) {
-		// build mnemonic
-		mnemonic.replace(0,3,"PCS");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		result.mnemonic = mnemonic;
 		result.systemID = 50;
 		return result;
 	}
@@ -1177,12 +1085,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		else if(result.detectorNumber== 8) result.detectorNumber= 12;
 		else if(result.detectorNumber== 9) result.detectorNumber= 11;
 		else if(result.detectorNumber== 10) result.detectorNumber= 15;
-		// build mnemonic
-		mnemonic.replace(0,3,"SCP");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		result.mnemonic = mnemonic;
 		result.systemID = 5000;
 		return result;
 	}
@@ -1198,133 +1100,61 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		else if(result.detectorNumber== 8) result.detectorNumber= 17;
 		else if(result.detectorNumber== 9) result.detectorNumber= 16;
 		else if(result.detectorNumber== 10) result.detectorNumber= 20;
-		// build mnemonic
-		mnemonic.replace(0,3,"SCP");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		result.mnemonic = mnemonic;
 		result.systemID = 5000;
 		return result;
 	}
 
 	if(volumeName.find("8piGermaniumBlockLog") != G4String::npos) {
-		// build mnemonic
-		mnemonic.replace(0,3,"8PI");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		result.mnemonic = mnemonic;
 		result.systemID = 6000;
 		return result;
 	}
 
 	if(volumeName.find("8piInnerBGOAnnulus") != G4String::npos) {
-		// build mnemonic
-		mnemonic.replace(0,3,"8PI");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		result.mnemonic = mnemonic;
 		result.systemID = 6010;
 		return result;
 	}
 
 	if(volumeName.find("8piOuterLowerBGOAnnulus") != G4String::npos) {
-		// build mnemonic
-		mnemonic.replace(0,3,"8PI");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		result.mnemonic = mnemonic;
 		result.systemID = 6020;
 		return result;
 	}
 
 	if(volumeName.find("8piOuterUpperBGOAnnulus") != G4String::npos) {
-		// build mnemonic
-		mnemonic.replace(0,3,"8PI");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		result.mnemonic = mnemonic;
 		result.systemID = 6030;
 		return result;
 	}
 
 	if(volumeName.find("gridcellLog") != G4String::npos) {
-		// build mnemonic
-		mnemonic.replace(0,3,"GRD");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		result.mnemonic = mnemonic;
 		result.systemID = 7000;
 		return result;
 	}
 
 	if(volumeName.find("blueScintillatorVolumeLog") != G4String::npos) {
-		// build mnemonic
-		mnemonic.replace(0,3,"DSC");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		result.mnemonic = mnemonic;
 		result.systemID = 8010;
 		return result;
 	}
 
 	if(volumeName.find("greenScintillatorVolumeLog") != G4String::npos) {
-		// build mnemonic
-		mnemonic.replace(0,3,"DSC");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		result.mnemonic = mnemonic;
 		result.systemID = 8020;
 		return result;
 	}
 
 	if(volumeName.find("redScintillatorVolumeLog") != G4String::npos) {
-		// build mnemonic
-		mnemonic.replace(0,3,"DSC");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		result.mnemonic = mnemonic;
 		result.systemID = 8030;
 		return result;
 	}
 
 	if(volumeName.find("whiteScintillatorVolumeLog") != G4String::npos) {
-		// build mnemonic
-		mnemonic.replace(0,3,"DSC");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		result.mnemonic = mnemonic;
 		result.systemID = 8040;
 		return result;
 	}
 
 	if(volumeName.find("yellowScintillatorVolumeLog") != G4String::npos) {
-		// build mnemonic
-		mnemonic.replace(0,3,"DSC");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		result.mnemonic = mnemonic;
 		result.systemID = 8050;
 		return result;
 	}
 
 	if(volumeName.find("testcanScintillatorLog") != G4String::npos) {
-		// build mnemonic
-		mnemonic.replace(0,3,"TCX");
-		std::stringstream out;
-		out<<std::setw(2)<<std::setfill('0')<<result.detectorNumber;
-		mnemonic.replace(3,2,out.str().c_str());
-		result.mnemonic = mnemonic;
 		result.systemID = 8500;
 		return result;
 	}
@@ -1332,16 +1162,3 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 	return result;
 }
 
-const char* DetectorConstruction::CrystalColour(G4int crystalNumber) {
-	switch(crystalNumber) {
-		case 1:
-			return "B";
-		case 2:
-			return "G";
-		case 3:
-			return "R";
-		case 4:
-			return "W";
-	}
-	return "X";
-}

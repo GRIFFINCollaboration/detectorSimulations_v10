@@ -73,11 +73,18 @@ class DetectionSystemAncillaryBGO;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 struct DetectorProperties {
-	std::string mnemonic;
 	G4int systemID;
 	G4int detectorNumber;
 	G4int crystalNumber;
+	void Clear()
+	{
+		systemID = 0;
+		detectorNumber = 0;
+		crystalNumber = 0;
+	}
 };
+
+bool operator==(const DetectorProperties& lhs, const DetectorProperties& rhs);
 
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
@@ -202,7 +209,7 @@ public:
 private:
 	bool CheckVolumeName(G4String volumeName);
 	DetectorProperties ParseVolumeName(G4String volumeName);
-	const char* CrystalColour(G4int crystalNumber);
+
 	G4int     fGriffinDetectorsMapIndex;
 	G4int     fGriffinDetectorsMap[16];
 

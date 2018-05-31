@@ -65,7 +65,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	G4int evntNb;
 
 	G4String particleName;
-	G4String mnemonic = "XXX00XX00X";
 
 	// Get volume of the current step
 	G4VPhysicalVolume* volume = aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume();
@@ -155,10 +154,10 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		// check edep again in case we use the grid cell but haven't hit it
 		if(edep <= 0) return;
 
-		fEventAction->AddHitTracker(prop.mnemonic, evntNb, trackID, parentID, stepNumber, particleType, processType, prop.systemID, prop.crystalNumber-1, prop.detectorNumber-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+		fEventAction->AddHitTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, pos2, time2, targetZ);
 
 		if(trackSteps) {
-			fEventAction->AddStepTracker(evntNb, trackID, parentID, stepNumber, particleType, processType, prop.systemID, prop.crystalNumber-1, prop.detectorNumber-1, edep, pos2.x(), pos2.y(), pos2.z(), time2, targetZ);
+			fEventAction->AddStepTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, pos2, time2, targetZ);
 		}
 	}// if(fDetector->HasProperties(volume))
 }

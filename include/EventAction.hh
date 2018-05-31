@@ -41,6 +41,8 @@
 #include "globals.hh"
 #include "HistoManager.hh"
 
+#include "DetectorConstruction.hh" // for DetectorProperties
+
 class RunAction;
 class HistoManager;
 
@@ -61,8 +63,8 @@ public:
 
 	G4int GetEventNumber() { return fEvtNb;};
 
-	void AddHitTracker(G4String mnemonic, G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int trackerZ);
-	void AddStepTracker(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int trackerZ);
+	void AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ);
+	void AddStepTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ);
 
 
 	// Energy deposit in detection systems
@@ -83,7 +85,6 @@ private:
 	void SetupSpiceErfc();
 	G4double SpiceErfc();
 
-
 	//Applying a resolution to SPCIE energies if desired
 	G4double fAmp[10000];//Bin amp (effective y)
 	G4double fAmpx[10000];
@@ -92,27 +93,18 @@ private:
 	// Tracking info
 	G4int    fHitTrackerI[NUMSTEPVARS][MAXHITS];
 	G4double fHitTrackerD[NUMSTEPVARS][MAXHITS];
-	G4int    fHitIndex;
 	G4int    fNumberOfHits;
-	G4String fPHitMnemonic[MAXHITS];
+	DetectorProperties fProperties[MAXHITS];
 
 	G4int    fStepTrackerI[NUMSTEPVARS][MAXSTEPS];
 	G4double fStepTrackerD[NUMSTEPVARS][MAXSTEPS];
-	G4int    fStepIndex;
 	G4int    fNumberOfSteps;
-
-	G4int    fPTrackID;
-	G4int    fPParentID;
-
 
 	// Energy deposit in detection systems
 	G4double fSpiceEnergyDet[10][12];
 	G4double fSpiceTrackDet[10][12];
-
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
-
-
