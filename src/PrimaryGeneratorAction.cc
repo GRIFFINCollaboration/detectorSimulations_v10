@@ -53,9 +53,9 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-PrimaryGeneratorAction::PrimaryGeneratorAction(HistoManager* histoManager)
+	PrimaryGeneratorAction::PrimaryGeneratorAction(HistoManager* histoManager)
 : G4VUserPrimaryGeneratorAction(),
-	fParticleGun(NULL),
+	fParticleGun(nullptr),
 	fDetector(histoManager->GetDetectorConstruction()),
 	fHistoManager(histoManager)
 {
@@ -119,9 +119,9 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 		prob = 1.0/((G4double)(fNumberOfDecayingLaBrDetectors));
 		sumProb = 0.0;
 		G4double randomDet = G4UniformRand();
-		for( G4int j = 0 ; j < fNumberOfDecayingLaBrDetectors ; j++ ) {  // get the number of particles in decay and loop over them
+		for(G4int j = 0 ; j < fNumberOfDecayingLaBrDetectors ; j++) {  // get the number of particles in decay and loop over them
 			sumProb = sumProb + prob;
-			if(randomDet <= sumProb ) {
+			if(randomDet <= sumProb) {
 				detnumber = j;
 				break;
 			}
@@ -134,10 +134,9 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 		G4double thisEnergy;
 		G4double randomEnergy = G4UniformRand();
 
-		if(randomEnergy <= prob ) {
+		if(randomEnergy <= prob) {
 			thisEnergy = 788.742*keV;
-		}
-		else {
+		} else {
 			thisEnergy = 1435.795*keV;
 		}
 
@@ -169,7 +168,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
 		// random direction
 		G4double randcostheta = 2.*G4UniformRand()-1.0;
-		G4double randsintheta = sqrt( 1. - randcostheta*randcostheta );
+		G4double randsintheta = sqrt(1. - randcostheta*randcostheta);
 		G4double randphi      = (360.*deg)*G4UniformRand();
 		G4ThreeVector thisDirection = G4ThreeVector(randsintheta*cos(randphi), randsintheta*sin(randphi), randcostheta);
 
@@ -177,24 +176,18 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 		fParticleGun->SetParticlePosition(thisPosition);
 		fParticleGun->SetParticleMomentumDirection(thisDirection);
 		fParticleGun->SetParticleEnergy(thisEnergy);
-	}
-
-	else  {
-			// Changed so that most grsi "/Detsys/gun/" commands still effect gun when using
-			// Underlying geant4 commands such as '/gun/particle ion" & "/gun/ion"
+	} else  {
+		// Changed so that most grsi "/Detsys/gun/" commands still effect gun when using
+		// Underlying geant4 commands such as '/gun/particle ion" & "/gun/ion"
 		if(fEffParticleBool) {
 			G4ParticleDefinition* effPart;
 			if(fEffParticle == "electron" || fEffParticle == "e-") {
 				effPart = G4ParticleTable::GetParticleTable()->FindParticle("e-");
-			}
-			else if(fEffParticle == "positron" || fEffParticle == "e+") {
+			} else if(fEffParticle == "positron" || fEffParticle == "e+") {
 				effPart = G4ParticleTable::GetParticleTable()->FindParticle("e+");
-			}
-			else if (fEffParticle == "neutron"){
+			} else if(fEffParticle == "neutron"){
 				effPart = G4ParticleTable::GetParticleTable()->FindParticle("neutron");
-			}
-// 			else if (fEffParticle == "gamma" || fEffParticle == "photon"){
-			else{
+			} else {
 				effPart = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
 			}
 			fParticleGun->SetParticleDefinition(effPart);
@@ -223,7 +216,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
 		if(fTargetDistro){
 			z = fLayerStart+G4UniformRand()*fLayerLength;
-		}else if(fNeedFileDistro){
+		} else if(fNeedFileDistro){
 			z += fBeamDistribution->GetRandom();
 		}
 
@@ -257,7 +250,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			//G4cout<<"Random "<< G4endl; //may offer the solution, an altered 2pi rando. Using 4pi for efficiency
 			// random direction if no preference provided
 			effRandCosTheta = 2.*G4UniformRand()-1.0; //cos(theta) = 2cos^2(0.5theta)-1 ??
-			effRandSinTheta = sqrt( 1. - effRandCosTheta*effRandCosTheta ); //from sin^2(theta)+cos^2(theta)=1
+			effRandSinTheta = sqrt(1. - effRandCosTheta*effRandCosTheta); //from sin^2(theta)+cos^2(theta)=1
 			effRandPhi      = (360.*deg)*G4UniformRand();
 			effdirection = G4ThreeVector(effRandSinTheta*cos(effRandPhi), effRandSinTheta*sin(effRandPhi), effRandCosTheta);
 			//converts from Spherical polar(physics def.) to cartesian via (rsin(theta)cos(phi),rsin(theta)cos(phi),rcos(theta)) r=1,unit length
@@ -289,7 +282,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	fParticleGun->GeneratePrimaryVertex(anEvent);
 }
 
-void PrimaryGeneratorAction::PassEfficiencyPosition( G4ThreeVector  num){
+void PrimaryGeneratorAction::PassEfficiencyPosition(G4ThreeVector  num){
 	fDetector->PassEfficiencyPosition(num);
 }
 

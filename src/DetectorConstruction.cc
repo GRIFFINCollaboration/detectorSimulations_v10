@@ -102,91 +102,91 @@ bool operator==(const DetectorProperties& lhs, const DetectorProperties& rhs)
 }
 
 DetectorConstruction::DetectorConstruction() :
-  fSolidWorld(NULL),
-  fLogicWorld(NULL),
-  fPhysiWorld(NULL)
+	fSolidWorld(nullptr),
+	fLogicWorld(nullptr),
+	fPhysiWorld(nullptr)
 {
-  fWorldSizeX  = fWorldSizeY = fWorldSizeZ = 10.0*m;
+	fWorldSizeX  = fWorldSizeY = fWorldSizeZ = 10.0*m;
 
-  fBoxMat = "G4_WATER";
-  fBoxThickness = 0.0*mm;
-  fBoxInnerDimensions = G4ThreeVector(0.0*mm,0.0*mm,0.0*mm);
-  fBoxColour = G4ThreeVector(0.0,0.0,1.0);
+	fBoxMat = "G4_WATER";
+	fBoxThickness = 0.0*mm;
+	fBoxInnerDimensions = G4ThreeVector(0.0*mm,0.0*mm,0.0*mm);
+	fBoxColour = G4ThreeVector(0.0,0.0,1.0);
 
-  fGridMat = "G4_WATER";
-  fGridSize = 0.0*mm;
-  fGridDimensions = G4ThreeVector(0.0*mm,0.0*mm,0.0*mm);
-  fGridColour = G4ThreeVector(1.0,0.0,0.0);
+	fGridMat = "G4_WATER";
+	fGridSize = 0.0*mm;
+	fGridDimensions = G4ThreeVector(0.0*mm,0.0*mm,0.0*mm);
+	fGridColour = G4ThreeVector(1.0,0.0,0.0);
 
-  // materials
-  DefineMaterials();
+	// materials
+	DefineMaterials();
 
-  //  builtDetectors = false;
+	//  builtDetectors = false;
 
 
-  fMatWorldName = "G4_AIR";
+	fMatWorldName = "G4_AIR";
 
-  // Generic Target Apparatus
-  fSetGenericTargetMaterial   = false;
-  fSetGenericTargetDimensions = false;
-  fSetGenericTargetPosition   = false;
+	// Generic Target Apparatus
+	fSetGenericTargetMaterial   = false;
+	fSetGenericTargetDimensions = false;
+	fSetGenericTargetPosition   = false;
 
-  // Field Box
-  fSetFieldBoxMaterial= false;//think this has been removed 17/8
-  fSetFieldBoxDimensions= false;
-  fSetFieldBoxPosition= false;
-  fSetFieldBoxMagneticField= false;
+	// Field Box
+	fSetFieldBoxMaterial= false;//think this has been removed 17/8
+	fSetFieldBoxDimensions= false;
+	fSetFieldBoxPosition= false;
+	fSetFieldBoxMagneticField= false;
 
-  // parameters to suppress:
+	// parameters to suppress:
 
-  DefineSuppressedParameters();
+	DefineSuppressedParameters();
 
-  // Shield Selection Default
+	// Shield Selection Default
 
-  fUseTigressPositions = false;
+	fUseTigressPositions = false;
 
-  fDetectorShieldSelect = 1 ; // Include suppressors by default.
-  fExtensionSuppressorLocation = 0 ; // Back by default (Detector Forward)
-  fHevimetSelector = 0 ; // Chooses whether or not to include a hevimet
+	fDetectorShieldSelect = 1 ; // Include suppressors by default.
+	fExtensionSuppressorLocation = 0 ; // Back by default (Detector Forward)
+	fHevimetSelector = 0 ; // Chooses whether or not to include a hevimet
 
-  fCustomDetectorNumber 		= 1 ; // detNum
-  fCustomDetectorPosition  = 1 ; // posNum
+	fCustomDetectorNumber 		= 1 ; // detNum
+	fCustomDetectorPosition  = 1 ; // posNum
 
-  // create commands for interactive definition
+	// create commands for interactive definition
 
-  fDetectorMessenger = new DetectorMessenger(this);
- 
-  // ensure the global field is initialized
-  //(void)GlobalField::getObject();
+	fDetectorMessenger = new DetectorMessenger(this);
 
-  //expHallMagField = new MagneticField(); // Global field is set to zero
+	// ensure the global field is initialized
+	//(void)GlobalField::getObject();
 
-  fGriffinDetectorsMapIndex = 0;
-  for(G4int i = 0; i < 16; ++i) {
-	  fGriffinDetectorsMap[i] = 0;
-	  for(G4int j = 0; j < 4; ++j) {
-		  fGriffinDeadLayer[i][j] = -1;
-	  }
-  }
+	//expHallMagField = new MagneticField(); // Global field is set to zero
 
-  fDescantColor = "white";
-  fDescantRotation.setX(M_PI);
-  fDescantRotation.setY(0.);
-  fDescantRotation.setZ(0.);
-  
-  fApparatusLayeredTarget=0;
+	fGriffinDetectorsMapIndex = 0;
+	for(G4int i = 0; i < 16; ++i) {
+		fGriffinDetectorsMap[i] = 0;
+		for(G4int j = 0; j < 4; ++j) {
+			fGriffinDeadLayer[i][j] = -1;
+		}
+	}
 
-  fGridCell = false;
-  fGriffin  = false;
-  fLaBr     = false;
-  fAncBgo   = false;
-  fNaI      = false;
-  fSceptar  = false;
-  fEightPi  = false;
-  fSpice    = false;
-  fPaces    = false;
-  fDescant  = false;
-  fTestcan  = false;
+	fDescantColor = "white";
+	fDescantRotation.setX(M_PI);
+	fDescantRotation.setY(0.);
+	fDescantRotation.setZ(0.);
+
+	fApparatusLayeredTarget=0;
+
+	fGridCell = false;
+	fGriffin  = false;
+	fLaBr     = false;
+	fAncBgo   = false;
+	fNaI      = false;
+	fSceptar  = false;
+	fEightPi  = false;
+	fSpice    = false;
+	fPaces    = false;
+	fDescant  = false;
+	fTestcan  = false;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -222,7 +222,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 			matWorld,	//its material
 			"World");		//its name
 
-	fPhysiWorld = new G4PVPlacement(  0,                  //no rotation
+	fPhysiWorld = new G4PVPlacement(0,                  //no rotation
 			G4ThreeVector(),	//at (0,0,0)
 			fLogicWorld,         //its logical volume
 			"World",            //its name
@@ -261,8 +261,8 @@ void DetectorConstruction::SetWorldVis(G4bool vis) {
 }
 
 void DetectorConstruction::SetWorldStepLimit(G4double step) {
-	if(fLogicWorld == NULL) {
-			Construct();
+	if(fLogicWorld == nullptr) {
+		Construct();
 	}
 	fLogicWorld->SetUserLimits(new G4UserLimits(step));
 }
@@ -275,7 +275,7 @@ void DetectorConstruction::LayeredTargetAdd(G4String Material, G4double Areal)
 {
 	if(!fApparatusLayeredTarget)fApparatusLayeredTarget=new ApparatusLayeredTarget(fDetEffPosition.z());
 	if(fApparatusLayeredTarget->BuildTargetLayer(Material,Areal)){
-		if(fLogicWorld == NULL) {
+		if(fLogicWorld == nullptr) {
 			Construct();
 		}  
 		fApparatusLayeredTarget->PlaceTarget(fLogicWorld);
@@ -343,7 +343,7 @@ G4double DetectorConstruction::LayeredTargetLayerStart(int layer){
 
 
 void DetectorConstruction::AddGrid() {
-	if(fLogicWorld == NULL) {
+	if(fLogicWorld == nullptr) {
 		Construct();
 	}
 
@@ -370,7 +370,7 @@ void DetectorConstruction::AddApparatusSpiceTargetChamber(G4String Options)//par
 
 void DetectorConstruction::AddApparatus8piVacuumChamber() {
 	//Create Vacuum Chamber
-	if(fLogicWorld == NULL) {
+	if(fLogicWorld == nullptr) {
 		Construct();
 	}
 
@@ -380,7 +380,7 @@ void DetectorConstruction::AddApparatus8piVacuumChamber() {
 
 void DetectorConstruction::AddApparatus8piVacuumChamberAuxMatShell(G4double thickness) {
 	//Create Shell Around Vacuum Chamber
-	if(fLogicWorld == NULL) {
+	if(fLogicWorld == nullptr) {
 		Construct();
 	}
 
@@ -390,7 +390,7 @@ void DetectorConstruction::AddApparatus8piVacuumChamberAuxMatShell(G4double thic
 
 void DetectorConstruction::AddApparatusGriffinStructure(G4int selector) {
 	//Create Shell Around Vacuum Chamber
-	if(fLogicWorld == NULL) {
+	if(fLogicWorld == nullptr) {
 		Construct();
 	}
 
@@ -402,7 +402,7 @@ void DetectorConstruction::AddApparatusGriffinStructure(G4int selector) {
 
 
 void DetectorConstruction::AddDetectionSystemSodiumIodide(G4int ndet) {
-	if(fLogicWorld == NULL) {
+	if(fLogicWorld == nullptr) {
 		Construct();
 	}
 
@@ -451,7 +451,7 @@ void DetectorConstruction::AddDetectionSystemSodiumIodide(G4int ndet) {
 }
 
 void DetectorConstruction::AddDetectionSystemLanthanumBromide(G4ThreeVector input) {
-	if(fLogicWorld == NULL) {
+	if(fLogicWorld == nullptr) {
 		Construct();
 	}
 
@@ -469,7 +469,7 @@ void DetectorConstruction::AddDetectionSystemLanthanumBromide(G4ThreeVector inpu
 }
 
 void DetectorConstruction::AddDetectionSystemAncillaryBGO(G4ThreeVector input) {
-	if(fLogicWorld == NULL) {
+	if(fLogicWorld == nullptr) {
 		Construct();
 	}
 
@@ -544,7 +544,7 @@ G4double DetectorConstruction::GetLanthanumBromideCrystalRadialPosition() {
 
 // Temporary Function for testing purposes
 void DetectorConstruction::AddDetectionSystemGriffinCustomDetector(G4int) {
-	if(fLogicWorld == NULL) {
+	if(fLogicWorld == nullptr) {
 		Construct();
 	}
 
@@ -575,7 +575,7 @@ void DetectorConstruction::AddDetectionSystemGriffinCustomDetector(G4int) {
 }
 
 void DetectorConstruction::AddDetectionSystemGriffinCustom(G4int ndet) {
-	if(fLogicWorld == NULL) {
+	if(fLogicWorld == nullptr) {
 		Construct();
 	}
 
@@ -635,7 +635,7 @@ void DetectorConstruction::AddDetectionSystemGriffinSetDeadLayer(G4ThreeVector p
 }
 
 void DetectorConstruction::AddDetectionSystemGriffinForward(G4int ndet) {
-	if(fLogicWorld == NULL) {
+	if(fLogicWorld == nullptr) {
 		Construct();
 	}
 
@@ -660,7 +660,7 @@ void DetectorConstruction::AddDetectionSystemGriffinForward(G4int ndet) {
 }
 
 void DetectorConstruction::AddDetectionSystemGriffinForwardDetector(G4int ndet) {
-	if(fLogicWorld == NULL) {
+	if(fLogicWorld == nullptr) {
 		Construct();
 	}
 
@@ -684,7 +684,7 @@ void DetectorConstruction::AddDetectionSystemGriffinForwardDetector(G4int ndet) 
 }
 
 void DetectorConstruction::AddDetectionSystemGriffinBack(G4int ndet) {
-	if(fLogicWorld == NULL) {
+	if(fLogicWorld == nullptr) {
 		Construct();
 	}
 
@@ -710,7 +710,7 @@ void DetectorConstruction::AddDetectionSystemGriffinBack(G4int ndet) {
 }
 
 void DetectorConstruction::AddDetectionSystemGriffinBackDetector(G4int ndet) {
-	if(fLogicWorld == NULL) {
+	if(fLogicWorld == nullptr) {
 		Construct();
 	}
 
@@ -738,7 +738,7 @@ void DetectorConstruction::AddDetectionSystemGriffinHevimet(G4int input) {
 }
 
 void DetectorConstruction::AddDetectionSystemSceptar(G4int ndet) {
-	if(fLogicWorld == NULL) {
+	if(fLogicWorld == nullptr) {
 		Construct();
 	}
 
@@ -751,7 +751,7 @@ void DetectorConstruction::AddDetectionSystemSceptar(G4int ndet) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void DetectorConstruction::AddDetectionSystemDescant(G4int ndet) {
-	if(fLogicWorld == NULL) {
+	if(fLogicWorld == nullptr) {
 		Construct();
 	}
 
@@ -764,7 +764,7 @@ void DetectorConstruction::AddDetectionSystemDescant(G4int ndet) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void DetectorConstruction::AddDetectionSystemDescantAuxPorts(G4ThreeVector input) {
-	if(fLogicWorld == NULL) {
+	if(fLogicWorld == nullptr) {
 		Construct();
 	}
 
@@ -798,7 +798,7 @@ void DetectorConstruction::SetDetectionSystemDescantColor(G4String input) {
 }
 
 void DetectorConstruction::AddDetectionSystemDescantCart(G4ThreeVector input) {
-	if(fLogicWorld == NULL) {
+	if(fLogicWorld == nullptr) {
 		Construct();
 	}
 
@@ -819,7 +819,7 @@ void DetectorConstruction::AddDetectionSystemDescantSpher(G4ThreeVector input, G
 }
 
 void DetectorConstruction::AddApparatusDescantStructure() {
-	if(fLogicWorld == NULL) {
+	if(fLogicWorld == nullptr) {
 		Construct();
 	}
 
@@ -831,7 +831,7 @@ void DetectorConstruction::AddApparatusDescantStructure() {
 }
 
 void DetectorConstruction::AddDetectionSystemTestcan(G4ThreeVector input) {
-	if(fLogicWorld == NULL) {
+	if(fLogicWorld == nullptr) {
 		Construct();
 	}
 
@@ -846,27 +846,27 @@ void DetectorConstruction::AddDetectionSystemTestcan(G4ThreeVector input) {
 }
 
 void DetectorConstruction::AddDetectionSystemSpice() {
-  if(fLogicWorld == NULL) {
-	Construct();
-  }
-  DetectionSystemSpice* pSpice = new DetectionSystemSpice() ;
-  pSpice->BuildPlace(fLogicWorld); 
-  
-  fSpice = true;
-  //HistoManager::Instance().Spice(true);//boolean needed to make SPICE histograms
+	if(fLogicWorld == nullptr) {
+		Construct();
+	}
+	DetectionSystemSpice* pSpice = new DetectionSystemSpice() ;
+	pSpice->BuildPlace(fLogicWorld); 
+
+	fSpice = true;
+	//HistoManager::Instance().Spice(true);//boolean needed to make SPICE histograms
 }
 
 void DetectorConstruction::AddDetectionSystemTrific(G4double Torr) {
-  if(fLogicWorld == NULL) {
-	Construct();
-  }
-  DetectionSystemTrific* pTrific = new DetectionSystemTrific(Torr) ;
-  pTrific->BuildPlace(fLogicWorld); 
-  
+	if(fLogicWorld == nullptr) {
+		Construct();
+	}
+	DetectionSystemTrific* pTrific = new DetectionSystemTrific(Torr) ;
+	pTrific->BuildPlace(fLogicWorld); 
+
 }
 
 void DetectorConstruction::AddDetectionSystemPaces(G4int ndet) {
-	if(fLogicWorld == NULL) {
+	if(fLogicWorld == nullptr) {
 		Construct();
 	}
 
@@ -881,7 +881,7 @@ void DetectorConstruction::AddDetectionSystemPaces(G4int ndet) {
 void DetectorConstruction::SetProperties() {
 	// loop over all existing daughters of the world volume
 	// check if their properties are set and if not, set them
-	if(fLogicWorld == NULL) return;
+	if(fLogicWorld == nullptr) return;
 	G4cout<<fLogicWorld->GetNoDaughters()<<" daughter volumes"<<std::endl;
 	for(int i = 0; i < fLogicWorld->GetNoDaughters(); ++i) {
 		if(!HasProperties(fLogicWorld->GetDaughter(i)) && CheckVolumeName(fLogicWorld->GetDaughter(i)->GetName())) {
@@ -891,7 +891,7 @@ void DetectorConstruction::SetProperties() {
 }
 
 void DetectorConstruction::Print() {
-	if(fLogicWorld == NULL) {
+	if(fLogicWorld == nullptr) {
 		std::cout<<"World volume does not exist yet!"<<std::endl;
 		return;
 	}

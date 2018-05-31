@@ -46,9 +46,9 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 SteppingAction::SteppingAction(DetectorConstruction* detcon,
-                               EventAction* evt)
-    : G4UserSteppingAction(),
-      fDetector(detcon), fEventAction(evt)
+		EventAction* evt)
+: G4UserSteppingAction(),
+	fDetector(detcon), fEventAction(evt)
 {
 }
 
@@ -79,17 +79,17 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 
 	const G4VProcess* process = aStep->GetPostStepPoint()->GetProcessDefinedStep();
 	G4int targetZ = -1;
-	if(process != NULL && process->GetProcessType() == fHadronic) {
+	if(process != nullptr && process->GetProcessType() == fHadronic) {
 		G4HadronicProcess* hadrProcess = (G4HadronicProcess*) process;
-		const G4Isotope* target = NULL;
+		const G4Isotope* target = nullptr;
 		target = hadrProcess->GetTargetIsotope();
-		if(target != NULL) {
+		if(target != nullptr) {
 			targetZ = target->GetZ();
 		}
 	}
 
 	// this can be modified to add more processes
-	if(theTrack->GetCreatorProcess() != NULL) {
+	if(theTrack->GetCreatorProcess() != nullptr) {
 		G4String processName = theTrack->GetCreatorProcess()->GetProcessName();
 		if(processName == "RadioactiveDecay")      processType = 1;
 		else if(processName == "eIoni")            processType = 2;

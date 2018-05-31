@@ -46,17 +46,17 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 EventAction::EventAction(RunAction* run, HistoManager* hist)
-    :G4UserEventAction(),
-      fRunAction(run),
-		fHistoManager(hist),
-      fPrintModulo(1000)
+:G4UserEventAction(),
+	fRunAction(run),
+	fHistoManager(hist),
+	fPrintModulo(1000)
 {
-    fNumberOfHits = 0;
-    fNumberOfSteps = 0;
+	fNumberOfHits = 0;
+	fNumberOfSteps = 0;
 
-	 if(fHistoManager->GetDetectorConstruction()->Spice()) {
-		 SetupSpiceErfc();
-	 }
+	if(fHistoManager->GetDetectorConstruction()->Spice()) {
+		SetupSpiceErfc();
+	}
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

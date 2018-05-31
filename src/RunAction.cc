@@ -41,7 +41,7 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 RunAction::RunAction(HistoManager* histoManager)
-    : G4UserRunAction()
+: G4UserRunAction()
 {
 	fHistoManager = histoManager;
 }
