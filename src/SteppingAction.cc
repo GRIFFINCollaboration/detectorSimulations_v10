@@ -60,7 +60,6 @@ SteppingAction::~SteppingAction() { }
 
 void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	G4bool trackSteps   = false;
-	G4int particleType  = 0;
 	G4int processType   = 0;
 	G4int evntNb;
 
@@ -78,16 +77,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	G4int stepNumber = theTrack->GetCurrentStepNumber();
 
 	// Track particle type in EVERY step
-	//G4cout << "Particle name = " << aStep->GetTrack()->GetParticleDefinition()->GetParticleName() << G4endl;
-	particleName = aStep->GetTrack()->GetParticleDefinition()->GetParticleName();
-	if (particleName == "gamma")         particleType = 1;
-	else if (particleName == "e-")       particleType = 2;
-	else if (particleName == "e+")       particleType = 3;
-	else if (particleName == "proton")   particleType = 4;
-	else if (particleName == "neutron")  particleType = 5;
-	else if (particleName == "deuteron") particleType = 6;
-	else if (particleName == "C12")      particleType = 7;
-	else particleType = 0;
+	G4int particleType  = aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
 
 	const G4VProcess* process = aStep->GetPostStepPoint()->GetProcessDefinedStep();
 	G4int targetZ = -1;
