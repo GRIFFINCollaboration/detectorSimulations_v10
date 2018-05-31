@@ -60,10 +60,8 @@ SteppingAction::~SteppingAction() { }
 
 void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	G4bool trackSteps   = false;
-	G4int processType   = 0;
-	G4int evntNb;
-
-	G4String particleName;
+	G4int processType   = -1;
+	G4int evntNb        = 0;
 
 	// Get volume of the current step
 	G4VPhysicalVolume* volume = aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume();
@@ -86,7 +84,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		const G4Isotope* target = NULL;
 		target = hadrProcess->GetTargetIsotope();
 		if(target != NULL) {
-			//	G4cout<<particleName<<", "<<process->GetProcessName()<<" on "<<target->GetName()<<G4endl;
 			targetZ = target->GetZ();
 		}
 	}
@@ -94,15 +91,12 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	// this can be modified to add more processes
 	if(theTrack->GetCreatorProcess() != NULL) {
 		G4String processName = theTrack->GetCreatorProcess()->GetProcessName();
-		//G4cout<<"found secondary, particle "<<particleName<<", creation process "<<process<<G4endl;
-		if (processName == "RadioactiveDecay")      processType = 1;
-		else if (processName == "eIoni")            processType = 2;
-		else if (processName == "msc")              processType = 3;
-		else if (processName == "Scintillation")    processType = 4;
-		else if (processName == "Cerenkov")         processType = 5;
-		else  processType = 0;
-	} else {
-		processType = -1;
+		if(processName == "RadioactiveDecay")      processType = 1;
+		else if(processName == "eIoni")            processType = 2;
+		else if(processName == "msc")              processType = 3;
+		else if(processName == "Scintillation")    processType = 4;
+		else if(processName == "Cerenkov")         processType = 5;
+		else                                       processType = 0;
 	}
 
 	evntNb =  fEventAction->GetEventNumber();
@@ -111,14 +105,10 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	G4int trackID = theTrack->GetTrackID();
 	G4int parentID = theTrack->GetParentID();
 
-	G4StepPoint* point1 = aStep->GetPreStepPoint();
-	G4StepPoint* point2 = aStep->GetPostStepPoint();
-
-	G4ThreeVector pos1 = point1->GetPosition();
-	G4ThreeVector pos2 = point2->GetPosition();
-
-	//G4double time1 = point1->GetGlobalTime();
-	G4double time2 = point2->GetGlobalTime();
+	//G4StepPoint* prePoint = aStep->GetPreStepPoint();
+	G4StepPoint* postPoint = aStep->GetPostStepPoint();
+	G4ThreeVector postPos = postPoint->GetPosition();
+	G4double postTime = postPoint->GetGlobalTime();
 
 	// check if this volume has its properties set, i.e. it's an active detector
 	if((edep > 0 || (fDetector->GridCell() && ekin > 0)) && fDetector->HasProperties(volume)) {
@@ -144,10 +134,10 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		// check edep again in case we use the grid cell but haven't hit it
 		if(edep <= 0) return;
 
-		fEventAction->AddHitTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, pos2, time2, targetZ);
+		fEventAction->AddHitTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ);
 
 		if(trackSteps) {
-			fEventAction->AddStepTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, pos2, time2, targetZ);
+			fEventAction->AddStepTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ);
 		}
 	}// if(fDetector->HasProperties(volume))
 }
