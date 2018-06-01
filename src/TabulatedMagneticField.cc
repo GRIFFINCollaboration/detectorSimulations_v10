@@ -6,13 +6,13 @@
 #include <algorithm> //for max_element
 
 TabulatedMagneticField::TabulatedMagneticField(const char* filename, G4double zOffset, G4double zRotation) //called in 'nonuniformfield'
-	: fZoffset(zOffset), fZrotation(zRotation), fInvertX(false), fInvertY(false), fInvertZ(false)
+: fZoffset(zOffset), fZrotation(zRotation), fInvertX(false), fInvertY(false), fInvertZ(false)
 {    
 	G4double lenUnit= mm;
 	G4double fieldUnit= tesla; 
 	G4cout<<"\n-----------------------------------------------------------"
- 		   <<"\n      Magnetic field"
-		   <<"\n-----------------------------------------------------------";
+		<<"\n      Magnetic field"
+		<<"\n-----------------------------------------------------------";
 
 	G4cout<<"\n ---> " "Reading the field grid from "<<filename<<" ... "<<std::endl; 
 
@@ -145,7 +145,7 @@ void TabulatedMagneticField::GetFieldValue(const G4double point[4], G4double* Bf
 	//
 
 	// Rotate the position here : Mhd : 25 Mar 2015 
-	G4ThreeVector R( x,  y,  z); 
+	G4ThreeVector R(x,  y,  z); 
 	R.rotateZ(-fZrotation*deg); // rotation made in the opposite direction of the lens
 	x = R.getX();
 	y = R.getY();
@@ -153,8 +153,8 @@ void TabulatedMagneticField::GetFieldValue(const G4double point[4], G4double* Bf
 
 	// Check that the point is within the defined region 
 	if(x>=fMinx && x<=fMaxx &&
-	   y>=fMiny && y<=fMaxy && 
-	   z>=fMinz && z<=fMaxz) {
+			y>=fMiny && y<=fMaxy && 
+			z>=fMinz && z<=fMaxz) {
 
 		// Position of given point within region, normalized to the range
 		// [0,1]

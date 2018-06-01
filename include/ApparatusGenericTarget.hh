@@ -44,31 +44,24 @@ class ApparatusGenericTarget
     ApparatusGenericTarget();
     ~ApparatusGenericTarget();
 
+    void Build(G4String, G4double, G4double, G4double); 
+    void PlaceApparatus(G4LogicalVolume*, G4ThreeVector, G4RotationMatrix*); 
+
   private:
+    G4Box* BuildTarget();
+    void BuildTargetVolume();           
+    G4ThreeVector GetDirectionXYZ(G4double, G4double);
+
     // Logical volumes        
     G4LogicalVolume* fTargetLog;    
 
     // Assembly volumes
     G4AssemblyVolume* fAssembly;
 
-  private: 
     G4String fTargetMaterial;
     G4double fTargetLengthX;   
     G4double fTargetLengthY;
     G4double fTargetLengthZ;
-
-  public: 
-    G4int Build(G4String, G4double, G4double, G4double); 
-    G4int PlaceApparatus(G4LogicalVolume*, G4ThreeVector, G4RotationMatrix*); 
-
-  private: 
-    G4Box* BuildTarget();
-    
-  private: 
-    G4int BuildTargetVolume();           
-        
-  private:
-    G4ThreeVector GetDirectionXYZ(G4double, G4double);
 };
 
 #endif

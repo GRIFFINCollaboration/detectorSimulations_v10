@@ -37,6 +37,8 @@
 #ifndef DETECTORCONSTRUCTION_HH
 #define DETECTORCONSTRUCTION_HH
 
+#include <unordered_map>
+
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -69,6 +71,20 @@ class DetectionSystemAncillaryBGO;
 //class MagneticField;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+struct DetectorProperties {
+	G4int systemID;
+	G4int detectorNumber;
+	G4int crystalNumber;
+	void Clear()
+	{
+		systemID = 0;
+		detectorNumber = 0;
+		crystalNumber = 0;
+	}
+};
+
+bool operator==(const DetectorProperties& lhs, const DetectorProperties& rhs);
 
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
@@ -184,7 +200,16 @@ public:
 	bool SpiceRes() { return fSpiceRes; }
 	void UseTIGRESSPositions( G4bool input )                  {fUseTigressPositions = input;};
 
+	bool HasProperties(G4VPhysicalVolume* vol) { return fPropertiesMap.find(vol) != fPropertiesMap.end(); }
+	DetectorProperties GetProperties(G4VPhysicalVolume* vol) { return fPropertiesMap.at(vol); }
+	void SetProperties();
+
+	void Print();
+
 private:
+	bool CheckVolumeName(G4String volumeName);
+	DetectorProperties ParseVolumeName(G4String volumeName);
+
 	G4int     fGriffinDetectorsMapIndex;
 	G4int     fGriffinDetectorsMap[16];
 
@@ -266,6 +291,9 @@ private:
 	G4bool fTestcan;
 	G4bool fSpice;
 	G4bool fPaces;
+
+	//unordered maps which hold properties of the physical volumes created
+	std::unordered_map<G4VPhysicalVolume*, DetectorProperties> fPropertiesMap;
 };
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

@@ -46,17 +46,17 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 EventAction::EventAction(RunAction* run, HistoManager* hist)
-    :G4UserEventAction(),
-      fRunAction(run),
-		fHistoManager(hist),
-      fPrintModulo(1000)
+:G4UserEventAction(),
+	fRunAction(run),
+	fHistoManager(hist),
+	fPrintModulo(1000)
 {
-    fNumberOfHits = 0;
-    fNumberOfSteps = 0;
+	fNumberOfHits = 0;
+	fNumberOfSteps = 0;
 
-	 if(fHistoManager->GetDetectorConstruction()->Spice()) {
-		 SetupSpiceErfc();
-	 }
+	if(fHistoManager->GetDetectorConstruction()->Spice()) {
+		SetupSpiceErfc();
+	}
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -96,76 +96,68 @@ void EventAction::EndOfEventAction(const G4Event*) {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void EventAction::AddHitTracker(G4String mnemonic, G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ) {
-	G4bool newhit = true;
+void EventAction::AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& targetZ) {
 	for(G4int i = 0; i < fNumberOfHits; i++) {
-		if(fPHitMnemonic[i] == mnemonic) {
+		if(fProperties[i] == properties) {
 			// sum the new enery
 			fHitTrackerD[0][i] = fHitTrackerD[0][i] + depEnergy;
-			newhit = false;
-			break;
+			return;
 		}
 	}
-	if(newhit) { // new hit
-		fPHitMnemonic[fHitIndex] = mnemonic;
-		fPTrackID = trackID;
-		fPParentID = parentID;
-		fHitTrackerI[0][fHitIndex] = eventNumber;
-		fHitTrackerI[1][fHitIndex] = trackID;
-		fHitTrackerI[2][fHitIndex] = parentID;
-		fHitTrackerI[3][fHitIndex] = stepNumber;
-		fHitTrackerI[4][fHitIndex] = particleType;
-		fHitTrackerI[5][fHitIndex] = processType;
-		fHitTrackerI[6][fHitIndex] = systemID;
-		fHitTrackerI[7][fHitIndex] = cryNumber;
-		fHitTrackerI[8][fHitIndex] = detNumber;
-		fHitTrackerI[9][fHitIndex] = targetZ;
-		fHitTrackerD[0][fHitIndex] = depEnergy;
-		fHitTrackerD[1][fHitIndex] = posx;
-		fHitTrackerD[2][fHitIndex] = posy;
-		fHitTrackerD[3][fHitIndex] = posz;
-		fHitTrackerD[4][fHitIndex] = time;
+	// new hit
+	fProperties[fNumberOfHits] = properties;
+	fHitTrackerI[0][fNumberOfHits] = eventNumber;
+	fHitTrackerI[1][fNumberOfHits] = trackID;
+	fHitTrackerI[2][fNumberOfHits] = parentID;
+	fHitTrackerI[3][fNumberOfHits] = stepNumber;
+	fHitTrackerI[4][fNumberOfHits] = particleType;
+	fHitTrackerI[5][fNumberOfHits] = processType;
+	fHitTrackerI[6][fNumberOfHits] = properties.systemID;
+	fHitTrackerI[7][fNumberOfHits] = properties.crystalNumber;
+	fHitTrackerI[8][fNumberOfHits] = properties.detectorNumber;
+	fHitTrackerI[9][fNumberOfHits] = targetZ;
+	fHitTrackerD[0][fNumberOfHits] = depEnergy;
+	fHitTrackerD[1][fNumberOfHits] = pos.x();
+	fHitTrackerD[2][fNumberOfHits] = pos.y();
+	fHitTrackerD[3][fNumberOfHits] = pos.z();
+	fHitTrackerD[4][fNumberOfHits] = time;
 
-		fHitIndex++;
-		fNumberOfHits = fHitIndex;
+	++fNumberOfHits;
 
-		if(fNumberOfHits >= MAXHITS) {
-			G4cout << "ERROR! Too many hits!" << G4endl;
-		}
+	if(fNumberOfHits >= MAXHITS) {
+		G4cout<<"ERROR! Too many hits!"<<G4endl;
+		throw;
 	}
 }
 
-void EventAction::AddStepTracker(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ) {
-	G4bool newstep = true;
-	if(newstep) { // new step
-		fStepTrackerI[0][fStepIndex] = eventNumber;
-		fStepTrackerI[1][fStepIndex] = trackID;
-		fStepTrackerI[2][fStepIndex] = parentID;
-		fStepTrackerI[3][fStepIndex] = stepNumber;
-		fStepTrackerI[4][fStepIndex] = particleType;
-		fStepTrackerI[5][fStepIndex] = processType;
-		fStepTrackerI[6][fStepIndex] = systemID;
-		fStepTrackerI[7][fStepIndex] = cryNumber;
-		fStepTrackerI[8][fStepIndex] = detNumber;
-		fStepTrackerI[9][fStepIndex] = targetZ;
-		fStepTrackerD[0][fStepIndex] = depEnergy;
-		fStepTrackerD[1][fStepIndex] = posx;
-		fStepTrackerD[2][fStepIndex] = posy;
-		fStepTrackerD[3][fStepIndex] = posz;
-		fStepTrackerD[4][fStepIndex] = time;
+void EventAction::AddStepTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& targetZ) {
+	// new step
+	fStepTrackerI[0][fNumberOfSteps] = eventNumber;
+	fStepTrackerI[1][fNumberOfSteps] = trackID;
+	fStepTrackerI[2][fNumberOfSteps] = parentID;
+	fStepTrackerI[3][fNumberOfSteps] = stepNumber;
+	fStepTrackerI[4][fNumberOfSteps] = particleType;
+	fStepTrackerI[5][fNumberOfSteps] = processType;
+	fStepTrackerI[6][fNumberOfSteps] = properties.systemID;
+	fStepTrackerI[7][fNumberOfSteps] = properties.crystalNumber;
+	fStepTrackerI[8][fNumberOfSteps] = properties.detectorNumber;
+	fStepTrackerI[9][fNumberOfSteps] = targetZ;
+	fStepTrackerD[0][fNumberOfSteps] = depEnergy;
+	fStepTrackerD[1][fNumberOfSteps] = pos.x();
+	fStepTrackerD[2][fNumberOfSteps] = pos.y();
+	fStepTrackerD[3][fNumberOfSteps] = pos.z();
+	fStepTrackerD[4][fNumberOfSteps] = time;
 
-		fStepIndex++;
+	++fNumberOfSteps;
 
-		fNumberOfSteps = fStepIndex;
-		if(fNumberOfSteps >= MAXSTEPS) {
-			G4cout << "ERROR! Too many steps!" << G4endl;
-		}
+	if(fNumberOfSteps >= MAXSTEPS) {
+		G4cout<<"ERROR! Too many steps!"<<G4endl;
+		throw;
 	}
 }
 
 void EventAction::ClearVariables() {
 	if(fHistoManager->GetStepTrackerBool()) {
-		fStepIndex = 0;
 		fNumberOfSteps = 0;
 		for(G4int i = 0; i < MAXSTEPS; i++) {
 			for(G4int j = 0; j < NUMSTEPVARS; j++) {
@@ -176,13 +168,10 @@ void EventAction::ClearVariables() {
 	}
 
 	if(fHistoManager->GetHitTrackerBool()) {
-		fHitIndex = 0;
 		fNumberOfHits = 0;
-		fPTrackID = -1;
-		fPParentID = -1;
 
 		for(G4int i = 0; i < MAXHITS; i++) {
-			fPHitMnemonic[i] = "XXX00XX00X";
+			fProperties[i].Clear();
 			for(G4int j = 0; j < NUMSTEPVARS; j++) {
 				fHitTrackerI[j][i] = 0;
 				fHitTrackerD[j][i] = 0.0;

@@ -152,8 +152,8 @@ G4ThreeVector DetectionSystem8pi::GetDirectionXYZ(G4double theta, G4double phi) 
 G4int DetectionSystem8pi::AddGermanium() {
     //material
     G4Material* material = G4Material::GetMaterial("Germanium");
-    if( !material ) {
-        G4cout << " ----> Material " << "Germanium" << " not found, cannot build the detector shell! " << G4endl;
+    if(!material) {
+        G4cout<<" ----> Material "<<"Germanium"<<" not found, cannot build the detector shell! "<<G4endl;
         return 0;
     }
 
@@ -191,7 +191,7 @@ G4int DetectionSystem8pi::AddGermanium() {
     G4ThreeVector move = zPosition * direction;
 
     //logical volume
-    if(fGermaniumBlockLog == NULL) {
+    if(fGermaniumBlockLog == nullptr) {
         fGermaniumBlockLog = new G4LogicalVolume(germaniumBlockWithCavity, material, "8piGermaniumBlockLog", 0, 0, 0);
         fGermaniumBlockLog->SetVisAttributes(germaniumBlockVisAtt);
     }
@@ -210,8 +210,8 @@ G4int DetectionSystem8pi::AddGermanium() {
 G4int DetectionSystem8pi::AddGermaniumDeadLayer() {
     //material
     G4Material* material = G4Material::GetMaterial("Germanium");
-    if( !material ) {
-        G4cout << " ----> Material " << "Germanium" << " not found, cannot build the detector shell! " << G4endl;
+    if(!material) {
+        G4cout<<" ----> Material "<<"Germanium"<<" not found, cannot build the detector shell! "<<G4endl;
         return 0;
     }
 
@@ -249,7 +249,7 @@ G4int DetectionSystem8pi::AddGermaniumDeadLayer() {
     G4ThreeVector move = G4ThreeVector(0, 0, zPosition);
 
     //logical volume
-    if(fGermaniumDeadLayerLog == NULL) {
+    if(fGermaniumDeadLayerLog == nullptr) {
 		fGermaniumDeadLayerLog = new G4LogicalVolume(germaniumDeadLayerWithCavity, material, "germaniumDeadLayerLog", 0, 0, 0);
 		fGermaniumDeadLayerLog->SetVisAttributes(visAtt);
     }
@@ -269,8 +269,8 @@ G4int DetectionSystem8pi::AddGermaniumDeadLayer() {
 G4int DetectionSystem8pi::AddGermaniumCore() {
     //material
     G4Material* material = G4Material::GetMaterial("Vacuum");
-    if( !material ) {
-        G4cout << " ----> Material " << "Vacuum" << " not found, cannot build the detector shell! " << G4endl;
+    if(!material) {
+        G4cout<<" ----> Material "<<"Vacuum"<<" not found, cannot build the detector shell! "<<G4endl;
         return 0;
     }
 
@@ -309,7 +309,7 @@ G4int DetectionSystem8pi::AddGermaniumCore() {
     G4ThreeVector move = G4ThreeVector(0, 0, zPosition);
 
     //logical volume
-    if(fGermaniumVacuumCoreLog == NULL) {
+    if(fGermaniumVacuumCoreLog == nullptr) {
 		fGermaniumVacuumCoreLog = new G4LogicalVolume(germaniumVacuumCoreWithCavity, material, "germaniumVacuumCoreLog", 0, 0, 0);
 		fGermaniumVacuumCoreLog->SetVisAttributes(visAtt);
     }
@@ -329,8 +329,8 @@ G4int DetectionSystem8pi::AddGermaniumCore() {
 G4int DetectionSystem8pi::AddElectrodeMatElectrode() {
     //material
     G4Material* material = G4Material::GetMaterial(fElectrodeMat);
-    if( !material ) {
-        G4cout << " ----> Material " << fElectrodeMat << " not found, cannot build the detector shell! " << G4endl;
+    if(!material) {
+        G4cout<<" ----> Material "<<fElectrodeMat<<" not found, cannot build the detector shell! "<<G4endl;
         return 0;
     }
 
@@ -351,7 +351,7 @@ G4int DetectionSystem8pi::AddElectrodeMatElectrode() {
     G4double lowerZPosition = fCrystalDistFromOrigin + fHoleStartingDepth/2.0; // check this! // adjust position
 
     //logical volume
-    if(fLowerElectrodeMatElectrodeLog == NULL) {
+    if(fLowerElectrodeMatElectrodeLog == nullptr) {
         fLowerElectrodeMatElectrodeLog = new G4LogicalVolume(lowerElectrodeMatCylinder, material, "lowerElectrodeMatElectrodeLog", 0, 0, 0);
         fLowerElectrodeMatElectrodeLog->SetVisAttributes(visAtt);
     }
@@ -367,7 +367,7 @@ G4int DetectionSystem8pi::AddElectrodeMatElectrode() {
     G4double zPosition = fCrystalDistFromOrigin + fCrystalLength/2.0 + halfLengthZ;
 
     //logical volume
-    if(fUpperElectrodeMatElectrodeLog == NULL) {
+    if(fUpperElectrodeMatElectrodeLog == nullptr) {
         fUpperElectrodeMatElectrodeLog = new G4LogicalVolume(upperElectrodeMatCylinder, material, "upperElectrodeMatElectrodeLog", 0, 0, 0);
         fUpperElectrodeMatElectrodeLog->SetVisAttributes(visAtt);
     }
@@ -392,8 +392,8 @@ G4int DetectionSystem8pi::AddElectrodeMatElectrode() {
 G4int DetectionSystem8pi::AddStructureMatCage() {
     //material
     G4Material* material = G4Material::GetMaterial(fStructureMat);
-    if( !material ) {
-        G4cout << " ----> Material " << fStructureMat << " not found, cannot build the detector shell! " << G4endl;
+    if(!material) {
+        G4cout<<" ----> Material "<<fStructureMat<<" not found, cannot build the detector shell! "<<G4endl;
         return 0;
     }
 
@@ -416,7 +416,7 @@ G4int DetectionSystem8pi::AddStructureMatCage() {
     G4ThreeVector move = zPosition * direction;
 
     //4 logical sides (quadrants)
-    if(fInnerCage1Log == NULL && fInnerCage2Log == NULL && fInnerCage3Log == NULL && fInnerCage4Log == NULL) {
+    if(fInnerCage1Log == nullptr && fInnerCage2Log == nullptr && fInnerCage3Log == nullptr && fInnerCage4Log == nullptr) {
         fInnerCage1Log = new G4LogicalVolume(innerCage1, material, "innerCage1Log", 0, 0, 0);
         fInnerCage1Log->SetVisAttributes(visAtt);
         fInnerCage2Log = new G4LogicalVolume(innerCage2, material, "innerCage2Log", 0, 0, 0);
@@ -445,7 +445,7 @@ G4int DetectionSystem8pi::AddStructureMatCage() {
     move =  zPosition * direction;
 
     //logical volume
-    if(fInnerCageBottomLog == NULL) {
+    if(fInnerCageBottomLog == nullptr) {
         fInnerCageBottomLog = new G4LogicalVolume(innerCageBottom, material, "innerCageBottomLog", 0, 0, 0);
         fInnerCageBottomLog->SetVisAttributes(visAtt);
     }
@@ -458,8 +458,8 @@ G4int DetectionSystem8pi::AddStructureMatCage() {
 G4int DetectionSystem8pi::AddInnerStructureMatLids() {
     //material
     G4Material* material = G4Material::GetMaterial(fStructureMat);
-    if( !material ) {
-        G4cout << " ----> Material " << "StructureMat" << " not found, cannot build the detector shell! " << G4endl;
+    if(!material) {
+        G4cout<<" ----> Material "<<"StructureMat"<<" not found, cannot build the detector shell! "<<G4endl;
         return 0;
     }
 
@@ -479,7 +479,7 @@ G4int DetectionSystem8pi::AddInnerStructureMatLids() {
     G4ThreeVector move = zPosition * direction;
 
     //logical volume
-    if(fInnerCageLidLog == NULL) {
+    if(fInnerCageLidLog == nullptr) {
         fInnerCageLidLog = new G4LogicalVolume(lid, material, "innerCageLidLog", 0, 0, 0);
         fInnerCageLidLog->SetVisAttributes(visAtt);
     }
@@ -500,8 +500,8 @@ G4int DetectionSystem8pi::AddInnerStructureMatLids() {
 G4int DetectionSystem8pi::AddStructureMatCoolingRod() {
     //material
     G4Material* material = G4Material::GetMaterial(fStructureMat);
-    if( !material ) {
-        G4cout << " ----> Material " << fStructureMat << " not found, cannot build the detector shell! " << G4endl;
+    if(!material) {
+        G4cout<<" ----> Material "<<fStructureMat<<" not found, cannot build the detector shell! "<<G4endl;
         return 0;
     }
 
@@ -511,7 +511,7 @@ G4int DetectionSystem8pi::AddStructureMatCoolingRod() {
     //ring measurements
     G4double innerRadius = 0.0*mm;
     G4double outerRadius = fStructureMatCoolingRodRadius;
-    G4double halfLengthZ = (fOuterCanExtendsPastCrystal - fInnerCanExtendsPastCrystal )/2.0;
+    G4double halfLengthZ = (fOuterCanExtendsPastCrystal - fInnerCanExtendsPastCrystal)/2.0;
 
     G4Tubs* coolingRod = new G4Tubs("coolingRod", innerRadius, outerRadius, halfLengthZ, 0.0*deg, fDetailViewEndAngle);
 
@@ -522,7 +522,7 @@ G4int DetectionSystem8pi::AddStructureMatCoolingRod() {
     G4ThreeVector move = zPosition * direction;
 
     //logical volume
-    if(fStructureMatCoolingRodLog == NULL) {
+    if(fStructureMatCoolingRodLog == nullptr) {
         fStructureMatCoolingRodLog = new G4LogicalVolume(coolingRod, material, "structureMatCoolingRodLog", 0, 0, 0);
         fStructureMatCoolingRodLog->SetVisAttributes(visAtt);
     }
@@ -537,8 +537,8 @@ G4int DetectionSystem8pi::AddElectrodeMatCoolingRod()
 {
     //material
     G4Material* material = G4Material::GetMaterial(fElectrodeMat);
-    if( !material ) {
-        G4cout << " ----> Material " << fElectrodeMat << " not found, cannot build the detector shell! " << G4endl;
+    if(!material) {
+        G4cout<<" ----> Material "<<fElectrodeMat<<" not found, cannot build the detector shell! "<<G4endl;
         return 0;
     }
 
@@ -559,7 +559,7 @@ G4int DetectionSystem8pi::AddElectrodeMatCoolingRod()
     G4ThreeVector move = zPosition * direction;
 
     //logical volume
-    if(fElectrodeMatCoolingRodLog == NULL) {
+    if(fElectrodeMatCoolingRodLog == nullptr) {
         fElectrodeMatCoolingRodLog = new G4LogicalVolume(coolingRod, material, "electrodeMatCoolingRodLog", 0, 0, 0);
         fElectrodeMatCoolingRodLog->SetVisAttributes(visAtt);
     }
@@ -575,8 +575,8 @@ G4int DetectionSystem8pi::AddElectrodeMatCoolingRod()
 G4int DetectionSystem8pi::AddBerylliumWindow() {
     //material
     G4Material* material = G4Material::GetMaterial("Beryllium");
-    if( !material ) {
-        G4cout << " ----> Material " << "Beryllium" << " not found, cannot build the detector shell! " << G4endl;
+    if(!material) {
+        G4cout<<" ----> Material "<<"Beryllium"<<" not found, cannot build the detector shell! "<<G4endl;
         return 0;
     }
 
@@ -596,7 +596,7 @@ G4int DetectionSystem8pi::AddBerylliumWindow() {
     G4ThreeVector move = zPosition * direction;
 
     //logical volume
-    if(fBerylliumWindowLog == NULL) {
+    if(fBerylliumWindowLog == nullptr) {
         fBerylliumWindowLog = new G4LogicalVolume(berylliumWindow, material, "berylliumWindowLog", 0, 0, 0);
         fBerylliumWindowLog->SetVisAttributes(visAtt);
     }
@@ -610,8 +610,8 @@ G4int DetectionSystem8pi::AddBerylliumWindow() {
 G4int DetectionSystem8pi::AddOuterStructureMatCan() {
     //material
     G4Material* material = G4Material::GetMaterial(fStructureMat);
-    if( !material ) {
-        G4cout << " ----> Material " << fStructureMat << " not found, cannot build the detector shell! " << G4endl;
+    if(!material) {
+        G4cout<<" ----> Material "<<fStructureMat<<" not found, cannot build the detector shell! "<<G4endl;
         return 0;
     }
 
@@ -631,7 +631,7 @@ G4int DetectionSystem8pi::AddOuterStructureMatCan() {
     G4ThreeVector move = zPosition * direction;
 
     //logical volume
-    if(fOuterCanSideLog == NULL) {
+    if(fOuterCanSideLog == nullptr) {
         fOuterCanSideLog = new G4LogicalVolume(outerCanSide, material, "outerCanSideLog", 0, 0, 0);
         fOuterCanSideLog->SetVisAttributes(visAtt);
     }
@@ -647,7 +647,7 @@ G4int DetectionSystem8pi::AddOuterStructureMatCan() {
     G4Tubs* outerCanLid = new G4Tubs("outerCanLid", innerRadius, outerRadius, halfLengthZ, 0.0*deg, fDetailViewEndAngle);
 
     //logical volume
-    if(fOuterCanLidLog == NULL) {
+    if(fOuterCanLidLog == nullptr) {
         fOuterCanLidLog = new G4LogicalVolume(outerCanLid, material, "outerCanLidLog", 0, 0, 0);
         fOuterCanLidLog->SetVisAttributes(visAtt);
     }
@@ -665,8 +665,8 @@ G4int DetectionSystem8pi::AddCoolingRodCover()
 {
     //material
     G4Material* material = G4Material::GetMaterial(fStructureMat);
-    if( !material ) {
-        G4cout << " ----> Material " << "StructureMat" << " not found, cannot build the detector shell! " << G4endl;
+    if(!material) {
+        G4cout<<" ----> Material "<<"StructureMat"<<" not found, cannot build the detector shell! "<<G4endl;
         return 0;
     }
 
@@ -686,7 +686,7 @@ G4int DetectionSystem8pi::AddCoolingRodCover()
     G4ThreeVector move = zPosition * direction;
 
     //logical volume
-    if( fCoolingRodCoverLog == NULL )
+    if(fCoolingRodCoverLog == nullptr)
     {
         fCoolingRodCoverLog = new G4LogicalVolume(coolingRodCover, material, "coolingRodCoverLog", 0, 0, 0);
         fCoolingRodCoverLog->SetVisAttributes(visAtt);
@@ -705,7 +705,7 @@ G4int DetectionSystem8pi::AddCoolingRodCover()
     G4Tubs* coolingRodCoverLid = new G4Tubs("coolingRodLid", innerRadius, outerRadius, halfLengthZ, 0.0*deg, fDetailViewEndAngle);
 
     //logical volume
-    if( fCoolingRodCoverLidLog == NULL )
+    if(fCoolingRodCoverLidLog == nullptr)
     {
         fCoolingRodCoverLidLog = new G4LogicalVolume(coolingRodCoverLid, material, "coolingRodCoverLidLog", 0, 0, 0);
         fCoolingRodCoverLidLog->SetVisAttributes(visAtt);
@@ -725,8 +725,8 @@ G4int DetectionSystem8pi::AddCoolingRodCover()
 G4int DetectionSystem8pi::AddInnerBGOAnnulus() {
     //material
     G4Material* material = G4Material::GetMaterial("BGO");
-    if( !material ) {
-        G4cout << " ----> Material " << "BGO" << " not found, cannot build the detector shell! " << G4endl;
+    if(!material) {
+        G4cout<<" ----> Material "<<"BGO"<<" not found, cannot build the detector shell! "<<G4endl;
         return 0;
     }
 
@@ -747,7 +747,7 @@ G4int DetectionSystem8pi::AddInnerBGOAnnulus() {
     G4ThreeVector move = zPosition * direction;
 
     //logical volume
-    if(fInnerBGOAnnulusLog == NULL) {
+    if(fInnerBGOAnnulusLog == nullptr) {
         fInnerBGOAnnulusLog = new G4LogicalVolume(innerBGOAnnulus, material, "8piInnerBGOAnnulus", 0, 0, 0);
         fInnerBGOAnnulusLog->SetVisAttributes(visAtt);
     }
@@ -761,8 +761,8 @@ G4int DetectionSystem8pi::AddInnerBGOAnnulus() {
 G4int DetectionSystem8pi::AddStructureMatBGOSheath() {
     //material
     G4Material* material = G4Material::GetMaterial(fStructureMat);
-    if( !material ) {
-        G4cout << " ----> Material " << fStructureMat << " not found, cannot build the detector shell! " << G4endl;
+    if(!material) {
+        G4cout<<" ----> Material "<<fStructureMat<<" not found, cannot build the detector shell! "<<G4endl;
         return 0;
     }
 
@@ -782,7 +782,7 @@ G4int DetectionSystem8pi::AddStructureMatBGOSheath() {
     G4ThreeVector move = zPosition * direction;
 
     //logical volume
-    if(fStructureMatSheathLog == NULL) {
+    if(fStructureMatSheathLog == nullptr) {
         fStructureMatSheathLog = new G4LogicalVolume(structureMatSheath, material, "structureMatSheathLog", 0, 0, 0);
         fStructureMatSheathLog->SetVisAttributes(visAtt);
     }
@@ -797,8 +797,8 @@ G4int DetectionSystem8pi::AddStructureMatBGOSheath() {
 G4int DetectionSystem8pi::AddOuterBGOAnnulus() {
     //material
     G4Material* material = G4Material::GetMaterial("BGO");
-    if( !material ) {
-        G4cout << " ----> Material " << "BGO" << " not found, cannot build the detector shell! " << G4endl;
+    if(!material) {
+        G4cout<<" ----> Material "<<"BGO"<<" not found, cannot build the detector shell! "<<G4endl;
         return 0;
     }
 
@@ -820,7 +820,7 @@ G4int DetectionSystem8pi::AddOuterBGOAnnulus() {
     G4ThreeVector move = zPosition * direction;
 
     //logical volume
-    if(fOuterLowerBGOAnnulusLog == NULL) {
+    if(fOuterLowerBGOAnnulusLog == nullptr) {
 		  fOuterLowerBGOAnnulusLog = new G4LogicalVolume(outerLowerBGOAnnulus, material, "8piOuterLowerBGOAnnulus", 0, 0, 0);
         fOuterLowerBGOAnnulusLog->SetVisAttributes(visAtt);
     }
@@ -836,7 +836,7 @@ G4int DetectionSystem8pi::AddOuterBGOAnnulus() {
     move = zPosition * direction;
 
     //logical volume
-    if(fOuterUpperBGOAnnulusLog == NULL) {
+    if(fOuterUpperBGOAnnulusLog == nullptr) {
         fOuterUpperBGOAnnulusLog = new G4LogicalVolume(outerUpperBGOAnnulus, material, "8piOuterUpperBGOAnnulus", 0, 0, 0);
         fOuterUpperBGOAnnulusLog->SetVisAttributes(visAtt);
     }
@@ -850,8 +850,8 @@ G4int DetectionSystem8pi::AddOuterBGOAnnulus() {
 G4int DetectionSystem8pi::AddLiquidN2Container() {
     //material
     G4Material* material = G4Material::GetMaterial("LiquidN2");
-    if( !material ) {
-        G4cout << " ----> Material " << "LiquidN2" << " not found, cannot build the detector shell! " << G4endl;
+    if(!material) {
+        G4cout<<" ----> Material "<<"LiquidN2"<<" not found, cannot build the detector shell! "<<G4endl;
         return 0;
     }
 
@@ -873,7 +873,7 @@ G4int DetectionSystem8pi::AddLiquidN2Container() {
     G4ThreeVector move = zPosition * direction;
 
     //logical volume
-    if(fLiquidN2Log == NULL) {
+    if(fLiquidN2Log == nullptr) {
         fLiquidN2Log = new G4LogicalVolume(liquidN2, material, "liquidN2Log", 0, 0, 0);
         fLiquidN2Log->SetVisAttributes(N2VisAtt);
     }
@@ -884,7 +884,7 @@ G4int DetectionSystem8pi::AddLiquidN2Container() {
     //material
     material = G4Material::GetMaterial(fStructureMat);
     if(!material) {
-        G4cout << " ----> Material " << fStructureMat << " not found, cannot build the detector shell! " << G4endl;
+        G4cout<<" ----> Material "<<fStructureMat<<" not found, cannot build the detector shell! "<<G4endl;
         return 0;
     }
 
@@ -902,7 +902,7 @@ G4int DetectionSystem8pi::AddLiquidN2Container() {
     move = zPosition * direction;
 
     //logical volume
-    if(fLiquidN2BottomLog == NULL) {
+    if(fLiquidN2BottomLog == nullptr) {
         fLiquidN2BottomLog = new G4LogicalVolume(liquidN2Bottom, material, "liquidN2BottomLog", 0, 0, 0);
         fLiquidN2BottomLog->SetVisAttributes(visAtt);
     }
@@ -923,7 +923,7 @@ G4int DetectionSystem8pi::AddLiquidN2Container() {
     move = zPosition * direction;
 
     //logical volume
-    if(fLiquidN2SideLog == NULL) {
+    if(fLiquidN2SideLog == nullptr) {
         fLiquidN2SideLog = new G4LogicalVolume(liquidN2Side, material, "liquidN2SideLog", 0, 0, 0);
         fLiquidN2SideLog->SetVisAttributes(visAtt);
     }
@@ -945,7 +945,7 @@ G4int DetectionSystem8pi::AddLiquidN2Container() {
     move = zPosition * direction;
 
     //logical volume
-    if(fLiquidN2LidLog == NULL) {
+    if(fLiquidN2LidLog == nullptr) {
         fLiquidN2LidLog = new G4LogicalVolume(liquidN2Lid, material, "liquidN2LidLog", 0, 0, 0);
         fLiquidN2LidLog->SetVisAttributes(visAtt);
     }
@@ -959,8 +959,8 @@ G4int DetectionSystem8pi::AddLiquidN2Container() {
 G4int DetectionSystem8pi::AddHevimetalCollimator() {
     //material
     G4Material* material = G4Material::GetMaterial("Hevimetal");
-    if( !material ) {
-        G4cout << " ----> Material " << "Hevimetal" << " not found, cannot build the detector shell! " << G4endl;
+    if(!material) {
+        G4cout<<" ----> Material "<<"Hevimetal"<<" not found, cannot build the detector shell! "<<G4endl;
         return 0;
     }
 
@@ -1005,7 +1005,7 @@ G4int DetectionSystem8pi::AddHevimetalCollimator() {
     G4ThreeVector move = zPosition * direction;
 
     //logical volume
-    if(fHevimetalLog == NULL) {
+    if(fHevimetalLog == nullptr) {
         fHevimetalLog = new G4LogicalVolume(hevimetalWithCavity, material, "hevimetalLog", 0, 0, 0);
         fHevimetalLog->SetVisAttributes(hevimetalVisAtt);
     }
@@ -1019,8 +1019,8 @@ G4int DetectionSystem8pi::AddHevimetalCollimator() {
 G4int DetectionSystem8pi::AddAuxMatPlug() {
     //material
     G4Material* material = G4Material::GetMaterial(fAuxMat);
-    if( !material ) {
-        G4cout << " ----> Material " << fAuxMat << " not found, cannot build the detector shell! " << G4endl;
+    if(!material) {
+        G4cout<<" ----> Material "<<fAuxMat<<" not found, cannot build the detector shell! "<<G4endl;
         return 0;
     }
 
@@ -1045,7 +1045,7 @@ G4int DetectionSystem8pi::AddAuxMatPlug() {
     G4ThreeVector move = zPosition * direction ; // check this!
 
     //logical volume
-    if(fAuxMatPlugLog == NULL) {
+    if(fAuxMatPlugLog == nullptr) {
         fAuxMatPlugLog = new G4LogicalVolume(auxMatPlug, material, "auxMatPlugLog", 0, 0, 0);
         fAuxMatPlugLog->SetVisAttributes(visAtt);
     }
@@ -1060,8 +1060,8 @@ G4int DetectionSystem8pi::AddAuxMatPlug() {
 G4int DetectionSystem8pi::AddThinAuxMatLayer() {
     //material
     G4Material* material = G4Material::GetMaterial(fAuxMat);
-    if( !material ) {
-        G4cout << " ----> Material " << fAuxMat << " not found, cannot build the detector shell! " << G4endl;
+    if(!material) {
+        G4cout<<" ----> Material "<<fAuxMat<<" not found, cannot build the detector shell! "<<G4endl;
         return 0;
     }
 
@@ -1091,7 +1091,7 @@ G4int DetectionSystem8pi::AddThinAuxMatLayer() {
     G4ThreeVector move = zPosition * direction;
 
     //logical volume
-    if(fAuxMatLayerLog == NULL) {
+    if(fAuxMatLayerLog == nullptr) {
         fAuxMatLayerLog = new G4LogicalVolume(auxMatLayer, material, "auxMatLayerLog", 0, 0, 0);
         fAuxMatLayerLog->SetVisAttributes(visAtt);
     }
