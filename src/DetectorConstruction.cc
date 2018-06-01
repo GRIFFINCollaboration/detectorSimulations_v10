@@ -59,6 +59,7 @@
 #include "G4RunManager.hh"
 #include "G4UserLimits.hh"
 
+#include "G4Threading.hh"
 
 //#include "DetectionSystemGammaTracking.hh"
 #include "DetectionSystem8pi.hh"
@@ -882,7 +883,11 @@ void DetectorConstruction::SetProperties() {
 	// loop over all existing daughters of the world volume
 	// check if their properties are set and if not, set them
 	if(fLogicWorld == nullptr) return;
-	G4cout<<fLogicWorld->GetNoDaughters()<<" daughter volumes"<<std::endl;
+	// thread id is -1 for master, -2 in sequential mode
+	// so this only outputs the number of volumes once
+	if(G4Threading::G4GetThreadId() < 0) {
+		G4cout<<fLogicWorld->GetNoDaughters()<<" daughter volumes"<<std::endl;
+	}
 	for(int i = 0; i < fLogicWorld->GetNoDaughters(); ++i) {
 		if(!HasProperties(fLogicWorld->GetDaughter(i)) && CheckVolumeName(fLogicWorld->GetDaughter(i)->GetName())) {
 			fPropertiesMap[fLogicWorld->GetDaughter(i)] = ParseVolumeName(fLogicWorld->GetDaughter(i)->GetName());

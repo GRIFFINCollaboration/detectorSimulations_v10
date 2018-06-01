@@ -485,16 +485,14 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	if(command == fLayeredTargetAddCmd) {
 		G4String Material;
 		G4double areal;
-		const char* s = newValue;///string
-		std::istringstream is ((char*)s);///string
+		std::istringstream is(newValue);///string
 		is>>Material>>areal;
 		fDetector->LayeredTargetAdd(Material, areal);
 	}
 	if(command == fTabMagneticFieldCmd) {
 		G4String PathAndTableName;
 		G4double z_offset, z_rotation;
-		const char* s = newValue;///string
-		std::istringstream is ((char*)s);///string
+		std::istringstream is(newValue);///string
 		is>>PathAndTableName>>z_offset>>z_rotation;
 		fDetector->SetTabMagneticField(PathAndTableName, z_offset, z_rotation); // z in mm, angle in degree  
 	}
@@ -622,8 +620,7 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	if(command == fAddDetectionSystemTrificCmd) {
 		//Done as a string because Torr isnt a default unit 
 		G4double torr;
-		const char* s = newValue;///string
-		std::istringstream is ((char*)s);///string
+		std::istringstream is(newValue);///string
 		is>>torr;
 		if(torr>1)fDetector->AddDetectionSystemTrific(torr);
 		else fDetector->AddDetectionSystemTrific(760.0);
