@@ -35,6 +35,7 @@
 #ifndef APPARATUSSPICETARGETCHAMBER_HH
 #define APPARATUSSPICETARGETCHAMBER_HH
 
+class G4VSolid;
 class G4LogicalVolume;
 class G4VPhysicalVolume;
 class G4Material;
@@ -58,7 +59,7 @@ class DetectorMessenger;
 class ApparatusSpiceTargetChamber
 {
 public:
-	ApparatusSpiceTargetChamber(G4String, G4double);
+	ApparatusSpiceTargetChamber(G4String);
 	~ApparatusSpiceTargetChamber();
 
 public:
@@ -84,13 +85,14 @@ private:
 	G4LogicalVolume* fGearPlateTwoLog;
 	G4LogicalVolume* fGearStickLog;
 	G4LogicalVolume* fTargetMountPlateLog;
+	G4LogicalVolume* fTargetMountRodLog;
 	G4LogicalVolume* fBiasPlateLog;
 	G4LogicalVolume* fPhotonShieldLayerOneLog;
 	G4LogicalVolume* fPhotonShieldLayerTwoLog;
 	G4LogicalVolume* fPhotonShieldLayerThreeLog;
 	G4LogicalVolume* fPsTargetClampLog;
 	G4LogicalVolume* fPsDetectorClampLog;
-	G4LogicalVolume* fTargetBoltLog;
+	G4LogicalVolume* fShieldBoltLog;
 	G4LogicalVolume* fDetectorBoltLog;
 	G4LogicalVolume* fMagnetLog;
 	G4LogicalVolume* fMagnetCoverLog;
@@ -122,6 +124,7 @@ private:
 	G4VPhysicalVolume* fGearPlateTwoPhys;
 	G4VPhysicalVolume* fGearStickPhys;
 	G4VPhysicalVolume* fTargetMountPlatePhys;
+	G4VPhysicalVolume* fTargetMountRodPhys;
 	G4VPhysicalVolume* fBiasPlatePhys;
 	G4VPhysicalVolume* fPhotonShieldLayerOnePhys;
 	G4VPhysicalVolume* fPhotonShieldLayerTwoPhys;
@@ -146,12 +149,6 @@ private:
 	// Properties used in ApparatusSpiceTargetChamber
 	////////////////////////////////////////////
 
-	//-------------------------
-	// Magnet properties:
-	//-------------------------
-	G4int fNumberOfMagnets;
-	G4int fNumberOfFrames;
-	G4double fZOffset;
 
 	//-------------------------
 	// Materials:
@@ -164,7 +161,7 @@ private:
 	G4String fPhotonShieldLayerTwoMaterial;//
 	G4String fPhotonShieldLayerThreeMaterial;//
 	G4String fPsClampMaterial;//
-	G4String fMagnetClampMaterial;//
+	G4String fMagnetChamberClampMaterial;//
 	G4String fTargetWheelMaterial;//
 	G4String fGearStickMaterial;//
 	G4String fBiasPlateMaterial;//
@@ -173,8 +170,7 @@ private:
 	G4String fGearPlateMaterial;//
 	G4String fTargetMountPlateMaterial;//
 	G4String fElectroBoxMaterial;//
-	G4String fSmallBoltMaterial;//
-	G4String fLargeBoltMaterial;//
+	G4String fPSBoltMaterial;//
 	G4String fShieldCoverMaterial;//
 	G4String fMagnetCoverMaterial;//
 	G4String fColdFingerMaterial;//
@@ -188,10 +184,18 @@ private:
 	//-----------------------------
 	// Dimensions of Target Chamber
 	//-----------------------------
+public:
+	static G4double fTargetChamberDistanceFromTarget;
+	static G4int fTargetWheelTargetPos[6];
+	static G4double fTargetWheelFaceZ;
+private:
 	G4double fTargetChamberCylinderInnerRadius;
 	G4double fTargetChamberCylinderOuterRadius;
 	G4double fTargetChamberCylinderLength;
-	G4double fTargetChamberDistanceFromTarget;
+	G4double fTargetChamberCylinderFlatRadius;
+	G4double fTargetChamberMELTabRad;
+	G4double fTargetChamberMELTabWidth;
+	G4double fTargetChamberMagnetIndent;
 	G4double fTargetChamberCylinderLipInnerRadius;
 	G4double fTargetChamberCylinderLipThickness;
 	G4double fTargetChamberCylinderDetOuterRadius;
@@ -220,17 +224,49 @@ private:
 	// --------------------------
 	// Dimensions of Target Wheel
 	// --------------------------
+	G4double fTargetWheelRotation;
+	
 	G4double fTargetWheelRadius;
 	G4double fTargetWheelThickness;
+	G4double fTargetWheelIndentRadius;
+	G4double fTargetWheelIndentDepth;
+	
+	G4double fTargetOffsetRadius;
+	
+	G4double fTargetWheelHoleSpaceAng;
+	G4double fTargetWheelTargetHoleRad;
+	G4double fTargetWheelExtInnerRad1;
+	G4double fTargetWheelExtInnerRad2;
+	G4double fTargetWheelExtBaseRad;
+	G4double fTargetWheelExtLength;
+	G4double fTargetWheelExtTargLip;
+	G4double fTargetWheelExtBaseLip;
+
+	// Mount Plate
+	G4double fTargetMountPlateRadius;
+	G4double fTargetMountPlateThickness;
+	G4double fTargetMountPlateCutDepth;
+	G4double fTargetMountPlateZOffset;
+	G4double fTargetMountPlateHoleRad;
+	
+	G4double fMountPlateRodRadius;
+	G4double fMountPlateRodPlaceR;
+	G4double fMountPlateRodLength;
+	
+	
+	G4double fMountPlateRodZoffset;
+
+
+	//Collimator
+	G4double fTargColRadius1;
+	G4double fTargColRadius2;
+	G4double fTargColHoleHalfSep;
+	G4double fTargColPlateAng;
+	G4double fTargColPlateThick;
+	G4double fTargColPlateFlat;
+	G4double fTargColPlateRad;
 	G4double fTargetWheelOffset;
-	G4double fTargetRadius;
-	G4double fTargetOffset;
-	G4double fCollimatorRadius;
-	// Bias Plate
-	G4double fBiasPlateOuterRadius;
-	G4double fBiasPlateThickness;
-	G4double fBiasPlateOffsetZ;
-	G4double fBiasPlateCut;
+	
 	// Gears
 	G4double fFirstGearRadius;
 	G4double fFirstGearPlaneOffset;
@@ -244,19 +280,22 @@ private:
 	G4double fGearPlateOneRadius;
 	G4double fGearPlateTwoRadius;
 	G4double fGearPlateThickness;
-	// Mount Plate
-	G4double fTargetMountPlateRadius;
-	G4double fTargetMountPlateThickness;
-	G4double fTargetMountPlateZOffset;
 	// Gear Stick
 	G4double fGearStickLength;
 	G4double fGearStickRadius;
-	G4double fGearStickZOffset;
-	// Target Frame
-	G4double fDimTargetFrameOutZ;
-	G4double fDimTargetFrameOutY;
-	G4double fDimTargetFrameCutY;
-
+	// Targets
+	G4double fBunnyTargetThickness;
+	G4double fBunnyRodLength;
+	
+	G4double fEvapTargetThickness;
+	G4double fEvapTargetRadius;
+	G4double fEvapTargetInner;
+	G4double fEvapTargetTabWidth;
+	G4double fEvapTargetTabExtra;
+	G4double fEvapTargetTabIndent;
+	G4double fEvapTargetScrewRad;
+	G4double fEvapTargetScrewHeight;
+	
 	//----------------------------
 	// Dimensions of Photon Shield
 	//----------------------------
@@ -276,22 +315,21 @@ private:
 	G4double fPsTargetClampRadius;
 	G4double fPsTargetClampThickness;
 	G4double fPsTargetClampExtension;
+	G4double fPsTargetClampExtWidth;
 	G4double fPsDetClampRadius;
 	G4double fPsDetClampThickness;
 
 	// ---------------------------------
 	// Dimensions of Photon Shield Bolts
 	// ---------------------------------
-	G4double fPsTargetBoltLength;
-	G4double fPsTargetBoltRadius;
-	G4double fPsTargetBoltPlaneOffset;
-	G4double fPsTargetBoltHeadRadius;
-	G4double fPsTargetBoltHeadLength;
-	G4double fPsDetBoltLength;
-	G4double fPsDetBoltRadius;
-	G4double fPsDetBoltPlaneOffset;
-	G4double fPsDetBoltHeadRadius;
-	G4double fPsDetBoltHeadLength;
+	G4double fPsBoltHoleRadius;
+	G4double fPsBoltPlaceRadius;
+	
+	G4double fPsBoltLength;
+	G4double fPsBoltRadius;
+	G4double fPsBoltBackShield;
+	G4double fPsNutLength;
+	G4double fPsNutRad;
 
 	//---------------------
 	// Dimensions of Magnet
@@ -306,7 +344,7 @@ private:
 	G4double fPlateTwoLength;
 	G4double fPlateTwoHeight;
 
-	G4double fDistanceFromTarget;
+	G4double fMagDistanceFromTarget;
 	G4double fCuttingBoxAngle;
 
 	// ------------------------------------
@@ -315,15 +353,19 @@ private:
 	G4double fMclampChamberThickness;
 	G4double fMclampChamberLength;
 	G4double fMclampChamberHeight;
+	G4double fMagnetRadiusClampOffset;
 
 	// ------------------------------------------
 	// Dimensions of Magnet Clamp (Photon Shield)
 	// ------------------------------------------
-	G4double fPsClampPsbuffer;
-	G4double fPsClampChamberBuffer;
-	G4double fPsClampThicknessBuffer;
-	G4double fPsClampLength;
-
+	G4double fPsClampThicknessTop;
+	G4double fPsClampThicknessBottom;
+	G4double fPsClampThicknessCut;
+	G4double fPsClampThicknessInner;
+	G4double fPsClampThicknessOuter;
+	G4double fPsClampThicknessFace;
+	G4double fPsClampTabHeight;
+	
 	// -------------------------
 	// Dimensions of ElectroBox
 	// -------------------------
@@ -344,16 +386,14 @@ private:
 	G4double fColdfingerHoleRadius;
 
 	// ------------------------------
-	// Dimensions of Plastic Coatings
+	// Dimensions of Kapton Coating
 	// ------------------------------
-	G4double fMagnetCoatingThickness;
 	G4double fShieldCoatingThickness;
 
 	// ---------------------------
 	// individual offsets for visualisation
 	// ---------------------------
 	G4double fFrontDomeOffset;
-	//G4double fTargetWheelOffset;
 	G4double fMiddleRingOffset;
 	G4double fBackDetAndAlBoxOffset;
 
@@ -368,18 +408,17 @@ private:
 	// --------------------------------
 	// Dimensions of Conical Collimator
 	// --------------------------------
-	G4double fMidInnerRadius;
-	G4double fMidOuterRadius;
-	G4double fMidZLength;
-	G4double fOuterCylOuterRadius;
-	G4double fOuterCylInnerRadius;
-	G4double fOuterCylZLength;
-	G4double fInnerCylOuterRadius;
-	G4double fInnerCylInnerRadius;
-	G4double fInnerCylZLength;
-	G4double fEdgeInnerRadius;
-	G4double fEdgeOuterRadius;
-	G4double fEdgeZLength;
+	G4double fConicalInnerRad1;
+	G4double fConicalInnerRad2;
+	G4double fConicalOuterRad1;
+	G4double fConicalOuterRad2;
+	G4double fConicalLength1;
+	G4double fConicalLength2;
+	G4double fConicalLength3;
+	G4double fConicalTabRad;
+	G4double fConicalTabHeight;
+	G4double fConicalTabWidth;
+
 	
 	// --------------------------
 	// Dimensions of X-ray Insert
@@ -387,30 +426,57 @@ private:
 	G4double fInsertCylOuterRadius;
 	G4double fInsertCylInnerRadius;
 	G4double fInsertCylZLength;
-	G4double fInsertEdgeInnerRadius;
-	G4double fInsertEdgeOuterRadius;
 	G4double fInsertEdgeZLength;
-	G4double fInsertHoleRadius;
-	G4double fInsertHoleLength;
 	
-	//-----------------------------
-	// copy numbers
-	//-----------------------------
-	G4int fTargetChamberDownstreamCopyNumber;
-	G4int fPhotonShieldCopyNumber;
-	G4int fPhotonShieldClampCopyNumber;
-	G4int fMagnetsCopyNumber;
-	G4int fMagnetClampCopyNumber;
-	G4int fTargetWheelCopyNumber;
-	G4int fBiasPlateCopyNumber;
-	G4int fGearCopyNumber;
-	G4int fGearStickCopyNumber;
-	G4int fElectroBoxCopyNumber;
-	G4int fPhotonShieldClampBoltCopyNumber;
-	G4int fShieldCoveringCopyNumber;
-	G4int fMagnetCoveringCopyNumber;
-	G4int fColdFingerCopyNumber;
+	G4double fInsertHoleRadius;
+	
+	G4double fInsertConeZLength;
+	G4double fInsertConeR1;
+	G4double fInsertConeR2;
+	G4double fInsertEdgeAngle;
+	
+	// --------------------------
+	// Dimensions of Source 
+	// --------------------------
+	
+	G4double fEffSourceHolderHeight;
+	G4double fEffSourceHolderRad;
+	G4double fEffSourceHolderInner;
+	G4double fEffSourceHoldPocket;
+	G4double fEffSourceHoldPocketRad;
+	G4double fEffSourceScrewRad;
+	G4double fEffSourceScrewHeight;
 
+	G4double fMEezagSourceHeight;
+	G4double fMEezagSourceRad;
+	G4double fMEezagSourceWall;
+	G4double fMEezagSourceRim;
+	G4double fMEezagSourceZ;
+	G4double fMEezagSourceActiveZ;
+	G4double fMEezagSourceAcrylicLength;
+	
+	G4double fBracketSideLength;
+	G4double fBracketBackLength;
+	G4double fBracketDepth;
+	G4double fBracketBackWidth;
+	G4double fBracketSideWidth;
+	G4double fBracketoffset;
+	G4double fBracketAngle;
+	G4double fBracketScrewRad;
+	G4double fBracketScrewHeight;
+		
+	// --------------------------
+	// Construction option bools
+	// --------------------------
+
+	bool BuildMEL;
+	bool Empty;
+	bool Light;
+	bool Bunny;
+	bool Eff;
+	bool Source;
+	bool Col;
+	
 private:
 	//////////////////////////////////////////////////////
 	// internal methods and functions in ApparatusSpiceTargetChamber::Build()
@@ -419,14 +485,13 @@ private:
 	// methods
 	void BuildTargetChamberFrontRing();
 	void BuildTargetChamberSphere();
-	void BuildTargetChamberCylinderDownstream();
+	void BuildTargetChamberCylinderDownstream(bool);
 	void BuildTargetWheel();
 	void BuildTargetWheelSimple();
-	void BuildTargetWheelRods();
 	void BuildTargetWheelGears();
 	void BuildTargetWheelGearPlates();
-	void BuildTargetFrame();
-	void BuildTargetWheelExtension();
+	void BuildBunnyTarget();
+	void BuildEvapTarget();
 	void BuildCollimator();
 	void BuildGearStick();
 	void BuildBiasPlate();
@@ -434,8 +499,8 @@ private:
 	void BuildPhotonShield();
 	void BuildPhotonShieldClamps();
 	void BuildPhotonShieldClampBolts();
-	void BuildCollectorMagnet();
-	void BuildMagnetCovering();
+	void BuildCollectorMagnetandCover();
+	void BuildMagnetCovering(G4VSolid*);
 	void BuildMagnetClampChamber();
 	void BuildElectroBox();
 	void BuildShieldCovering();
@@ -444,36 +509,34 @@ private:
 	void BuildConicalCollimator();
 	void BuildXrayInsert();
 	
+	void BuildPlaceEfficiencySource(G4LogicalVolume*);
+	void BuildMEezagSource(G4LogicalVolume*);
+	void BuildPlaceSource(G4LogicalVolume*);
+	
 	void PlaceTargetChamberFrontRing(G4LogicalVolume*);
 	void PlaceTargetChamberSphere(G4LogicalVolume*);
 	void PlaceTargetChamberCylinderDownstream(G4LogicalVolume*);
 	void PlaceTargetWheel(G4LogicalVolume*);
-	void PlaceTargetWheelRods(G4double, G4double, G4LogicalVolume*);
 	void PlaceTargetWheelGears(G4LogicalVolume*);
 	void PlaceTargetWheelGearPlates(G4LogicalVolume*);
-	void PlaceTargetFrame(G4double, G4LogicalVolume*);
+	void PlaceBunnyTargets(G4LogicalVolume*);
+	void PlaceBunnyTarget(G4int, G4LogicalVolume*);
+	void PlaceEvapTargets(G4LogicalVolume*);
+	void PlaceEvapTarget(G4int, G4LogicalVolume*);
 	void PlaceCollimator(G4LogicalVolume*);
 	void PlaceGearStick(G4LogicalVolume*);
 	void PlaceTargetMountPlate(G4LogicalVolume*);
-	void PlaceTargetWheelExtension(G4LogicalVolume*);
 	void PlaceBiasPlate(G4LogicalVolume*);
 	void PlacePhotonShield(G4LogicalVolume*);
 	void PlacePhotonShieldClamps(G4LogicalVolume*);
 	void PlacePhotonShieldClampBolts(G4int, G4LogicalVolume*);
-	void PlaceCollectorMagnet(G4int, G4LogicalVolume*);
-	void PlaceMagnetCovering(G4int, G4LogicalVolume*);
-	void PlaceMagnetClampChamber(G4int, G4LogicalVolume*);
+	void PlaceMagnetAndCover(G4int, G4LogicalVolume*);
 	void PlaceElectroBox(G4LogicalVolume*);
 	void PlaceShieldCovering(G4LogicalVolume*);
 	void PlaceColdFinger(G4LogicalVolume*);
 	void PlaceS3CableHolder(G4LogicalVolume*);
         void PlaceConicalCollimator(G4LogicalVolume*);
 	void PlaceXrayInsert(G4LogicalVolume*);
-	
-	G4double fTargetZ;
-	
-	// functions
-	G4RotationMatrix* RotateMagnets(G4int);
-	G4ThreeVector TranslateMagnets(G4int, G4double, G4double);
+
 };
 #endif

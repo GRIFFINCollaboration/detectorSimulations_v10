@@ -56,27 +56,6 @@ public:
 private:
     DetectorConstruction* fDetector;
     EventAction*          fEventAction;
-
-    // Griffin
-    void SetDetAndCryNumberForGriffinComponent( G4String );
-    void SetDetAndCryNumberForDeadLayerSpecificGriffinCrystal(G4String);
-    void SetDetNumberForGenericDetector( G4String );
-    void SetDetNumberForAncillaryBGODetector( G4String );
-    void SetDetAndCryNumberForSpiceDetector( G4String ); //to get 10 total detectors
-
-    G4int FindTrueGriffinDetector(G4int);
-
-    G4int fStepNumber;
-    G4int fDet;
-    G4int fCry;
-    G4int fTrueGriffinDetectorMap[16];
-    G4bool fGriffinDetectorMapSet;
-
-    G4int fNumberOfAssemblyVols;
-
-    G4String G4intToG4String(G4int value);
-    G4String GetCrystalColour(G4int value);
-
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

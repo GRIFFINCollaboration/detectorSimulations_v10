@@ -1,0 +1,51 @@
+#/DetSys/phys/SelectPhysics emlivermore
+/run/initialize
+/process/em/fluo true
+/process/em/auger true
+/process/em/pixe true
+/DetSys/world/material Vacuum
+
+/event/verbose 0
+/tracking/verbose 0
+
+/DetSys/app/addSpiceTargetChamber MedEff
+/DetSys/det/addSpiceDetector
+/DetSys/world/TabMagneticField MagneticField3D.MED.TABLE -1 -45
+
+### Set the gun to be a 207Bi ion at rest
+### Decay data is taken from tables part of the geant4 install
+/gun/particle ion
+/gun/ion 83 207 0 0.0
+/grdm/nucleusLimits 207 207 83 82
+/DetSys/gun/efficiencyEnergy 0 MeV
+
+### One can set grdm to use user defined files (format change in 4.10.04)
+#/grdm/setRadioactiveDecayFile 80 198 UserData/Rad_z80.a198
+#/grdm/setPhotoEvaporationFile 80 198 UserData/Phot_z80.a198
+
+
+/DetSys/det/UseSpiceResolution 1
+
+### IMPORTANT ###
+### Because of the magnetic field the simulation will run VERY SLOWLY if
+### nuclear recoils are in free space. Ensure they are inside material!
+### The "Eff" option of /DetSys/app/addSpiceTargetChamber builds a solid source
+/DetSys/gun/position 0.0 0.0 -8.2 mm 
+
+### Here we build a 3 mg/cm2 gold foil which extends from Z=+1um to Z=-0.6um
+### A second call to /DetSys/gun/position then moves the emission position to inside this layer
+### /DetSys/gun/position 0.0 0.0 0.001 mm 
+### /DetSys/app/LayeredTargetAddLayer Gold 3.
+### /DetSys/gun/position 0.0 0.0 0.000 mm 
+
+
+### useful to colour lines when debugging in viewer
+#/vis/modeling/trajectories/create/drawByParticleID
+#/vis/modeling/trajectories/drawByParticleID-0/set gamma magenta
+#/vis/modeling/trajectories/drawByParticleID-0/set e+ blue
+#/vis/modeling/trajectories/drawByParticleID-0/set Pb207[1633.400] white
+#/vis/modeling/trajectories/drawByParticleID-0/set Pb207[569.698] cyan
+#/vis/modeling/trajectories/drawByParticleID-0/set Pb207 green
+#/vis/modeling/trajectories/drawByParticleID-0/set e- yellow
+
+/run/beamOn 50000000

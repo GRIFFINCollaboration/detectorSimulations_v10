@@ -50,76 +50,72 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun)
-    :fAction(Gun)
+:fAction(Gun)
 {
-  
-    fNumberOfDecayingLaBrDetectorsCmd = new G4UIcmdWithAnInteger("/DetSys/gun/numberOfDecayingLaBrDetectors",this);
-    fNumberOfDecayingLaBrDetectorsCmd->SetGuidance("Set the number of radioactive LaBr detectors");
-    fNumberOfDecayingLaBrDetectorsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    fEfficiencyEnergyCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/efficiencyEnergy",this);
-    fEfficiencyEnergyCmd->SetGuidance("Set gamma efficiency energy");
-    fEfficiencyEnergyCmd->SetUnitCategory("Energy");
-    fEfficiencyEnergyCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	fNumberOfDecayingLaBrDetectorsCmd = new G4UIcmdWithAnInteger("/DetSys/gun/numberOfDecayingLaBrDetectors",this);
+	fNumberOfDecayingLaBrDetectorsCmd->SetGuidance("Set the number of radioactive LaBr detectors");
+	fNumberOfDecayingLaBrDetectorsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    fEfficiencyDirectionCmd = new G4UIcmdWith3Vector("/DetSys/gun/direction",this);
-    fEfficiencyDirectionCmd->SetGuidance("Set momentum direction.");
-    fEfficiencyDirectionCmd->SetGuidance("Direction needs not to be a unit vector.");
-    fEfficiencyDirectionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	fEfficiencyEnergyCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/efficiencyEnergy",this);
+	fEfficiencyEnergyCmd->SetGuidance("Set gamma efficiency energy");
+	fEfficiencyEnergyCmd->SetUnitCategory("Energy");
+	fEfficiencyEnergyCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    fEfficiencyPositionCmd = new G4UIcmdWith3VectorAndUnit("/DetSys/gun/position",this);
-    fEfficiencyPositionCmd->SetGuidance("Set position.");
-    fEfficiencyPositionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	fEfficiencyDirectionCmd = new G4UIcmdWith3Vector("/DetSys/gun/direction",this);
+	fEfficiencyDirectionCmd->SetGuidance("Set momentum direction.");
+	fEfficiencyDirectionCmd->SetGuidance("Direction needs not to be a unit vector.");
+	fEfficiencyDirectionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    fEfficiencyParticleCmd = new G4UIcmdWithAString("/DetSys/gun/particle",this);
-    fEfficiencyParticleCmd->SetGuidance("Set particle.");
-    fEfficiencyParticleCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	fEfficiencyPositionCmd = new G4UIcmdWith3VectorAndUnit("/DetSys/gun/position",this);
+	fEfficiencyPositionCmd->SetGuidance("Set position.");
+	fEfficiencyPositionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    fEfficiencyPolarizationCmd = new G4UIcmdWith3Vector("/DetSys/gun/polarization",this);
-    fEfficiencyPolarizationCmd->SetGuidance("Set gamma polarization direction.");
-    fEfficiencyPolarizationCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-   
-    fConeAngleCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/coneMaxAngle",this);//SPICE cone angle value
-    fConeAngleCmd->SetGuidance("Set cone value for outer theta - use deg (0-90)");
-    fConeAngleCmd->SetUnitCategory("Angle");
-    fConeAngleCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-    
-    fConeMinAngleCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/coneMinAngle",this);//SPICE cone angle value
-    fConeMinAngleCmd->SetGuidance("Set cone value for inner theta - use deg (0-90) - default is 0 if none specified");
-    fConeMinAngleCmd->SetUnitCategory("Angle");
-    fConeMinAngleCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-     
-    fBeamSpotSigmaCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/BeamSpot",this);//Beam spot sigma
-    fBeamSpotSigmaCmd->SetGuidance("Set sigma for a realistic beamspot");
-    fBeamSpotSigmaCmd->SetUnitCategory("Length");
-    fBeamSpotSigmaCmd->AvailableForStates(G4State_PreInit,G4State_Idle);   
+	fEfficiencyParticleCmd = new G4UIcmdWithAString("/DetSys/gun/particle",this);
+	fEfficiencyParticleCmd->SetGuidance("Set particle.");
+	fEfficiencyParticleCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    fBeamDistroCmd = new G4UIcmdWithAnInteger("/Detsys/gun/TargetLayer",this);//with target, can apply a distribution
-    fBeamDistroCmd->SetGuidance("Set beam distribution within a target layer, zero indexed");
-    fBeamDistroCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-    
-    fBeamFileCmd = new G4UIcmdWithAString("/Detsys/gun/FileDistro",this);//with target, can apply a distribution
-    fBeamFileCmd->SetGuidance("Set beam distribution within a target using definitions in a data file");
-    fBeamFileCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-    
-    fSourceBeamCmd = new G4UIcmdWithAString("/Detsys/gun/SourceBeam",this);//apply beam make-up from bismuth/barium
-    fSourceBeamCmd->SetGuidance("Set beam distribution from source, named by the command");
-    fSourceBeamCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	fEfficiencyPolarizationCmd = new G4UIcmdWith3Vector("/DetSys/gun/polarization",this);
+	fEfficiencyPolarizationCmd->SetGuidance("Set gamma polarization direction.");
+	fEfficiencyPolarizationCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	fConeAngleCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/coneMaxAngle",this);//SPICE cone angle value
+	fConeAngleCmd->SetGuidance("Set cone value for outer theta - use deg (0-90)");
+	fConeAngleCmd->SetUnitCategory("Angle");
+	fConeAngleCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	fConeMinAngleCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/coneMinAngle",this);//SPICE cone angle value
+	fConeMinAngleCmd->SetGuidance("Set cone value for inner theta - use deg (0-90) - default is 0 if none specified");
+	fConeMinAngleCmd->SetUnitCategory("Angle");
+	fConeMinAngleCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	fBeamSpotSigmaCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/BeamSpot",this);//Beam spot sigma
+	fBeamSpotSigmaCmd->SetGuidance("Set sigma for a realistic beamspot");
+	fBeamSpotSigmaCmd->SetUnitCategory("Length");
+	fBeamSpotSigmaCmd->AvailableForStates(G4State_PreInit,G4State_Idle);   
+
+	fBeamDistroCmd = new G4UIcmdWithAnInteger("/Detsys/gun/TargetLayer",this);//with target, can apply a distribution
+	fBeamDistroCmd->SetGuidance("Set beam distribution within a target layer, zero indexed");
+	fBeamDistroCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	fBeamFileCmd = new G4UIcmdWithAString("/Detsys/gun/FileDistro",this);//with target, can apply a distribution
+	fBeamFileCmd->SetGuidance("Set beam distribution within a target using definitions in a data file");
+	fBeamFileCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger() {
-    delete fNumberOfDecayingLaBrDetectorsCmd;
-    delete fEfficiencyEnergyCmd;
-    delete fEfficiencyDirectionCmd;
-    delete fEfficiencyPolarizationCmd;
-    delete fConeAngleCmd;
-    delete fConeMinAngleCmd;
-    delete fBeamSpotSigmaCmd;
-    delete fBeamDistroCmd;
-    delete fBeamFileCmd;
-    delete fSourceBeamCmd;    
+	delete fNumberOfDecayingLaBrDetectorsCmd;
+	delete fEfficiencyEnergyCmd;
+	delete fEfficiencyDirectionCmd;
+	delete fEfficiencyPolarizationCmd;
+	delete fConeAngleCmd;
+	delete fConeMinAngleCmd;
+	delete fBeamSpotSigmaCmd;
+	delete fBeamDistroCmd;
+	delete fBeamFileCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -129,7 +125,7 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
 		fAction->SetNumberOfDecayingLaBrDetectors(fNumberOfDecayingLaBrDetectorsCmd->GetNewIntValue(newValue));
 		return;
 	}
-	if(command == fEfficiencyEnergyCmd ) {
+	if(command == fEfficiencyEnergyCmd) {
 		fAction->SetEfficiencyEnergy(fEfficiencyEnergyCmd->GetNewDoubleValue(newValue));
 		return;
 	}
@@ -172,11 +168,6 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
 		G4cout<<"Beam Distribution from file "<<newValue<<" selected "<< G4endl;
 		fAction->PrepareBeamFile(newValue);
 	}
-	if(command == fSourceBeamCmd) {
-		fAction->SetSourceNeeded(true);
-		G4cout<<"Source beam chosen"<< G4endl;
-		fAction->SetSourceName(newValue);
-	}  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

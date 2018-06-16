@@ -51,7 +51,7 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
-    :fDetector(Det)
+:fDetector(Det)
 {
 	fDetSysDir = new G4UIdirectory("/DetSys/");
 	fDetSysDir->SetGuidance("UI commands of this example");
@@ -83,6 +83,11 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
 	fWorldMagneticFieldCmd->SetGuidance("Set world magnetic field - x y z unit.");
 	fWorldMagneticFieldCmd->SetUnitCategory("Magnetic flux density");
 	fWorldMagneticFieldCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	fWorldStepLimit = new G4UIcmdWithADoubleAndUnit("/DetSys/world/StepLimit",this);
+	fWorldStepLimit->SetGuidance("Set user step limit for the world volume.");
+	fWorldStepLimit->SetUnitCategory("Length");
+	fWorldStepLimit->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 	fGenericTargetCmd = new G4UIcmdWithAString("/DetSys/app/genericTarget",this);
 	fGenericTargetCmd->SetGuidance("Select material of the target.");
@@ -278,39 +283,39 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
 	fAddDetectionSystemGriffinBackDetectorCmd->SetGuidance("Add GriffinBack Detector");
 	fAddDetectionSystemGriffinBackDetectorCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-	fAddDetectionSystemGriffinCustomDetectorCmd = new G4UIcmdWithAnInteger( "/DetSys/det/addGriffinCustomDetector", this);
-	fAddDetectionSystemGriffinCustomDetectorCmd->SetGuidance( "Adds a detector using the paramaters specified");
-	fAddDetectionSystemGriffinCustomDetectorCmd->AvailableForStates( G4State_PreInit, G4State_Idle);
+	fAddDetectionSystemGriffinCustomDetectorCmd = new G4UIcmdWithAnInteger("/DetSys/det/addGriffinCustomDetector", this);
+	fAddDetectionSystemGriffinCustomDetectorCmd->SetGuidance("Adds a detector using the paramaters specified");
+	fAddDetectionSystemGriffinCustomDetectorCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-	fAddDetectionSystemGriffinCustomCmd = new G4UIcmdWithAnInteger( "/DetSys/det/addGriffinCustom", this);
-	fAddDetectionSystemGriffinCustomCmd->SetGuidance( "Adds a detection system using the paramaters specified");
-	fAddDetectionSystemGriffinCustomCmd->AvailableForStates( G4State_PreInit, G4State_Idle);
+	fAddDetectionSystemGriffinCustomCmd = new G4UIcmdWithAnInteger("/DetSys/det/addGriffinCustom", this);
+	fAddDetectionSystemGriffinCustomCmd->SetGuidance("Adds a detection system using the paramaters specified");
+	fAddDetectionSystemGriffinCustomCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
 	//////// Commands that are required for addGriffinCustom
-	fAddDetectionSystemGriffinShieldSelectCmd = new G4UIcmdWithAnInteger( "/DetSys/det/SetCustomShieldsPresent", this);
-	fAddDetectionSystemGriffinShieldSelectCmd->SetGuidance( "Selects whether or not the detector suppressors are included");
-	fAddDetectionSystemGriffinShieldSelectCmd->AvailableForStates( G4State_PreInit, G4State_Idle);
+	fAddDetectionSystemGriffinShieldSelectCmd = new G4UIcmdWithAnInteger("/DetSys/det/SetCustomShieldsPresent", this);
+	fAddDetectionSystemGriffinShieldSelectCmd->SetGuidance("Selects whether or not the detector suppressors are included");
+	fAddDetectionSystemGriffinShieldSelectCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-	fAddDetectionSystemGriffinSetRadialDistanceCmd = new G4UIcmdWithADoubleAndUnit( "/DetSys/det/SetCustomRadialDistance", this);
-	fAddDetectionSystemGriffinSetRadialDistanceCmd->SetGuidance( "Selects the radial distance for the detector from the origin");
-	fAddDetectionSystemGriffinSetRadialDistanceCmd->AvailableForStates( G4State_PreInit, G4State_Idle);
+	fAddDetectionSystemGriffinSetRadialDistanceCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/det/SetCustomRadialDistance", this);
+	fAddDetectionSystemGriffinSetRadialDistanceCmd->SetGuidance("Selects the radial distance for the detector from the origin");
+	fAddDetectionSystemGriffinSetRadialDistanceCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-	fAddDetectionSystemGriffinSetExtensionSuppLocationCmd = new G4UIcmdWithAnInteger( "/DetSys/det/SetCustomExtensionSuppressorLocation", this);
-	fAddDetectionSystemGriffinSetExtensionSuppLocationCmd->SetGuidance( "Selects a position for the extension suppressors. Either forward (0) or back (1).");
-	fAddDetectionSystemGriffinSetExtensionSuppLocationCmd->AvailableForStates( G4State_PreInit, G4State_Idle);
+	fAddDetectionSystemGriffinSetExtensionSuppLocationCmd = new G4UIcmdWithAnInteger("/DetSys/det/SetCustomExtensionSuppressorLocation", this);
+	fAddDetectionSystemGriffinSetExtensionSuppLocationCmd->SetGuidance("Selects a position for the extension suppressors. Either forward (0) or back (1).");
+	fAddDetectionSystemGriffinSetExtensionSuppLocationCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-	fAddDetectionSystemGriffinSetPositionCmd = new G4UIcmdWith3Vector( "/DetSys/det/SetCustomPosition", this);
-	fAddDetectionSystemGriffinSetPositionCmd->SetGuidance( "Sets the position and number for the detector placed in the next call to addGriffinCustom.");
-	fAddDetectionSystemGriffinSetPositionCmd->AvailableForStates( G4State_PreInit, G4State_Idle);
+	fAddDetectionSystemGriffinSetPositionCmd = new G4UIcmdWith3Vector("/DetSys/det/SetCustomPosition", this);
+	fAddDetectionSystemGriffinSetPositionCmd->SetGuidance("Sets the position and number for the detector placed in the next call to addGriffinCustom.");
+	fAddDetectionSystemGriffinSetPositionCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-	fAddDetectionSystemGriffinSetDeadLayerCmd = new G4UIcmdWith3Vector( "/DetSys/det/SetCustomDeadLayer", this);
-	fAddDetectionSystemGriffinSetDeadLayerCmd->SetGuidance( "Sets the dead layer for the specified crystal.");
-	fAddDetectionSystemGriffinSetDeadLayerCmd->AvailableForStates( G4State_PreInit, G4State_Idle);
+	fAddDetectionSystemGriffinSetDeadLayerCmd = new G4UIcmdWith3Vector("/DetSys/det/SetCustomDeadLayer", this);
+	fAddDetectionSystemGriffinSetDeadLayerCmd->SetGuidance("Sets the dead layer for the specified crystal.");
+	fAddDetectionSystemGriffinSetDeadLayerCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 	////////
 
-	fAddDetectionSystemGriffinHevimetCmd = new G4UIcmdWithAnInteger( "/DetSys/det/includeGriffinHevimet", this);
-	fAddDetectionSystemGriffinHevimetCmd->SetGuidance( "Includes the Hevimet for a Griffin detector.");
-	fAddDetectionSystemGriffinHevimetCmd->AvailableForStates( G4State_PreInit, G4State_Idle);
+	fAddDetectionSystemGriffinHevimetCmd = new G4UIcmdWithAnInteger("/DetSys/det/includeGriffinHevimet", this);
+	fAddDetectionSystemGriffinHevimetCmd->SetGuidance("Includes the Hevimet for a Griffin detector.");
+	fAddDetectionSystemGriffinHevimetCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
 	fAddDetectionSystemSceptarCmd = new G4UIcmdWithAnInteger("/DetSys/det/addSceptar",this);
 	fAddDetectionSystemSceptarCmd->SetGuidance("Add Detection System Sceptar");
@@ -319,6 +324,10 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
 	fAddDetectionSystemSpiceCmd = new G4UIcmdWithoutParameter("/DetSys/det/addSpiceDetector",this);
 	fAddDetectionSystemSpiceCmd->SetGuidance("Add Detection System Spice");
 	fAddDetectionSystemSpiceCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	fAddDetectionSystemTrificCmd = new G4UIcmdWithAString("/DetSys/det/addTrificDetector",this);
+	fAddDetectionSystemTrificCmd->SetGuidance("Add Detection System Trific");
+	fAddDetectionSystemTrificCmd->AvailableForStates(G4State_PreInit,G4State_Idle);	
 
 	fUseSpiceResolutionCmd = new G4UIcmdWithABool("/DetSys/det/UseSpiceResolution",this);
 	fUseSpiceResolutionCmd->SetGuidance("Apply a resolution to energy depositions");
@@ -344,6 +353,7 @@ DetectorMessenger::~DetectorMessenger()
 	delete fWorldDimensionsCmd;
 	delete fWorldVisCmd;
 	delete fWorldMagneticFieldCmd;
+	delete fWorldStepLimit;
 	delete fDetSysDir;
 	delete fUpdateCmd;
 	delete fGenericTargetCmd;
@@ -395,6 +405,7 @@ DetectorMessenger::~DetectorMessenger()
 
 	delete fAddDetectionSystemSceptarCmd;
 	delete fAddDetectionSystemSpiceCmd;
+	delete fAddDetectionSystemTrificCmd;
 	delete fAddDetectionSystemPacesCmd;
 
 	delete fAddDetectionSystemGriffinForwardCmd;
@@ -431,6 +442,9 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	}
 	if(command == fUpdateCmd) {
 		fDetector->UpdateGeometry();
+	}
+	if(command == fWorldStepLimit) {
+		fDetector->SetWorldStepLimit(fWorldStepLimit->GetNewDoubleValue(newValue));
 	}
 	if(command == fGenericTargetCmd) {
 		fDetector->SetGenericTargetMaterial(newValue);
@@ -471,16 +485,14 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	if(command == fLayeredTargetAddCmd) {
 		G4String Material;
 		G4double areal;
-		const char* s = newValue;///string
-		std::istringstream is ((char*)s);///string
+		std::istringstream is(newValue);///string
 		is>>Material>>areal;
 		fDetector->LayeredTargetAdd(Material, areal);
 	}
-	if( command == fTabMagneticFieldCmd) {
+	if(command == fTabMagneticFieldCmd) {
 		G4String PathAndTableName;
 		G4double z_offset, z_rotation;
-		const char* s = newValue;///string
-		std::istringstream is ((char*)s);///string
+		std::istringstream is(newValue);///string
 		is>>PathAndTableName>>z_offset>>z_rotation;
 		fDetector->SetTabMagneticField(PathAndTableName, z_offset, z_rotation); // z in mm, angle in degree  
 	}
@@ -603,9 +615,17 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 		fDetector->AddDetectionSystemGriffinSetDeadLayer(fAddDetectionSystemGriffinSetDeadLayerCmd->GetNew3VectorValue(newValue));
 	}
 	if(command == fAddDetectionSystemSpiceCmd) {
-		fDetector->AddDetectionSystemSpice(10); 
+		fDetector->AddDetectionSystemSpice(); 
 	}
-	if(command == fUseSpiceResolutionCmd ) {
+	if(command == fAddDetectionSystemTrificCmd) {
+		//Done as a string because Torr isnt a default unit 
+		G4double torr;
+		std::istringstream is(newValue);///string
+		is>>torr;
+		if(torr>1)fDetector->AddDetectionSystemTrific(torr);
+		else fDetector->AddDetectionSystemTrific(760.0);
+	}
+	if(command == fUseSpiceResolutionCmd) {
 		fDetector->SpiceRes(fUseSpiceResolutionCmd->GetNewBoolValue(newValue));
 	}
 	if(command == fAddDetectionSystemPacesCmd) {

@@ -15,41 +15,35 @@ do
 
 	### Dont change ###
 	echo "/run/initialize" > spiceauto.mac 
-	echo "/process/em/fluo true" >> spiceauto.mac 
-	echo "/process/em/auger true" >> spiceauto.mac 
-	echo "/process/em/pixe true" >> spiceauto.mac 
+	echo "/process/em/fluo false" >> spiceauto.mac 
+	echo "/process/em/auger false" >> spiceauto.mac 
+	echo "/process/em/pixe false" >> spiceauto.mac 
 	echo "/DetSys/world/material Vacuum" >> spiceauto.mac 
 	echo "/DetSys/gun/particle e-" >> spiceauto.mac 
 	echo "/DetSys/gun/efficiencyEnergy $E keV" >> spiceauto.mac 
 	echo "/DetSys/gun/BeamSpot 0.5 mm" >> spiceauto.mac 
 	### Dont change ###
 
-	### Set to target position -8. or -0.5
-	echo "/DetSys/gun/position 0.0 0.0 -8. mm " >> spiceauto.mac 
-
-	### Select one of the two detector configurations 
-	### LEL
-	#echo "/DetSys/app/addSpiceTargetChamber Low" >> spiceauto.mac 
-	#echo "/DetSys/det/addSpiceDetector" >> spiceauto.mac 
-	#echo "/DetSys/world/TabMagneticField MagneticField3D.LOW.TABLE -1 -45" >> spiceauto.mac 
-	### MED
-	echo "/DetSys/app/addSpiceTargetChamber Med" >> spiceauto.mac 
-	echo "/DetSys/det/addSpiceDetector" >> spiceauto.mac 
+	### Select the desired options and the corresponding field file field
+	echo "/DetSys/app/addSpiceTargetChamber MedBunnyCol" >> spiceauto.mac 
 	echo "/DetSys/world/TabMagneticField MagneticField3D.MED.TABLE -1 -45" >> spiceauto.mac 
+	#echo "/DetSys/world/TabMagneticField MagneticField3D.LOW.TABLE -1 -45" >> spiceauto.mac 
+	echo "/DetSys/det/addSpiceDetector" >> spiceauto.mac 
 
 	### Set target details, thickness in mg/cm2
+	### Position should match options (bunny nominally Z=-8.)
+	echo "/DetSys/gun/position 0.0 0.0 -8. mm " >> spiceauto.mac 
 	echo "/DetSys/app/LayeredTargetAddLayer Gold 1.8" >> spiceauto.mac 
 	echo "/Detsys/gun/TargetLayer 0" >> spiceauto.mac 
 
 	### Change based on time/precision
 	### Set as low as 10,000 for a very rough fast answer and a maximum of 10,000,000 
-	echo "/run/beamOn 10000" >> spiceauto.mac 
+	echo "/run/beamOn 100000" >> spiceauto.mac 
 
 	#running the sim with macro created here
 	./Griffinv10 spiceauto.mac 
 
 	mv g4out.root SPICE_"$E".root
-
 done
 
-# root -l MakeEfficiency.c
+root -nl MakeEfficiency.c

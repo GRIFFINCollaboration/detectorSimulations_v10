@@ -46,17 +46,17 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 EventAction::EventAction(RunAction* run, HistoManager* hist)
-    :G4UserEventAction(),
-      fRunAction(run),
-		fHistoManager(hist),
-      fPrintModulo(1000)
+:G4UserEventAction(),
+	fRunAction(run),
+	fHistoManager(hist),
+	fPrintModulo(1000)
 {
-    fNumberOfHits = 0;
-    fNumberOfSteps = 0;
+	fNumberOfHits = 0;
+	fNumberOfSteps = 0;
 
-	 if(fHistoManager->GetDetectorConstruction()->Spice()) {
-		 SetupSpiceErfc();
-	 }
+	if(fHistoManager->GetDetectorConstruction()->Spice()) {
+		SetupSpiceErfc();
+	}
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -80,15 +80,7 @@ void EventAction::BeginOfEventAction(const G4Event* evt) {
 void EventAction::EndOfEventAction(const G4Event*) {
 	if(fHistoManager != nullptr) {
 		if(fHistoManager->GetDetectorConstruction()->Spice()) {
-			FillParticleType();
-			FillGriffinCryst();
-			Fill8piCryst();
-			FillLaBrCryst();
-			FillAncillaryBgo();
-			FillSceptar();
-			FillGridCell();
 			FillSpice();
-			FillPacesCryst();
 		} else {
 			for(G4int i = 0; i < fNumberOfHits; i++) {
 				fHistoManager->FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i]);
@@ -104,76 +96,68 @@ void EventAction::EndOfEventAction(const G4Event*) {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void EventAction::AddHitTracker(G4String mnemonic, G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ) {
-	G4bool newhit = true;
+void EventAction::AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& targetZ) {
 	for(G4int i = 0; i < fNumberOfHits; i++) {
-		if(fPHitMnemonic[i] == mnemonic) {
+		if(fProperties[i] == properties) {
 			// sum the new enery
 			fHitTrackerD[0][i] = fHitTrackerD[0][i] + depEnergy;
-			newhit = false;
-			break;
+			return;
 		}
 	}
-	if(newhit) { // new hit
-		fPHitMnemonic[fHitIndex] = mnemonic;
-		fPTrackID = trackID;
-		fPParentID = parentID;
-		fHitTrackerI[0][fHitIndex] = eventNumber;
-		fHitTrackerI[1][fHitIndex] = trackID;
-		fHitTrackerI[2][fHitIndex] = parentID;
-		fHitTrackerI[3][fHitIndex] = stepNumber;
-		fHitTrackerI[4][fHitIndex] = particleType;
-		fHitTrackerI[5][fHitIndex] = processType;
-		fHitTrackerI[6][fHitIndex] = systemID;
-		fHitTrackerI[7][fHitIndex] = cryNumber;
-		fHitTrackerI[8][fHitIndex] = detNumber;
-		fHitTrackerI[9][fHitIndex] = targetZ;
-		fHitTrackerD[0][fHitIndex] = depEnergy;
-		fHitTrackerD[1][fHitIndex] = posx;
-		fHitTrackerD[2][fHitIndex] = posy;
-		fHitTrackerD[3][fHitIndex] = posz;
-		fHitTrackerD[4][fHitIndex] = time;
+	// new hit
+	fProperties[fNumberOfHits] = properties;
+	fHitTrackerI[0][fNumberOfHits] = eventNumber;
+	fHitTrackerI[1][fNumberOfHits] = trackID;
+	fHitTrackerI[2][fNumberOfHits] = parentID;
+	fHitTrackerI[3][fNumberOfHits] = stepNumber;
+	fHitTrackerI[4][fNumberOfHits] = particleType;
+	fHitTrackerI[5][fNumberOfHits] = processType;
+	fHitTrackerI[6][fNumberOfHits] = properties.systemID;
+	fHitTrackerI[7][fNumberOfHits] = properties.crystalNumber;
+	fHitTrackerI[8][fNumberOfHits] = properties.detectorNumber;
+	fHitTrackerI[9][fNumberOfHits] = targetZ;
+	fHitTrackerD[0][fNumberOfHits] = depEnergy;
+	fHitTrackerD[1][fNumberOfHits] = pos.x();
+	fHitTrackerD[2][fNumberOfHits] = pos.y();
+	fHitTrackerD[3][fNumberOfHits] = pos.z();
+	fHitTrackerD[4][fNumberOfHits] = time;
 
-		fHitIndex++;
-		fNumberOfHits = fHitIndex;
+	++fNumberOfHits;
 
-		if(fNumberOfHits >= MAXHITS) {
-			G4cout << "ERROR! Too many hits!" << G4endl;
-		}
+	if(fNumberOfHits >= MAXHITS) {
+		G4cout<<"ERROR! Too many hits!"<<G4endl;
+		throw;
 	}
 }
 
-void EventAction::AddStepTracker(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ) {
-	G4bool newstep = true;
-	if(newstep) { // new step
-		fStepTrackerI[0][fStepIndex] = eventNumber;
-		fStepTrackerI[1][fStepIndex] = trackID;
-		fStepTrackerI[2][fStepIndex] = parentID;
-		fStepTrackerI[3][fStepIndex] = stepNumber;
-		fStepTrackerI[4][fStepIndex] = particleType;
-		fStepTrackerI[5][fStepIndex] = processType;
-		fStepTrackerI[6][fStepIndex] = systemID;
-		fStepTrackerI[7][fStepIndex] = cryNumber;
-		fStepTrackerI[8][fStepIndex] = detNumber;
-		fStepTrackerI[9][fStepIndex] = targetZ;
-		fStepTrackerD[0][fStepIndex] = depEnergy;
-		fStepTrackerD[1][fStepIndex] = posx;
-		fStepTrackerD[2][fStepIndex] = posy;
-		fStepTrackerD[3][fStepIndex] = posz;
-		fStepTrackerD[4][fStepIndex] = time;
+void EventAction::AddStepTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& targetZ) {
+	// new step
+	fStepTrackerI[0][fNumberOfSteps] = eventNumber;
+	fStepTrackerI[1][fNumberOfSteps] = trackID;
+	fStepTrackerI[2][fNumberOfSteps] = parentID;
+	fStepTrackerI[3][fNumberOfSteps] = stepNumber;
+	fStepTrackerI[4][fNumberOfSteps] = particleType;
+	fStepTrackerI[5][fNumberOfSteps] = processType;
+	fStepTrackerI[6][fNumberOfSteps] = properties.systemID;
+	fStepTrackerI[7][fNumberOfSteps] = properties.crystalNumber;
+	fStepTrackerI[8][fNumberOfSteps] = properties.detectorNumber;
+	fStepTrackerI[9][fNumberOfSteps] = targetZ;
+	fStepTrackerD[0][fNumberOfSteps] = depEnergy;
+	fStepTrackerD[1][fNumberOfSteps] = pos.x();
+	fStepTrackerD[2][fNumberOfSteps] = pos.y();
+	fStepTrackerD[3][fNumberOfSteps] = pos.z();
+	fStepTrackerD[4][fNumberOfSteps] = time;
 
-		fStepIndex++;
+	++fNumberOfSteps;
 
-		fNumberOfSteps = fStepIndex;
-		if(fNumberOfSteps >= MAXSTEPS) {
-			G4cout << "ERROR! Too many steps!" << G4endl;
-		}
+	if(fNumberOfSteps >= MAXSTEPS) {
+		G4cout<<"ERROR! Too many steps!"<<G4endl;
+		throw;
 	}
 }
 
 void EventAction::ClearVariables() {
 	if(fHistoManager->GetStepTrackerBool()) {
-		fStepIndex = 0;
 		fNumberOfSteps = 0;
 		for(G4int i = 0; i < MAXSTEPS; i++) {
 			for(G4int j = 0; j < NUMSTEPVARS; j++) {
@@ -184,13 +168,10 @@ void EventAction::ClearVariables() {
 	}
 
 	if(fHistoManager->GetHitTrackerBool()) {
-		fHitIndex = 0;
 		fNumberOfHits = 0;
-		fPTrackID = -1;
-		fPParentID = -1;
 
 		for(G4int i = 0; i < MAXHITS; i++) {
-			fPHitMnemonic[i] = "XXX00XX00X";
+			fProperties[i].Clear();
 			for(G4int j = 0; j < NUMSTEPVARS; j++) {
 				fHitTrackerI[j][i] = 0;
 				fHitTrackerD[j][i] = 0.0;
@@ -199,221 +180,23 @@ void EventAction::ClearVariables() {
 	}
 
 	if(fHistoManager->GetDetectorConstruction()->Spice()) {
-		for(G4int i = 0; i < NUMPARTICLETYPES; i++) {
-			fParticleTypes[i]   = 0;
-		}
-		for(G4int iii = 0; iii < MAXNUMDETPACES; iii++) {
-			fPacesCrystEnergyDet[iii]  = 0;
-			fPacesCrystTrackDet[iii]   = 0;
-		}
-		for(G4int i = 0; i < MAXNUMDETSPICE; i++){
+		for(G4int i = 0; i < 10; i++){
 			for(G4int j=0; j<12; j++) {
 				fSpiceEnergyDet[i][j] = 0;
 				fSpiceTrackDet[i][j]  = 0;
 			}
 		}
-		for(G4int i = 0; i < MAXNUMDET; i++) {
-			fEightPiCrystEnergyDet[i] = 0;
-			fEightPiCrystTrackDet[i]  = 0;
-
-			fLaBrCrystEnergyDet[i]  = 0;
-			fLaBrCrystTrackDet[i]   = 0;
-
-			fAncillaryBgoEnergyDet[i]  = 0;
-			fAncillaryBgoTrackDet[i]   = 0;
-
-			fSceptarEnergyDet[i]  = 0;
-			fSceptarTrackDet[i]   = 0;
-
-			fGridCellElectronEKinDet[i]  = 0;
-			fGridCellElectronTrackDet[i] = 0;
-			fGridCellGammaEKinDet[i]     = 0;
-			fGridCellGammaTrackDet[i]    = 0;
-			fGridCellNeutronEKinDet[i]   = 0;
-			fGridCellNeutronTrackDet[i]  = 0;
-		}
-
-		for(G4int i = 0; i < MAXNUMDETGRIFFIN; i++) {
-			for(G4int j = 0; j < MAXNUMCRYGRIFFIN; j++) {
-				fGriffinCrystEnergyDet[i][j]                 = 0;
-				fGriffinCrystTrackDet[i][j]                  = 0;
-				fGriffinSuppressorBackEnergyDet[i][j]        = 0;
-				fGriffinSuppressorBackTrackDet[i][j]         = 0;
-				fGriffinSuppressorLeftExtensionEnergyDet[i][j]  = 0;
-				fGriffinSuppressorLeftExtensionTrackDet[i][j]   = 0;
-				fGriffinSuppressorLeftSideEnergyDet[i][j]       = 0;
-				fGriffinSuppressorLeftSideTrackDet[i][j]        = 0;
-				fGriffinSuppressorRightExtensionEnergyDet[i][j] = 0;
-				fGriffinSuppressorRightExtensionTrackDet[i][j]  = 0;
-				fGriffinSuppressorRightSideEnergyDet[i][j]      = 0;
-				fGriffinSuppressorRightSideTrackDet[i][j]       = 0;
-			}
-		}  // NOTE: Clear the variables from the new Fill___Cryst functions as last EndofEvent action
 	}
 }
 
-void EventAction::FillParticleType() {///this works
-	G4int numParticleTypes = 0;
-	for(G4int i = 0; i < NUMPARTICLETYPES; i++) {
-		if(fParticleTypes[i] != 0) { // if particle type 'i' has non-zero counts
-			for(G4int j = 0; j< fParticleTypes[i]; j++) { // loop over the number of time we saw it
-				fHistoManager->FillHistogram(kAstatsParticleTypeInEachStep, i);
-			}
-		}
-	}
-
-	// Fill the number of particle types in the event
-	for(G4int i = 0; i < NUMPARTICLETYPES; i++) {
-		if(fParticleTypes[i] != 0)
-			numParticleTypes++;
-	}
-	fHistoManager->FillHistogram(kAstatsParticleTypeInEachEvent, numParticleTypes);
-}
-
-void EventAction::FillGriffinCryst()
-{
-	G4double  energySum = 0;
-	G4double  energySumDet = 0;
-	G4bool suppressorBackFired[MAXNUMDETGRIFFIN] = {0};
-	G4bool suppressorExtensionFired[MAXNUMDETGRIFFIN] = {0};
-	G4bool suppressorSideFired[MAXNUMDETGRIFFIN] = {0};
-	G4bool suppressorFired = false;
-
-	// Fill Griffin Histos
-	for(G4int i=0; i < MAXNUMDETGRIFFIN; i++) {
-		energySumDet = 0;
-		// Find if any suppressors were fired
-		for(G4int j=0; j < MAXNUMCRYGRIFFIN; j++) {
-			if(fGriffinSuppressorBackEnergyDet[i][j] > MINENERGYTHRES) {
-				suppressorBackFired[i] = true;
-			}
-			if(fGriffinSuppressorLeftExtensionEnergyDet[i][j] > MINENERGYTHRES) {
-				suppressorExtensionFired[i] = true;
-			}
-			if(fGriffinSuppressorRightExtensionEnergyDet[i][j] > MINENERGYTHRES) {
-				suppressorExtensionFired[i] = true;
-			}
-			if(fGriffinSuppressorLeftSideEnergyDet[i][j] > MINENERGYTHRES) {
-				suppressorSideFired[i] = true;
-			}
-			if(fGriffinSuppressorRightSideEnergyDet[i][j] > MINENERGYTHRES) {
-				suppressorSideFired[i] = true;
-			}
-			if(!suppressorFired && ( suppressorBackFired[i] || suppressorExtensionFired[i] || suppressorSideFired[i] ) ) {
-				suppressorFired = true;
-			}
-		}
-
-		for(G4int j=0; j < MAXNUMCRYGRIFFIN; j++) {
-			if(fGriffinCrystEnergyDet[i][j] > MINENERGYTHRES) {
-				// fill energies in each crystal
-				if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram((kGriffinCrystalUnsupEdepDet0Cry0+(MAXNUMDETGRIFFIN*j))+i, fGriffinCrystEnergyDet[i][j]);
-				if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kGriffinCrystalUnsupEdepCry, fGriffinCrystEnergyDet[i][j]);
-				if(!suppressorBackFired[i] && !suppressorExtensionFired[i] && !suppressorSideFired[i]) { // Suppressor fired?
-					if(WRITEEDEPHISTOS) fHistoManager->FillHistogram((kGriffinCrystalSupEdepDet0Cry0+(MAXNUMDETGRIFFIN*j))+i, fGriffinCrystEnergyDet[i][j]);
-					if(WRITEEDEPHISTOS) fHistoManager->FillHistogram(kGriffinCrystalSupEdepCry, fGriffinCrystEnergyDet[i][j]);
-				}
-				energySumDet += fGriffinCrystEnergyDet[i][j];
-			}
-		}
-		if(energySumDet > MINENERGYTHRES) {
-			// fill energies in each detector
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kGriffinCrystalUnsupEdepDet0+i, energySumDet);
-			// fill standard energy and track spectra
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kGriffinCrystalUnsupEdep, energySumDet);
-			if(!suppressorBackFired[i] && !suppressorExtensionFired[i] && !suppressorSideFired[i]) {
-				// fill energies in each detector
-				if(WRITEEDEPHISTOS) fHistoManager->FillHistogram(kGriffinCrystalSupEdepDet0+i, energySumDet);
-				// fill standard energy and track spectra
-				if(WRITEEDEPHISTOS) fHistoManager->FillHistogram(kGriffinCrystalSupEdep, energySumDet);
-			}
-		}
-		energySum += energySumDet;
-	}
-
-	if(energySum > MINENERGYTHRES) {
-		if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kGriffinCrystalUnsupEdepSum, energySum);
-		if(!suppressorFired) {
-			if(WRITEEDEPHISTOS) fHistoManager->FillHistogram(kGriffinCrystalSupEdepSum, energySum);
-		}
-	}
-}
-
-void EventAction::Fill8piCryst() {
-	G4double energySumDet = 0;
-	for(G4int j=0; j < MAXNUMDET; j++) {
-		if(fEightPiCrystEnergyDet[j] > MINENERGYTHRES) {
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kEightpiCrystalEdep, fEightPiCrystEnergyDet[j]);
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kEightpiCrystalEdepDet0+j, fEightPiCrystEnergyDet[j]);
-			energySumDet += fEightPiCrystEnergyDet[j];
-		}
-	}
-	if(energySumDet > MINENERGYTHRES) {
-		if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kEightpiCrystalEdepSum, energySumDet);
-	}
-}
-
-
-void EventAction::FillLaBrCryst() {
-	G4double energySumDet = 0;
-	for(G4int j=0; j < MAXNUMDET; j++) {
-		if(fLaBrCrystEnergyDet[j] > MINENERGYTHRES) {
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kLabrCrystalEdep, fLaBrCrystEnergyDet[j]);
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kLabrCrystalEdepDet0+j, fLaBrCrystEnergyDet[j]);
-			energySumDet += fLaBrCrystEnergyDet[j];
-		}
-	}
-	if(energySumDet > MINENERGYTHRES) {
-		if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kLabrCrystalEdepSum, energySumDet);
-	}
-}
-
-void EventAction::FillAncillaryBgo() {
-	G4double energySumDet = 0;
-	for(G4int j=0; j < MAXNUMDET; j++) {
-		if(fAncillaryBgoEnergyDet[j] > MINENERGYTHRES) {
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kAncillaryBgoCrystalEdep, fAncillaryBgoEnergyDet[j]);
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kAncillaryBgoCrystalEdepDet0+j, fAncillaryBgoEnergyDet[j]);
-			energySumDet += fAncillaryBgoEnergyDet[j];
-		}
-	}
-	if(energySumDet > MINENERGYTHRES) {
-		if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kAncillaryBgoCrystalEdepSum, energySumDet);
-	}
-}
-
-void EventAction::FillSceptar() {
-	G4double energySumDet = 0;
-	for(G4int j=0; j < MAXNUMDET; j++) {
-		if(fSceptarEnergyDet[j] > MINENERGYTHRES) {
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kSceptarEdep, fSceptarEnergyDet[j]);
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kSceptarEdepDet0+j, fSceptarEnergyDet[j]);
-			energySumDet += fSceptarEnergyDet[j];
-		}
-	}
-	if(energySumDet > MINENERGYTHRES) {
-		if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(kSceptarEdepSum, energySumDet);
-	}
-
-}
-
-void EventAction::FillGridCell() {
-	for(G4int j=0; j < MAXNUMDET; j++) {
-		if(WRITEEKINHISTOS && fGridCellElectronEKinDet[j] > MINENERGYTHRES)  fHistoManager->FillHistogram(kGridcellElectronEkinDet0+j, fGridCellElectronEKinDet[j]);
-		if(WRITEEKINHISTOS && fGridCellGammaEKinDet[j] > MINENERGYTHRES)     fHistoManager->FillHistogram(kGridcellGammaEkinDet0+j, fGridCellGammaEKinDet[j]);
-		if(WRITEEKINHISTOS && fGridCellNeutronEKinDet[j] > MINENERGYTHRES)   fHistoManager->FillHistogram(kGridcellNeutronEkinDet0+j, fGridCellNeutronEKinDet[j]);
-	}
-}
 
 void EventAction::FillSpice() {
-	//     G4cout << "FillSpice entered " << G4endl;
 	G4double energySumDet = 0;
 	G4int fSpiceMultiplicity = 0;
 	G4double SpiceEnergy,SpiceEnergyRaw;
 	for(G4int ring=0; ring < MAXNUMDETSPICE; ring++) {
 		for(G4int seg=0; seg < 12; seg++) {
 			if(fSpiceEnergyDet[ring][seg] > 20.*CLHEP::keV&&WRITEEDEPHISTOS) {
-
 				SpiceEnergyRaw = fSpiceEnergyDet[ring][seg];// SpiceRawEnergy. No resolution applied
 				SpiceEnergy=SpiceEnergyRaw;
 				if(fHistoManager->GetDetectorConstruction()->SpiceRes()){
@@ -456,21 +239,6 @@ void EventAction::FillSpice() {
 	}
 }
 
-void EventAction::FillPacesCryst() {
-	G4double energySumDet = 0;
-	for(G4int j=0; j < MAXNUMDETPACES; j++) {
-		if(fPacesCrystEnergyDet[j] > MINENERGYTHRES) {
-
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(fHistoManager->PacesHistNumbers(0), fPacesCrystEnergyDet[j]);
-			if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(fHistoManager->PacesHistNumbers(j+2), fPacesCrystEnergyDet[j]);
-			energySumDet += fPacesCrystEnergyDet[j];
-		}
-	}
-	if(energySumDet > MINENERGYTHRES) {
-		if(WRITEEDEPHISTOS && (energySumDet > MINENERGYTHRES))     fHistoManager->FillHistogram(fHistoManager->PacesHistNumbers(1), energySumDet);
-
-	}
-}
 
 G4bool EventAction::SpiceTest(){//is SPICE inputted
 	return fHistoManager->GetDetectorConstruction()->Spice();
