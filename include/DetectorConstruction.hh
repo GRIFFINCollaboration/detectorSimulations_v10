@@ -68,6 +68,7 @@ class DetectionSystemLanthanumBromide;
 class DetectionSystemBox;
 class DetectionSystemAncillaryBGO;
 
+class DetectionSystemPlastics;
 //class MagneticField;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -153,6 +154,7 @@ public:
 	void AddApparatusDescantStructure();
 
 	void AddDetectionSystemTestcan(G4ThreeVector input);
+	void AddDetectionSystemPlastics(G4ThreeVector input);
 
 	void AddDetectionSystem8piDetector(G4int ndet);
 	void AddDetectionSystemGriffinForward(G4int ndet);
@@ -195,6 +197,7 @@ public:
 	G4bool   Paces()      { return fPaces;      }
 	G4bool   Descant()    { return fDescant;    }
 	G4bool   Testcan()    { return fTestcan;    }
+	G4bool   Plastics()    { return fPlastics;    }
 
 	void SpiceRes(G4bool val) { fSpiceRes = val; }
 	bool SpiceRes() { return fSpiceRes; }
@@ -291,6 +294,7 @@ private:
 	G4bool fTestcan;
 	G4bool fSpice;
 	G4bool fPaces;
+	G4bool fPlastics;
 
 	//unordered maps which hold properties of the physical volumes created
 	std::unordered_map<G4VPhysicalVolume*, DetectorProperties> fPropertiesMap;

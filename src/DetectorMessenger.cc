@@ -249,6 +249,10 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
 	fAddDetectionSystemTestcanCmd = new G4UIcmdWith3Vector("/DetSys/det/addTestcan",this);
 	fAddDetectionSystemTestcanCmd->SetGuidance("Add Testcan Detection System");
 	fAddDetectionSystemTestcanCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	
+	fAddDetectionSystemPlasticsCmd = new G4UIcmdWith3Vector("/DetSys/det/addPlastics",this);
+	fAddDetectionSystemPlasticsCmd->SetGuidance("Add Plastics Detection System");
+	fAddDetectionSystemPlasticsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 	fSetDetectionSystemDescantColorCmd = new G4UIcmdWithAString("/DetSys/det/setDescantColor", this);
 	fSetDetectionSystemDescantColorCmd->SetGuidance("Set color of next descant detector to be added via addDescantCart or addDescantSpher");
@@ -397,6 +401,7 @@ DetectorMessenger::~DetectorMessenger()
 	delete fAddApparatusDescantStructureCmd;
 
 	delete fAddDetectionSystemTestcanCmd;
+	delete fAddDetectionSystemPlasticsCmd;
 
 	delete fSetDetectionSystemDescantColorCmd;
 	delete fSetDetectionSystemDescantRotationCmd;	 
@@ -570,6 +575,9 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	}
 	if(command == fAddDetectionSystemTestcanCmd) { 
 		fDetector->AddDetectionSystemTestcan(fAddDetectionSystemTestcanCmd->GetNew3VectorValue(newValue));
+	}
+	if(command == fAddDetectionSystemPlasticsCmd) { 
+		fDetector->AddDetectionSystemPlastics(fAddDetectionSystemPlasticsCmd->GetNew3VectorValue(newValue));
 	}
 
 	if(command == fAddDetectionSystemSceptarCmd) {
