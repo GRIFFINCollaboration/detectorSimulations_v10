@@ -71,6 +71,11 @@ public:
 	void SpiceDet(G4double de, G4double dl, G4int det, G4int seg) { fSpiceEnergyDet[det][seg] += de; fSpiceTrackDet[det][seg] += dl;};///19/7
 
 	G4bool SpiceTest();
+
+	//Lab Angle
+	G4double GetLabAngle() {return pLabAngle; };
+	void SetLabAngle(G4double angle) {pLabAngle = angle; };
+
 private:
 	RunAction*    fRunAction;
 	HistoManager* fHistoManager;
@@ -103,6 +108,10 @@ private:
 	// Energy deposit in detection systems
 	G4double fSpiceEnergyDet[10][12];
 	G4double fSpiceTrackDet[10][12];
+
+	//Lab Angle
+	G4double pLabAngle;
+
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

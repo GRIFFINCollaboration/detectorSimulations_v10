@@ -127,10 +127,30 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	G4int trackID = theTrack->GetTrackID();
 	G4int parentID = theTrack->GetParentID();
 
-	//G4StepPoint* prePoint = aStep->GetPreStepPoint();
+	G4StepPoint* prePoint = aStep->GetPreStepPoint();
 	G4StepPoint* postPoint = aStep->GetPostStepPoint();
 	G4ThreeVector postPos = postPoint->GetPosition();
 	G4double postTime = postPoint->GetGlobalTime();
+
+	size_t found;
+
+	//Set Lab Angle
+	G4int nSecondaries = aStep->GetSecondary()->size();
+	G4double lab_angle = -1;
+	found = volname.find("PlasticDet");
+	if(postPoint->GetProcessDefinedStep()->GetProcessName() == "hadElastic" && nSecondaries == 1 && fEventAction->GetLabAngle() == -1 && found != G4String::npos) {
+	G4ThreeVector momentum_1 = prePoint->GetMomentum();
+	G4ThreeVector momentum_2 = postPoint->GetMomentum();
+	lab_angle = momentum_2.angle(momentum_1);
+	fEventAction->SetLabAngle(lab_angle);
+	G4cout << "lab_angle: " << lab_angle << G4endl;
+	G4cout << "GetLabAngle(): " << fEventAction->GetLabAngle() << G4endl;
+	}
+
+
+
+
+
 
 	// check if this volume has its properties set, i.e. it's an active detector
 	if((edep > 0 || (fDetector->GridCell() && ekin > 0)) && fDetector->HasProperties(volume)) {

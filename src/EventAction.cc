@@ -51,6 +51,7 @@ EventAction::EventAction(RunAction* run, HistoManager* hist)
 	fHistoManager(hist),
 	fPrintModulo(1000)
 {
+	pLabAngle = -1;
 	fNumberOfHits = 0;
 	fNumberOfSteps = 0;
 
@@ -73,6 +74,9 @@ void EventAction::BeginOfEventAction(const G4Event* evt) {
 	}
 
 	if(fHistoManager != nullptr) ClearVariables();
+	
+	//Set Lab angle
+	pLabAngle = -1;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -92,6 +96,7 @@ void EventAction::EndOfEventAction(const G4Event*) {
 
 		ClearVariables();
 	}
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
