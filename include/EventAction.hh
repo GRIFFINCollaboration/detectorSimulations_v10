@@ -75,7 +75,14 @@ public:
 	//Lab Angle
 	G4double GetLabAngle() {return pLabAngle; };
 	void SetLabAngle(G4double angle) {pLabAngle = angle; };
-
+	
+	//Counting for Efficiencies
+	void totalCounter() {++TotalCounter;};
+	G4int GetTotalCounter() {return TotalCounter;};
+	void elasticCounter() {++ElasticCounter;};
+	G4int GetElasticCounter() {return ElasticCounter;};
+	void inelasticCounter() {++InelasticCounter;};
+	G4int GetInelasticCounter() {return InelasticCounter;};
 private:
 	RunAction*    fRunAction;
 	HistoManager* fHistoManager;
@@ -111,7 +118,10 @@ private:
 
 	//Lab Angle
 	G4double pLabAngle;
-
+	//Counters
+	G4int TotalCounter;
+	G4int InelasticCounter;
+	G4int ElasticCounter;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

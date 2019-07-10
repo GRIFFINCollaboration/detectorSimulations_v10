@@ -138,6 +138,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	G4int nSecondaries = aStep->GetSecondary()->size();
 	G4double lab_angle = -1;
 	found = volname.find("PlasticDet");
+	G4cout << "Found " << found << G4endl;
 	if(postPoint->GetProcessDefinedStep()->GetProcessName() == "hadElastic" && nSecondaries == 1 && fEventAction->GetLabAngle() == -1 && found != G4String::npos) {
 	G4ThreeVector momentum_1 = prePoint->GetMomentum();
 	G4ThreeVector momentum_2 = postPoint->GetMomentum();
@@ -147,9 +148,23 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	G4cout << "GetLabAngle(): " << fEventAction->GetLabAngle() << G4endl;
 	}
 
-
-
-
+	//Counting hits for efficiencies
+	found = volname.find("PlasticDet");
+	G4cout << "Found " << found << G4endl;
+	if(found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {
+	if(postPoint->GetProcessDefinedStep()->GetProcessName() == "hadElastic") {
+	fEventAction->totalCounter();
+	fEventAction->elasticCounter();
+	G4cout << "GetTotalCounter(): " << fEventAction->GetTotalCounter() << G4endl;
+	G4cout << "GetElasticCounter(): " << fEventAction->GetElasticCounter() << G4endl;
+	}
+	if(postPoint->GetProcessDefinedStep()->GetProcessName() == "neutronInelastic" || postPoint->GetProcessDefinedStep()->GetProcessName() == "nCapture" || postPoint->GetProcessDefinedStep()->GetProcessName() == "nFission") {
+	fEventAction->totalCounter();
+	fEventAction->inelasticCounter();
+	G4cout << "GetTotalCounter(): " << fEventAction->GetTotalCounter() << G4endl;
+	G4cout << "GetInelasticCounter(): " << fEventAction->GetInelasticCounter() << G4endl;
+	}
+	}
 
 
 	// check if this volume has its properties set, i.e. it's an active detector
