@@ -70,6 +70,7 @@
 #include "ApparatusDescantStructure.hh"
 
 #include "DetectionSystemTestcan.hh"
+#include "DetectionSystemPlastics.hh"
 
 #include "G4FieldManager.hh"
 #include "G4UniformMagField.hh"
@@ -188,6 +189,7 @@ DetectorConstruction::DetectorConstruction() :
 	fPaces    = false;
 	fDescant  = false;
 	fTestcan  = false;
+	fPlastics  = false;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -844,6 +846,20 @@ void DetectorConstruction::AddDetectionSystemTestcan(G4ThreeVector input) {
 	pDetectionSystemTestcan->PlaceDetector(fLogicWorld);
 
 	fTestcan = true;
+}
+void DetectorConstruction::AddDetectionSystemPlastics(G4ThreeVector input) {
+	if(fLogicWorld == nullptr) {
+		Construct();
+	}
+
+	G4double thickness = G4double(input.x())*cm;
+	G4int material = G4double(input.y());
+
+	DetectionSystemPlastics* pDetectionSystemPlastics = new DetectionSystemPlastics(thickness, material);
+	pDetectionSystemPlastics->Build();
+	pDetectionSystemPlastics->PlaceDetector(fLogicWorld);
+
+	fPlastics = true;
 }
 
 void DetectorConstruction::AddDetectionSystemSpice() {

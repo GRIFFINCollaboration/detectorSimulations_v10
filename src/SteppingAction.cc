@@ -65,7 +65,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 
 	// Get volume of the current step
 	G4VPhysicalVolume* volume = aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume();
-
+	G4String volname = volume->GetName();
 	// collect energy and track length step by step
 	// As it's called more than once, get the Track and assign to variable
 	G4double edep = aStep->GetTotalEnergyDeposit();
@@ -96,7 +96,29 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		else if(processName == "msc")              processType = 3;
 		else if(processName == "Scintillation")    processType = 4;
 		else if(processName == "Cerenkov")         processType = 5;
-		else                                       processType = 0;
+		else if(processName == "hadElastic")         processType = 6;
+		else if(processName == "neutronInelastic")         processType = 7;
+		else if(processName == "nCapture")         processType = 8;
+		else if(processName == "hIoni")         processType = 9;
+		else if(processName == "ionIoni")         processType = 10;
+		else if(processName == "compt")         processType = 11;
+		else if(processName == "phot")         processType = 12;
+		else if(processName == "conv")         processType = 13;
+		else if(processName == "eBrem")         processType = 14;
+		else if(processName == "annihil")         processType = 15;
+		else if(processName == "dInelastic")         processType = 16;
+		else if(processName == "CoulombScat")         processType = 17;
+		else if(processName == "protonInelastic")         processType = 18;
+		else if(processName == "alphaInelastic")         processType = 19;
+		else if(processName == "tInelastic")         processType = 20;
+		else if(processName == "photonNuclear")         processType = 21;
+		else if(processName == "He3Inelastic")         processType = 22;
+		else {                                      processType = 0;
+		G4cout << "unknown process -> " << processName << G4endl;
+		}
+	}
+	else {
+		processType = -1;
 	}
 
 	evntNb =  fEventAction->GetEventNumber();
