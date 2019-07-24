@@ -149,6 +149,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	}
 
 	//Counting hits for efficiencies
+	//By not initilalizing counters in event action to zero, they keep counting for whole run, which is good
 	found = volname.find("PlasticDet");
 	G4cout << "Found " << found << G4endl;
 	if(found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {
@@ -164,7 +165,32 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	G4cout << "GetTotalCounter(): " << fEventAction->GetTotalCounter() << G4endl;
 	G4cout << "GetInelasticCounter(): " << fEventAction->GetInelasticCounter() << G4endl;
 	}
+}
+
+G4int total = fEventAction->GetTotalCounter();
+G4int elastic = fEventAction->GetElasticCounter();
+G4int inelastic = fEventAction->GetInelasticCounter();
+
+
+	//Counting number of scintillating photons -> Setting to zero at beginning of event ---- Not sure if it does though...
+	G4double numScintPhotons;
+	G4double numCollectedPhotons;
+	found = volname.find("PlasticDet");
+	G4cout << "Found " << found << G4endl;
+	const std::vector<const G4Track*> *secondaries = aStep->GetSecondaryInCurrentStep();
+	if (secondaries->size()>0) {
+		for(unsigned int i=0; i<secondaries->size(); ++i) {
+			if(secondaries->at(i)->GetParentID()>0) {
+				if(secondaries->at(i)->GetDynamicParticle()->GetParticleDefinition() == G4OpticalPhoton::OpticalPhotonDefinition())  {
+					if(secondaries->at(i)->GetCreatorProcess()->GetProcessName() == "Scintillation") {
+						fEventAction->CountOneScintPhoton();
+						G4cout<< "GetTotScintPhoton() "<< fEventAction->GetTotScintPhoton() <<G4endl;
+					}
+				}
+			}
+		}
 	}
+numScintPhotons = fEventAction->GetTotScintPhoton();
 
 
 	// check if this volume has its properties set, i.e. it's an active detector
@@ -191,10 +217,10 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		// check edep again in case we use the grid cell but haven't hit it
 		if(edep <= 0) return;
 
-		fEventAction->AddHitTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ);
+		fEventAction->AddHitTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle);
 
 		if(trackSteps) {
-			fEventAction->AddStepTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ);
+			fEventAction->AddStepTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle);
 		}
 	}// if(fDetector->HasProperties(volume))
 }
