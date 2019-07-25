@@ -192,9 +192,15 @@ G4int inelastic = fEventAction->GetInelasticCounter();
 	}
 numScintPhotons = fEventAction->GetTotScintPhoton();
 
+		//G4cout << "edep out of loop " << edep << G4endl;
+		//G4cout << "Has Properties out of loop " << fDetector->HasProperties(volume) << G4endl;
+		//G4cout << "Get Properties out of loop " << G4endl;
+		//fDetector->GetProperties(volume);
 
 	// check if this volume has its properties set, i.e. it's an active detector
 	if((edep > 0 || (fDetector->GridCell() && ekin > 0)) && fDetector->HasProperties(volume)) {
+		//G4cout << "edep in loop " << edep << G4endl;
+	
 		DetectorProperties prop = fDetector->GetProperties(volume);
 
 		if(fDetector->GridCell()) {
@@ -215,6 +221,7 @@ numScintPhotons = fEventAction->GetTotScintPhoton();
 		}
 
 		// check edep again in case we use the grid cell but haven't hit it
+		//G4cout << "edep " << edep << G4endl; //Testing PLastic fillling ntuple
 		if(edep <= 0) return;
 
 		fEventAction->AddHitTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle);

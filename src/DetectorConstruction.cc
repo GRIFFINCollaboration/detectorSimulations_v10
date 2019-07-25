@@ -905,7 +905,10 @@ void DetectorConstruction::SetProperties() {
 		G4cout<<fLogicWorld->GetNoDaughters()<<" daughter volumes"<<std::endl;
 	}
 	for(int i = 0; i < fLogicWorld->GetNoDaughters(); ++i) {
+		//G4cout << "fLogicWorld->GetNoDaughters(): " << fLogicWorld->GetNoDaughters() << G4endl; //Testing Plastic PLacement
+		//G4cout << "fLogicWorld->GetName(): " << fLogicWorld->GetDaughter(i)->GetName() << G4endl; //Testing Plastic PLacement
 		if(!HasProperties(fLogicWorld->GetDaughter(i)) && CheckVolumeName(fLogicWorld->GetDaughter(i)->GetName())) {
+		//G4cout << "fLogicWorld->GetName(): " << fLogicWorld->GetDaughter(i)->GetName() << G4endl; //Testing Plastic PLacement
 			fPropertiesMap[fLogicWorld->GetDaughter(i)] = ParseVolumeName(fLogicWorld->GetDaughter(i)->GetName());
 		}
 	}
@@ -956,6 +959,7 @@ bool DetectorConstruction::CheckVolumeName(G4String volumeName) {
 	if(volumeName.find("whiteScintillatorVolumeLog") != G4String::npos) return true;
 	if(volumeName.find("yellowScintillatorVolumeLog") != G4String::npos) return true;
 	if(volumeName.find("testcanScintillatorLog") != G4String::npos) return true;
+	if(volumeName.find("PlasticDet") != G4String::npos) return true;
 	return false;
 }
 
@@ -1227,6 +1231,10 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		return result;
 	}
 
+	if(volumeName.find("PlasticDet") != G4String::npos) {
+		result.systemID = 8700;
+		return result;
+	}
 	return result;
 }
 

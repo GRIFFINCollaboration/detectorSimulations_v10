@@ -79,19 +79,27 @@ void EventAction::BeginOfEventAction(const G4Event* evt) {
 	pLabAngle = -1;
 	//Reset Optical Photon Counter
 	SetTotScintPhoton(0);
+	SetElasticCounter(0);
+	SetInelasticCounter(0);
+	SetTotalCounter(0);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void EventAction::EndOfEventAction(const G4Event*) {
+		G4cout << "End of event activated "  << G4endl;
+
 	if(fHistoManager != nullptr) {
-		if(fHistoManager->GetDetectorConstruction()->Spice()) {
+	G4cout << "testing if statement nullptr " << fNumberOfHits << " " << fNumberOfSteps << G4endl;
+		/*if(fHistoManager->GetDetectorConstruction()->Spice()) {
 			FillSpice();
-		} else {  
+		} else*/ {  
 			for(G4int i = 0; i < fNumberOfHits; i++) {
+		G4cout << "Filling HitNTuple, testing printing fHitTrackerD[4][i] time " << fHitTrackerD[4][i] << G4endl;
 				fHistoManager->FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i], fHitTrackerD[5][i], fHitTrackerD[6][i], fHitTrackerD[7][i], fHitTrackerD[8][i], fHitTrackerD[9][i]);
 			}
 			for(G4int i = 0; i < fNumberOfSteps; i++) {
+		G4cout << "Filling StepNTuple, testing printing fStepTrackerD[4][i] time " << fStepTrackerD[4][i] << G4endl;
 				fHistoManager->FillStepNtuple(fStepTrackerI[0][i], fStepTrackerI[1][i], fStepTrackerI[2][i], fStepTrackerI[3][i],  fStepTrackerI[4][i], fStepTrackerI[5][i], fStepTrackerI[6][i], fStepTrackerI[7][i], fStepTrackerI[8][i], fStepTrackerD[0][i]/keV, fStepTrackerD[1][i]/mm, fStepTrackerD[2][i]/mm, fStepTrackerD[3][i]/mm, fStepTrackerD[4][i]/second, fStepTrackerI[9][i], fStepTrackerD[5][i], fStepTrackerD[6][i], fStepTrackerD[7][i], fStepTrackerD[8][i], fStepTrackerD[9][i]);
 			}
 		}

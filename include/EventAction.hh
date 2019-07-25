@@ -79,10 +79,13 @@ public:
 	//Counting for Efficiencies
 	void totalCounter() {++TotalCounter;};
 	G4int GetTotalCounter() {return TotalCounter;};
+	void SetTotalCounter(int count) {TotalCounter = count;};
 	void elasticCounter() {++ElasticCounter;};
 	G4int GetElasticCounter() {return ElasticCounter;};
+	void SetElasticCounter(int count1) {ElasticCounter=count1;};
 	void inelasticCounter() {++InelasticCounter;};
 	G4int GetInelasticCounter() {return InelasticCounter;};
+	void SetInelasticCounter(int count2) {InelasticCounter=count2;};
 
 	//Counting Scintillation photons
 	void CountOneScintPhoton() {++totScintPhotons;};
