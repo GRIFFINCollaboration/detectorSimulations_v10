@@ -196,6 +196,7 @@ numScintPhotons = fEventAction->GetTotScintPhoton();
 		//G4cout << "Has Properties out of loop " << fDetector->HasProperties(volume) << G4endl;
 		//G4cout << "Get Properties out of loop " << G4endl;
 		//fDetector->GetProperties(volume);
+<<<<<<< HEAD
 	
 	
 		//Instead of looking at energy deposited, look at kinetic energy of neutrons before they hit descant
@@ -249,6 +250,12 @@ numScintPhotons = fEventAction->GetTotScintPhoton();
 	// check if this volume has its properties set, i.e. it's an active detector
 	if((edep > 0 || (fDetector->GridCell() && ekin > 0)) && fDetector->HasProperties(volume)) {
 		G4cout << "edep in loop " << edep << G4endl;
+=======
+
+	// check if this volume has its properties set, i.e. it's an active detector
+	if((edep > 0 || (fDetector->GridCell() && ekin > 0)) && fDetector->HasProperties(volume)) {
+		//G4cout << "edep in loop " << edep << G4endl;
+>>>>>>> 2c0eeb1b5df7aa4f21d8f8eff1ea115c68f24a66
 	
 		DetectorProperties prop = fDetector->GetProperties(volume);
 

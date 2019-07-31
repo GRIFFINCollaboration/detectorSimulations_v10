@@ -140,7 +140,11 @@ void EventAction::AddHitTracker(const DetectorProperties& properties, const G4in
 	fHitTrackerD[6][fNumberOfHits] = elastic;
 	fHitTrackerD[7][fNumberOfHits] = inelastic;
 	fHitTrackerD[8][fNumberOfHits] = numScintPhotons;
+<<<<<<< HEAD
 	fHitTrackerD[9][fNumberOfHits] = pLabAngle; //pLabAngle?
+=======
+	fHitTrackerD[9][fNumberOfHits] = lab_angle; //pLabAngle?
+>>>>>>> 2c0eeb1b5df7aa4f21d8f8eff1ea115c68f24a66
 
 	++fNumberOfHits;
 
