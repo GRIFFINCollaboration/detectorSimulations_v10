@@ -232,7 +232,7 @@ ScintWrapper->SetMaterialPropertiesTable(ScintWrapperProperty);
 
 
 G4Box * box = new G4Box("Plastic Detector", fScintillatorLength, fScintillatorHeight, fScintillatorWidth);
-   move = G4ThreeVector(0., 0., 0.);
+   move = G4ThreeVector(0., 0., 400.); //In mm, positive number in Z direction(x, y, z) is towards DESCANT, and is thickness
     rotate = new G4RotationMatrix;
     direction 	  = G4ThreeVector(1., 1., 1.);
    

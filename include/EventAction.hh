@@ -63,8 +63,8 @@ public:
 
 	G4int GetEventNumber() { return fEvtNb;};
 
-	void AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ);
-	void AddStepTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ);
+	void AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle);
+	void AddStepTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle);
 
 
 	// Energy deposit in detection systems
@@ -75,6 +75,22 @@ public:
 	//Lab Angle
 	G4double GetLabAngle() {return pLabAngle; };
 	void SetLabAngle(G4double angle) {pLabAngle = angle; };
+	
+	//Counting for Efficiencies
+	void totalCounter() {++TotalCounter;};
+	G4int GetTotalCounter() {return TotalCounter;};
+	void SetTotalCounter(int count) {TotalCounter = count;};
+	void elasticCounter() {++ElasticCounter;};
+	G4int GetElasticCounter() {return ElasticCounter;};
+	void SetElasticCounter(int count1) {ElasticCounter=count1;};
+	void inelasticCounter() {++InelasticCounter;};
+	G4int GetInelasticCounter() {return InelasticCounter;};
+	void SetInelasticCounter(int count2) {InelasticCounter=count2;};
+
+	//Counting Scintillation photons
+	void CountOneScintPhoton() {++totScintPhotons;};
+	G4int GetTotScintPhoton() {return totScintPhotons;};
+	void SetTotScintPhoton(G4int total) {totScintPhotons = total;};
 
 private:
 	RunAction*    fRunAction;
@@ -111,7 +127,12 @@ private:
 
 	//Lab Angle
 	G4double pLabAngle;
-
+	//Counters
+	G4int TotalCounter;
+	G4int InelasticCounter;
+	G4int ElasticCounter;
+	//Optical Scintillation photon counter
+	G4int totScintPhotons;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
