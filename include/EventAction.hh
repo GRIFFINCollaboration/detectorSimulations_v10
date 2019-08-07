@@ -63,8 +63,13 @@ public:
 
 	G4int GetEventNumber() { return fEvtNb;};
 
+<<<<<<< HEAD
 	void AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle);
 	void AddStepTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle);
+=======
+	void AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle);
+	void AddStepTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle);
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
 
 
 	// Energy deposit in detection systems
@@ -76,6 +81,7 @@ public:
 	G4double GetLabAngle() {return pLabAngle; };
 	void SetLabAngle(G4double angle) {pLabAngle = angle; };
 	
+<<<<<<< HEAD
 	//Final Angle
 	G4double GetFinalAngle() {return fFinalAngle; };
 	void SetFinalAngle(G4double angle2) {fFinalAngle = angle2; };
@@ -85,6 +91,8 @@ public:
 	G4ThreeVector GetInitialMomentum() {return fInitialMomentum;};
 	
 
+=======
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
 	//Counting for Efficiencies
 	void totalCounter() {++TotalCounter;};
 	G4int GetTotalCounter() {return TotalCounter;};
@@ -136,10 +144,13 @@ private:
 
 	//Lab Angle
 	G4double pLabAngle;
+<<<<<<< HEAD
 	G4double fFinalAngle;
 	G4ThreeVector fFinalMomentum;
 	G4ThreeVector fInitialMomentum;
 	
+=======
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
 	//Counters
 	G4int TotalCounter;
 	G4int InelasticCounter;
