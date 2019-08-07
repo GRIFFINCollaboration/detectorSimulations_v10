@@ -46,9 +46,9 @@ DetectionSystemPlastics::DetectionSystemPlastics(G4double thickness, G4int mater
     fScintillatorWidth         = thickness;
    
    if(material == 1)  fPlasticMaterial = "BC408";
-	else if (material == 2) fPlasticMaterial = "Deuterium";
-	else if (material == 3) fPlasticMaterial = "H";
-	else if (material == 4) fPlasticMaterial = "C";
+	else if (material == 2) fPlasticMaterial = "deuterium";
+	else if (material == 3) fPlasticMaterial = "Hydrogen";
+	else if (material == 4) fPlasticMaterial = "Carbon";
 	else G4cout<< "Material Unknown" << G4endl;
 
 
@@ -118,7 +118,7 @@ G4cout << "Calling Build PLastics" << G4endl;
         return 0;
     }
       else {
-G4cout << plasticG4material->GetName() << "is the name of the detector material" << G4endl;
+G4cout << plasticG4material->GetName() << " is the name of the detector material" << G4endl;
 }
 /*
 G4Box * box = new G4Box("Plastic Detector", fScintillatorLength, fScintillatorHeight, fScintillatorWidth);
@@ -232,7 +232,7 @@ ScintWrapper->SetMaterialPropertiesTable(ScintWrapperProperty);
 
 
 G4Box * box = new G4Box("Plastic Detector", fScintillatorLength, fScintillatorHeight, fScintillatorWidth);
-   move = G4ThreeVector(0., 0., 0.);
+   move = G4ThreeVector(0., 0., 400.); //In mm, positive number in Z direction(x, y, z) is towards DESCANT, and is thickness
     rotate = new G4RotationMatrix;
     direction 	  = G4ThreeVector(1., 1., 1.);
    

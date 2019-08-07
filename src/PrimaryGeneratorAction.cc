@@ -256,6 +256,10 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			//converts from Spherical polar(physics def.) to cartesian via (rsin(theta)cos(phi),rsin(theta)cos(phi),rcos(theta)) r=1,unit length
 		}
 
+		//Set Direction of Beam Manually
+		effdirection = G4ThreeVector(0. , 0. , 1.);
+		
+
 		//after running through if-statements above we now have particle type definition, position, mom. direction, and the energy (or their initialised values)
 		fParticleGun->SetParticlePosition(thisEffPosition);
 		fParticleGun->SetParticleMomentumDirection(effdirection);
