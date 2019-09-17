@@ -63,8 +63,23 @@ public:
 
 	G4int GetEventNumber() { return fEvtNb;};
 
+<<<<<<< HEAD
 	void AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4ThreeVector TOFPos);
 	void AddStepTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4ThreeVector TOFPos);
+=======
+<<<<<<< HEAD
+	void AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4ThreeVector TOFPos);
+	void AddStepTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4ThreeVector TOFPos);
+=======
+<<<<<<< HEAD
+	void AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle);
+	void AddStepTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle);
+=======
+	void AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle);
+	void AddStepTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle);
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
 
 
 	// Energy deposit in detection systems
@@ -76,6 +91,13 @@ public:
 	G4double GetLabAngle() {return pLabAngle; };
 	void SetLabAngle(G4double angle) {pLabAngle = angle; };
 	
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
 	//Final Angle
 	G4double GetFinalAngle() {return fFinalAngle; };
 	void SetFinalAngle(G4double angle2) {fFinalAngle = angle2; };
@@ -85,6 +107,14 @@ public:
 	G4ThreeVector GetInitialMomentum() {return fInitialMomentum;};
 	
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
 	//Counting for Efficiencies
 	void totalCounter() {++TotalCounter;};
 	G4int GetTotalCounter() {return TotalCounter;};
@@ -96,12 +126,21 @@ public:
 	G4int GetInelasticCounter() {return InelasticCounter;};
 	void SetInelasticCounter(int count2) {InelasticCounter=count2;};
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
 	//Getting TOF
 	void SetTOF(G4double scatterTime) {fTOF = scatterTime;};
 	G4double GetTOF() {return fTOF;};
 	void SetTOFPos(G4ThreeVector scatterPos) {fTOFPos = scatterPos;};
 	G4ThreeVector GetTOFPos() {return fTOFPos;};
 
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
 	//Counting Scintillation photons
 	void CountOneScintPhoton() {++totScintPhotons;};
 	G4int GetTotScintPhoton() {return totScintPhotons;};
@@ -142,12 +181,28 @@ private:
 
 	//Lab Angle
 	G4double pLabAngle;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
 	G4double fFinalAngle;
 	G4ThreeVector fFinalMomentum;
 	G4ThreeVector fInitialMomentum;
 	//TOF
 	G4double fTOF;
 	G4ThreeVector fTOFPos;
+<<<<<<< HEAD
+=======
+=======
+<<<<<<< HEAD
+	G4double fFinalAngle;
+	G4ThreeVector fFinalMomentum;
+	G4ThreeVector fInitialMomentum;
+	
+=======
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
 	//Counters
 	G4int TotalCounter;
 	G4int InelasticCounter;
