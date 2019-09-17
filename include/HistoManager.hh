@@ -42,7 +42,7 @@
 
 #include "DetectorConstruction.hh"
 
-const G4int MAXNTCOL            = 15;
+const G4int MAXNTCOL            = 25; // Number of Columns
 
 const G4bool WRITEEKINHISTOS    = true;//bools needed to write histos
 const G4bool WRITEEDEPHISTOS    = true;
@@ -96,8 +96,8 @@ public:
 	void Book();
 	void Save();
 
-	void FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ);
-	void FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ);
+	void FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz);
+	void FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz);
 
 	void FillHistogram(G4int ih, G4double e, G4double weight = 1.0);
 	void Fill2DHistogram(G4int ih, G4double xbin, G4double ybin, G4double weight = 1.0);

@@ -64,6 +64,10 @@ private:
     G4double fScintillatorHeight;
     G4double fScintillatorWidth;
 
+    G4double fRadialDistance;
+    G4double fLeadShieldThickness;
+
+
     G4String fPlasticMaterial;
    
     G4LogicalVolume * fPlasticLog;
