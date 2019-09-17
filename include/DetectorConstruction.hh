@@ -145,6 +145,7 @@ public:
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void AddDetectionSystemDescant(G4int ndet);
 	void AddDetectionSystemDescantAuxPorts(G4ThreeVector input);
+	void AddDetectionSystemDescantNoLead(G4int ndet);
 
 	void SetDetectionSystemDescantRotation(G4ThreeVector input);
 	void SetDetectionSystemDescantColor(G4String input);

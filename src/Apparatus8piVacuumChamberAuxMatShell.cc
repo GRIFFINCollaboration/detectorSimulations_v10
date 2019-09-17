@@ -53,9 +53,11 @@ void Apparatus8piVacuumChamberAuxMatShell::BuildApparatus8piVacuumChamberAuxMatS
 
     G4double startPhi = 0;
     G4double endPhi = 2*M_PI;
-
     G4double startTheta = 0;
     G4double endTheta = M_PI;
+//Partial Delrin with opening for DESCANT to be uncovered
+//    G4double startTheta = 1.14;
+//    G4double endTheta = M_PI;
 
     G4double innerRadius = fVacuumChamberOuterRadius;
     G4double outerRadius = fVacuumChamberOuterRadius + thickness;

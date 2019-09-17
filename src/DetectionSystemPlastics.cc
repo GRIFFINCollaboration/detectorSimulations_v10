@@ -33,7 +33,7 @@
 #include <string>
 
 //DetectionSystemPlastics::DetectionSystemPlastics(G4double length, G4double height, G4double width, G4int material):
-DetectionSystemPlastics::DetectionSystemPlastics(G4double thickness, G4int material):
+DetectionSystemPlastics::DetectionSystemPlastics(G4double thickness, G4int material, G4double spacing):
     // LogicalVolumes
     fPlasticLog(0)
  //   fTestcanAlumCasingLog(0),
@@ -44,11 +44,15 @@ DetectionSystemPlastics::DetectionSystemPlastics(G4double thickness, G4int mater
     fScintillatorLength        = 6.*cm;
     fScintillatorHeight        = 6.*cm;
     fScintillatorWidth         = thickness;
-   
+    fRadialDistance = 50*cm;
+    fLeadShieldThickness = 6.35*mm;
+    fSpacing = spacing+fLeadShieldThickness; //with lead
+    //fSpacing = spacing*cm;  //no lead
+  
    if(material == 1)  fPlasticMaterial = "BC408";
-	else if (material == 2) fPlasticMaterial = "Deuterium";
-	else if (material == 3) fPlasticMaterial = "H";
-	else if (material == 4) fPlasticMaterial = "C";
+	else if (material == 2) fPlasticMaterial = "deuterium";
+	else if (material == 3) fPlasticMaterial = "Hydrogen";
+	else if (material == 4) fPlasticMaterial = "Carbon";
 	else G4cout<< "Material Unknown" << G4endl;
 
 
@@ -118,7 +122,7 @@ G4cout << "Calling Build PLastics" << G4endl;
         return 0;
     }
       else {
-G4cout << plasticG4material->GetName() << "is the name of the detector material" << G4endl;
+G4cout << plasticG4material->GetName() << " is the name of the detector material" << G4endl;
 }
 /*
 G4Box * box = new G4Box("Plastic Detector", fScintillatorLength, fScintillatorHeight, fScintillatorWidth);
@@ -230,16 +234,41 @@ scintillatorMPT->AddProperty("EFFICIENCY", photonEnergy, efficiency, nEntries); 
 
 ScintWrapper->SetMaterialPropertiesTable(ScintWrapperProperty);
 
+//Building the Plastic Geometry
 
+//For creating a square shaped target of specified material.  Used for physics validation etc.
+
+/*
 G4Box * box = new G4Box("Plastic Detector", fScintillatorLength, fScintillatorHeight, fScintillatorWidth);
-   move = G4ThreeVector(0., 0., 0.);
+   move = G4ThreeVector(0., 0., 400.); //In mm, positive number in Z direction(x, y, z) is towards DESCANT, and is thickness
     rotate = new G4RotationMatrix;
     direction 	  = G4ThreeVector(1., 1., 1.);
-   
+*/
+
+ 
+//Creating actual detector shape
+//place outer radius of plastics at position of DESCANT detectors, taking into account lead shield and placing 1 cm away after
+//G4double outerRadius = fRadialDistance - fLeadShieldThickness - 1*cm;
+G4double outerRadius = fRadialDistance - fSpacing;
+G4double innerRadius = outerRadius - fScintillatorWidth;
+//Opening angle 65.5 degrees, approx 1.143 radians. Limiting to 1.13
+G4double startTheta = 0.;
+G4double endTheta = 1.13;
+G4double startPhi = 0. ;
+//Can probably make a series of these ~20 and not include the end pieces
+G4double endPhi = 2*M_PI;
+//G4double endPhi = M_PI;
+
+G4Sphere * plasticSphere = new G4Sphere("Plastic Detector", innerRadius, outerRadius, startPhi, endPhi, startTheta, endTheta);
+move = G4ThreeVector(0., 0., 0.);
+rotate = new G4RotationMatrix;
     
-    //logical volume for scintillator can
+    //logical volume for plastic scintillator
     if(fPlasticLog == NULL ) {
-        fPlasticLog = new G4LogicalVolume(box, plasticG4material, "PlasticDet", 0, 0, 0);
+        //For Target like detector
+	//fPlasticLog = new G4LogicalVolume(box, plasticG4material, "PlasticDet", 0, 0, 0);
+	//For Sphere like detector
+        fPlasticLog = new G4LogicalVolume(plasticSphere, plasticG4material, "PlasticDet", 0, 0, 0);
         //fTestcanAlumCasingLog->SetVisAttributes(canVisAtt);
     }
     fAssemblyPlastics->AddPlacedVolume(fPlasticLog, move, rotate);

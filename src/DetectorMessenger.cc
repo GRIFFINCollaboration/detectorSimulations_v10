@@ -236,6 +236,9 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
 	fAddDetectionSystemDescantCmd->SetGuidance("Add Detection System DESCANT");
 	fAddDetectionSystemDescantCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	fAddDetectionSystemDescantNoLeadCmd = new G4UIcmdWithAnInteger("/DetSys/det/addDescantNoLead",this);
+	fAddDetectionSystemDescantNoLeadCmd->SetGuidance("Add Detection System DESCANT no lead");
+	fAddDetectionSystemDescantNoLeadCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 	fAddDetectionSystemDescantAuxPortsCmd = new G4UIcmdWith3Vector("/DetSys/det/addDescantAuxPorts",this);
 	fAddDetectionSystemDescantAuxPortsCmd->SetGuidance("Add 8 DESCANT detectors in the auxillary LaBr3 detector locations");
@@ -402,6 +405,7 @@ DetectorMessenger::~DetectorMessenger()
 
 	delete fAddDetectionSystemTestcanCmd;
 	delete fAddDetectionSystemPlasticsCmd;
+	delete fAddDetectionSystemDescantNoLeadCmd;
 
 	delete fSetDetectionSystemDescantColorCmd;
 	delete fSetDetectionSystemDescantRotationCmd;	 
@@ -552,6 +556,9 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	if(command == fAddDetectionSystemDescantCmd) {
 		fDetector->AddDetectionSystemDescant(fAddDetectionSystemDescantCmd->GetNewIntValue(newValue));
+	}
+	if(command == fAddDetectionSystemDescantNoLeadCmd) {
+		fDetector->AddDetectionSystemDescantNoLead(fAddDetectionSystemDescantNoLeadCmd->GetNewIntValue(newValue));
 	}
 	if(command == fAddDetectionSystemDescantAuxPortsCmd)  {
 		fDetector->AddDetectionSystemDescantAuxPorts(fAddDetectionSystemDescantAuxPortsCmd->GetNew3VectorValue(newValue));

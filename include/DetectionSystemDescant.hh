@@ -53,7 +53,11 @@ public:
     G4int PlaceDetectorAuxPorts(G4LogicalVolume* expHallLog, G4int detectorNumber, G4double radialpos);
 
     G4int PlaceDetector(G4LogicalVolume* expHallLog, G4String color, G4ThreeVector pos, G4ThreeVector rot);
-  
+
+  //Get DESCANT values for Plastics
+	//G4double GetRadialDistance() {return fRadialDistance;};
+	//G4double GetLeadThickness() {return fLeadShieldThickness;};
+
 private:
     // Logical volumes
     G4LogicalVolume* fBlueVolumeLog;
