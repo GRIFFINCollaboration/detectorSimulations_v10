@@ -32,8 +32,8 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef DETECTIONSYSTEMPLASTICS_HH
-#define DETECTIONSYSTEMPLASTICS_HH
+#ifndef APPARATUSLABFLOOR_HH
+#define APPARATUSLABFLOOR_HH
 
 #include "G4SystemOfUnits.hh" // new version geant4.10 requires units
 #include "G4VUserDetectorConstruction.hh"
@@ -41,58 +41,29 @@
 
 class G4AssemblyVolume;
 
-class DetectionSystemPlastics
+class ApparatusLabFloor
 {
 public:
-   // DetectionSystemPlastics(G4double length, G4double height, G4double width, G4int material);
-    DetectionSystemPlastics(G4double thickness, G4int material, G4double spacing);
-    ~DetectionSystemPlastics();
+    ApparatusLabFloor();
+    ~ApparatusLabFloor();
 
     G4int Build();
-    G4int PlaceDetector(G4LogicalVolume* expHallLog);
+    G4int PlaceLabFloor(G4LogicalVolume* expHallLog);
 
 private:
-    // Logical volumes
-//    G4LogicalVolume* fTestcanAlumCasingLog;
-//    G4LogicalVolume* fTestcanScintillatorLog;   
-//    G4LogicalVolume* fTestcanQuartzWindowLog;
 
-    // Assembly volumes
-    G4AssemblyVolume* fAssemblyPlastics;                 // Contains all non-sensitive materials
+    G4AssemblyVolume* fAssemblyFloor;                 // Contains all non-sensitive materials
 
-    G4double fScintillatorLength;
-    G4double fScintillatorHeight;
-    G4double fScintillatorWidth;
+    G4double fFloorLength;
+    G4double fFloorHeight;
+    G4double fFloorWidth;
 
-    G4double fRadialDistance;
-    G4double fLeadShieldThickness;
-    G4double fSpacing;
-
-    G4String fPlasticMaterial;
+    G4String fFloorMaterial;
    
-    G4LogicalVolume * fPlasticLog;
+    G4LogicalVolume * fFloorLog;
    
-//    G4double fScintillatorLength;
-//    G4double fScintillatorInnerRadius;
-//    G4double fScintillatorOuterRadius;
 
-//    G4double fAlumCanThickness;
-//    G4double fQuartzThickness;
-//    G4double fQuartzRadius;
-
-//    G4double fStartPhi;
-//    G4double fEndPhi;
-
-//    G4String fCanMaterial;
-//    G4String fLiquidMaterial;
-//    G4String fQuartzMaterial;
-
-    // The colours of the detectors
-//    G4Colour fLiquidColour; // Scintillator colour
-//    G4Colour fGreyColour;   // can colour
-//    G4Colour fQuartzColour;
-
-    G4int BuildPlastics();
+    G4int BuildFloor();
 
 };
 
