@@ -53,16 +53,39 @@ EventAction::EventAction(RunAction* run, HistoManager* hist)
 {
 	fFinalAngle = -1;
 	pLabAngle = -1;
+<<<<<<< HEAD
 	fTOF = 0.;
 	SetTOFPos(G4ThreeVector(0.,0.,0.));
 	fTOFMulti = 0.;
 	SetTOFPosMulti(G4ThreeVector(0.,0.,0.));
+=======
+<<<<<<< HEAD
+	fTOF = 0.;
+	SetTOFPos(G4ThreeVector(0.,0.,0.));
+=======
+<<<<<<< HEAD
+	fTOF = 0.;
+	SetTOFPos(G4ThreeVector(0.,0.,0.));
+=======
+<<<<<<< HEAD
+	fTOF = 0.;
+	SetTOFPos(G4ThreeVector(0.,0.,0.));
+=======
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 //    G4ThreeVector fFinalMomentum = G4ThreeVector(0., 0., 0.);
 //    G4ThreeVector fInitialMomentum = G4ThreeVector(0., 0., 0.);
 	SetFinalMomentum(G4ThreeVector(0.,0.,0.));
 	SetInitialMomentum(G4ThreeVector(0.,0.,0.));
+<<<<<<< HEAD
 	fPEdep =0.;
 	fPEkin=0.;
+=======
+
+
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 
 	fNumberOfHits = 0;
 	fNumberOfSteps = 0;
@@ -89,12 +112,35 @@ void EventAction::BeginOfEventAction(const G4Event* evt) {
 	
 	//Set Lab angle
 	pLabAngle = -1;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 	fFinalAngle = -1;
 //    G4ThreeVector fFinalMomentum = G4ThreeVector(0., 0., 0.);
 //    G4ThreeVector fInitialMomentum = G4ThreeVector(0., 0., 0.);
 	SetFinalMomentum(G4ThreeVector(0.,0.,0.));
 	SetInitialMomentum(G4ThreeVector(0.,0.,0.));
 	
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 	//Reset Optical Photon Counter
 	SetTotScintPhoton(0);
 	//Reset Scatter Counters
@@ -104,12 +150,30 @@ void EventAction::BeginOfEventAction(const G4Event* evt) {
 	//Reset TOF
 	SetTOF(0);
 	SetTOFPos(G4ThreeVector(0.,0.,0.));
+<<<<<<< HEAD
 	SetTOFMulti(0);
 	SetTOFPosMulti(G4ThreeVector(0.,0.,0.));
 	//Reset PEdep
 	SetPEdep(0);
 	SetPEkin(0);
 
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+=======
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
+	//Reset Optical Photon Counter
+	SetTotScintPhoton(0);
+	SetElasticCounter(0);
+	SetInelasticCounter(0);
+	SetTotalCounter(0);
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -124,11 +188,51 @@ void EventAction::EndOfEventAction(const G4Event*) {
 		} else*/ {  
 			for(G4int i = 0; i < fNumberOfHits; i++) {
 		G4cout << "Filling HitNTuple, testing printing fHitTrackerD[4][i] time " << fHitTrackerD[4][i] << G4endl;
+<<<<<<< HEAD
 				fHistoManager->FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i], fHitTrackerD[5][i], fHitTrackerD[6][i], fHitTrackerD[7][i], fHitTrackerD[8][i], fHitTrackerD[9][i]/degree, fHitTrackerD[10][i]/degree, fHitTrackerD[11][i]/nanosecond, fHitTrackerD[12][i]/cm, fHitTrackerD[13][i]/cm, fHitTrackerD[14][i]/cm, fHitTrackerD[15][i]/nanosecond, fHitTrackerD[16][i]/cm, fHitTrackerD[17][i]/cm, fHitTrackerD[18][i]/cm, fHitTrackerD[19][i]/keV, fHitTrackerD[20][i]/keV);
 			}
 			for(G4int i = 0; i < fNumberOfSteps; i++) {
 		G4cout << "Filling StepNTuple, testing printing fStepTrackerD[4][i] time " << fStepTrackerD[4][i] << G4endl;
 				fHistoManager->FillStepNtuple(fStepTrackerI[0][i], fStepTrackerI[1][i], fStepTrackerI[2][i], fStepTrackerI[3][i],  fStepTrackerI[4][i], fStepTrackerI[5][i], fStepTrackerI[6][i], fStepTrackerI[7][i], fStepTrackerI[8][i], fStepTrackerD[0][i]/keV, fStepTrackerD[1][i]/mm, fStepTrackerD[2][i]/mm, fStepTrackerD[3][i]/mm, fStepTrackerD[4][i]/second, fStepTrackerI[9][i], fStepTrackerD[5][i], fStepTrackerD[6][i], fStepTrackerD[7][i], fStepTrackerD[8][i], fStepTrackerD[9][i], fStepTrackerD[10][i], fStepTrackerD[11][i]/nanosecond, fStepTrackerD[12][i]/cm, fStepTrackerD[13][i]/cm, fStepTrackerD[14][i]/cm, fStepTrackerD[15][i]/nanosecond, fStepTrackerD[16][i]/cm, fStepTrackerD[17][i]/cm, fStepTrackerD[18][i]/cm, fStepTrackerD[19][i]/keV, fStepTrackerD[20][i]/keV);
+=======
+<<<<<<< HEAD
+				fHistoManager->FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i], fHitTrackerD[5][i], fHitTrackerD[6][i], fHitTrackerD[7][i], fHitTrackerD[8][i], fHitTrackerD[9][i]/degree, fHitTrackerD[10][i]/degree, fHitTrackerD[11][i]/nanosecond, fHitTrackerD[12][i]/cm, fHitTrackerD[13][i]/cm, fHitTrackerD[14][i]/cm);
+			}
+			for(G4int i = 0; i < fNumberOfSteps; i++) {
+		G4cout << "Filling StepNTuple, testing printing fStepTrackerD[4][i] time " << fStepTrackerD[4][i] << G4endl;
+				fHistoManager->FillStepNtuple(fStepTrackerI[0][i], fStepTrackerI[1][i], fStepTrackerI[2][i], fStepTrackerI[3][i],  fStepTrackerI[4][i], fStepTrackerI[5][i], fStepTrackerI[6][i], fStepTrackerI[7][i], fStepTrackerI[8][i], fStepTrackerD[0][i]/keV, fStepTrackerD[1][i]/mm, fStepTrackerD[2][i]/mm, fStepTrackerD[3][i]/mm, fStepTrackerD[4][i]/second, fStepTrackerI[9][i], fStepTrackerD[5][i], fStepTrackerD[6][i], fStepTrackerD[7][i], fStepTrackerD[8][i], fStepTrackerD[9][i], fStepTrackerD[10][i], fStepTrackerD[11][i]/nanosecond, fStepTrackerD[12][i]/cm, fStepTrackerD[13][i]/cm, fStepTrackerD[14][i]/cm);
+=======
+<<<<<<< HEAD
+				fHistoManager->FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i], fHitTrackerD[5][i], fHitTrackerD[6][i], fHitTrackerD[7][i], fHitTrackerD[8][i], fHitTrackerD[9][i]/degree, fHitTrackerD[10][i]/degree, fHitTrackerD[11][i]/nanosecond, fHitTrackerD[12][i]/cm, fHitTrackerD[13][i]/cm, fHitTrackerD[14][i]/cm);
+			}
+			for(G4int i = 0; i < fNumberOfSteps; i++) {
+		G4cout << "Filling StepNTuple, testing printing fStepTrackerD[4][i] time " << fStepTrackerD[4][i] << G4endl;
+				fHistoManager->FillStepNtuple(fStepTrackerI[0][i], fStepTrackerI[1][i], fStepTrackerI[2][i], fStepTrackerI[3][i],  fStepTrackerI[4][i], fStepTrackerI[5][i], fStepTrackerI[6][i], fStepTrackerI[7][i], fStepTrackerI[8][i], fStepTrackerD[0][i]/keV, fStepTrackerD[1][i]/mm, fStepTrackerD[2][i]/mm, fStepTrackerD[3][i]/mm, fStepTrackerD[4][i]/second, fStepTrackerI[9][i], fStepTrackerD[5][i], fStepTrackerD[6][i], fStepTrackerD[7][i], fStepTrackerD[8][i], fStepTrackerD[9][i], fStepTrackerD[10][i], fStepTrackerD[11][i]/nanosecond, fStepTrackerD[12][i]/cm, fStepTrackerD[13][i]/cm, fStepTrackerD[14][i]/cm);
+=======
+<<<<<<< HEAD
+				fHistoManager->FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i], fHitTrackerD[5][i], fHitTrackerD[6][i], fHitTrackerD[7][i], fHitTrackerD[8][i], fHitTrackerD[9][i]/degree, fHitTrackerD[10][i]/degree, fHitTrackerD[11][i]/nanosecond, fHitTrackerD[12][i]/cm, fHitTrackerD[13][i]/cm, fHitTrackerD[14][i]/cm);
+			}
+			for(G4int i = 0; i < fNumberOfSteps; i++) {
+		G4cout << "Filling StepNTuple, testing printing fStepTrackerD[4][i] time " << fStepTrackerD[4][i] << G4endl;
+				fHistoManager->FillStepNtuple(fStepTrackerI[0][i], fStepTrackerI[1][i], fStepTrackerI[2][i], fStepTrackerI[3][i],  fStepTrackerI[4][i], fStepTrackerI[5][i], fStepTrackerI[6][i], fStepTrackerI[7][i], fStepTrackerI[8][i], fStepTrackerD[0][i]/keV, fStepTrackerD[1][i]/mm, fStepTrackerD[2][i]/mm, fStepTrackerD[3][i]/mm, fStepTrackerD[4][i]/second, fStepTrackerI[9][i], fStepTrackerD[5][i], fStepTrackerD[6][i], fStepTrackerD[7][i], fStepTrackerD[8][i], fStepTrackerD[9][i], fStepTrackerD[10][i], fStepTrackerD[11][i]/nanosecond, fStepTrackerD[12][i]/cm, fStepTrackerD[13][i]/cm, fStepTrackerD[14][i]/cm);
+=======
+<<<<<<< HEAD
+				fHistoManager->FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i], fHitTrackerD[5][i], fHitTrackerD[6][i], fHitTrackerD[7][i], fHitTrackerD[8][i], fHitTrackerD[9][i]/degree, fHitTrackerD[10][i]/degree);
+			}
+			for(G4int i = 0; i < fNumberOfSteps; i++) {
+		G4cout << "Filling StepNTuple, testing printing fStepTrackerD[4][i] time " << fStepTrackerD[4][i] << G4endl;
+				fHistoManager->FillStepNtuple(fStepTrackerI[0][i], fStepTrackerI[1][i], fStepTrackerI[2][i], fStepTrackerI[3][i],  fStepTrackerI[4][i], fStepTrackerI[5][i], fStepTrackerI[6][i], fStepTrackerI[7][i], fStepTrackerI[8][i], fStepTrackerD[0][i]/keV, fStepTrackerD[1][i]/mm, fStepTrackerD[2][i]/mm, fStepTrackerD[3][i]/mm, fStepTrackerD[4][i]/second, fStepTrackerI[9][i], fStepTrackerD[5][i], fStepTrackerD[6][i], fStepTrackerD[7][i], fStepTrackerD[8][i], fStepTrackerD[9][i], fStepTrackerD[10][i]);
+=======
+				fHistoManager->FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i], fHitTrackerD[5][i], fHitTrackerD[6][i], fHitTrackerD[7][i], fHitTrackerD[8][i], fHitTrackerD[9][i]);
+			}
+			for(G4int i = 0; i < fNumberOfSteps; i++) {
+		G4cout << "Filling StepNTuple, testing printing fStepTrackerD[4][i] time " << fStepTrackerD[4][i] << G4endl;
+				fHistoManager->FillStepNtuple(fStepTrackerI[0][i], fStepTrackerI[1][i], fStepTrackerI[2][i], fStepTrackerI[3][i],  fStepTrackerI[4][i], fStepTrackerI[5][i], fStepTrackerI[6][i], fStepTrackerI[7][i], fStepTrackerI[8][i], fStepTrackerD[0][i]/keV, fStepTrackerD[1][i]/mm, fStepTrackerD[2][i]/mm, fStepTrackerD[3][i]/mm, fStepTrackerD[4][i]/second, fStepTrackerI[9][i], fStepTrackerD[5][i], fStepTrackerD[6][i], fStepTrackerD[7][i], fStepTrackerD[8][i], fStepTrackerD[9][i]);
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 			}
 		}
 
@@ -139,7 +243,27 @@ void EventAction::EndOfEventAction(const G4Event*) {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+<<<<<<< HEAD
 void EventAction::AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4ThreeVector TOFPos, G4double TOFMulti, G4ThreeVector TOFPosMulti, G4double PEkin, G4double PEdep) {
+=======
+<<<<<<< HEAD
+void EventAction::AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4ThreeVector TOFPos) {
+=======
+<<<<<<< HEAD
+void EventAction::AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4ThreeVector TOFPos) {
+=======
+<<<<<<< HEAD
+void EventAction::AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4ThreeVector TOFPos) {
+=======
+<<<<<<< HEAD
+void EventAction::AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle) {
+=======
+void EventAction::AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle) {
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 	for(G4int i = 0; i < fNumberOfHits; i++) {
 		if(fProperties[i] == properties) {
 			// sum the new enery
@@ -169,18 +293,49 @@ void EventAction::AddHitTracker(const DetectorProperties& properties, const G4in
 	fHitTrackerD[6][fNumberOfHits] = elastic;
 	fHitTrackerD[7][fNumberOfHits] = inelastic;
 	fHitTrackerD[8][fNumberOfHits] = numScintPhotons;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 	fHitTrackerD[9][fNumberOfHits] = pLabAngle; //pLabAngle?
 	fHitTrackerD[10][fNumberOfHits] = final_angle; //fFinalAngle?
 	fHitTrackerD[11][fNumberOfHits] = TOF; //based on first scatter
 	fHitTrackerD[12][fNumberOfHits] = TOFPos.x(); //based on first scatter
 	fHitTrackerD[13][fNumberOfHits] = TOFPos.y(); //based on first scatter
 	fHitTrackerD[14][fNumberOfHits] = TOFPos.z(); //based on first scatter
+<<<<<<< HEAD
 	fHitTrackerD[15][fNumberOfHits] = TOFMulti;  //based on >2 scatter
 	fHitTrackerD[16][fNumberOfHits] = TOFPosMulti.x(); //based on >2 scatter
 	fHitTrackerD[17][fNumberOfHits] = TOFPosMulti.y(); //based on >2 scatter
 	fHitTrackerD[18][fNumberOfHits] = TOFPosMulti.z(); //based on >2 scatter
 	fHitTrackerD[19][fNumberOfHits] = PEkin; //kinetic energy of neutron in plastic
 	fHitTrackerD[20][fNumberOfHits] = PEdep; //energy is plastic
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+<<<<<<< HEAD
+	fHitTrackerD[9][fNumberOfHits] = pLabAngle; //pLabAngle?
+	fHitTrackerD[10][fNumberOfHits] = final_angle; //fFinalAngle?
+=======
+<<<<<<< HEAD
+	fHitTrackerD[9][fNumberOfHits] = pLabAngle; //pLabAngle?
+=======
+	fHitTrackerD[9][fNumberOfHits] = lab_angle; //pLabAngle?
+>>>>>>> 2c0eeb1b5df7aa4f21d8f8eff1ea115c68f24a66
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 
 	++fNumberOfHits;
 
@@ -190,7 +345,27 @@ void EventAction::AddHitTracker(const DetectorProperties& properties, const G4in
 	}
 }
 
+<<<<<<< HEAD
 void EventAction::AddStepTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4ThreeVector TOFPos, G4double TOFMulti, G4ThreeVector TOFPosMulti, G4double PEkin, G4double PEdep) {
+=======
+<<<<<<< HEAD
+void EventAction::AddStepTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4ThreeVector TOFPos) {
+=======
+<<<<<<< HEAD
+void EventAction::AddStepTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4ThreeVector TOFPos) {
+=======
+<<<<<<< HEAD
+void EventAction::AddStepTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4ThreeVector TOFPos) {
+=======
+<<<<<<< HEAD
+void EventAction::AddStepTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle) {
+=======
+void EventAction::AddStepTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle) {
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 	// new step
 	fStepTrackerI[0][fNumberOfSteps] = eventNumber;
 	fStepTrackerI[1][fNumberOfSteps] = trackID;
@@ -212,17 +387,42 @@ void EventAction::AddStepTracker(const DetectorProperties& properties, const G4i
 	fStepTrackerD[7][fNumberOfSteps] = inelastic;
 	fStepTrackerD[8][fNumberOfSteps] = numScintPhotons;
 	fStepTrackerD[9][fNumberOfSteps] = lab_angle;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 	fStepTrackerD[10][fNumberOfSteps] = final_angle;
 	fStepTrackerD[11][fNumberOfSteps] = TOF;
 	fStepTrackerD[12][fNumberOfSteps] = TOFPos.x();
 	fStepTrackerD[13][fNumberOfSteps] = TOFPos.y();
 	fStepTrackerD[14][fNumberOfSteps] = TOFPos.z();
+<<<<<<< HEAD
 	fStepTrackerD[15][fNumberOfSteps] = TOFMulti;
 	fStepTrackerD[16][fNumberOfSteps] = TOFPosMulti.x();
 	fStepTrackerD[17][fNumberOfSteps] = TOFPosMulti.y();
 	fStepTrackerD[18][fNumberOfSteps] = TOFPosMulti.z();
 	fStepTrackerD[19][fNumberOfSteps] = PEkin;
 	fStepTrackerD[20][fNumberOfSteps] = PEdep;
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+<<<<<<< HEAD
+	fStepTrackerD[9][fNumberOfSteps] = final_angle;
+=======
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 
 	++fNumberOfSteps;
 

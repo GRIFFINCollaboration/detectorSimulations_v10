@@ -44,10 +44,29 @@ DetectionSystemPlastics::DetectionSystemPlastics(G4double thickness, G4int mater
     fScintillatorLength        = 6.*cm;
     fScintillatorHeight        = 6.*cm;
     fScintillatorWidth         = thickness;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
     fRadialDistance = 50*cm;
     fLeadShieldThickness = 6.35*mm;
     fSpacing = spacing; //with lead
     //fSpacing = spacing;  //no lead
+<<<<<<< HEAD
+=======
+=======
+<<<<<<< HEAD
+    fRadialDistance = 50*cm;
+    fLeadShieldThickness = 6.35*mm;
+    fSpacing = spacing+fLeadShieldThickness; //with lead
+    //fSpacing = spacing*cm;  //no lead
+=======
+ 
+    fRadialDistance = 50*cm;
+    fLeadShieldThickness = 6.35*mm;
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
   
    if(material == 1)  fPlasticMaterial = "BC408";
 	else if (material == 2) fPlasticMaterial = "deuterium";
@@ -248,8 +267,22 @@ G4Box * box = new G4Box("Plastic Detector", fScintillatorLength, fScintillatorHe
  
 //Creating actual detector shape
 //place outer radius of plastics at position of DESCANT detectors, taking into account lead shield and placing 1 cm away after
+<<<<<<< HEAD
 //G4double outerRadius = fRadialDistance - fLeadShieldThickness - 1*cm;
 G4double outerRadius = fRadialDistance - fSpacing;
+=======
+<<<<<<< HEAD
+//G4double outerRadius = fRadialDistance - fLeadShieldThickness - 1*cm;
+G4double outerRadius = fRadialDistance - fSpacing;
+=======
+<<<<<<< HEAD
+//G4double outerRadius = fRadialDistance - fLeadShieldThickness - 1*cm;
+G4double outerRadius = fRadialDistance - fSpacing;
+=======
+G4double outerRadius = fRadialDistance - fLeadShieldThickness - 1*cm;
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 G4double innerRadius = outerRadius - fScintillatorWidth;
 //Opening angle 65.5 degrees, approx 1.143 radians. Limiting to 1.13
 G4double startTheta = 0.;

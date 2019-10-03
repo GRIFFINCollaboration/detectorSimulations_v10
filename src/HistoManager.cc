@@ -104,17 +104,42 @@ void HistoManager::Book() {
 		fNtColIdHit[17] = analysisManager->CreateNtupleDColumn("inelastic");
 		fNtColIdHit[18] = analysisManager->CreateNtupleDColumn("numScintPhotons");
 		fNtColIdHit[19] = analysisManager->CreateNtupleDColumn("lab_angle");
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 		fNtColIdHit[20] = analysisManager->CreateNtupleDColumn("final_angle");
 		fNtColIdHit[21] = analysisManager->CreateNtupleDColumn("TOF");
 		fNtColIdHit[22] = analysisManager->CreateNtupleDColumn("TOFPosx");
 		fNtColIdHit[23] = analysisManager->CreateNtupleDColumn("TOFPosy");
 		fNtColIdHit[24] = analysisManager->CreateNtupleDColumn("TOFPosz");
+<<<<<<< HEAD
 		fNtColIdHit[25] = analysisManager->CreateNtupleDColumn("TOFMulti");
 		fNtColIdHit[26] = analysisManager->CreateNtupleDColumn("TOFPosMultix");
 		fNtColIdHit[27] = analysisManager->CreateNtupleDColumn("TOFPosMultiy");
 		fNtColIdHit[28] = analysisManager->CreateNtupleDColumn("TOFPosMultiz");
 		fNtColIdHit[29] = analysisManager->CreateNtupleDColumn("PEkin");
 		fNtColIdHit[30] = analysisManager->CreateNtupleDColumn("PEdep");
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+<<<<<<< HEAD
+		fNtColIdHit[20] = analysisManager->CreateNtupleDColumn("final_angle");
+=======
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 		analysisManager->FinishNtuple();
 	}
 
@@ -141,17 +166,42 @@ void HistoManager::Book() {
 		fNtColIdStep[17] = analysisManager->CreateNtupleDColumn("inelastic");
 		fNtColIdStep[18] = analysisManager->CreateNtupleDColumn("numScintPhotons");
 		fNtColIdStep[19] = analysisManager->CreateNtupleDColumn("lab_angle");
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 		fNtColIdStep[20] = analysisManager->CreateNtupleDColumn("final_angle");
 		fNtColIdStep[21] = analysisManager->CreateNtupleDColumn("TOF");
 		fNtColIdStep[22] = analysisManager->CreateNtupleDColumn("TOFPosx");
 		fNtColIdStep[23] = analysisManager->CreateNtupleDColumn("TOFPosy");
 		fNtColIdStep[24] = analysisManager->CreateNtupleDColumn("TOFPosz");
+<<<<<<< HEAD
 		fNtColIdStep[25] = analysisManager->CreateNtupleDColumn("TOFMulti");
 		fNtColIdStep[26] = analysisManager->CreateNtupleDColumn("TOFPosMultix");
 		fNtColIdStep[27] = analysisManager->CreateNtupleDColumn("TOFPosMultiy");
 		fNtColIdStep[28] = analysisManager->CreateNtupleDColumn("TOFPosMultiz");
 		fNtColIdStep[29] = analysisManager->CreateNtupleDColumn("PEkin");
 		fNtColIdStep[30] = analysisManager->CreateNtupleDColumn("PEdep");
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+<<<<<<< HEAD
+		fNtColIdStep[20] = analysisManager->CreateNtupleDColumn("final_angle");
+=======
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 		analysisManager->FinishNtuple();
 	}
 
@@ -176,7 +226,27 @@ void HistoManager::Save() {
 	}
 }
 
+<<<<<<< HEAD
 void HistoManager::FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScinPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz, G4double TOFMulti, G4double TOFPosMultix, G4double TOFPosMultiy, G4double TOFPosMultiz, G4double PEkin, G4double PEdep) {
+=======
+<<<<<<< HEAD
+void HistoManager::FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScinPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz) {
+=======
+<<<<<<< HEAD
+void HistoManager::FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScinPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz) {
+=======
+<<<<<<< HEAD
+void HistoManager::FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScinPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz) {
+=======
+<<<<<<< HEAD
+void HistoManager::FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScinPhotons, G4double lab_angle, G4double final_angle) {
+=======
+void HistoManager::FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScinPhotons, G4double lab_angle) {
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 	if(fHitTrackerBool) {
 		G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 		analysisManager->FillNtupleIColumn(fNtColIdHit[0], eventNumber);
@@ -199,22 +269,67 @@ void HistoManager::FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentI
 		analysisManager->FillNtupleDColumn(fNtColIdHit[17], inelastic);
 		analysisManager->FillNtupleDColumn(fNtColIdHit[18], numScinPhotons);
 		analysisManager->FillNtupleDColumn(fNtColIdHit[19], lab_angle);
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 		analysisManager->FillNtupleDColumn(fNtColIdHit[20], final_angle);
 		analysisManager->FillNtupleDColumn(fNtColIdHit[21], TOF);
 		analysisManager->FillNtupleDColumn(fNtColIdHit[22], TOFPosx);
 		analysisManager->FillNtupleDColumn(fNtColIdHit[23], TOFPosy);
 		analysisManager->FillNtupleDColumn(fNtColIdHit[24], TOFPosz);
+<<<<<<< HEAD
 		analysisManager->FillNtupleDColumn(fNtColIdHit[25], TOFMulti);
 		analysisManager->FillNtupleDColumn(fNtColIdHit[26], TOFPosMultix);
 		analysisManager->FillNtupleDColumn(fNtColIdHit[27], TOFPosMultiy);
 		analysisManager->FillNtupleDColumn(fNtColIdHit[28], TOFPosMultiz);
 		analysisManager->FillNtupleDColumn(fNtColIdHit[29], PEkin);
 		analysisManager->FillNtupleDColumn(fNtColIdHit[30], PEdep);
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+<<<<<<< HEAD
+		analysisManager->FillNtupleDColumn(fNtColIdHit[20], final_angle);
+=======
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 		analysisManager->AddNtupleRow();
 	}
 }
 
+<<<<<<< HEAD
 void HistoManager::FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScinPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz, G4double TOFMulti, G4double TOFPosMultix, G4double TOFPosMultiy, G4double TOFPosMultiz, G4double PEkin, G4double PEdep) {
+=======
+<<<<<<< HEAD
+void HistoManager::FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScinPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz) {
+=======
+<<<<<<< HEAD
+void HistoManager::FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScinPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz) {
+=======
+<<<<<<< HEAD
+void HistoManager::FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScinPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz) {
+=======
+<<<<<<< HEAD
+void HistoManager::FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScinPhotons, G4double lab_angle, G4double final_angle) {
+=======
+void HistoManager::FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScinPhotons, G4double lab_angle) {
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 	if(fStepTrackerBool) {
 		G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 		analysisManager->FillNtupleIColumn(fNtColIdStep[0], eventNumber);
@@ -237,17 +352,42 @@ void HistoManager::FillStepNtuple(G4int eventNumber, G4int trackID, G4int parent
 		analysisManager->FillNtupleDColumn(fNtColIdStep[17], inelastic);
 		analysisManager->FillNtupleDColumn(fNtColIdStep[18], numScinPhotons);
 		analysisManager->FillNtupleDColumn(fNtColIdStep[19], lab_angle);
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 		analysisManager->FillNtupleDColumn(fNtColIdStep[20], final_angle);
 		analysisManager->FillNtupleDColumn(fNtColIdStep[21], TOF);
 		analysisManager->FillNtupleDColumn(fNtColIdStep[22], TOFPosx);
 		analysisManager->FillNtupleDColumn(fNtColIdStep[23], TOFPosy);
 		analysisManager->FillNtupleDColumn(fNtColIdStep[24], TOFPosz);
+<<<<<<< HEAD
 		analysisManager->FillNtupleDColumn(fNtColIdStep[25], TOFMulti);
 		analysisManager->FillNtupleDColumn(fNtColIdStep[26], TOFPosMultix);
 		analysisManager->FillNtupleDColumn(fNtColIdStep[27], TOFPosMultiy);
 		analysisManager->FillNtupleDColumn(fNtColIdStep[28], TOFPosMultiz);
 		analysisManager->FillNtupleDColumn(fNtColIdStep[29], PEkin);
 		analysisManager->FillNtupleDColumn(fNtColIdStep[30], PEdep);
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+<<<<<<< HEAD
+		analysisManager->FillNtupleDColumn(fNtColIdStep[20], final_angle);
+=======
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 		analysisManager->AddNtupleRow();
 	}
 }

@@ -138,8 +138,33 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	G4int nSecondaries = aStep->GetSecondary()->size();
 	G4double lab_angle = -1;
 	found = volname.find("PlasticDet");
+<<<<<<< HEAD
 	//G4cout << "Found " << found << G4endl;
 	if(postPoint->GetProcessDefinedStep()->GetProcessName() == "hadElastic" && fEventAction->GetLabAngle() == -1 && found != G4String::npos) {
+=======
+<<<<<<< HEAD
+	//G4cout << "Found " << found << G4endl;
+	if(postPoint->GetProcessDefinedStep()->GetProcessName() == "hadElastic" && fEventAction->GetLabAngle() == -1 && found != G4String::npos) {
+=======
+<<<<<<< HEAD
+	//G4cout << "Found " << found << G4endl;
+	if(postPoint->GetProcessDefinedStep()->GetProcessName() == "hadElastic" && fEventAction->GetLabAngle() == -1 && found != G4String::npos) {
+=======
+<<<<<<< HEAD
+	//G4cout << "Found " << found << G4endl;
+	if(postPoint->GetProcessDefinedStep()->GetProcessName() == "hadElastic" && fEventAction->GetLabAngle() == -1 && found != G4String::npos) {
+=======
+<<<<<<< HEAD
+	//G4cout << "Found " << found << G4endl;
+	if(postPoint->GetProcessDefinedStep()->GetProcessName() == "hadElastic" && fEventAction->GetLabAngle() == -1 && found != G4String::npos) {
+=======
+	G4cout << "Found " << found << G4endl;
+	if(postPoint->GetProcessDefinedStep()->GetProcessName() == "hadElastic" && nSecondaries == 1 && fEventAction->GetLabAngle() == -1 && found != G4String::npos) {
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 	G4ThreeVector momentum_1 = prePoint->GetMomentum();
 	G4ThreeVector momentum_2 = postPoint->GetMomentum();
 	lab_angle = momentum_2.angle(momentum_1);
@@ -148,19 +173,40 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	G4cout << "GetLabAngle(): " << fEventAction->GetLabAngle() << G4endl;
 	}
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 	//Get angle when leaving Detector
 	G4double final_angle = -1;
 	found = volname.find("PlasticDet");
 	//G4cout << "Found " << found << G4endl;
+<<<<<<< HEAD
 //	if(aStep->GetTrack()->GetParentID() == 0 && fEventAction->GetFinalAngle() == -1 && found != G4String::npos && aStep->IsFirstStepInVolume() == true) { 
 	if(aStep->GetTrack()->GetParentID() == 0 && fEventAction->GetFinalAngle() == -1 && found != G4String::npos && prePoint->GetStepStatus() == fGeomBoundary) { 
+=======
+	if(aStep->GetTrack()->GetParentID() == 0 && fEventAction->GetFinalAngle() == -1 && found != G4String::npos && aStep->IsFirstStepInVolume() == true) { 
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 	G4ThreeVector momentum_3 = prePoint->GetMomentum();
 	//Set initial momenturm 
 	fEventAction->SetInitialMomentum(momentum_3);
 	G4cout<< "Setting Initial Momentum as : " << fEventAction->GetInitialMomentum() << G4endl;
 	}
+<<<<<<< HEAD
 	//if(aStep->GetTrack()->GetParentID() == 0 && fEventAction->GetFinalAngle() == -1 && found != G4String::npos && aStep->IsLastStepInVolume() == true) { 
 	if(aStep->GetTrack()->GetParentID() == 0 && fEventAction->GetFinalAngle() == -1 && found != G4String::npos && postPoint->GetStepStatus() == fGeomBoundary) { 
+=======
+	if(aStep->GetTrack()->GetParentID() == 0 && fEventAction->GetFinalAngle() == -1 && found != G4String::npos && aStep->IsLastStepInVolume() == true) { 
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 	G4ThreeVector momentum_4 = postPoint->GetMomentum();
 	//Set final momentum
 	fEventAction->SetFinalMomentum(momentum_4);
@@ -176,8 +222,305 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	}
 	final_angle= fEventAction->GetFinalAngle();
 	G4cout<<"Calling Get Final Angle: " << fEventAction->GetFinalAngle() << G4endl;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
 
 
+	//Counting hits for efficiencies
+	//By not initilalizing counters in event action to zero, they keep counting for whole run, which is good
+	found = volname.find("PlasticDet");
+	//G4cout << "Found " << found << G4endl;
+	if(found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {
+	G4cout << "Testing " << G4endl;
+	if(postPoint->GetProcessDefinedStep()->GetProcessName() == "hadElastic") {
+	fEventAction->totalCounter();
+	fEventAction->elasticCounter();
+	G4cout << "GetTotalCounter(): " << fEventAction->GetTotalCounter() << G4endl;
+	G4cout << "GetElasticCounter(): " << fEventAction->GetElasticCounter() << G4endl;
+	}
+	if(postPoint->GetProcessDefinedStep()->GetProcessName() == "neutronInelastic" || postPoint->GetProcessDefinedStep()->GetProcessName() == "nCapture" || postPoint->GetProcessDefinedStep()->GetProcessName() == "nFission") {
+	fEventAction->totalCounter();
+	fEventAction->inelasticCounter();
+	G4cout << "GetTotalCounter(): " << fEventAction->GetTotalCounter() << G4endl;
+	G4cout << "GetInelasticCounter(): " << fEventAction->GetInelasticCounter() << G4endl;
+	}
+}
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+
+G4int total = fEventAction->GetTotalCounter();
+G4int elastic = fEventAction->GetElasticCounter();
+G4int inelastic = fEventAction->GetInelasticCounter();
+<<<<<<< HEAD
+
+=======
+=======
+=======
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+
+G4int total = fEventAction->GetTotalCounter();
+G4int elastic = fEventAction->GetElasticCounter();
+G4int inelastic = fEventAction->GetInelasticCounter();
+
+	//Counting hits for efficiencies
+	//By not initilalizing counters in event action to zero, they keep counting for whole run, which is good
+	found = volname.find("PlasticDet");
+	//G4cout << "Found " << found << G4endl;
+	if(found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {
+	if(postPoint->GetProcessDefinedStep()->GetProcessName() == "hadElastic") {
+	fEventAction->totalCounter();
+	fEventAction->elasticCounter();
+	G4cout << "GetTotalCounter(): " << fEventAction->GetTotalCounter() << G4endl;
+	G4cout << "GetElasticCounter(): " << fEventAction->GetElasticCounter() << G4endl;
+	}
+	if(postPoint->GetProcessDefinedStep()->GetProcessName() == "neutronInelastic" || postPoint->GetProcessDefinedStep()->GetProcessName() == "nCapture" || postPoint->GetProcessDefinedStep()->GetProcessName() == "nFission") {
+	fEventAction->totalCounter();
+	fEventAction->inelasticCounter();
+	G4cout << "GetTotalCounter(): " << fEventAction->GetTotalCounter() << G4endl;
+	G4cout << "GetInelasticCounter(): " << fEventAction->GetInelasticCounter() << G4endl;
+	}
+}
+
+<<<<<<< HEAD
+	//Counting number of scintillating photons -> Setting to zero at beginning of event ---- Not sure if it does though...
+	G4double numScintPhotons;
+	G4double numCollectedPhotons;
+	found = volname.find("PlasticDet");
+	//G4cout << "Found " << found << G4endl;
+	const std::vector<const G4Track*> *secondaries = aStep->GetSecondaryInCurrentStep();
+	if (secondaries->size()>0) {
+		for(unsigned int i=0; i<secondaries->size(); ++i) {
+			if(secondaries->at(i)->GetParentID()>0) {
+				if(secondaries->at(i)->GetDynamicParticle()->GetParticleDefinition() == G4OpticalPhoton::OpticalPhotonDefinition())  {
+					if(secondaries->at(i)->GetCreatorProcess()->GetProcessName() == "Scintillation") {
+						fEventAction->CountOneScintPhoton();
+						G4cout<< "GetTotScintPhoton() "<< fEventAction->GetTotScintPhoton() <<G4endl;
+					}
+				}
+			}
+		}
+	}
+numScintPhotons = fEventAction->GetTotScintPhoton();
+=======
+G4int total = fEventAction->GetTotalCounter();
+G4int elastic = fEventAction->GetElasticCounter();
+G4int inelastic = fEventAction->GetInelasticCounter();
+=======
+	//Counting hits for efficiencies
+	//By not initilalizing counters in event action to zero, they keep counting for whole run, which is good
+	found = volname.find("PlasticDet");
+	G4cout << "Found " << found << G4endl;
+	if(found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {
+	if(postPoint->GetProcessDefinedStep()->GetProcessName() == "hadElastic") {
+	fEventAction->totalCounter();
+	fEventAction->elasticCounter();
+	G4cout << "GetTotalCounter(): " << fEventAction->GetTotalCounter() << G4endl;
+	G4cout << "GetElasticCounter(): " << fEventAction->GetElasticCounter() << G4endl;
+	}
+	if(postPoint->GetProcessDefinedStep()->GetProcessName() == "neutronInelastic" || postPoint->GetProcessDefinedStep()->GetProcessName() == "nCapture" || postPoint->GetProcessDefinedStep()->GetProcessName() == "nFission") {
+	fEventAction->totalCounter();
+	fEventAction->inelasticCounter();
+	G4cout << "GetTotalCounter(): " << fEventAction->GetTotalCounter() << G4endl;
+	G4cout << "GetInelasticCounter(): " << fEventAction->GetInelasticCounter() << G4endl;
+	}
+}
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+
+G4int total = fEventAction->GetTotalCounter();
+G4int elastic = fEventAction->GetElasticCounter();
+G4int inelastic = fEventAction->GetInelasticCounter();
+
+
+	//Counting number of scintillating photons -> Setting to zero at beginning of event ---- Not sure if it does though...
+	G4double numScintPhotons;
+	G4double numCollectedPhotons;
+	found = volname.find("PlasticDet");
+	G4cout << "Found " << found << G4endl;
+	const std::vector<const G4Track*> *secondaries = aStep->GetSecondaryInCurrentStep();
+	if (secondaries->size()>0) {
+		for(unsigned int i=0; i<secondaries->size(); ++i) {
+			if(secondaries->at(i)->GetParentID()>0) {
+				if(secondaries->at(i)->GetDynamicParticle()->GetParticleDefinition() == G4OpticalPhoton::OpticalPhotonDefinition())  {
+					if(secondaries->at(i)->GetCreatorProcess()->GetProcessName() == "Scintillation") {
+						fEventAction->CountOneScintPhoton();
+						G4cout<< "GetTotScintPhoton() "<< fEventAction->GetTotScintPhoton() <<G4endl;
+					}
+				}
+			}
+		}
+	}
+numScintPhotons = fEventAction->GetTotScintPhoton();
+
+		//G4cout << "edep out of loop " << edep << G4endl;
+		//G4cout << "Has Properties out of loop " << fDetector->HasProperties(volume) << G4endl;
+		//G4cout << "Get Properties out of loop " << G4endl;
+		//fDetector->GetProperties(volume);
+<<<<<<< HEAD
+	
+	
+		//Instead of looking at energy deposited, look at kinetic energy of neutrons before they hit descant
+		//Comment OUT! ONLY for DELRIN TEST
+		/*
+		G4String volume_name = volume->GetName();
+		found  = volume_name.find("blueScintillatorVolumeLog");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+	//	if (aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		//theTrack->SetTrackStatus(fKillTrackAndSecondaries);
+		}
+		found  = volume_name.find("greenScintillatorVolumeLog");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		}
+		found  = volume_name.find("redScintillatorVolumeLog");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		}
+		found  = volume_name.find("whiteScintillatorVolumeLog");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		}
+		found  = volume_name.find("yellowScintillatorVolumeLog");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		}
+		if(aStep->GetTrack()->GetParentID() > 0 ){ //Should maybe be >0 but oh well
+		theTrack->SetTrackStatus(fStopAndKill);
+		G4cout<< " Calling kill" << G4endl;
+		edep =0;
+		}
+		*/
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
+
+	// check if this volume has its properties set, i.e. it's an active detector
+	if((edep > 0 || (fDetector->GridCell() && ekin > 0)) && fDetector->HasProperties(volume)) {
+		G4cout << "edep in loop " << edep << G4endl;
+=======
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+
+	//Counting number of scintillating photons -> Setting to zero at beginning of event ---- Not sure if it does though...
+	G4double numScintPhotons;
+	G4double numCollectedPhotons;
+	found = volname.find("PlasticDet");
+	//G4cout << "Found " << found << G4endl;
+	const std::vector<const G4Track*> *secondaries = aStep->GetSecondaryInCurrentStep();
+	if (secondaries->size()>0) {
+		for(unsigned int i=0; i<secondaries->size(); ++i) {
+			if(secondaries->at(i)->GetParentID()>0) {
+				if(secondaries->at(i)->GetDynamicParticle()->GetParticleDefinition() == G4OpticalPhoton::OpticalPhotonDefinition())  {
+					if(secondaries->at(i)->GetCreatorProcess()->GetProcessName() == "Scintillation") {
+						fEventAction->CountOneScintPhoton();
+						G4cout<< "GetTotScintPhoton() "<< fEventAction->GetTotScintPhoton() <<G4endl;
+					}
+				}
+			}
+		}
+	}
+numScintPhotons = fEventAction->GetTotScintPhoton();
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
+
+<<<<<<< HEAD
+	//Counting number of scintillating photons -> Setting to zero at beginning of event ---- Not sure if it does though...
+	G4double numScintPhotons;
+	G4double numCollectedPhotons;
+	found = volname.find("PlasticDet");
+	//G4cout << "Found " << found << G4endl;
+	const std::vector<const G4Track*> *secondaries = aStep->GetSecondaryInCurrentStep();
+	if (secondaries->size()>0) {
+		for(unsigned int i=0; i<secondaries->size(); ++i) {
+			if(secondaries->at(i)->GetParentID()>0) {
+				if(secondaries->at(i)->GetDynamicParticle()->GetParticleDefinition() == G4OpticalPhoton::OpticalPhotonDefinition())  {
+					if(secondaries->at(i)->GetCreatorProcess()->GetProcessName() == "Scintillation") {
+						fEventAction->CountOneScintPhoton();
+						G4cout<< "GetTotScintPhoton() "<< fEventAction->GetTotScintPhoton() <<G4endl;
+					}
+				}
+			}
+		}
+	}
+numScintPhotons = fEventAction->GetTotScintPhoton();
+=======
+		//G4cout << "edep out of loop " << edep << G4endl;
+		//G4cout << "Has Properties out of loop " << fDetector->HasProperties(volume) << G4endl;
+		//G4cout << "Get Properties out of loop " << G4endl;
+		//fDetector->GetProperties(volume);
+	
+	
+		//Instead of looking at energy deposited, look at kinetic energy of neutrons before they hit descant
+		//Comment OUT! ONLY for DELRIN TEST
+		/*
+		G4String volume_name = volume->GetName();
+		found  = volume_name.find("blueScintillatorVolumeLog");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+	//	if (aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		//theTrack->SetTrackStatus(fKillTrackAndSecondaries);
+		}
+		found  = volume_name.find("greenScintillatorVolumeLog");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		}
+		found  = volume_name.find("redScintillatorVolumeLog");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		}
+		found  = volume_name.find("whiteScintillatorVolumeLog");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		}
+		found  = volume_name.find("yellowScintillatorVolumeLog");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		}
+		if(aStep->GetTrack()->GetParentID() > 0 ){ //Should maybe be >0 but oh well
+		theTrack->SetTrackStatus(fStopAndKill);
+		G4cout<< " Calling kill" << G4endl;
+		edep =0;
+		}
+		*/
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+
+<<<<<<< HEAD
 	//Counting hits for efficiencies
 	//By not initilalizing counters in event action to zero, they keep counting for whole run, which is good
 	found = volname.find("PlasticDet");
@@ -198,11 +541,206 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	G4cout << "GetInelasticCounter(): " << fEventAction->GetInelasticCounter() << G4endl;
 	}
 }
+=======
+	//Getting the TOF based off first scatter in detector.	Using Global Time.
+	found = volname.find("PlasticDet");
+	G4double TOF;
+	G4ThreeVector TOFPos;
+	//G4cout << "Found " << found << G4endl;
+	if(found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true && total == 1) { //does transportation alone count as first step, if so might be losing information... also conditions are redundant if total is included.  From what I see in tracking output, first step in volume is a scatter, pure transportation is "along step"
+	TOF = postTime;
+	TOFPos = postPos;
+	fEventAction->SetTOF(TOF);
+	fEventAction->SetTOFPos(TOFPos);
+	G4cout << "Total counter in TOF loop: " << total << G4endl;
+	//G4cout << "Get TOF from event action in loop: " << fEventAction->GetTOF() << G4endl;
+	}
+	//G4cout << "Get TOF from postTime out of loop: " << TOF << G4endl;
+	//G4cout << "Get TOF from event action out of loop: " << fEventAction->GetTOF() << G4endl;
+	TOF = fEventAction->GetTOF();
+	TOFPos = fEventAction->GetTOFPos();
+	G4cout << "Get x TOF Pos from event action  out of loop via var: " << TOFPos.x() << G4endl;
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 
 G4int total = fEventAction->GetTotalCounter();
 G4int elastic = fEventAction->GetElasticCounter();
 G4int inelastic = fEventAction->GetInelasticCounter();
 
+		//G4cout << "edep out of loop " << edep << G4endl;
+		//G4cout << "Has Properties out of loop " << fDetector->HasProperties(volume) << G4endl;
+		//G4cout << "Get Properties out of loop " << G4endl;
+		//fDetector->GetProperties(volume);
+	
+	
+		//Instead of looking at energy deposited, look at kinetic energy of neutrons before they hit descant
+		//Comment OUT! ONLY for DELRIN TEST
+		//Also using for scattering test with plastics to see how different proportions of different neutron energies reach the plastics - ie Scattering effects of griffin
+<<<<<<< HEAD
+		
+=======
+	/*	
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+		G4String volume_name = volume->GetName();
+		found  = volume_name.find("PlasticDet");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		//theTrack->SetTrackStatus(fKillTrackAndSecondaries);
+		}
+<<<<<<< HEAD
+		else {
+		edep =0;
+		}
+=======
+		if(aStep->GetTrack()->GetParentID() > 0 ){
+		theTrack->SetTrackStatus(fStopAndKill);
+		G4cout<< " Calling kill" << G4endl;
+		edep =0;
+		}
+	*/	
+		/*
+		G4String volume_name = volume->GetName();
+		found  = volume_name.find("blueScintillatorVolumeLog");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+	//	if (aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		//theTrack->SetTrackStatus(fKillTrackAndSecondaries);
+		}
+		found  = volume_name.find("greenScintillatorVolumeLog");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		}
+		found  = volume_name.find("redScintillatorVolumeLog");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		}
+		found  = volume_name.find("whiteScintillatorVolumeLog");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		}
+		found  = volume_name.find("yellowScintillatorVolumeLog");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		}
+		if(aStep->GetTrack()->GetParentID() > 0 ){ //Should maybe be >0 but oh well
+		theTrack->SetTrackStatus(fStopAndKill);
+		G4cout<< " Calling kill" << G4endl;
+		edep =0;
+		}
+		*/
+
+	//Getting the TOF based off first scatter in detector.	Using Global Time.
+	found = volname.find("PlasticDet");
+	G4double TOF;
+	G4ThreeVector TOFPos;
+	//G4cout << "Found " << found << G4endl;
+	if(found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true && total == 1) { //does transportation alone count as first step, if so might be losing information... also conditions are redundant if total is included.  From what I see in tracking output, first step in volume is a scatter, pure transportation is "along step"
+	TOF = postTime;
+	TOFPos = postPos;
+	fEventAction->SetTOF(TOF);
+	fEventAction->SetTOFPos(TOFPos);
+	G4cout << "Total counter in TOF loop: " << total << G4endl;
+	//G4cout << "Get TOF from event action in loop: " << fEventAction->GetTOF() << G4endl;
+	}
+	//G4cout << "Get TOF from postTime out of loop: " << TOF << G4endl;
+	//G4cout << "Get TOF from event action out of loop: " << fEventAction->GetTOF() << G4endl;
+	TOF = fEventAction->GetTOF();
+	TOFPos = fEventAction->GetTOFPos();
+	G4cout << "Get x TOF Pos from event action  out of loop via var: " << TOFPos.x() << G4endl;
+
+
+		//G4cout << "edep out of loop " << edep << G4endl;
+		//G4cout << "Has Properties out of loop " << fDetector->HasProperties(volume) << G4endl;
+		//G4cout << "Get Properties out of loop " << G4endl;
+		//fDetector->GetProperties(volume);
+	
+	
+		//Instead of looking at energy deposited, look at kinetic energy of neutrons before they hit descant
+		//Comment OUT! ONLY for DELRIN TEST
+		//Also using for scattering test with plastics to see how different proportions of different neutron energies reach the plastics - ie Scattering effects of griffin
+	/*	
+		G4String volume_name = volume->GetName();
+		found  = volume_name.find("PlasticDet");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		//theTrack->SetTrackStatus(fKillTrackAndSecondaries);
+		}
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+		if(aStep->GetTrack()->GetParentID() > 0 ){
+		theTrack->SetTrackStatus(fStopAndKill);
+		G4cout<< " Calling kill" << G4endl;
+		edep =0;
+		}
+<<<<<<< HEAD
+		
+=======
+	*/	
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+		/*
+		G4String volume_name = volume->GetName();
+		found  = volume_name.find("blueScintillatorVolumeLog");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+	//	if (aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		//theTrack->SetTrackStatus(fKillTrackAndSecondaries);
+		}
+		found  = volume_name.find("greenScintillatorVolumeLog");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		}
+		found  = volume_name.find("redScintillatorVolumeLog");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		}
+		found  = volume_name.find("whiteScintillatorVolumeLog");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		}
+		found  = volume_name.find("yellowScintillatorVolumeLog");
+		if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && aStep->IsFirstStepInVolume() == true) {	
+		G4cout << "edep before assigning ekin " << edep << G4endl;
+		edep = ekin;
+		G4cout << "edep after assigning ekin " << edep << G4endl;		
+		theTrack->SetTrackStatus(fStopAndKill);
+		}
+		if(aStep->GetTrack()->GetParentID() > 0 ){ //Should maybe be >0 but oh well
+		theTrack->SetTrackStatus(fStopAndKill);
+		G4cout<< " Calling kill" << G4endl;
+		edep =0;
+		}
+		*/
 
 	//Counting number of scintillating photons -> Setting to zero at beginning of event ---- Not sure if it does though...
 	G4double numScintPhotons;
@@ -346,7 +884,27 @@ numScintPhotons = fEventAction->GetTotScintPhoton();
 	// check if this volume has its properties set, i.e. it's an active detector
 	if((edep > 0 || (fDetector->GridCell() && ekin > 0)) && fDetector->HasProperties(volume)) {
 		//G4cout << "edep in loop " << edep << G4endl;
+<<<<<<< HEAD
 	G4cout<<"Calling Get Loop Final Angle: " << fEventAction->GetFinalAngle() << G4endl;
+=======
+<<<<<<< HEAD
+	G4cout<<"Calling Get Loop Final Angle: " << fEventAction->GetFinalAngle() << G4endl;
+=======
+<<<<<<< HEAD
+	G4cout<<"Calling Get Loop Final Angle: " << fEventAction->GetFinalAngle() << G4endl;
+=======
+<<<<<<< HEAD
+	G4cout<<"Calling Get Loop Final Angle: " << fEventAction->GetFinalAngle() << G4endl;
+=======
+<<<<<<< HEAD
+	G4cout<<"Calling Get Loop Final Angle: " << fEventAction->GetFinalAngle() << G4endl;
+=======
+>>>>>>> 2c0eeb1b5df7aa4f21d8f8eff1ea115c68f24a66
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 	
 		DetectorProperties prop = fDetector->GetProperties(volume);
 
@@ -373,11 +931,50 @@ numScintPhotons = fEventAction->GetTotScintPhoton();
 		// check edep again in case we use the grid cell but haven't hit it
 		//G4cout << "edep " << edep << G4endl; //Testing PLastic fillling ntuple
 		if(edep <= 0) return;
+<<<<<<< HEAD
 		G4cout << "Calling Add Hit Tracker" << G4endl;
 		fEventAction->AddHitTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle, final_angle, TOF, TOFPos, TOFMulti, TOFPosMulti, PlasticEkin, PlasticEdep);
 
 		if(trackSteps) {
 			fEventAction->AddStepTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle, final_angle, TOF, TOFPos, TOFMulti, TOFPosMulti, PlasticEkin, PlasticEdep);
+=======
+<<<<<<< HEAD
+		G4cout << "Calling Add Hit Tracker" << G4endl;
+		fEventAction->AddHitTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle, final_angle, TOF, TOFPos);
+
+		if(trackSteps) {
+			fEventAction->AddStepTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle, final_angle, TOF, TOFPos);
+=======
+<<<<<<< HEAD
+		G4cout << "Calling Add Hit Tracker" << G4endl;
+		fEventAction->AddHitTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle, final_angle, TOF, TOFPos);
+
+		if(trackSteps) {
+			fEventAction->AddStepTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle, final_angle, TOF, TOFPos);
+=======
+<<<<<<< HEAD
+		G4cout << "Calling Add Hit Tracker" << G4endl;
+		fEventAction->AddHitTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle, final_angle, TOF, TOFPos);
+
+		if(trackSteps) {
+			fEventAction->AddStepTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle, final_angle, TOF, TOFPos);
+=======
+
+<<<<<<< HEAD
+		fEventAction->AddHitTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle, final_angle);
+
+		if(trackSteps) {
+			fEventAction->AddStepTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle, final_angle);
+=======
+		fEventAction->AddHitTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle);
+
+		if(trackSteps) {
+			fEventAction->AddStepTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle);
+>>>>>>> 6828e1eec50f49505f6682d4e9b4096511be47f0
+>>>>>>> 47c502e8e4318a844071ec8793822e1e8af02bf9
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 		}
 	}// if(fDetector->HasProperties(volume))
 }

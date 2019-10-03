@@ -66,7 +66,19 @@ private:
 
     G4double fRadialDistance;
     G4double fLeadShieldThickness;
+<<<<<<< HEAD
     G4double fSpacing;
+=======
+<<<<<<< HEAD
+    G4double fSpacing;
+=======
+<<<<<<< HEAD
+    G4double fSpacing;
+=======
+
+>>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
+>>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
+>>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 
     G4String fPlasticMaterial;
    
