@@ -62,6 +62,7 @@ private:
     G4UIcmdWithADoubleAndUnit* fGammaCutCmd;
     G4UIcmdWithADoubleAndUnit* fElectCutCmd;
     G4UIcmdWithADoubleAndUnit* fProtoCutCmd;
+    G4UIcmdWithADoubleAndUnit* fNeutronCutCmd;
     G4UIcmdWithADoubleAndUnit* fAllCutCmd;
     G4UIcmdWithADoubleAndUnit* fMCutCmd;
     G4UIcmdWithADoubleAndUnit* fECutCmd;
