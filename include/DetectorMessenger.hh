@@ -123,8 +123,6 @@ private:
 
 	G4UIcmdWithAnInteger*       fAddDetectionSystemDescantCmd;
 	G4UIcmdWith3Vector*         fAddDetectionSystemDescantAuxPortsCmd;
-	
-	G4UIcmdWithoutParameter*	  fAddApparatusLabFloorCmd;
 
 	G4UIcmdWithoutParameter*	  fAddApparatusDescantStructureCmd;
 	G4UIcmdWithAString*         fSetDetectionSystemDescantColorCmd;
@@ -134,7 +132,6 @@ private:
 
 	G4UIcmdWith3Vector*         fAddDetectionSystemTestcanCmd;
 	G4UIcmdWith3Vector*         fAddDetectionSystemPlasticsCmd;
-	G4UIcmdWithAnInteger*       fAddDetectionSystemDescantNoLeadCmd;
 
 	G4UIcmdWithAnInteger*       fAddDetectionSystemSceptarCmd;
 	G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinForwardCmd;

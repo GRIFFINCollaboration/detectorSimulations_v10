@@ -45,7 +45,7 @@ class DetectionSystemPlastics
 {
 public:
    // DetectionSystemPlastics(G4double length, G4double height, G4double width, G4int material);
-    DetectionSystemPlastics(G4double thickness, G4int material, G4double spacing);
+    DetectionSystemPlastics(G4double thickness, G4int material);
     ~DetectionSystemPlastics();
 
     G4int Build();
@@ -63,22 +63,6 @@ private:
     G4double fScintillatorLength;
     G4double fScintillatorHeight;
     G4double fScintillatorWidth;
-
-    G4double fRadialDistance;
-    G4double fLeadShieldThickness;
-<<<<<<< HEAD
-    G4double fSpacing;
-=======
-<<<<<<< HEAD
-    G4double fSpacing;
-=======
-<<<<<<< HEAD
-    G4double fSpacing;
-=======
-
->>>>>>> 3064246b7a7818cc5e2250e0a2139fa8a7c21204
->>>>>>> 6487c29a178d340690563b4cc1ec43aceac6d944
->>>>>>> 77f9ed17803d5c660639c899c05ad4a9b1bdcd29
 
     G4String fPlasticMaterial;
    
