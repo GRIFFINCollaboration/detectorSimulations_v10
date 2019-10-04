@@ -236,6 +236,9 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
 	fAddDetectionSystemDescantCmd->SetGuidance("Add Detection System DESCANT");
 	fAddDetectionSystemDescantCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	fAddDetectionSystemDescantNoLeadCmd = new G4UIcmdWithAnInteger("/DetSys/det/addDescantNoLead",this);
+	fAddDetectionSystemDescantNoLeadCmd->SetGuidance("Add Detection System DESCANT no lead");
+	fAddDetectionSystemDescantNoLeadCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 	fAddDetectionSystemDescantAuxPortsCmd = new G4UIcmdWith3Vector("/DetSys/det/addDescantAuxPorts",this);
 	fAddDetectionSystemDescantAuxPortsCmd->SetGuidance("Add 8 DESCANT detectors in the auxillary LaBr3 detector locations");
@@ -245,6 +248,10 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
 	fAddApparatusDescantStructureCmd = new G4UIcmdWithoutParameter("/DetSys/det/addDescantStructure",this);
 	fAddApparatusDescantStructureCmd->SetGuidance("Add DESCANT structure");
 	fAddApparatusDescantStructureCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	fAddApparatusLabFloorCmd = new G4UIcmdWithoutParameter("/DetSys/app/addLabFloor",this);
+	fAddApparatusLabFloorCmd->SetGuidance("Add Lab Floor");
+	fAddApparatusLabFloorCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 	fAddDetectionSystemTestcanCmd = new G4UIcmdWith3Vector("/DetSys/det/addTestcan",this);
 	fAddDetectionSystemTestcanCmd->SetGuidance("Add Testcan Detection System");
@@ -386,7 +393,8 @@ DetectorMessenger::~DetectorMessenger()
 	delete fAddApparatus8piVacuumChamberCmd;
 	delete fAddApparatus8piVacuumChamberAuxMatShellCmd;
 	delete fAddApparatusGriffinStructureCmd;
-
+	
+	delete fAddApparatusLabFloorCmd;
 
 	delete fAddDetectionSystemSodiumIodideCmd;
 	delete fAddDetectionSystemLanthanumBromideCmd;
@@ -402,6 +410,7 @@ DetectorMessenger::~DetectorMessenger()
 
 	delete fAddDetectionSystemTestcanCmd;
 	delete fAddDetectionSystemPlasticsCmd;
+	delete fAddDetectionSystemDescantNoLeadCmd;
 
 	delete fSetDetectionSystemDescantColorCmd;
 	delete fSetDetectionSystemDescantRotationCmd;	 
@@ -553,12 +562,18 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	if(command == fAddDetectionSystemDescantCmd) {
 		fDetector->AddDetectionSystemDescant(fAddDetectionSystemDescantCmd->GetNewIntValue(newValue));
 	}
+	if(command == fAddDetectionSystemDescantNoLeadCmd) {
+		fDetector->AddDetectionSystemDescantNoLead(fAddDetectionSystemDescantNoLeadCmd->GetNewIntValue(newValue));
+	}
 	if(command == fAddDetectionSystemDescantAuxPortsCmd)  {
 		fDetector->AddDetectionSystemDescantAuxPorts(fAddDetectionSystemDescantAuxPortsCmd->GetNew3VectorValue(newValue));
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	if(command == fAddApparatusDescantStructureCmd) {
 		fDetector->AddApparatusDescantStructure();
+	}
+	if(command == fAddApparatusLabFloorCmd) {
+		fDetector->AddApparatusLabFloor();
 	}
 
 	if(command == fSetDetectionSystemDescantColorCmd) {

@@ -94,11 +94,11 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun
 	fBeamSpotSigmaCmd->SetUnitCategory("Length");
 	fBeamSpotSigmaCmd->AvailableForStates(G4State_PreInit,G4State_Idle);   
 
-	fBeamDistroCmd = new G4UIcmdWithAnInteger("/Detsys/gun/TargetLayer",this);//with target, can apply a distribution
+	fBeamDistroCmd = new G4UIcmdWithAnInteger("/DetSys/gun/TargetLayer",this);//with target, can apply a distribution
 	fBeamDistroCmd->SetGuidance("Set beam distribution within a target layer, zero indexed");
 	fBeamDistroCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-	fBeamFileCmd = new G4UIcmdWithAString("/Detsys/gun/FileDistro",this);//with target, can apply a distribution
+	fBeamFileCmd = new G4UIcmdWithAString("/DetSys/gun/FileDistro",this);//with target, can apply a distribution
 	fBeamFileCmd->SetGuidance("Set beam distribution within a target using definitions in a data file");
 	fBeamFileCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
