@@ -56,7 +56,6 @@ public:
 private:
 
 	G4LogicalVolume* fGasCell;
-	G4LogicalVolume* fGasCellOdd;
 // 	G4LogicalVolume* fAnnularClampLog;
 // 	std::vector<G4LogicalVolume*> fSiliLog;
 // 

@@ -29,8 +29,7 @@ ApparatusLayeredTarget::ApparatusLayeredTarget(G4double beaminput) {
   
   fBeamPos = beaminput*mm;
   fTargetRadius = 6.0*mm;
- 
-
+  
   G4double fMaxStep=10.*CLHEP::um; 
   fStepLimit = new G4UserLimits(fMaxStep);
   
@@ -87,7 +86,7 @@ void ApparatusLayeredTarget::PlaceTarget(G4LogicalVolume* oexpHallLog)
   G4cout << "Adding Target Layer " << G4endl;
 
   G4double placement =LayerStart(fTargetLayerPhys.size()) - fTargetLayerThick[fTargetLayerPhys.size()]/2.;
-  G4cout << "Placement target : " <<  placement/mm << G4endl;
+  G4cout << "Placement target : " << placement << " " << placement/mm << G4endl;
   
   G4ThreeVector move = G4ThreeVector(0.,0.,placement);//0 for now until read in 
   G4RotationMatrix* sRotate = new G4RotationMatrix;

@@ -183,9 +183,6 @@ void DetectionSystemTrific::BuildPCB(){
 	
 	fGasCell = new G4LogicalVolume(CellB, material, "TrificGasCell", 0, 0, 0);
 	fGasCell->SetVisAttributes (G4VisAttributes::Invisible); 
-		
-	fGasCellOdd = new G4LogicalVolume(CellB, material, "TrificGasCell", 0, 0, 0);
-	fGasCellOdd->SetVisAttributes (G4VisAttributes::Invisible); 
 	
 	//Original version was box with tube cut (so defined verticle and rotated later)
 	//but for some reason that didnt work here, though that method is used for the PCB next
@@ -245,7 +242,6 @@ void DetectionSystemTrific::BuildPCB(){
 	G4double pcbplacedistance = (box_half_thickness+fWireD)/cos(fGridAngle);
 	G4ThreeVector moveP(0,0,pcbplacedistance);
 	new G4PVPlacement(rotate, moveP, fFullPCB, "TrificPCB", fGasCell,false, 0);
-	new G4PVPlacement(rotate, moveP, fFullPCB, "TrificPCB", fGasCellOdd,false, 0);
 	
 // 	fGridPCB->AddPlacedVolume(fFullPCB, moveP, rotate); //G4AssemblyVolume version
 
@@ -280,9 +276,6 @@ void DetectionSystemTrific::BuildPCB(){
 		new G4PVPlacement(rotate, moveL, WireLogical, "TrificWire", fGasCell,false, 0);
 		G4ThreeVector moveR(-wireX,0,wireplacedistance);
 		new G4PVPlacement(rotate, moveR, WireLogical, "TrificWire", fGasCell,false, 0);
-
-		new G4PVPlacement(rotate, moveL, WireLogical, "TrificWire", fGasCellOdd,false, 0);
-		new G4PVPlacement(rotate, moveR, WireLogical, "TrificWire", fGasCellOdd,false, 0);
         
 		wireX+=fWirePitch;
 	}
