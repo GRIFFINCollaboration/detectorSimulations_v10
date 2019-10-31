@@ -206,7 +206,6 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			y = fEffPosition.y();
 			z = fEffPosition.z();	
 		}
-		G4double zZero = z;
 
 		// If we want to simulate a realistic beam spot, instead of perfect pencil beam.
 		if(fBeamSpotSigma>0){
@@ -260,15 +259,15 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 		fParticleGun->SetParticlePosition(thisEffPosition);
 		fParticleGun->SetParticleMomentumDirection(effdirection);
 		fParticleGun->SetParticleEnergy(fEffEnergy);
-
-		if(fDetector->Spice()) {
-			fHistoManager->Fill2DHistogram(fHistoManager->AngleDistro(2), thisEffPosition.x(), thisEffPosition.y(), 1.0);
-			fHistoManager->FillHistogram(fHistoManager->AngleDistro(3), thisEffPosition.z() - zZero);
-			fHistoManager->FillHistogram(fHistoManager->AngleDistro(0), fEffEnergy);
-			fHistoManager->BeamEnergy(fEffEnergy);
-			fHistoManager->BeamTheta(acos(effdirection.z()/effdirection.mag()));
-			fHistoManager->BeamPhi(atan2(effdirection.y(),effdirection.x()));
-		}
+        
+        
+        if(fDetector->RecordingGun()){
+            fHistoManager->BeamEnergy(fEffEnergy);
+            fHistoManager->BeamTheta(effdirection.theta());
+            fHistoManager->BeamPhi(effdirection.phi());
+            fHistoManager->BeamPos(thisEffPosition);
+        }
+        
 	}
 
 

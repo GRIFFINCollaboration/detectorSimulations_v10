@@ -31,7 +31,8 @@ do
 	### Standard disk source, thickness in mg/cm2
 	echo "/DetSys/gun/position 0.0 0.0 -8.2 mm " >> spiceauto.mac 
 
-	echo "/run/beamOn ${relint[i]*Multiplyer}" >> spiceauto.mac 
+	counts=$[relint[i]*Multiplyer]
+	echo "/run/beamOn $counts" >> spiceauto.mac 
 
 	#running the sim with macro created here
 	./Griffinv10 spiceauto.mac 
@@ -42,4 +43,8 @@ done
 
 rm -rf SPICESource.root
 hadd SPICESource.root SourceTmp_*.root
+cp SPICESource.root g4out.root
+root  -b -l -q SpiceMiniSort.C
+rm spiceauto.mac
+rm g4out.root
 

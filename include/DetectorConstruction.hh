@@ -196,15 +196,18 @@ public:
 	G4bool   Descant()    { return fDescant;    }
 	G4bool   Testcan()    { return fTestcan;    }
 
-	void SpiceRes(G4bool val) { fSpiceRes = val; }
-	bool SpiceRes() { return fSpiceRes; }
-	void UseTIGRESSPositions( G4bool input )                  {fUseTigressPositions = input;};
+	void RecordGun( G4bool input ){fRecordGun = input;};
+	G4bool RecordingGun(){return fRecordGun;};
+	
+	void UseTIGRESSPositions( G4bool input ) {fUseTigressPositions = input;};
 
 	bool HasProperties(G4VPhysicalVolume* vol) { return fPropertiesMap.find(vol) != fPropertiesMap.end(); }
 	DetectorProperties GetProperties(G4VPhysicalVolume* vol) { return fPropertiesMap.at(vol); }
 	void SetProperties();
+	void SetPropertiesRecursive(G4LogicalVolume* vol);
 
 	void Print();
+	void PrintRecursive(G4LogicalVolume* vol);
 
 private:
 	bool CheckVolumeName(G4String volumeName);
@@ -227,6 +230,7 @@ private:
 	G4int     fCustomDetectorVal ;
 	G4int     fHevimetSelector ;
 	G4bool    fUseTigressPositions;
+    G4bool    fRecordGun;  
 
 	// Box
 	G4String           fBoxMat;
@@ -255,8 +259,6 @@ private:
 	G4String      fGenericTargetMaterial;
 	G4ThreeVector fGenericTargetDimensions;
 	G4ThreeVector fGenericTargetPosition;
-
-	G4bool        fSpiceRes;
 
 	G4bool        fSetFieldBoxMaterial;
 	G4bool        fSetFieldBoxDimensions;

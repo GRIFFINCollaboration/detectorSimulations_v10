@@ -152,7 +152,7 @@ private:
 	G4UIcmdWith3Vector*         fAddDetectionSystemGriffinSetPositionCmd ;
 	G4UIcmdWith3Vector*         fAddDetectionSystemGriffinSetDeadLayerCmd ;
 	G4UIcmdWithABool*           fUseTIGRESSPositionsCmd;
-	G4UIcmdWithABool*           fUseSpiceResolutionCmd;
+	G4UIcmdWithABool*           fRecordGunCmd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
