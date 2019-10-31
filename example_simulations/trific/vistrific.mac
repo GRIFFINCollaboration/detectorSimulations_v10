@@ -1,22 +1,32 @@
 ### After running ./Griffinv10
 ### Run the following command in the "Session" box
-### /control/execute SPICE_vis.mac
+### /control/execute vistrific.mac
 
-### Required
+/process/em/fluo true # atomic dexcitations (apparently required otherwise exception thrown)
+/process/em/auger false # auger electrons
+/process/em/pixe false # particle induced X-ray emission
+######Physics List END######################################################
+
+###### Verbosities ######
+### Defines terminal output - useful for debugging
+### 0 = no output, higher integers give greater output
+/control/verbose 2
+/run/verbose 2
+/event/verbose 0
+/tracking/verbose 0
+
 /run/initialize
+
+# When using heavy ions this bust me set to stop tracking so many many electrons
+/DetSys/phys/setECut 5 cm
+
 /DetSys/world/material Vacuum
 
-### Choose Apparatus To Build
-/DetSys/app/addSpiceTargetChamber LiteCol
-/DetSys/det/addSpiceDetector
-/DetSys/world/TabMagneticField MagneticField3D.LOW.TABLE -1 -45
-
-### Match to SPICE options
-/DetSys/gun/position 0.0 0.0 -0.5 mm
-#/DetSys/gun/direction 0.0 1.0 -1.0
+/DetSys/det/addTrificDetector 91.0
 
 ### Required
 /vis/open OGL
+#/vis/open OGL 600x600-0+0
 
 ### Choose Drawing Style
 /vis/viewer/set/style surface ### Optional - You will not be able to see inside, use the GUI to hide parts.
@@ -24,21 +34,33 @@
 
 ### Required
 /vis/drawVolume 
+/vis/scene/endOfEventAction accumulate
+/vis/scene/add/trajectories
+/vis/viewer/set/autoRefresh true
 
-### Some optimised viewer position settings for seeing the target area
-/vis/viewer/set/viewpointThetaPhi 70 20 deg
-#/vis/viewer/zoomTo 4
-#/vis/viewer/pan -250.0 -30.0 mm ### Correct for SPICE bulk off center of not running spice option Lite
+/vis/viewer/set/viewpointThetaPhi 90 0 deg
 
-### Optional - To visualise the (effect of) magnetic field
-#/vis/scene/add/magneticField 20 ### Doesnt seem to work at the same time as tracks.
+#First Grits at 53.4 cm
+#/DetSys/gun/position 0.0 0.0 53 cm 
+#/gun/particle ion
+#/gun/ion 2 4 0 0.0
+#/DetSys/gun/efficiencyEnergy 5.5 MeV
 
-### Optional - Actually make events and see tracks
-/vis/scene/endOfEventAction accumulate #View all electron trajectories in visualisation
-/vis/scene/add/trajectories smooth #Optional - To visualise the whole flight of the particles in a simulation
-/DetSys/phys/SpiceStepper 1 # CRUCIAL to see electron paths in magnetic field 
-/DetSys/world/StepLimit 10 mm # As there are few interactions in the field region 
+/DetSys/gun/position 0.0 0.0 0.0 cm
+/gun/particle ion
+/gun/ion 38 80 0 0.0
+/grdm/nucleusLimits 1 1 1 1 # we dont want decay
+/DetSys/gun/efficiencyEnergy 700 MeV
+#/DetSys/gun/direction 0.0 0.0 1.0
+/DetSys/gun/coneMinAngle 0.0 deg
+/DetSys/gun/coneMaxAngle 4.0 deg
 
-/DetSys/gun/particle e-
-/DetSys/gun/efficiencyEnergy 500 keV
-/run/beamOn 20 ### Keep number low
+/vis/modeling/trajectories/create/drawByParticleID
+/vis/modeling/trajectories/drawByParticleID-0/set gamma magenta
+/vis/modeling/trajectories/drawByParticleID-0/set photon cyan
+/vis/modeling/trajectories/drawByParticleID-0/set e+ blue
+/vis/modeling/trajectories/drawByParticleID-0/set Sr80 green
+/vis/modeling/trajectories/drawByParticleID-0/set Kr80 white
+/vis/modeling/trajectories/drawByParticleID-0/set e- yellow
+
+/run/beamOn 10
