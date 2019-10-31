@@ -94,7 +94,12 @@ private:
 	G4double fRodD;
 	G4double fRodPlaceD;
 
-	
+	G4int fYgrid;
+	std::vector<G4int> fYwires;
+	G4int fXgrid;
+	std::vector<G4int> fXwires;
+    
+    
 	G4double fTargetChamberZOffset;
 	G4double fChamberWindowZ;
 	G4double fWindowGridZ;
@@ -104,6 +109,7 @@ private:
 	G4double fWindowInnerD;
 	G4double fWindowOuterD;
 	G4double fWindowChamberLength;
+	G4double fWindowPipeInnerD;
 	
 	//------------------------------------------------//
 	// internal methods in Build()
@@ -112,6 +118,9 @@ private:
 
 	void 	BuildPCB();
 	void 	PlacePCBs(G4LogicalVolume*);
+    G4VSolid* GasCell(int N=1);
+	void 	BuildPlaceYSense(G4LogicalVolume*);
+	void 	BuildPlaceXSense(G4LogicalVolume*);
 	void 	BuildPlaceWindow(G4LogicalVolume*);
 	void 	BuildPlacePipe(G4LogicalVolume*);
 	void 	BuildGasVolume(G4LogicalVolume*);

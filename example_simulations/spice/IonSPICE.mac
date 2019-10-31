@@ -23,9 +23,6 @@
 #/grdm/setRadioactiveDecayFile 80 198 UserData/Rad_z80.a198
 #/grdm/setPhotoEvaporationFile 80 198 UserData/Phot_z80.a198
 
-
-/DetSys/det/UseSpiceResolution 1
-
 ### IMPORTANT ###
 ### Because of the magnetic field the simulation will run VERY SLOWLY if
 ### nuclear recoils are in free space. Ensure they are inside material!
@@ -48,4 +45,4 @@
 #/vis/modeling/trajectories/drawByParticleID-0/set Pb207 green
 #/vis/modeling/trajectories/drawByParticleID-0/set e- yellow
 
-/run/beamOn 50000000
+/run/beamOn 1000000

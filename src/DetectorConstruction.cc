@@ -188,6 +188,8 @@ DetectorConstruction::DetectorConstruction() :
 	fPaces    = false;
 	fDescant  = false;
 	fTestcan  = false;
+    
+    fRecordGun = false;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -888,11 +890,18 @@ void DetectorConstruction::SetProperties() {
 	if(G4Threading::G4GetThreadId() < 0) {
 		G4cout<<fLogicWorld->GetNoDaughters()<<" daughter volumes"<<std::endl;
 	}
-	for(int i = 0; i < fLogicWorld->GetNoDaughters(); ++i) {
-		if(!HasProperties(fLogicWorld->GetDaughter(i)) && CheckVolumeName(fLogicWorld->GetDaughter(i)->GetName())) {
-			fPropertiesMap[fLogicWorld->GetDaughter(i)] = ParseVolumeName(fLogicWorld->GetDaughter(i)->GetName());
+    SetPropertiesRecursive(fLogicWorld);
+}
+
+
+void DetectorConstruction::SetPropertiesRecursive(G4LogicalVolume* vol) {
+    for(int i = 0; i < vol->GetNoDaughters(); ++i) {
+		if(!HasProperties(vol->GetDaughter(i)) && CheckVolumeName(vol->GetDaughter(i)->GetName())) {
+			fPropertiesMap[vol->GetDaughter(i)] = ParseVolumeName(vol->GetDaughter(i)->GetName());
 		}
+		SetPropertiesRecursive(vol->GetDaughter(i)->GetLogicalVolume());
 	}
+    
 }
 
 void DetectorConstruction::Print() {
@@ -903,13 +912,19 @@ void DetectorConstruction::Print() {
 
 	SetProperties();
 
-	for(int i = 0; i < fLogicWorld->GetNoDaughters(); ++i) {
-		std::cout<<i<<": "<<fLogicWorld->GetDaughter(i)<<" - "<<fLogicWorld->GetDaughter(i)->GetName();
-		if(HasProperties(fLogicWorld->GetDaughter(i))) {
-			auto prop = GetProperties(fLogicWorld->GetDaughter(i));
+    PrintRecursive(fLogicWorld);
+}
+
+void DetectorConstruction::PrintRecursive(G4LogicalVolume* vol){
+    
+    for(int i = 0; i < vol->GetNoDaughters(); ++i) {
+		std::cout<<i<<": "<<vol->GetDaughter(i)<<" - "<<vol->GetDaughter(i)->GetName();
+		if(HasProperties(vol->GetDaughter(i))) {
+			auto prop = GetProperties(vol->GetDaughter(i));
 			std::cout<<" - "<<prop.detectorNumber<<", "<<prop.crystalNumber<<", "<<prop.systemID;
 		}
 		std::cout<<std::endl;
+        PrintRecursive(vol->GetDaughter(i)->GetLogicalVolume());
 	}
 }
 
@@ -993,8 +1008,8 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
 		// create istringstream from the stripped and converted stream, and read detector and crystal number
 		std::istringstream is(tmpString);
-		is>>result.detectorNumber;
-		result.systemID = 10;//?? why the same as SiSegmentPhys??
+		is>>result.detectorNumber>>result.crystalNumber;
+		result.systemID = 20;
 		return result;
 	}
 

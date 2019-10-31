@@ -52,9 +52,9 @@ void ActionInitialization::BuildForMaster() const
 {
 	// Actions
 	// the master only need a HistoManager to handle histograms, so we pass a null
-	// pointer instead of a pointer to a HistoManager unless we use SPICE
-	// That was the idea, but at this point spice hasn't been created yet, so we can't
-	// do this!!!
+	// pointer instead of a pointer to a HistoManager unless we use require histograms
+	// That was the idea, but at this point we havent clarified if we want histograms 
+    // so we can't do this!!!
 	auto histManager = new HistoManager(fDetector);
 	SetUserAction(new RunAction(histManager));
 }

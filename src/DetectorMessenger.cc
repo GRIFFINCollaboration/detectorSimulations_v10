@@ -329,10 +329,6 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
 	fAddDetectionSystemTrificCmd->SetGuidance("Add Detection System Trific");
 	fAddDetectionSystemTrificCmd->AvailableForStates(G4State_PreInit,G4State_Idle);	
 
-	fUseSpiceResolutionCmd = new G4UIcmdWithABool("/DetSys/det/UseSpiceResolution",this);
-	fUseSpiceResolutionCmd->SetGuidance("Apply a resolution to energy depositions");
-	fUseSpiceResolutionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
 	fAddDetectionSystemPacesCmd = new G4UIcmdWithAnInteger("/DetSys/det/addPaces",this);
 	fAddDetectionSystemPacesCmd->SetGuidance("Add Detection System Paces");
 	fAddDetectionSystemPacesCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
@@ -340,6 +336,11 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
 	fUseTIGRESSPositionsCmd = new G4UIcmdWithABool("/DetSys/det/UseTIGRESSPositions",this);
 	fUseTIGRESSPositionsCmd->SetGuidance("Use TIGRESS detector positions rather than GRIFFIN");
 	fUseTIGRESSPositionsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    
+   	fRecordGunCmd = new G4UIcmdWithABool("/DetSys/det/RecordGun",this);
+	fRecordGunCmd->SetGuidance("Record the particle for each event in the tree");
+	fRecordGunCmd->AvailableForStates(G4State_PreInit,G4State_Idle); 
+    
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -422,8 +423,8 @@ DetectorMessenger::~DetectorMessenger()
 	delete fAddDetectionSystemGriffinSetPositionCmd;
 	delete fAddDetectionSystemGriffinSetDeadLayerCmd;
 
-	delete fUseSpiceResolutionCmd;
 	delete fUseTIGRESSPositionsCmd;
+	delete fRecordGunCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -616,6 +617,7 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	}
 	if(command == fAddDetectionSystemSpiceCmd) {
 		fDetector->AddDetectionSystemSpice(); 
+		fDetector->RecordGun(true);
 	}
 	if(command == fAddDetectionSystemTrificCmd) {
 		//Done as a string because Torr isnt a default unit 
@@ -625,14 +627,14 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 		if(torr>1)fDetector->AddDetectionSystemTrific(torr);
 		else fDetector->AddDetectionSystemTrific(760.0);
 	}
-	if(command == fUseSpiceResolutionCmd) {
-		fDetector->SpiceRes(fUseSpiceResolutionCmd->GetNewBoolValue(newValue));
-	}
 	if(command == fAddDetectionSystemPacesCmd) {
 		fDetector->AddDetectionSystemPaces(fAddDetectionSystemPacesCmd->GetNewIntValue(newValue));
 	}
 	if(command == fUseTIGRESSPositionsCmd) {
 		fDetector->UseTIGRESSPositions(fUseTIGRESSPositionsCmd->GetNewBoolValue(newValue));
+	}
+	if(command == fRecordGunCmd) {
+		fDetector->RecordGun(fRecordGunCmd->GetNewBoolValue(newValue));
 	}
 }
 

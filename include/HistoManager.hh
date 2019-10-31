@@ -42,7 +42,7 @@
 
 #include "DetectorConstruction.hh"
 
-const G4int MAXNTCOL            = 15;
+const G4int MAXNTCOL            = 21;
 
 const G4bool WRITEEKINHISTOS    = true;//bools needed to write histos
 const G4bool WRITEEDEPHISTOS    = true;
@@ -50,8 +50,6 @@ const G4bool WRITETRACKLHISTOS  = true;
 
 const G4int MAXHISTO            = 500;//max number of histos in root file
 const G4int MAXNUMDET           = 20;
-const G4int MAXNUMDETSPICE	= 10;//10 rings
-const G4int MAXNUMSEGSPICE	= 12;//12 segments per ring
 const G4int MAXNUMDETPACES	= 5;
 const G4int MAXNUMDETGRIFFIN    = 16;
 const G4int MAXNUMCRYGRIFFIN    = 4;
@@ -61,25 +59,16 @@ const G4int NUMPARTICLETYPES    = 20;
 const G4int     EKINNBINS  = 10000;
 const G4double  EKINXMIN   = 0.5*keV;
 const G4double  EKINXMAX   = 10000.5*keV;
-const G4int     EKINNBINSSPICE  = 10000;//spice histos range may be different
-const G4double  EKINXMINSPICE   = 0.5*keV;
-const G4double  EKINXMAXSPICE   = 10000.5*keV;
 
 // edep histo properties    ///////////////////////
 const G4int     EDEPNBINS  = 10000;//was 10000
 const G4double  EDEPXMIN   = 0.0*keV;
 const G4double  EDEPXMAX   = 10000.0*keV;//was 10000.5
-const G4int     EDEPNBINSSPICE  = 2000;//was 10000
-const G4double  EDEPXMINSPICE   = 0.0*keV;
-const G4double  EDEPXMAXSPICE   = 2100.0*keV;//was 10000.5
 
 // trackl histo properties  ///////////////////////
 const G4int     TRACKLNBINS = 5000;
 const G4double  TRACKLXMIN  = 0.5*mm;
 const G4double  TRACKLXMAX  = 5000.5*mm;
-const G4int     TRACKLNBINSSPICE = 5000;
-const G4double  TRACKLXMINSPICE  = 0.5*mm;
-const G4double  TRACKLXMAXSPICE  = 5000.5*mm;
 
 ///////////////////////////////////////////////////
 const G4double MINENERGYTHRES   = 0.001*keV;
@@ -110,16 +99,17 @@ public:
 	G4bool GetStepTrackerBool() { return fStepTrackerBool; }
 	G4bool GetHitTrackerBool()  { return fHitTrackerBool; }
 
-	void BeamEnergy(G4double val) { fBeamEnergy = val; }
+	void BeamEnergy(G4double val) { fBeamEnergy = val*1000.; }//default is in MeV, but other outputs are keV
 	void BeamTheta(G4double val)  { fBeamTheta = val; }
 	void BeamPhi(G4double val)    { fBeamPhi = val; }
+	void BeamPos(G4ThreeVector val)    { fBeamPos = val; }
 
 	G4double BeamEnergy() { return fBeamEnergy; }
 	G4double BeamTheta() { return fBeamTheta; }
 	G4double BeamPhi() { return fBeamPhi; }
+	G4ThreeVector BeamPos() {return fBeamPos; }
 
 private:
-	void BookSpiceHistograms();
 	void MakeHistogram(G4AnalysisManager* analysisManager, G4String filename,  G4String title, G4double xmin, G4double xmax, G4int nbins);
 	void Make2DHistogram(G4AnalysisManager* analysisManager, const G4String& name, const G4String& title,
 	             G4int nxbins, G4double xmin, G4double xmax,
@@ -146,16 +136,13 @@ private:
 	G4double fBeamEnergy;
 	G4double fBeamTheta;
 	G4double fBeamPhi;
+	G4ThreeVector fBeamPos;
 
 public:
 	short PacesHistNumbers(int i) { return fPacesHistNumbers[i]; }
-	short SpiceHistNumbers(int i) { return fSpiceHistNumbers[i]; }
-	short SpiceAngleHists(int i) { return fSpiceAngleHists[i]; }
 	short AngleDistro(int i) { return fAngleDistro[i]; }
 private:
 	short fPacesHistNumbers[MAXNUMDETPACES+2]; //+2 for edep and sum histos 
-	short fSpiceHistNumbers[MAXNUMDETSPICE*MAXNUMSEGSPICE+2]; //+2 for edep and sum histos 
-	short fSpiceAngleHists[120];
 	short fAngleDistro[10]; //this variable will hold the histogran ID for various beam distribution histograms
 };
 
