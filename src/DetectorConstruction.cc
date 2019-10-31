@@ -189,7 +189,7 @@ DetectorConstruction::DetectorConstruction() :
 	fDescant  = false;
 	fTestcan  = false;
     
-    fRecordGun = true;
+    fRecordGun = false;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
