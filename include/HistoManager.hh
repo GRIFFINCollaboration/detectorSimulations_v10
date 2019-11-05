@@ -37,12 +37,12 @@
 
 #include "globals.hh"
 #include "g4root.hh"
-
+#include "HistoManagerMessenger.hh"
 #include "G4SystemOfUnits.hh" // new version geant4.10 requires units
 
 #include "DetectorConstruction.hh"
 
-const G4int MAXNTCOL            = 15;
+const G4int MAXNTCOL            = 31; // Number of Columns
 
 const G4bool WRITEEKINHISTOS    = true;//bools needed to write histos
 const G4bool WRITEEDEPHISTOS    = true;
@@ -96,8 +96,8 @@ public:
 	void Book();
 	void Save();
 
-	void FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ);
-	void FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ);
+	void FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz, G4double TOFMulti, G4double TOFPosMultix, G4double TOFPosMultiy, G4double TOFPosMultiz, G4double PEkin, G4double PEdep);
+	void FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz, G4double TOFMulti, G4double TOFPosMultix, G4double TOFPosMultiy, G4double TOFPosMultiz, G4double PEkin, G4double PEdep);
 
 	void FillHistogram(G4int ih, G4double e, G4double weight = 1.0);
 	void Fill2DHistogram(G4int ih, G4double xbin, G4double ybin, G4double weight = 1.0);
@@ -113,6 +113,8 @@ public:
 	void BeamEnergy(G4double val) { fBeamEnergy = val; }
 	void BeamTheta(G4double val)  { fBeamTheta = val; }
 	void BeamPhi(G4double val)    { fBeamPhi = val; }
+
+	void SetFileName(G4String file) {fFileName[0] = file;};
 
 	G4double BeamEnergy() { return fBeamEnergy; }
 	G4double BeamTheta() { return fBeamTheta; }

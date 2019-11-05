@@ -59,6 +59,8 @@ class ApparatusDescantStructure;
 class ApparatusLayeredTarget;
 class DetectionSystemDescant;
 
+class ApparatusLabFloor;
+
 class DetectionSystemSceptar;
 class DetectionSystemSpice;
 class DetectionSystemTrific;
@@ -124,6 +126,7 @@ public:
 	void AddApparatus8piVacuumChamber();
 	void AddApparatus8piVacuumChamberAuxMatShell(G4double thickness);
 	void AddApparatusGriffinStructure(G4int selector);
+	void AddApparatusLabFloor();
 
 	G4double GetWorldSizeX()           {return fWorldSizeX;};
 	G4double GetWorldSizeY()           {return fWorldSizeY;};
@@ -145,6 +148,7 @@ public:
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void AddDetectionSystemDescant(G4int ndet);
 	void AddDetectionSystemDescantAuxPorts(G4ThreeVector input);
+	void AddDetectionSystemDescantNoLead(G4int ndet);
 
 	void SetDetectionSystemDescantRotation(G4ThreeVector input);
 	void SetDetectionSystemDescantColor(G4String input);
