@@ -58,6 +58,7 @@ public:
     void SetCutForGamma(G4double);
     void SetCutForElectron(G4double);
     void SetCutForPositron(G4double);
+    void SetCutForNeutron(G4double);
 
     void SelectPhysicsList(const G4String& name);
     virtual void ConstructProcess();
@@ -79,6 +80,7 @@ private:
     G4double fCutForGamma;
     G4double fCutForElectron;
     G4double fCutForPositron;
+    G4double fCutForNeutron;
 
     G4VPhysicsConstructor*  fEmPhysicsList;
     G4VPhysicsConstructor*  fRaddecayList;

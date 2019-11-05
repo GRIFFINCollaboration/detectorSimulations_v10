@@ -83,6 +83,7 @@ PhysicsList::PhysicsList() :
 	G4VModularPhysicsList(),
 	fCutForGamma(1.*mm), fCutForElectron(0.01*mm),//e- cut to follow old code
 	fCutForPositron(1.*mm),//just sets defaults, can be altered through commands in a macro
+	fCutForNeutron(0.0*keV),//just sets defaults, can be altered through commands in a macro
 	fEmPhysicsList(0),
 	fRaddecayList(0),
 	fParticleList(0),
@@ -327,6 +328,15 @@ void PhysicsList::SetCutForPositron(G4double cut)
 {
 	fCutForPositron = cut;
 	SetParticleCuts(fCutForPositron, G4Positron::Positron());
+}
+
+void PhysicsList::SetCutForNeutron(G4double cut)
+{
+	fCutForNeutron = cut;
+	G4NeutronTrackingCut * nCut = new G4NeutronTrackingCut();
+	nCut->SetKineticEnergyLimit(fCutForNeutron);
+	nCut->ConstructProcess();
+	
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
