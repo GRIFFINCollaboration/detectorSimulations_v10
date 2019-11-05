@@ -53,8 +53,16 @@ DetectionSystemPlastics::DetectionSystemPlastics(G4double thickness, G4int mater
 	else if (material == 2) fPlasticMaterial = "deuterium";
 	else if (material == 3) fPlasticMaterial = "Hydrogen";
 	else if (material == 4) fPlasticMaterial = "Carbon";
+<<<<<<< HEAD
 	else if (material == 5) fPlasticMaterial = "Deuterated Scintillator";
 	else if (material == 6) fPlasticMaterial = "BC537";
+=======
+<<<<<<< HEAD
+	else if (material == 5) fPlasticMaterial = "Deuterated Scintillator";
+	else if (material == 6) fPlasticMaterial = "BC537";
+=======
+>>>>>>> a1759399b050b68a71eafa602b8905015c62d248
+>>>>>>> a91c16cb894ee0af819a5e3142703d0e51645661
 	else G4cout<< "Material Unknown" << G4endl;
 
 
