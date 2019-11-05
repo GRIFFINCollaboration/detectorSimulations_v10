@@ -128,11 +128,16 @@ public:
 	void AddPEdep(G4double pedep) {fPEdep = fPEdep + pedep;};
 	G4double GetPEdep() {return fPEdep;};
 	void SetPEdep(G4double Pedep) {fPEdep = Pedep;};
+<<<<<<< HEAD
 	//Ekin based on first scatter in Plastics
 	G4double GetPEkin() {return fPEkin;};
 	void SetPEkin(G4double Pekin) {fPEkin = Pekin;};
 	//Ekin based on first scatter in Plastics using vectors
 	void SetPlasticInfo(G4double Ptime, G4double Pekin, G4ThreeVector Ppos) {fPlasticInfo.push_back(PlasticInfo(Ptime, Pekin, Ppos)); G4cout << "Ptime " << Ptime << " Pekin " << Pekin << " Ppos " << Ppos<< G4endl;};
+=======
+	G4double GetPEkin() {return fPEkin;};
+	void SetPEkin(G4double Pekin) {fPEkin = Pekin;};
+>>>>>>> a1759399b050b68a71eafa602b8905015c62d248
 
 private:
 	RunAction*    fRunAction;
@@ -186,7 +191,10 @@ private:
 	//Plastic edep
 	G4double fPEdep;
 	G4double fPEkin;
+<<<<<<< HEAD
 	std::vector<PlasticInfo> fPlasticInfo;
+=======
+>>>>>>> a1759399b050b68a71eafa602b8905015c62d248
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
