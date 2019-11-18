@@ -48,6 +48,7 @@ PhysicsListMessenger::PhysicsListMessenger(PhysicsList* pPhys)
 	fGammaCutCmd(0),
 	fElectCutCmd(0),
 	fProtoCutCmd(0),
+	fNeutronCutCmd(0),
 	fAllCutCmd(0),
 	fMCutCmd(0),
 	fECutCmd(0),
@@ -78,6 +79,13 @@ PhysicsListMessenger::PhysicsListMessenger(PhysicsList* pPhys)
 	fProtoCutCmd->SetUnitCategory("Length");
 	fProtoCutCmd->SetRange("Pcut>0.0");
 	fProtoCutCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	fNeutronCutCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/phys/setNCut",this);
+	fNeutronCutCmd->SetGuidance("Set neutron cut.");
+	fNeutronCutCmd->SetParameterName("Ncut",false);
+	fNeutronCutCmd->SetUnitCategory("Energy");
+	fNeutronCutCmd->SetRange("Ncut>0.0");
+	fNeutronCutCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 	fAllCutCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/phys/setCuts",this);
 	fAllCutCmd->SetGuidance("Set cut for all.");
@@ -124,6 +132,7 @@ PhysicsListMessenger::~PhysicsListMessenger()
 	delete fGammaCutCmd;
 	delete fElectCutCmd;
 	delete fProtoCutCmd;
+	delete fNeutronCutCmd;
 	delete fAllCutCmd;
 	delete fPListCmd;
 	delete fECutCmd;
@@ -150,6 +159,10 @@ void PhysicsListMessenger::SetNewValue(G4UIcommand* command,
 	if(command == fProtoCutCmd)
 	{
 		fPPhysicsList->SetCutForPositron(fProtoCutCmd->GetNewDoubleValue(newValue));
+	}
+	if(command == fNeutronCutCmd)
+	{
+		fPPhysicsList->SetCutForNeutron(fNeutronCutCmd->GetNewDoubleValue(newValue));
 	}
 
 	if(command == fAllCutCmd)

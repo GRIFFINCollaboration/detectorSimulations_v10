@@ -23,55 +23,51 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-// $Id: PhysicsListMessenger.hh 68007 2013-03-13 11:28:03Z gcosmo $
 //
-/// \file radioactivedecay/rdecay02/include/PhysicsListMessenger.hh
-/// \brief Definition of the PhysicsListMessenger class
+// $Id: PrimaryGeneratorMessenger.hh,v 1.1 2010-10-18 15:56:17 maire Exp $
+// GEANT4 tag $Name: geant4-09-04-patch-02 $
+//
 //
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef PHYSICSLISTMESSENGER_HH
-#define PHYSICSLISTMESSENGER_HH
+#ifndef HISTOMANAGERMESSENGER_HH
+#define HISTOMANAGERMESSENGER_HH
 
-#include "globals.hh"
 #include "G4UImessenger.hh"
+#include "globals.hh"
+#include "G4SystemOfUnits.hh"
+class HistoManager;
 
-class PhysicsList;
 class G4UIdirectory;
+class G4UIcmdWithADouble;
 class G4UIcmdWithADoubleAndUnit;
+class G4UIcmdWith3Vector;
+class G4UIcmdWith3VectorAndUnit;
 class G4UIcmdWithAString;
+class G4UIcommand;
+class G4UIcmdWithAnInteger;
 class G4UIcmdWithABool;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class PhysicsListMessenger: public G4UImessenger
+class HistoManagerMessenger: public G4UImessenger
 {
 public:
+    HistoManagerMessenger(HistoManager*);
+    virtual ~HistoManagerMessenger();
 
-    PhysicsListMessenger(PhysicsList* );
-    virtual ~PhysicsListMessenger();
-
-    virtual void SetNewValue(G4UIcommand*, G4String);
+public:
+    void SetNewValue(G4UIcommand*, G4String);
 
 private:
+    HistoManager*        	fHistoMan;
 
-    PhysicsList* fPPhysicsList;
-
-    G4UIdirectory*             fPhysDir;
-    G4UIcmdWithADoubleAndUnit* fGammaCutCmd;
-    G4UIcmdWithADoubleAndUnit* fElectCutCmd;
-    G4UIcmdWithADoubleAndUnit* fProtoCutCmd;
-    G4UIcmdWithADoubleAndUnit* fNeutronCutCmd;
-    G4UIcmdWithADoubleAndUnit* fAllCutCmd;
-    G4UIcmdWithADoubleAndUnit* fMCutCmd;
-    G4UIcmdWithADoubleAndUnit* fECutCmd;
-    G4UIcmdWithAString*        fPListCmd;
-    G4UIcmdWithABool*          fConstructOpCmd;
-    G4UIcmdWithABool*          fSpiceStepperCmd;
-
+    G4UIcmdWithAString* 	fFileNameCmd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
+

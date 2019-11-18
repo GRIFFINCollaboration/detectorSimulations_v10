@@ -90,6 +90,7 @@
 #include "Apparatus8piVacuumChamber.hh"
 #include "Apparatus8piVacuumChamberAuxMatShell.hh"
 #include "ApparatusGriffinStructure.hh"
+#include "ApparatusLabFloor.hh"
 
 #include "DetectionSystemBox.hh" // New file
 #include "DetectionSystemGrid.hh"
@@ -127,6 +128,7 @@ DetectorConstruction::DetectorConstruction() :
 
 
 	fMatWorldName = "G4_AIR";
+//	fMatWorldName = "G4_Galactic";
 
 	// Generic Target Apparatus
 	fSetGenericTargetMaterial   = false;
@@ -402,6 +404,18 @@ void DetectorConstruction::AddApparatusGriffinStructure(G4int selector) {
 
 	pApparatusGriffinStructure->Place(fLogicWorld, selector);
 }
+
+void DetectorConstruction::AddApparatusLabFloor() {
+
+if(fLogicWorld == nullptr) {
+	Construct();
+}
+
+ApparatusLabFloor * pApparatusLabFloor = new ApparatusLabFloor();
+pApparatusLabFloor->Build();
+pApparatusLabFloor->PlaceLabFloor(fLogicWorld);
+}
+
 
 
 void DetectorConstruction::AddDetectionSystemSodiumIodide(G4int ndet) {
@@ -765,6 +779,17 @@ void DetectorConstruction::AddDetectionSystemDescant(G4int ndet) {
 	fDescant = true;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void DetectorConstruction::AddDetectionSystemDescantNoLead(G4int ndet) {
+	if(fLogicWorld == nullptr) {
+		Construct();
+	}
+
+	DetectionSystemDescant* pDetectionSystemDescant = new DetectionSystemDescant(false) ;
+	pDetectionSystemDescant->Build() ;
+	pDetectionSystemDescant->PlaceDetector(fLogicWorld, ndet) ;
+
+	fDescant = true;
+}
 
 void DetectorConstruction::AddDetectionSystemDescantAuxPorts(G4ThreeVector input) {
 	if(fLogicWorld == nullptr) {
@@ -854,8 +879,9 @@ void DetectorConstruction::AddDetectionSystemPlastics(G4ThreeVector input) {
 
 	G4double thickness = G4double(input.x())*cm;
 	G4int material = G4double(input.y());
+	G4double spacing = G4double(input.z())*cm;
 
-	DetectionSystemPlastics* pDetectionSystemPlastics = new DetectionSystemPlastics(thickness, material);
+	DetectionSystemPlastics* pDetectionSystemPlastics = new DetectionSystemPlastics(thickness, material, spacing);
 	pDetectionSystemPlastics->Build();
 	pDetectionSystemPlastics->PlaceDetector(fLogicWorld);
 
@@ -905,7 +931,10 @@ void DetectorConstruction::SetProperties() {
 		G4cout<<fLogicWorld->GetNoDaughters()<<" daughter volumes"<<std::endl;
 	}
 	for(int i = 0; i < fLogicWorld->GetNoDaughters(); ++i) {
+		//G4cout << "fLogicWorld->GetNoDaughters(): " << fLogicWorld->GetNoDaughters() << G4endl; //Testing Plastic PLacement
+		//G4cout << "fLogicWorld->GetName(): " << fLogicWorld->GetDaughter(i)->GetName() << G4endl; //Testing Plastic PLacement
 		if(!HasProperties(fLogicWorld->GetDaughter(i)) && CheckVolumeName(fLogicWorld->GetDaughter(i)->GetName())) {
+		//G4cout << "fLogicWorld->GetName(): " << fLogicWorld->GetDaughter(i)->GetName() << G4endl; //Testing Plastic PLacement
 			fPropertiesMap[fLogicWorld->GetDaughter(i)] = ParseVolumeName(fLogicWorld->GetDaughter(i)->GetName());
 		}
 	}
@@ -956,6 +985,7 @@ bool DetectorConstruction::CheckVolumeName(G4String volumeName) {
 	if(volumeName.find("whiteScintillatorVolumeLog") != G4String::npos) return true;
 	if(volumeName.find("yellowScintillatorVolumeLog") != G4String::npos) return true;
 	if(volumeName.find("testcanScintillatorLog") != G4String::npos) return true;
+	if(volumeName.find("PlasticDet") != G4String::npos) return true;
 	return false;
 }
 
@@ -1227,6 +1257,10 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		return result;
 	}
 
+	if(volumeName.find("PlasticDet") != G4String::npos) {
+		result.systemID = 8700;
+		return result;
+	}
 	return result;
 }
 

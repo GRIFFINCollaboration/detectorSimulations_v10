@@ -177,7 +177,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 		fParticleGun->SetParticleMomentumDirection(thisDirection);
 		fParticleGun->SetParticleEnergy(thisEnergy);
 	} else  {
-		// Changed so that most grsi "/Detsys/gun/" commands still effect gun when using
+		// Changed so that most grsi "/DetSys/gun/" commands still effect gun when using
 		// Underlying geant4 commands such as '/gun/particle ion" & "/gun/ion"
 		if(fEffParticleBool) {
 			G4ParticleDefinition* effPart;
@@ -255,6 +255,10 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			effdirection = G4ThreeVector(effRandSinTheta*cos(effRandPhi), effRandSinTheta*sin(effRandPhi), effRandCosTheta);
 			//converts from Spherical polar(physics def.) to cartesian via (rsin(theta)cos(phi),rsin(theta)cos(phi),rcos(theta)) r=1,unit length
 		}
+
+		//Set Direction of Beam Manually
+	//	effdirection = G4ThreeVector(0. , 0. , 1.);
+		
 
 		//after running through if-statements above we now have particle type definition, position, mom. direction, and the energy (or their initialised values)
 		fParticleGun->SetParticlePosition(thisEffPosition);
