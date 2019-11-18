@@ -51,6 +51,26 @@ static const int MAXHITS        = 100;
 static const int NUMSTEPVARS    = 21;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+<<<<<<< HEAD
+/*
+=======
+>>>>>>> a91c16cb894ee0af819a5e3142703d0e51645661
+class PlasticInfo : public G4UserEventAction
+{
+public:
+PlasticInfo(G4double time, G4double Ke, G4ThreeVector pos) : TimeInfo(time), KEInfo(Ke), PosInfo(pos) {}
+virtual ~PlasticInfo(){}
+	G4double TimeInfo;
+	G4double KEInfo;
+	G4ThreeVector PosInfo;
+	
+
+};
+<<<<<<< HEAD
+*/
+=======
+
+>>>>>>> a91c16cb894ee0af819a5e3142703d0e51645661
 
 class EventAction : public G4UserEventAction
 {
@@ -116,9 +136,29 @@ public:
 	void AddPEdep(G4double pedep) {fPEdep = fPEdep + pedep;};
 	G4double GetPEdep() {return fPEdep;};
 	void SetPEdep(G4double Pedep) {fPEdep = Pedep;};
+<<<<<<< HEAD
 	//Ekin based on first scatter in Plastics
 	G4double GetPEkin() {return fPEkin;};
 	void SetPEkin(G4double Pekin) {fPEkin = Pekin;};
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> a91c16cb894ee0af819a5e3142703d0e51645661
+	//Ekin based on first scatter in Plastics
+	G4double GetPEkin() {return fPEkin;};
+	void SetPEkin(G4double Pekin) {fPEkin = Pekin;};
+	//Ekin based on first scatter in Plastics using vectors
+<<<<<<< HEAD
+//	void SetPlasticInfo(G4double Ptime, G4double Pekin, G4ThreeVector Ppos) {fPlasticInfo.push_back(PlasticInfo(Ptime, Pekin, Ppos)); G4cout << "Ptime " << Ptime << " Pekin " << Pekin << " Ppos " << Ppos<< G4endl;};
+=======
+	void SetPlasticInfo(G4double Ptime, G4double Pekin, G4ThreeVector Ppos) {fPlasticInfo.push_back(PlasticInfo(Ptime, Pekin, Ppos)); G4cout << "Ptime " << Ptime << " Pekin " << Pekin << " Ppos " << Ppos<< G4endl;};
+=======
+	G4double GetPEkin() {return fPEkin;};
+	void SetPEkin(G4double Pekin) {fPEkin = Pekin;};
+>>>>>>> a1759399b050b68a71eafa602b8905015c62d248
+>>>>>>> a91c16cb894ee0af819a5e3142703d0e51645661
+>>>>>>> 53179312d4eb2681605074b4f6ad0d9fb1b02d60
 
 private:
 	RunAction*    fRunAction;
@@ -172,6 +212,17 @@ private:
 	//Plastic edep
 	G4double fPEdep;
 	G4double fPEkin;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+//	std::vector<PlasticInfo> fPlasticInfo;
+=======
+<<<<<<< HEAD
+	std::vector<PlasticInfo> fPlasticInfo;
+=======
+>>>>>>> a1759399b050b68a71eafa602b8905015c62d248
+>>>>>>> a91c16cb894ee0af819a5e3142703d0e51645661
+>>>>>>> 53179312d4eb2681605074b4f6ad0d9fb1b02d60
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

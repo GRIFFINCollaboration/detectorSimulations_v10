@@ -44,13 +44,30 @@ DetectionSystemPlastics::DetectionSystemPlastics(G4double thickness, G4int mater
     fRadialDistance = 50*cm;
     fLeadShieldThickness = 6.35*mm;
     fSpacing = spacing; //with lead
+<<<<<<< HEAD
+=======
+    //fSpacing = spacing;  //no lead
+>>>>>>> 53179312d4eb2681605074b4f6ad0d9fb1b02d60
   
    if(material == 1)  fPlasticMaterial = "BC408";
 	else if (material == 2) fPlasticMaterial = "deuterium";
 	else if (material == 3) fPlasticMaterial = "Hydrogen";
 	else if (material == 4) fPlasticMaterial = "Carbon";
+<<<<<<< HEAD
 	else if (material == 5) fPlasticMaterial = "Deuterated Scintillator";
 	else if (material == 6) fPlasticMaterial = "BC537";
+=======
+<<<<<<< HEAD
+	else if (material == 5) fPlasticMaterial = "Deuterated Scintillator";
+	else if (material == 6) fPlasticMaterial = "BC537";
+=======
+<<<<<<< HEAD
+	else if (material == 5) fPlasticMaterial = "Deuterated Scintillator";
+	else if (material == 6) fPlasticMaterial = "BC537";
+=======
+>>>>>>> a1759399b050b68a71eafa602b8905015c62d248
+>>>>>>> a91c16cb894ee0af819a5e3142703d0e51645661
+>>>>>>> 53179312d4eb2681605074b4f6ad0d9fb1b02d60
 	else G4cout<< "Material Unknown" << G4endl;
 
 
@@ -194,8 +211,23 @@ scintillatorMPT->AddProperty("EFFICIENCY", photonEnergy, efficiency, nEntries); 
 
 ScintWrapper->SetMaterialPropertiesTable(ScintWrapperProperty);
 
+<<<<<<< HEAD
 /////Building the Plastic Geometry////////
 
+=======
+//Building the Plastic Geometry
+
+//For creating a square shaped target of specified material.  Used for physics validation etc.
+
+/*
+G4Box * box = new G4Box("Plastic Detector", fScintillatorLength, fScintillatorHeight, fScintillatorWidth);
+   move = G4ThreeVector(0., 0., 400.); //In mm, positive number in Z direction(x, y, z) is towards DESCANT, and is thickness
+    rotate = new G4RotationMatrix;
+    direction 	  = G4ThreeVector(1., 1., 1.);
+*/
+
+ 
+>>>>>>> 53179312d4eb2681605074b4f6ad0d9fb1b02d60
 //Creating actual detector shape
 //place outer radius of plastics at position of DESCANT detectors, taking into account lead shield and placing 1 cm away after
 //G4double outerRadius = fRadialDistance - fLeadShieldThickness - 1*cm;
@@ -215,8 +247,16 @@ rotate = new G4RotationMatrix;
     
     //logical volume for plastic scintillator
     if(fPlasticLog == NULL ) {
+<<<<<<< HEAD
 	//For Sphere like detector
         fPlasticLog = new G4LogicalVolume(plasticSphere, plasticG4material, "PlasticDet", 0, 0, 0);
+=======
+        //For Target like detector
+	//fPlasticLog = new G4LogicalVolume(box, plasticG4material, "PlasticDet", 0, 0, 0);
+	//For Sphere like detector
+        fPlasticLog = new G4LogicalVolume(plasticSphere, plasticG4material, "PlasticDet", 0, 0, 0);
+        //fTestcanAlumCasingLog->SetVisAttributes(canVisAtt);
+>>>>>>> 53179312d4eb2681605074b4f6ad0d9fb1b02d60
     }
     fAssemblyPlastics->AddPlacedVolume(fPlasticLog, move, rotate);
 
