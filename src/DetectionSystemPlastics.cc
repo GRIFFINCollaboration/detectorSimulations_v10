@@ -194,8 +194,9 @@ scintillatorMPT->AddProperty("EFFICIENCY", photonEnergy, efficiency, nEntries); 
 
 ScintWrapper->SetMaterialPropertiesTable(ScintWrapperProperty);
 
-/////Building the Plastic Geometry////////
+//Building the Plastic Geometry
 
+ 
 //Creating actual detector shape
 //place outer radius of plastics at position of DESCANT detectors, taking into account lead shield and placing 1 cm away after
 //G4double outerRadius = fRadialDistance - fLeadShieldThickness - 1*cm;
@@ -217,6 +218,7 @@ rotate = new G4RotationMatrix;
     if(fPlasticLog == NULL ) {
 	//For Sphere like detector
         fPlasticLog = new G4LogicalVolume(plasticSphere, plasticG4material, "PlasticDet", 0, 0, 0);
+        //fTestcanAlumCasingLog->SetVisAttributes(canVisAtt);
     }
     fAssemblyPlastics->AddPlacedVolume(fPlasticLog, move, rotate);
 

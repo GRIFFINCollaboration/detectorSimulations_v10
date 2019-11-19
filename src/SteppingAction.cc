@@ -262,7 +262,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 
 	// check if this volume has its properties set, i.e. it's an active detector
 	if((edep > 0 || (fDetector->GridCell() && ekin > 0)) && fDetector->HasProperties(volume)) {
-		//G4cout << "edep in loop " << edep << G4endl;
+
 	
 		DetectorProperties prop = fDetector->GetProperties(volume);
 
@@ -289,7 +289,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		// check edep again in case we use the grid cell but haven't hit it
 		//G4cout << "edep " << edep << G4endl; //Testing PLastic fillling ntuple
 		if(edep <= 0) return;
-	//	G4cout << "Calling Add Hit Tracker" << G4endl;
+//		G4cout << "Calling Add Hit Tracker" << G4endl;
 		fEventAction->AddHitTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle, final_angle, TOF, TOFPos, TOFMulti, TOFPosMulti, PlasticEkin, PlasticEdep);
 
 		if(trackSteps) {
