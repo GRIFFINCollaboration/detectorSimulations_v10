@@ -33,52 +33,33 @@
 #include <string>
 
 //DetectionSystemPlastics::DetectionSystemPlastics(G4double length, G4double height, G4double width, G4int material):
-DetectionSystemPlastics::DetectionSystemPlastics(G4double thickness, G4int material):
+DetectionSystemPlastics::DetectionSystemPlastics(G4double thickness, G4int material, G4double spacing):
     // LogicalVolumes
     fPlasticLog(0)
- //   fTestcanAlumCasingLog(0),
-   // fTestcanScintillatorLog(0),
-   // fTestcanQuartzWindowLog(0)
 {
-    // can properties
+    // detector dimensions  properties
     fScintillatorLength        = 6.*cm;
     fScintillatorHeight        = 6.*cm;
     fScintillatorWidth         = thickness;
-   
+    fRadialDistance = 50*cm;
+    fLeadShieldThickness = 6.35*mm;
+    fSpacing = spacing; //with lead
+  
    if(material == 1)  fPlasticMaterial = "BC408";
-	else if (material == 2) fPlasticMaterial = "Deuterium";
-	else if (material == 3) fPlasticMaterial = "H";
-	else if (material == 4) fPlasticMaterial = "C";
+	else if (material == 2) fPlasticMaterial = "deuterium";
+	else if (material == 3) fPlasticMaterial = "Hydrogen";
+	else if (material == 4) fPlasticMaterial = "Carbon";
+	else if (material == 5) fPlasticMaterial = "Deuterated Scintillator";
+	else if (material == 6) fPlasticMaterial = "BC537";
 	else G4cout<< "Material Unknown" << G4endl;
 
 
-/*    fScintillatorLength        = length;
-    fAlumCanThickness          = 1.0*mm;
-    fScintillatorInnerRadius   = 0.0*mm;
-    fScintillatorOuterRadius   = radius;
-    fQuartzThickness           = 6.35*mm;
-    fQuartzRadius              = radius + fAlumCanThickness;
-    fCanMaterial               = "G4_Al";
-    fLiquidMaterial            = "Deuterated Scintillator";
-    fQuartzMaterial            = "G4_SILICON_DIOXIDE";
-
-    fStartPhi               = 0.0*deg;
-    fEndPhi                 = 360.0*deg;
-   
-    fLiquidColour           = G4Colour(0.0/255.0,255.0/255.0,225.0/255.0);
-    fGreyColour             = G4Colour(0.5, 0.5, 0.5); 
-    fQuartzColour           = G4Colour(1.0, 0.0, 1.0);   
-*/ 
 G4cout << "Calling Constructor" << G4endl;
 }
 /////
 ///////
 DetectionSystemPlastics::~DetectionSystemPlastics() {
     // LogicalVolumes
- /*   delete fTestcanAlumCasingLog;
-    delete fTestcanScintillatorLog;
-    delete fTestcanQuartzWindowLog;
-*/
 delete fPlasticLog;
 G4cout << "Calling Destructor" << G4endl;
 
@@ -98,7 +79,8 @@ G4int DetectionSystemPlastics::PlaceDetector(G4LogicalVolume* expHallLog) {
     G4RotationMatrix * rotate = new G4RotationMatrix;
     G4ThreeVector move = G4ThreeVector(0., 0., 0.);
 
-    fAssemblyPlastics->MakeImprint(expHallLog, move, rotate);
+//    fAssemblyPlastics->MakeImprint(expHallLog, move, rotate);
+    fAssemblyPlastics->MakeImprint(expHallLog, move, rotate, 0, true);
 G4cout << "Calling place detector" << G4endl;
     return 1;
 }
@@ -118,35 +100,13 @@ G4cout << "Calling Build PLastics" << G4endl;
         return 0;
     }
       else {
-G4cout << plasticG4material->GetName() << "is the name of the detector material" << G4endl;
+G4cout << plasticG4material->GetName() << " is the name of the detector material" << G4endl;
 }
-/*
-G4Box * box = new G4Box("Plastic Detector", fScintillatorLength, fScintillatorHeight, fScintillatorWidth);
-   move = G4ThreeVector(50., 50., 50.);
-    rotate = new G4RotationMatrix;
-    direction 	  = G4ThreeVector(1., 1., 1.);
-   
-    
-    //logical volume for scintillator can
-    if(fPlasticLog == NULL ) {
-        fPlasticLog = new G4LogicalVolume(box, plasticG4material, "test", 0, 0, 0);
-        //fTestcanAlumCasingLog->SetVisAttributes(canVisAtt);
-    }
-    fAssemblyPlastics->AddPlacedVolume(fPlasticLog, move, rotate);
-*/
 
  ////////Scintillation Properties ////////  --------- Might have to be put before the material is constructed
-// Havent included appropriate libraries yet...
 //Based on BC408 data
 G4MaterialPropertiesTable * scintillatorMPT = new G4MaterialPropertiesTable();
 
-const G4int num = 12;
-
-G4double photonEnergy[num] = {1.7*eV, 2.38*eV, 2.48*eV, 2.58*eV, 2.70*eV, 2.76*eV, 2.82*eV, 2.91*eV, 2.95*eV, 3.1*eV, 3.26*eV, 3.44*eV}; //BC408 emission spectra & corresponding energies
-
-G4double RIndex1[num] = {1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58};
-
-const G4int nEntries = sizeof(photonEnergy)/sizeof(G4double);
 ////Can potentially comment this all out because i dont know what e yield should be.
 //If I dont specify ny own scintillation yield for p,d,t,a,C then they all default to the electron.. Might be a good test...
 /*
@@ -174,16 +134,20 @@ scintillatorMPT->AddProperty("IONSCINTILLATIONYIELD", C_test, num_test, num2);
 ///////
 //
 */
+const G4int num = 12;
+
+G4double photonEnergy[num] = {1.7*eV, 2.38*eV, 2.48*eV, 2.58*eV, 2.70*eV, 2.76*eV, 2.82*eV, 2.91*eV, 2.95*eV, 3.1*eV, 3.26*eV, 3.44*eV}; //BC408 emission spectra & corresponding energies
+
+G4double RIndex1[num] = {1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58};
 assert(sizeof(RIndex1) == sizeof(photonEnergy));
+const G4int nEntries = sizeof(photonEnergy)/sizeof(G4double);
 
 G4double absorption[num] = {380.*cm, 380*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm}; ///light attenuation
 assert(sizeof(absorption) == sizeof(photonEnergy));
 
-//G4double scint[4] = {0.1, 1., 10., 100.}; ///// Joey has as emission spectra
 G4double scint[num] = {3., 3., 8., 18., 43., 55., 80., 100., 80., 20., 7., 3. }; ///// Based off emission spectra for BC408
 assert(sizeof(scint) == sizeof(photonEnergy));
 
-//G4MaterialPropertiesTable * scintillatorMPT = new G4MaterialPropertiesTable();
 
 scintillatorMPT->AddProperty("FASTCOMPONENT", photonEnergy, scint, nEntries)->SetSpline(true); // BC408 emission spectra
 scintillatorMPT->AddProperty("SLOWCOMPONENT", photonEnergy, scint, nEntries)->SetSpline(true); // BC408 emission spectra
@@ -230,17 +194,29 @@ scintillatorMPT->AddProperty("EFFICIENCY", photonEnergy, efficiency, nEntries); 
 
 ScintWrapper->SetMaterialPropertiesTable(ScintWrapperProperty);
 
+/////Building the Plastic Geometry////////
 
-G4Box * box = new G4Box("Plastic Detector", fScintillatorLength, fScintillatorHeight, fScintillatorWidth);
-   move = G4ThreeVector(0., 0., 0.);
-    rotate = new G4RotationMatrix;
-    direction 	  = G4ThreeVector(1., 1., 1.);
-   
+//Creating actual detector shape
+//place outer radius of plastics at position of DESCANT detectors, taking into account lead shield and placing 1 cm away after
+//G4double outerRadius = fRadialDistance - fLeadShieldThickness - 1*cm;
+G4double outerRadius = fRadialDistance - fSpacing;
+G4double innerRadius = outerRadius - fScintillatorWidth;
+//Opening angle 65.5 degrees, approx 1.143 radians. Limiting to 1.13
+G4double startTheta = 0.;
+G4double endTheta = 1.13;
+G4double startPhi = 0. ;
+//Can probably make a series of these ~20 and not include the end pieces
+G4double endPhi = 2*M_PI;
+//G4double endPhi = M_PI;
+
+G4Sphere * plasticSphere = new G4Sphere("Plastic Detector", innerRadius, outerRadius, startPhi, endPhi, startTheta, endTheta);
+move = G4ThreeVector(0., 0., 0.);
+rotate = new G4RotationMatrix;
     
-    //logical volume for scintillator can
+    //logical volume for plastic scintillator
     if(fPlasticLog == NULL ) {
-        fPlasticLog = new G4LogicalVolume(box, plasticG4material, "PlasticDet", 0, 0, 0);
-        //fTestcanAlumCasingLog->SetVisAttributes(canVisAtt);
+	//For Sphere like detector
+        fPlasticLog = new G4LogicalVolume(plasticSphere, plasticG4material, "PlasticDet", 0, 0, 0);
     }
     fAssemblyPlastics->AddPlacedVolume(fPlasticLog, move, rotate);
 

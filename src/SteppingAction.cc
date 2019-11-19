@@ -76,6 +76,15 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 
 	// Track particle type in EVERY step
 	G4int particleType  = aStep->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
+	G4String particleName  = aStep->GetTrack()->GetParticleDefinition()->GetParticleName();
+		if(particleName=="gamma") particleType = 1;
+		else if(particleName=="e-") particleType = 2;
+		else if(particleName=="proton") particleType = 3;
+		else if(particleName=="neutron") particleType = 4;
+		else if(particleName=="deuteron") particleType = 5;
+		else if(particleName=="C12") particleType = 6;
+		else if(particleName=="C13") particleType = 7;
+
 
 	const G4VProcess* process = aStep->GetPostStepPoint()->GetProcessDefinedStep();
 	G4int targetZ = -1;
@@ -89,6 +98,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	}
 
 	// this can be modified to add more processes
+	// Do we really care about creator process? maybe switch to get process type?
+	// Creator process will be usefull for identifying scintillation photons
 	if(theTrack->GetCreatorProcess() != nullptr) {
 		G4String processName = theTrack->GetCreatorProcess()->GetProcessName();
 		if(processName == "RadioactiveDecay")      processType = 1;
@@ -138,22 +149,121 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	G4int nSecondaries = aStep->GetSecondary()->size();
 	G4double lab_angle = -1;
 	found = volname.find("PlasticDet");
-	if(postPoint->GetProcessDefinedStep()->GetProcessName() == "hadElastic" && nSecondaries == 1 && fEventAction->GetLabAngle() == -1 && found != G4String::npos) {
+	if(postPoint->GetProcessDefinedStep()->GetProcessName() == "hadElastic" && fEventAction->GetLabAngle() == -1 && found != G4String::npos) {
 	G4ThreeVector momentum_1 = prePoint->GetMomentum();
 	G4ThreeVector momentum_2 = postPoint->GetMomentum();
 	lab_angle = momentum_2.angle(momentum_1);
 	fEventAction->SetLabAngle(lab_angle);
-	G4cout << "lab_angle: " << lab_angle << G4endl;
-	G4cout << "GetLabAngle(): " << fEventAction->GetLabAngle() << G4endl;
+	}
+	lab_angle= fEventAction->GetLabAngle();
+
+	//Get angle when leaving Detector
+	G4double final_angle = -1;
+	found = volname.find("PlasticDet");
+	if(aStep->GetTrack()->GetParentID() == 0 && fEventAction->GetFinalAngle() == -1 && found != G4String::npos && prePoint->GetStepStatus() == fGeomBoundary && postPoint->GetStepStatus() != fGeomBoundary) { 
+	G4ThreeVector momentum_3 = prePoint->GetMomentum();
+	//Set initial momenturm 
+	fEventAction->SetInitialMomentum(momentum_3);
+	}
+	if(aStep->GetTrack()->GetParentID() == 0 && fEventAction->GetFinalAngle() == -1 && found != G4String::npos && postPoint->GetStepStatus() == fGeomBoundary && prePoint->GetStepStatus() != fGeomBoundary) { 
+	G4ThreeVector momentum_4 = postPoint->GetMomentum();
+	//Set final momentum
+	fEventAction->SetFinalMomentum(momentum_4);
+	}
+	G4ThreeVector check = G4ThreeVector(0., 0., 0.);
+	if(aStep->GetTrack()->GetParentID() == 0 && fEventAction->GetFinalAngle() == -1 && found != G4String::npos && fEventAction->GetInitialMomentum() != check && fEventAction->GetFinalMomentum() != check) {
+	G4ThreeVector initialM = fEventAction->GetInitialMomentum();
+	G4ThreeVector finalM = fEventAction->GetFinalMomentum();
+	final_angle = finalM.angle(initialM);
+	fEventAction->SetFinalAngle(final_angle);
+	}
+	final_angle= fEventAction->GetFinalAngle();
+
+
+	//Counting hits for efficiencies
+	//By not initilalizing counters in event action to zero, they keep counting for whole run, which is good
+	found = volname.find("PlasticDet");
+	if(found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && prePoint->GetStepStatus() == fGeomBoundary) {
+	if(postPoint->GetProcessDefinedStep()->GetProcessName() == "hadElastic") {
+//	fEventAction->totalCounter();
+	fEventAction->elasticCounter();
+	}
+	if(postPoint->GetProcessDefinedStep()->GetProcessName() == "neutronInelastic" || postPoint->GetProcessDefinedStep()->GetProcessName() == "nCapture" || postPoint->GetProcessDefinedStep()->GetProcessName() == "nFission") {
+//	fEventAction->totalCounter();
+	fEventAction->inelasticCounter();
+	}
 	}
 
+//	G4int total = fEventAction->GetTotalCounter();
+	G4int elastic = fEventAction->GetElasticCounter();
+	G4int inelastic = fEventAction->GetInelasticCounter();
 
 
+	//Counting number of scintillating photons -> Setting to zero at beginning of event ---- Not sure if it does though...
+	G4double numScintPhotons;
+	G4double numCollectedPhotons;
+	found = volname.find("PlasticDet");
+	//G4cout << "Found " << found << G4endl;
+	const std::vector<const G4Track*> *secondaries = aStep->GetSecondaryInCurrentStep();
+	if (secondaries->size()>0) {
+		for(unsigned int i=0; i<secondaries->size(); ++i) {
+			if(secondaries->at(i)->GetParentID()>0) {
+				if(secondaries->at(i)->GetDynamicParticle()->GetParticleDefinition() == G4OpticalPhoton::OpticalPhotonDefinition())  {
+					if(secondaries->at(i)->GetCreatorProcess()->GetProcessName() == "Scintillation") {
+						fEventAction->CountOneScintPhoton();
+					//	G4cout<< "GetTotScintPhoton() "<< fEventAction->GetTotScintPhoton() <<G4endl;
+					}
+				}
+			}
+		}
+	}
+	numScintPhotons = fEventAction->GetTotScintPhoton();
+
+		
+	//Kinetic energy of neutrons in Plastic Scintillator based off first scatter and TOF based off first scatter
+	G4double TOF;
+	G4ThreeVector TOFPos;
+	G4double PlasticEkin;		
+	G4double TOFMulti;
+	G4ThreeVector TOFPosMulti;
+	found  = volname.find("PlasticDet");
+	if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && prePoint->GetStepStatus() == fGeomBoundary && postPoint->GetStepStatus() != fGeomBoundary) {	
+//	if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && prePoint->GetStepStatus() == fGeomBoundary && process->GetProcessType() == fHadronic) {	
+	fEventAction->SetTOFMulti(postTime);
+	fEventAction->SetTOFPosMulti(postPos);
+	fEventAction->totalCounter();
+
+	if (fEventAction->GetPEkin()==-1) {
+	fEventAction->SetPEkin(ekin);
+	fEventAction->SetTOF(postTime);
+	fEventAction->SetTOFPos(postPos);
+//	G4cout << "Stepping action ekin, postTime, posPos " << ekin << "  " << postTime << "  " << postPos << G4endl;
+	}
+	}
+	PlasticEkin = fEventAction->GetPEkin();
+	TOF = fEventAction->GetTOF();
+	TOFPos = fEventAction->GetTOFPos();
+	TOFMulti = fEventAction->GetTOFMulti();
+	TOFPosMulti = fEventAction->GetTOFPosMulti();
+	G4int total = fEventAction->GetTotalCounter();
+
+
+
+	//Energy Deposited in Plastic Scintillators for quick reference
+	G4double PlasticEdep;		
+	found  = volname.find("PlasticDet");
+	if (found != G4String::npos && edep >  0 && fDetector->HasProperties(volume)) {	
+	//fEventAction->AddPEdep(edep);
+	fEventAction->SetPEdep(edep);
+	}
+	PlasticEdep = fEventAction->GetPEdep();
 
 
 
 	// check if this volume has its properties set, i.e. it's an active detector
 	if((edep > 0 || (fDetector->GridCell() && ekin > 0)) && fDetector->HasProperties(volume)) {
+		//G4cout << "edep in loop " << edep << G4endl;
+	
 		DetectorProperties prop = fDetector->GetProperties(volume);
 
 		if(fDetector->GridCell()) {
@@ -173,13 +283,17 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 			fEventAction->SpiceDet(edep, stepl, prop.detectorNumber, prop.crystalNumber);
 		}
 
-		// check edep again in case we use the grid cell but haven't hit it
-		if(edep <= 0) return;
 
-		fEventAction->AddHitTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ);
+
+
+		// check edep again in case we use the grid cell but haven't hit it
+		//G4cout << "edep " << edep << G4endl; //Testing PLastic fillling ntuple
+		if(edep <= 0) return;
+	//	G4cout << "Calling Add Hit Tracker" << G4endl;
+		fEventAction->AddHitTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle, final_angle, TOF, TOFPos, TOFMulti, TOFPosMulti, PlasticEkin, PlasticEdep);
 
 		if(trackSteps) {
-			fEventAction->AddStepTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ);
+			fEventAction->AddStepTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle, final_angle, TOF, TOFPos, TOFMulti, TOFPosMulti, PlasticEkin, PlasticEdep);
 		}
 	}// if(fDetector->HasProperties(volume))
 }
