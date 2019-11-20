@@ -52,7 +52,7 @@ DetectionSystemDescant::DetectionSystemDescant(G4bool leadShield) :
 	fCanLength              = 150.0*mm;
 	fCanThickness           = 1.5*mm;
 	fCanMaterial            = "G4_Al";
-	fLiquidMaterial         = "Deuterated Scintillator";
+	fLiquidMaterial         = "BC537";
 	fLeadMaterial           = "G4_Pb";
 	fLeadShieldThickness   = 6.35*mm;
 	fCanBackThickness      = 12.7*mm;   
@@ -414,30 +414,20 @@ G4int DetectionSystemDescant::Build() {
 	// Build assembly volumes
 	// assemblyBlue contains non-sensitive volumes of the blue detector
 	// assemblyBlueScintillator contains only sensitive volumes of the blue detector
-	G4AssemblyVolume* myAssemblyBlue = new G4AssemblyVolume();
-	fAssemblyBlue = myAssemblyBlue;
-	G4AssemblyVolume* myAssemblyBlueScintillator = new G4AssemblyVolume();
-	fAssemblyBlueScintillator = myAssemblyBlueScintillator;
+	fAssemblyBlue = new G4AssemblyVolume();
+	fAssemblyBlueScintillator = new G4AssemblyVolume();
 
-	G4AssemblyVolume* myAssemblyGreen = new G4AssemblyVolume();
-	fAssemblyGreen = myAssemblyGreen;
-	G4AssemblyVolume* myAssemblyGreenScintillator = new G4AssemblyVolume();
-	fAssemblyGreenScintillator = myAssemblyGreenScintillator;
+	fAssemblyGreen = new G4AssemblyVolume();
+	fAssemblyGreenScintillator = new G4AssemblyVolume();
 
-	G4AssemblyVolume* myAssemblyRed = new G4AssemblyVolume();
-	fAssemblyRed = myAssemblyRed;
-	G4AssemblyVolume* myAssemblyRedScintillator = new G4AssemblyVolume();
-	fAssemblyRedScintillator = myAssemblyRedScintillator;
+	fAssemblyRed = new G4AssemblyVolume();
+	fAssemblyRedScintillator = new G4AssemblyVolume();
 
-	G4AssemblyVolume* myAssemblyWhite = new G4AssemblyVolume();
-	fAssemblyWhite = myAssemblyWhite;
-	G4AssemblyVolume* myAssemblyWhiteScintillator = new G4AssemblyVolume();
-	fAssemblyWhiteScintillator = myAssemblyWhiteScintillator;
+	fAssemblyWhite = new G4AssemblyVolume();
+	fAssemblyWhiteScintillator = new G4AssemblyVolume();
 
-	G4AssemblyVolume* myAssemblyYellow = new G4AssemblyVolume();
-	fAssemblyYellow = myAssemblyYellow;
-	G4AssemblyVolume* myAssemblyYellowScintillator = new G4AssemblyVolume();
-	fAssemblyYellowScintillator = myAssemblyYellowScintillator;
+	fAssemblyYellow = new G4AssemblyVolume();
+	fAssemblyYellowScintillator = new G4AssemblyVolume();
 
 	G4cout<<"Building DESCANT..."<<G4endl;
 
@@ -453,89 +443,721 @@ G4int DetectionSystemDescant::Build() {
 G4int DetectionSystemDescant::PlaceDetector(G4LogicalVolume* expHallLog, G4int detectorNumber) {
 	G4double position = fRadialDistance;
 
-	G4int idx;
 	G4double x = 0;
 	G4double y = 0;
 	G4double z = position;
 
-	G4ThreeVector move;
-	G4RotationMatrix* rotate;
+	G4ThreeVector move = G4ThreeVector(x,y,z);
+	G4RotationMatrix* rotate = new G4RotationMatrix;
+	rotate->rotateY(M_PI); // flip the detector so that the face is pointing upstream.
 
-	// Place Blue Detector
-	for(G4int i=0; i<(detectorNumber-55); i++) {
-		move = G4ThreeVector(x,y,z);
-		idx = i;
-		move.rotateZ(fBlueAlphaBetaGamma[idx][2]);
-		move.rotateY(fBlueAlphaBetaGamma[idx][1]);
-		move.rotateZ(fBlueAlphaBetaGamma[idx][0]);
-		rotate = new G4RotationMatrix;
-		rotate->rotateY(M_PI); // flip the detector so that the face is pointing upstream.
-		rotate->rotateZ(fBlueAlphaBetaGamma[idx][2]);
-		rotate->rotateY(fBlueAlphaBetaGamma[idx][1]);
-		rotate->rotateZ(fBlueAlphaBetaGamma[idx][0]);
-		fAssemblyBlue->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
-		fAssemblyBlueScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
-
-	}
-	// Place Green Detector
-	for(G4int i=15; i<(detectorNumber-45); i++) {
-		idx = i-15;
-		move = G4ThreeVector(x,y,z);
-		move.rotateZ(fGreenAlphaBetaGamma[idx][2]);
-		move.rotateY(fGreenAlphaBetaGamma[idx][1]);
-		move.rotateZ(fGreenAlphaBetaGamma[idx][0]);
-		rotate = new G4RotationMatrix;
-		rotate->rotateY(M_PI); // flip the detector so that the face is pointing upstream.
-		rotate->rotateZ(fGreenAlphaBetaGamma[idx][2]);
-		rotate->rotateY(fGreenAlphaBetaGamma[idx][1]);
-		rotate->rotateZ(fGreenAlphaBetaGamma[idx][0]);
-		fAssemblyGreen->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
-		fAssemblyGreenScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
-	}
-	// Place Red Detector
-	for(G4int i=25; i<(detectorNumber-30); i++) {
-		idx = i-25;
-		move = G4ThreeVector(x,y,z);
-		move.rotateZ(fRedAlphaBetaGamma[idx][2]);
-		move.rotateY(fRedAlphaBetaGamma[idx][1]);
-		move.rotateZ(fRedAlphaBetaGamma[idx][0]);
-		rotate = new G4RotationMatrix;
-		rotate->rotateY(M_PI); // flip the detector so that the face is pointing upstream.
-		rotate->rotateZ(fRedAlphaBetaGamma[idx][2]);
-		rotate->rotateY(fRedAlphaBetaGamma[idx][1]);
-		rotate->rotateZ(fRedAlphaBetaGamma[idx][0]);
-		fAssemblyRed->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
-		fAssemblyRedScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
-	}
-	// Place White Detector
-	for(G4int i=40; i<(detectorNumber-10); i++) {
-		idx = i-40;
-		move = G4ThreeVector(x,y,z);
-		move.rotateZ(fWhiteAlphaBetaGamma[idx][2]);
-		move.rotateY(fWhiteAlphaBetaGamma[idx][1]);
-		move.rotateZ(fWhiteAlphaBetaGamma[idx][0]);
-		rotate = new G4RotationMatrix;
-		rotate->rotateY(M_PI); // flip the detector so that the face is pointing upstream.
-		rotate->rotateZ(fWhiteAlphaBetaGamma[idx][2]);
-		rotate->rotateY(fWhiteAlphaBetaGamma[idx][1]);
-		rotate->rotateZ(fWhiteAlphaBetaGamma[idx][0]);
-		fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
-		fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
-	}
-	// Place Yellow Detector
-	for(G4int i=60; i<(detectorNumber); i++) {
-		idx = i-60;
-		move = G4ThreeVector(x,y,z);
-		move.rotateZ(fYellowAlphaBetaGamma[idx][2]);
-		move.rotateY(fYellowAlphaBetaGamma[idx][1]);
-		move.rotateZ(fYellowAlphaBetaGamma[idx][0]);
-		rotate = new G4RotationMatrix;
-		rotate->rotateY(M_PI); // flip the detector so that the face is pointing upstream.
-		rotate->rotateZ(fYellowAlphaBetaGamma[idx][2]);
-		rotate->rotateY(fYellowAlphaBetaGamma[idx][1]);
-		rotate->rotateZ(fYellowAlphaBetaGamma[idx][0]);
-		fAssemblyYellow->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
-		fAssemblyYellowScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+	for(int i = 0; i < detectorNumber; ++i) {
+		// brute force map to DESCANT positions, could be improved by creating a single array of angles?
+		switch(i) {
+			case 0:
+				move.rotateZ(fWhiteAlphaBetaGamma[8][2]);
+				move.rotateY(fWhiteAlphaBetaGamma[8][1]);
+				move.rotateZ(fWhiteAlphaBetaGamma[8][0]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[8][2]);
+				rotate->rotateY(fWhiteAlphaBetaGamma[8][1]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[8][0]);
+				fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 1:
+				move.rotateZ(fWhiteAlphaBetaGamma[4][2]);
+				move.rotateY(fWhiteAlphaBetaGamma[4][1]);
+				move.rotateZ(fWhiteAlphaBetaGamma[4][0]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[4][2]);
+				rotate->rotateY(fWhiteAlphaBetaGamma[4][1]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[4][0]);
+				fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 2:
+				move.rotateZ(fWhiteAlphaBetaGamma[0][2]);
+				move.rotateY(fWhiteAlphaBetaGamma[0][1]);
+				move.rotateZ(fWhiteAlphaBetaGamma[0][0]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[0][2]);
+				rotate->rotateY(fWhiteAlphaBetaGamma[0][1]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[0][0]);
+				fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 3:
+				move.rotateZ(fWhiteAlphaBetaGamma[16][2]);
+				move.rotateY(fWhiteAlphaBetaGamma[16][1]);
+				move.rotateZ(fWhiteAlphaBetaGamma[16][0]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[16][2]);
+				rotate->rotateY(fWhiteAlphaBetaGamma[16][1]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[16][0]);
+				fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 4:
+				move.rotateZ(fWhiteAlphaBetaGamma[12][2]);
+				move.rotateY(fWhiteAlphaBetaGamma[12][1]);
+				move.rotateZ(fWhiteAlphaBetaGamma[12][0]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[12][2]);
+				rotate->rotateY(fWhiteAlphaBetaGamma[12][1]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[12][0]);
+				fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 5:
+				move.rotateZ(fWhiteAlphaBetaGamma[9][2]);
+				move.rotateY(fWhiteAlphaBetaGamma[9][1]);
+				move.rotateZ(fWhiteAlphaBetaGamma[9][0]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[9][2]);
+				rotate->rotateY(fWhiteAlphaBetaGamma[9][1]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[9][0]);
+				fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 6:
+				move.rotateZ(fRedAlphaBetaGamma[3][2]);
+				move.rotateY(fRedAlphaBetaGamma[3][1]);
+				move.rotateZ(fRedAlphaBetaGamma[3][0]);
+				rotate->rotateZ(fRedAlphaBetaGamma[3][2]);
+				rotate->rotateY(fRedAlphaBetaGamma[3][1]);
+				rotate->rotateZ(fRedAlphaBetaGamma[3][0]);
+				fAssemblyRed->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyRedScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 7:
+				move.rotateZ(fWhiteAlphaBetaGamma[5][2]);
+				move.rotateY(fWhiteAlphaBetaGamma[5][1]);
+				move.rotateZ(fWhiteAlphaBetaGamma[5][0]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[5][2]);
+				rotate->rotateY(fWhiteAlphaBetaGamma[5][1]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[5][0]);
+				fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 8:
+				move.rotateZ(fRedAlphaBetaGamma[0][2]);
+				move.rotateY(fRedAlphaBetaGamma[0][1]);
+				move.rotateZ(fRedAlphaBetaGamma[0][0]);
+				rotate->rotateZ(fRedAlphaBetaGamma[0][2]);
+				rotate->rotateY(fRedAlphaBetaGamma[0][1]);
+				rotate->rotateZ(fRedAlphaBetaGamma[0][0]);
+				fAssemblyRed->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyRedScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 9:
+				move.rotateZ(fWhiteAlphaBetaGamma[1][2]);
+				move.rotateY(fWhiteAlphaBetaGamma[1][1]);
+				move.rotateZ(fWhiteAlphaBetaGamma[1][0]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[1][2]);
+				rotate->rotateY(fWhiteAlphaBetaGamma[1][1]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[1][0]);
+				fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 10:
+				move.rotateZ(fRedAlphaBetaGamma[12][2]);
+				move.rotateY(fRedAlphaBetaGamma[12][1]);
+				move.rotateZ(fRedAlphaBetaGamma[12][0]);
+				rotate->rotateZ(fRedAlphaBetaGamma[12][2]);
+				rotate->rotateY(fRedAlphaBetaGamma[12][1]);
+				rotate->rotateZ(fRedAlphaBetaGamma[12][0]);
+				fAssemblyRed->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyRedScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 11:
+				move.rotateZ(fWhiteAlphaBetaGamma[17][2]);
+				move.rotateY(fWhiteAlphaBetaGamma[17][1]);
+				move.rotateZ(fWhiteAlphaBetaGamma[17][0]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[17][2]);
+				rotate->rotateY(fWhiteAlphaBetaGamma[17][1]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[17][0]);
+				fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 12:
+				move.rotateZ(fRedAlphaBetaGamma[9][2]);
+				move.rotateY(fRedAlphaBetaGamma[9][1]);
+				move.rotateZ(fRedAlphaBetaGamma[9][0]);
+				rotate->rotateZ(fRedAlphaBetaGamma[9][2]);
+				rotate->rotateY(fRedAlphaBetaGamma[9][1]);
+				rotate->rotateZ(fRedAlphaBetaGamma[9][0]);
+				fAssemblyRed->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyRedScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 13:
+				move.rotateZ(fWhiteAlphaBetaGamma[13][2]);
+				move.rotateY(fWhiteAlphaBetaGamma[13][1]);
+				move.rotateZ(fWhiteAlphaBetaGamma[13][0]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[13][2]);
+				rotate->rotateY(fWhiteAlphaBetaGamma[13][1]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[13][0]);
+				fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 14:
+				move.rotateZ(fRedAlphaBetaGamma[6][2]);
+				move.rotateY(fRedAlphaBetaGamma[6][1]);
+				move.rotateZ(fRedAlphaBetaGamma[6][0]);
+				rotate->rotateZ(fRedAlphaBetaGamma[6][2]);
+				rotate->rotateY(fRedAlphaBetaGamma[6][1]);
+				rotate->rotateZ(fRedAlphaBetaGamma[6][0]);
+				fAssemblyRed->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyRedScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 15:
+				move.rotateZ(fWhiteAlphaBetaGamma[10][2]);
+				move.rotateY(fWhiteAlphaBetaGamma[10][1]);
+				move.rotateZ(fWhiteAlphaBetaGamma[10][0]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[10][2]);
+				rotate->rotateY(fWhiteAlphaBetaGamma[10][1]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[10][0]);
+				fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 16:
+				move.rotateZ(fBlueAlphaBetaGamma[4][2]);
+				move.rotateY(fBlueAlphaBetaGamma[4][1]);
+				move.rotateZ(fBlueAlphaBetaGamma[4][0]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[4][2]);
+				rotate->rotateY(fBlueAlphaBetaGamma[4][1]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[4][0]);
+				fAssemblyBlue->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyBlueScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 17:
+				move.rotateZ(fBlueAlphaBetaGamma[3][2]);
+				move.rotateY(fBlueAlphaBetaGamma[3][1]);
+				move.rotateZ(fBlueAlphaBetaGamma[3][0]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[3][2]);
+				rotate->rotateY(fBlueAlphaBetaGamma[3][1]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[3][0]);
+				fAssemblyBlue->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyBlueScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 18:
+				move.rotateZ(fWhiteAlphaBetaGamma[6][2]);
+				move.rotateY(fWhiteAlphaBetaGamma[6][1]);
+				move.rotateZ(fWhiteAlphaBetaGamma[6][0]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[6][2]);
+				rotate->rotateY(fWhiteAlphaBetaGamma[6][1]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[6][0]);
+				fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 19:
+				move.rotateZ(fBlueAlphaBetaGamma[1][2]);
+				move.rotateY(fBlueAlphaBetaGamma[1][1]);
+				move.rotateZ(fBlueAlphaBetaGamma[1][0]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[1][2]);
+				rotate->rotateY(fBlueAlphaBetaGamma[1][1]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[1][0]);
+				fAssemblyBlue->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyBlueScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 20:
+				move.rotateZ(fBlueAlphaBetaGamma[0][2]);
+				move.rotateY(fBlueAlphaBetaGamma[0][1]);
+				move.rotateZ(fBlueAlphaBetaGamma[0][0]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[0][2]);
+				rotate->rotateY(fBlueAlphaBetaGamma[0][1]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[0][0]);
+				fAssemblyBlue->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyBlueScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 21:
+				move.rotateZ(fWhiteAlphaBetaGamma[2][2]);
+				move.rotateY(fWhiteAlphaBetaGamma[2][1]);
+				move.rotateZ(fWhiteAlphaBetaGamma[2][0]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[2][2]);
+				rotate->rotateY(fWhiteAlphaBetaGamma[2][1]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[2][0]);
+				fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 22:
+				move.rotateZ(fBlueAlphaBetaGamma[13][2]);
+				move.rotateY(fBlueAlphaBetaGamma[13][1]);
+				move.rotateZ(fBlueAlphaBetaGamma[13][0]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[13][2]);
+				rotate->rotateY(fBlueAlphaBetaGamma[13][1]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[13][0]);
+				fAssemblyBlue->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyBlueScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 23:
+				move.rotateZ(fBlueAlphaBetaGamma[12][2]);
+				move.rotateY(fBlueAlphaBetaGamma[12][1]);
+				move.rotateZ(fBlueAlphaBetaGamma[12][0]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[12][2]);
+				rotate->rotateY(fBlueAlphaBetaGamma[12][1]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[12][0]);
+				fAssemblyBlue->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyBlueScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 24:
+				move.rotateZ(fWhiteAlphaBetaGamma[18][2]);
+				move.rotateY(fWhiteAlphaBetaGamma[18][1]);
+				move.rotateZ(fWhiteAlphaBetaGamma[18][0]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[18][2]);
+				rotate->rotateY(fWhiteAlphaBetaGamma[18][1]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[18][0]);
+				fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 25:
+				move.rotateZ(fBlueAlphaBetaGamma[10][2]);
+				move.rotateY(fBlueAlphaBetaGamma[10][1]);
+				move.rotateZ(fBlueAlphaBetaGamma[10][0]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[10][2]);
+				rotate->rotateY(fBlueAlphaBetaGamma[10][1]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[10][0]);
+				fAssemblyBlue->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyBlueScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 26:
+				move.rotateZ(fBlueAlphaBetaGamma[9][2]);
+				move.rotateY(fBlueAlphaBetaGamma[9][1]);
+				move.rotateZ(fBlueAlphaBetaGamma[9][0]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[9][2]);
+				rotate->rotateY(fBlueAlphaBetaGamma[9][1]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[9][0]);
+				fAssemblyBlue->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyBlueScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 27:
+				move.rotateZ(fWhiteAlphaBetaGamma[14][2]);
+				move.rotateY(fWhiteAlphaBetaGamma[14][1]);
+				move.rotateZ(fWhiteAlphaBetaGamma[14][0]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[14][2]);
+				rotate->rotateY(fWhiteAlphaBetaGamma[14][1]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[14][0]);
+				fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 28:
+				move.rotateZ(fBlueAlphaBetaGamma[7][2]);
+				move.rotateY(fBlueAlphaBetaGamma[7][1]);
+				move.rotateZ(fBlueAlphaBetaGamma[7][0]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[7][2]);
+				rotate->rotateY(fBlueAlphaBetaGamma[7][1]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[7][0]);
+				fAssemblyBlue->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyBlueScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 29:
+				move.rotateZ(fBlueAlphaBetaGamma[6][2]);
+				move.rotateY(fBlueAlphaBetaGamma[6][1]);
+				move.rotateZ(fBlueAlphaBetaGamma[6][0]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[6][2]);
+				rotate->rotateY(fBlueAlphaBetaGamma[6][1]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[6][0]);
+				fAssemblyBlue->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyBlueScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 30:
+				move.rotateZ(fWhiteAlphaBetaGamma[11][2]);
+				move.rotateY(fWhiteAlphaBetaGamma[11][1]);
+				move.rotateZ(fWhiteAlphaBetaGamma[11][0]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[11][2]);
+				rotate->rotateY(fWhiteAlphaBetaGamma[11][1]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[11][0]);
+				fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 31:
+				move.rotateZ(fRedAlphaBetaGamma[5][2]);
+				move.rotateY(fRedAlphaBetaGamma[5][1]);
+				move.rotateZ(fRedAlphaBetaGamma[5][0]);
+				rotate->rotateZ(fRedAlphaBetaGamma[5][2]);
+				rotate->rotateY(fRedAlphaBetaGamma[5][1]);
+				rotate->rotateZ(fRedAlphaBetaGamma[5][0]);
+				fAssemblyRed->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyRedScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 32:
+				move.rotateZ(fBlueAlphaBetaGamma[5][2]);
+				move.rotateY(fBlueAlphaBetaGamma[5][1]);
+				move.rotateZ(fBlueAlphaBetaGamma[5][0]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[5][2]);
+				rotate->rotateY(fBlueAlphaBetaGamma[5][1]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[5][0]);
+				fAssemblyBlue->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyBlueScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 33:
+				move.rotateZ(fRedAlphaBetaGamma[4][2]);
+				move.rotateY(fRedAlphaBetaGamma[4][1]);
+				move.rotateZ(fRedAlphaBetaGamma[4][0]);
+				rotate->rotateZ(fRedAlphaBetaGamma[4][2]);
+				rotate->rotateY(fRedAlphaBetaGamma[4][1]);
+				rotate->rotateZ(fRedAlphaBetaGamma[4][0]);
+				fAssemblyRed->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyRedScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 34:
+				move.rotateZ(fWhiteAlphaBetaGamma[7][2]);
+				move.rotateY(fWhiteAlphaBetaGamma[7][1]);
+				move.rotateZ(fWhiteAlphaBetaGamma[7][0]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[7][2]);
+				rotate->rotateY(fWhiteAlphaBetaGamma[7][1]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[7][0]);
+				fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 35:
+				move.rotateZ(fRedAlphaBetaGamma[2][2]);
+				move.rotateY(fRedAlphaBetaGamma[2][1]);
+				move.rotateZ(fRedAlphaBetaGamma[2][0]);
+				rotate->rotateZ(fRedAlphaBetaGamma[2][2]);
+				rotate->rotateY(fRedAlphaBetaGamma[2][1]);
+				rotate->rotateZ(fRedAlphaBetaGamma[2][0]);
+				fAssemblyRed->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyRedScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 36:
+				move.rotateZ(fBlueAlphaBetaGamma[2][2]);
+				move.rotateY(fBlueAlphaBetaGamma[2][1]);
+				move.rotateZ(fBlueAlphaBetaGamma[2][0]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[2][2]);
+				rotate->rotateY(fBlueAlphaBetaGamma[2][1]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[2][0]);
+				fAssemblyBlue->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyBlueScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 37:
+				move.rotateZ(fRedAlphaBetaGamma[1][2]);
+				move.rotateY(fRedAlphaBetaGamma[1][1]);
+				move.rotateZ(fRedAlphaBetaGamma[1][0]);
+				rotate->rotateZ(fRedAlphaBetaGamma[1][2]);
+				rotate->rotateY(fRedAlphaBetaGamma[1][1]);
+				rotate->rotateZ(fRedAlphaBetaGamma[1][0]);
+				fAssemblyRed->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyRedScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 38:
+				move.rotateZ(fWhiteAlphaBetaGamma[3][2]);
+				move.rotateY(fWhiteAlphaBetaGamma[3][1]);
+				move.rotateZ(fWhiteAlphaBetaGamma[3][0]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[3][2]);
+				rotate->rotateY(fWhiteAlphaBetaGamma[3][1]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[3][0]);
+				fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 39:
+				move.rotateZ(fRedAlphaBetaGamma[14][2]);
+				move.rotateY(fRedAlphaBetaGamma[14][1]);
+				move.rotateZ(fRedAlphaBetaGamma[14][0]);
+				rotate->rotateZ(fRedAlphaBetaGamma[14][2]);
+				rotate->rotateY(fRedAlphaBetaGamma[14][1]);
+				rotate->rotateZ(fRedAlphaBetaGamma[14][0]);
+				fAssemblyRed->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyRedScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 40:
+				move.rotateZ(fBlueAlphaBetaGamma[14][2]);
+				move.rotateY(fBlueAlphaBetaGamma[14][1]);
+				move.rotateZ(fBlueAlphaBetaGamma[14][0]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[14][2]);
+				rotate->rotateY(fBlueAlphaBetaGamma[14][1]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[14][0]);
+				fAssemblyBlue->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyBlueScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 41:
+				move.rotateZ(fRedAlphaBetaGamma[13][2]);
+				move.rotateY(fRedAlphaBetaGamma[13][1]);
+				move.rotateZ(fRedAlphaBetaGamma[13][0]);
+				rotate->rotateZ(fRedAlphaBetaGamma[13][2]);
+				rotate->rotateY(fRedAlphaBetaGamma[13][1]);
+				rotate->rotateZ(fRedAlphaBetaGamma[13][0]);
+				fAssemblyRed->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyRedScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 42:
+				move.rotateZ(fWhiteAlphaBetaGamma[19][2]);
+				move.rotateY(fWhiteAlphaBetaGamma[19][1]);
+				move.rotateZ(fWhiteAlphaBetaGamma[19][0]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[19][2]);
+				rotate->rotateY(fWhiteAlphaBetaGamma[19][1]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[19][0]);
+				fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 43:
+				move.rotateZ(fRedAlphaBetaGamma[10][2]);
+				move.rotateY(fRedAlphaBetaGamma[10][1]);
+				move.rotateZ(fRedAlphaBetaGamma[10][0]);
+				rotate->rotateZ(fRedAlphaBetaGamma[10][2]);
+				rotate->rotateY(fRedAlphaBetaGamma[10][1]);
+				rotate->rotateZ(fRedAlphaBetaGamma[10][0]);
+				fAssemblyRed->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyRedScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 44:
+				move.rotateZ(fBlueAlphaBetaGamma[12][2]);
+				move.rotateY(fBlueAlphaBetaGamma[12][1]);
+				move.rotateZ(fBlueAlphaBetaGamma[12][0]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[12][2]);
+				rotate->rotateY(fBlueAlphaBetaGamma[12][1]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[12][0]);
+				fAssemblyBlue->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyBlueScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 45:
+				move.rotateZ(fRedAlphaBetaGamma[12][2]);
+				move.rotateY(fRedAlphaBetaGamma[12][1]);
+				move.rotateZ(fRedAlphaBetaGamma[12][0]);
+				rotate->rotateZ(fRedAlphaBetaGamma[12][2]);
+				rotate->rotateY(fRedAlphaBetaGamma[12][1]);
+				rotate->rotateZ(fRedAlphaBetaGamma[12][0]);
+				fAssemblyRed->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyRedScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 46:
+				move.rotateZ(fWhiteAlphaBetaGamma[15][2]);
+				move.rotateY(fWhiteAlphaBetaGamma[15][1]);
+				move.rotateZ(fWhiteAlphaBetaGamma[15][0]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[15][2]);
+				rotate->rotateY(fWhiteAlphaBetaGamma[15][1]);
+				rotate->rotateZ(fWhiteAlphaBetaGamma[15][0]);
+				fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyWhiteScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 47:
+				move.rotateZ(fRedAlphaBetaGamma[8][2]);
+				move.rotateY(fRedAlphaBetaGamma[8][1]);
+				move.rotateZ(fRedAlphaBetaGamma[8][0]);
+				rotate->rotateZ(fRedAlphaBetaGamma[8][2]);
+				rotate->rotateY(fRedAlphaBetaGamma[8][1]);
+				rotate->rotateZ(fRedAlphaBetaGamma[8][0]);
+				fAssemblyRed->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyRedScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 48:
+				move.rotateZ(fBlueAlphaBetaGamma[8][2]);
+				move.rotateY(fBlueAlphaBetaGamma[8][1]);
+				move.rotateZ(fBlueAlphaBetaGamma[8][0]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[8][2]);
+				rotate->rotateY(fBlueAlphaBetaGamma[8][1]);
+				rotate->rotateZ(fBlueAlphaBetaGamma[8][0]);
+				fAssemblyBlue->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyBlueScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 49:
+				move.rotateZ(fRedAlphaBetaGamma[7][2]);
+				move.rotateY(fRedAlphaBetaGamma[7][1]);
+				move.rotateZ(fRedAlphaBetaGamma[7][0]);
+				rotate->rotateZ(fRedAlphaBetaGamma[7][2]);
+				rotate->rotateY(fRedAlphaBetaGamma[7][1]);
+				rotate->rotateZ(fRedAlphaBetaGamma[7][0]);
+				fAssemblyRed->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyRedScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 50:
+				move.rotateZ(fGreenAlphaBetaGamma[4][2]);
+				move.rotateY(fGreenAlphaBetaGamma[4][1]);
+				move.rotateZ(fGreenAlphaBetaGamma[4][0]);
+				rotate->rotateZ(fGreenAlphaBetaGamma[4][2]);
+				rotate->rotateY(fGreenAlphaBetaGamma[4][1]);
+				rotate->rotateZ(fGreenAlphaBetaGamma[4][0]);
+				fAssemblyGreen->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyGreenScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 51:
+				move.rotateZ(fYellowAlphaBetaGamma[3][2]);
+				move.rotateY(fYellowAlphaBetaGamma[3][1]);
+				move.rotateZ(fYellowAlphaBetaGamma[3][0]);
+				rotate->rotateZ(fYellowAlphaBetaGamma[3][2]);
+				rotate->rotateY(fYellowAlphaBetaGamma[3][1]);
+				rotate->rotateZ(fYellowAlphaBetaGamma[3][0]);
+				fAssemblyYellow->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyYellowScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 52:
+				move.rotateZ(fYellowAlphaBetaGamma[2][2]);
+				move.rotateY(fYellowAlphaBetaGamma[2][1]);
+				move.rotateZ(fYellowAlphaBetaGamma[2][0]);
+				rotate->rotateZ(fYellowAlphaBetaGamma[2][2]);
+				rotate->rotateY(fYellowAlphaBetaGamma[2][1]);
+				rotate->rotateZ(fYellowAlphaBetaGamma[2][0]);
+				fAssemblyYellow->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyYellowScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 53:
+				move.rotateZ(fGreenAlphaBetaGamma[3][2]);
+				move.rotateY(fGreenAlphaBetaGamma[3][1]);
+				move.rotateZ(fGreenAlphaBetaGamma[3][0]);
+				rotate->rotateZ(fGreenAlphaBetaGamma[3][2]);
+				rotate->rotateY(fGreenAlphaBetaGamma[3][1]);
+				rotate->rotateZ(fGreenAlphaBetaGamma[3][0]);
+				fAssemblyGreen->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyGreenScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 54:
+				move.rotateZ(fGreenAlphaBetaGamma[2][2]);
+				move.rotateY(fGreenAlphaBetaGamma[2][1]);
+				move.rotateZ(fGreenAlphaBetaGamma[2][0]);
+				rotate->rotateZ(fGreenAlphaBetaGamma[2][2]);
+				rotate->rotateY(fGreenAlphaBetaGamma[2][1]);
+				rotate->rotateZ(fGreenAlphaBetaGamma[2][0]);
+				fAssemblyGreen->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyGreenScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 55:
+				move.rotateZ(fYellowAlphaBetaGamma[1][2]);
+				move.rotateY(fYellowAlphaBetaGamma[1][1]);
+				move.rotateZ(fYellowAlphaBetaGamma[1][0]);
+				rotate->rotateZ(fYellowAlphaBetaGamma[1][2]);
+				rotate->rotateY(fYellowAlphaBetaGamma[1][1]);
+				rotate->rotateZ(fYellowAlphaBetaGamma[1][0]);
+				fAssemblyYellow->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyYellowScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 56:
+				move.rotateZ(fYellowAlphaBetaGamma[0][2]);
+				move.rotateY(fYellowAlphaBetaGamma[0][1]);
+				move.rotateZ(fYellowAlphaBetaGamma[0][0]);
+				rotate->rotateZ(fYellowAlphaBetaGamma[0][2]);
+				rotate->rotateY(fYellowAlphaBetaGamma[0][1]);
+				rotate->rotateZ(fYellowAlphaBetaGamma[0][0]);
+				fAssemblyYellow->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyYellowScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 57:
+				move.rotateZ(fGreenAlphaBetaGamma[1][2]);
+				move.rotateY(fGreenAlphaBetaGamma[1][1]);
+				move.rotateZ(fGreenAlphaBetaGamma[1][0]);
+				rotate->rotateZ(fGreenAlphaBetaGamma[1][2]);
+				rotate->rotateY(fGreenAlphaBetaGamma[1][1]);
+				rotate->rotateZ(fGreenAlphaBetaGamma[1][0]);
+				fAssemblyGreen->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyGreenScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 58:
+				move.rotateZ(fGreenAlphaBetaGamma[0][2]);
+				move.rotateY(fGreenAlphaBetaGamma[0][1]);
+				move.rotateZ(fGreenAlphaBetaGamma[0][0]);
+				rotate->rotateZ(fGreenAlphaBetaGamma[0][2]);
+				rotate->rotateY(fGreenAlphaBetaGamma[0][1]);
+				rotate->rotateZ(fGreenAlphaBetaGamma[0][0]);
+				fAssemblyGreen->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyGreenScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 59:
+				move.rotateZ(fYellowAlphaBetaGamma[9][2]);
+				move.rotateY(fYellowAlphaBetaGamma[9][1]);
+				move.rotateZ(fYellowAlphaBetaGamma[9][0]);
+				rotate->rotateZ(fYellowAlphaBetaGamma[9][2]);
+				rotate->rotateY(fYellowAlphaBetaGamma[9][1]);
+				rotate->rotateZ(fYellowAlphaBetaGamma[9][0]);
+				fAssemblyYellow->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyYellowScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 60:
+				move.rotateZ(fYellowAlphaBetaGamma[8][2]);
+				move.rotateY(fYellowAlphaBetaGamma[8][1]);
+				move.rotateZ(fYellowAlphaBetaGamma[8][0]);
+				rotate->rotateZ(fYellowAlphaBetaGamma[8][2]);
+				rotate->rotateY(fYellowAlphaBetaGamma[8][1]);
+				rotate->rotateZ(fYellowAlphaBetaGamma[8][0]);
+				fAssemblyYellow->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyYellowScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 61:
+				move.rotateZ(fGreenAlphaBetaGamma[9][2]);
+				move.rotateY(fGreenAlphaBetaGamma[9][1]);
+				move.rotateZ(fGreenAlphaBetaGamma[9][0]);
+				rotate->rotateZ(fGreenAlphaBetaGamma[9][2]);
+				rotate->rotateY(fGreenAlphaBetaGamma[9][1]);
+				rotate->rotateZ(fGreenAlphaBetaGamma[9][0]);
+				fAssemblyGreen->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyGreenScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 62:
+				move.rotateZ(fGreenAlphaBetaGamma[0][2]);
+				move.rotateY(fGreenAlphaBetaGamma[0][1]);
+				move.rotateZ(fGreenAlphaBetaGamma[0][0]);
+				rotate->rotateZ(fGreenAlphaBetaGamma[0][2]);
+				rotate->rotateY(fGreenAlphaBetaGamma[0][1]);
+				rotate->rotateZ(fGreenAlphaBetaGamma[0][0]);
+				fAssemblyGreen->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyGreenScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 63:
+				move.rotateZ(fYellowAlphaBetaGamma[7][2]);
+				move.rotateY(fYellowAlphaBetaGamma[7][1]);
+				move.rotateZ(fYellowAlphaBetaGamma[7][0]);
+				rotate->rotateZ(fYellowAlphaBetaGamma[7][2]);
+				rotate->rotateY(fYellowAlphaBetaGamma[7][1]);
+				rotate->rotateZ(fYellowAlphaBetaGamma[7][0]);
+				fAssemblyYellow->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyYellowScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 64:
+				move.rotateZ(fYellowAlphaBetaGamma[6][2]);
+				move.rotateY(fYellowAlphaBetaGamma[6][1]);
+				move.rotateZ(fYellowAlphaBetaGamma[6][0]);
+				rotate->rotateZ(fYellowAlphaBetaGamma[6][2]);
+				rotate->rotateY(fYellowAlphaBetaGamma[6][1]);
+				rotate->rotateZ(fYellowAlphaBetaGamma[6][0]);
+				fAssemblyYellow->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyYellowScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 65:
+				move.rotateZ(fGreenAlphaBetaGamma[7][2]);
+				move.rotateY(fGreenAlphaBetaGamma[7][1]);
+				move.rotateZ(fGreenAlphaBetaGamma[7][0]);
+				rotate->rotateZ(fGreenAlphaBetaGamma[7][2]);
+				rotate->rotateY(fGreenAlphaBetaGamma[7][1]);
+				rotate->rotateZ(fGreenAlphaBetaGamma[7][0]);
+				fAssemblyGreen->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyGreenScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 66:
+				move.rotateZ(fGreenAlphaBetaGamma[6][2]);
+				move.rotateY(fGreenAlphaBetaGamma[6][1]);
+				move.rotateZ(fGreenAlphaBetaGamma[6][0]);
+				rotate->rotateZ(fGreenAlphaBetaGamma[6][2]);
+				rotate->rotateY(fGreenAlphaBetaGamma[6][1]);
+				rotate->rotateZ(fGreenAlphaBetaGamma[6][0]);
+				fAssemblyGreen->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyGreenScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 67:
+				move.rotateZ(fYellowAlphaBetaGamma[5][2]);
+				move.rotateY(fYellowAlphaBetaGamma[5][1]);
+				move.rotateZ(fYellowAlphaBetaGamma[5][0]);
+				rotate->rotateZ(fYellowAlphaBetaGamma[5][2]);
+				rotate->rotateY(fYellowAlphaBetaGamma[5][1]);
+				rotate->rotateZ(fYellowAlphaBetaGamma[5][0]);
+				fAssemblyYellow->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyYellowScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 68:
+				move.rotateZ(fYellowAlphaBetaGamma[4][2]);
+				move.rotateY(fYellowAlphaBetaGamma[4][1]);
+				move.rotateZ(fYellowAlphaBetaGamma[4][0]);
+				rotate->rotateZ(fYellowAlphaBetaGamma[4][2]);
+				rotate->rotateY(fYellowAlphaBetaGamma[4][1]);
+				rotate->rotateZ(fYellowAlphaBetaGamma[4][0]);
+				fAssemblyYellow->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyYellowScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			case 69:
+				move.rotateZ(fGreenAlphaBetaGamma[5][2]);
+				move.rotateY(fGreenAlphaBetaGamma[5][1]);
+				move.rotateZ(fGreenAlphaBetaGamma[5][0]);
+				rotate->rotateZ(fGreenAlphaBetaGamma[5][2]);
+				rotate->rotateY(fGreenAlphaBetaGamma[5][1]);
+				rotate->rotateZ(fGreenAlphaBetaGamma[5][0]);
+				fAssemblyGreen->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				fAssemblyGreenScintillator->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
+				break;
+			default:
+				G4cout<<"Error, unknown DESCANT detector number "<<i<<"/"<<detectorNumber<<std::endl;
+				break;
+		}
 	}
 
 	return 1;
@@ -615,7 +1237,7 @@ G4int DetectionSystemDescant::BuildCanVolume() {
 	G4ThreeVector moveCut, move, direction;
 	G4RotationMatrix* rotateCut;
 	G4RotationMatrix* rotate;
-	G4double zPosition, moveExtra;
+	G4double zPosition;
 
 	G4Material* canG4material = G4Material::GetMaterial(fCanMaterial);
 	if(!canG4material) {
@@ -688,8 +1310,7 @@ G4int DetectionSystemDescant::BuildCanVolume() {
 	fAssemblyBlue->AddPlacedVolume(fBlueVolumeLog, move, rotate);
 
 	// quartz window blue
-	moveExtra = 2.0*(1.85*mm);
-	move = G4ThreeVector(fBluePMTOffsetX, 0.0, -1.0*(fCanLength + (fCanBackThickness)/2.0 + moveExtra));
+	move = G4ThreeVector(fBluePMTOffsetX, 0.0, -1.0*(fOpticalWindowHalfThickness+fCanLength));
 	rotate = new G4RotationMatrix;
 	fAssemblyBlue->AddPlacedVolume(fQuartzWindow5inchLog, move, rotate);
 
@@ -749,8 +1370,7 @@ G4int DetectionSystemDescant::BuildCanVolume() {
 	fAssemblyGreen->AddPlacedVolume(fGreenVolumeLog, move, rotate);
 
 	// quartz window green
-	moveExtra = 2.0*(1.85*mm);
-	move = G4ThreeVector(-1.0*fYellowGreenPMTOffsetX, fYellowGreenPMTOffsetY, -1.0*(fCanLength + (fCanBackThickness)/2.0 + moveExtra));
+	move = G4ThreeVector(-1.0*fYellowGreenPMTOffsetX, fYellowGreenPMTOffsetY, -1.0*(fOpticalWindowHalfThickness+fCanLength));
 	rotate = new G4RotationMatrix;
 	fAssemblyGreen->AddPlacedVolume(fQuartzWindow3inchLog, move, rotate);
 
@@ -809,8 +1429,7 @@ G4int DetectionSystemDescant::BuildCanVolume() {
 	}
 	fAssemblyRed->AddPlacedVolume(fRedVolumeLog, move, rotate);
 
-	moveExtra = 2.0*(1.85*mm);
-	move = G4ThreeVector(-1.0*fRedPMTOffsetX, 0.0, -1.0*(fCanLength + (fCanBackThickness)/2.0 + moveExtra));
+	move = G4ThreeVector(-1.0*fRedPMTOffsetX, 0.0, -1.0*(fOpticalWindowHalfThickness+fCanLength));
 	rotate = new G4RotationMatrix;
 	fAssemblyRed->AddPlacedVolume(fQuartzWindow5inchLog, move, rotate);
 
@@ -871,8 +1490,7 @@ G4int DetectionSystemDescant::BuildCanVolume() {
 	fAssemblyWhite->AddPlacedVolume(fWhiteVolumeLog, move, rotate);
 
 	// QUARTZ WINDOW
-	moveExtra = 2.0*(1.85*mm);
-	move = G4ThreeVector(0.0, fWhitePMTOffsetY, -1.0*(fCanLength + (fCanBackThickness)/2.0 + moveExtra));
+	move = G4ThreeVector(0.0, fWhitePMTOffsetY, -1.0*(fOpticalWindowHalfThickness+fCanLength));
 	rotate = new G4RotationMatrix;
 	fAssemblyWhite->AddPlacedVolume(fQuartzWindow5inchLog, move, rotate);
 
@@ -932,8 +1550,7 @@ G4int DetectionSystemDescant::BuildCanVolume() {
 	fAssemblyYellow->AddPlacedVolume(fYellowVolumeLog, move, rotate);
 
 	// QUARTZ WINDOW
-	moveExtra = 2.0*(1.85*mm);
-	move = G4ThreeVector(1.0*fYellowGreenPMTOffsetX, fYellowGreenPMTOffsetY, -1.0*(fCanLength + (fCanBackThickness)/2.0 + moveExtra));
+	move = G4ThreeVector(1.0*fYellowGreenPMTOffsetX, fYellowGreenPMTOffsetY, -1.0*(fOpticalWindowHalfThickness+fCanLength));
 	rotate = new G4RotationMatrix;
 	fAssemblyYellow->AddPlacedVolume(fQuartzWindow3inchLog, move, rotate);
 
