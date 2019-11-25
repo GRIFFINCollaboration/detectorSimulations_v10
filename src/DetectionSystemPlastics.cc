@@ -11,6 +11,7 @@
 #include "G4PVPlacement.hh"
 
 #include "G4SubtractionSolid.hh"
+#include "G4IntersectionSolid.hh"
 #include "G4GeometryManager.hh"
 #include "G4PhysicalVolumeStore.hh"
 #include "G4LogicalVolumeStore.hh"
@@ -44,7 +45,8 @@ DetectionSystemPlastics::DetectionSystemPlastics(G4double thickness, G4int mater
     fRadialDistance = 50*cm;
     fLeadShieldThickness = 6.35*mm;
     fSpacing = spacing; //with lead
-  
+ //fNumDet = variable ;
+ //fPlasticLogArray.resize(NumDet); 
    if(material == 1)  fPlasticMaterial = "BC408";
 	else if (material == 2) fPlasticMaterial = "deuterium";
 	else if (material == 3) fPlasticMaterial = "Hydrogen";
@@ -79,8 +81,9 @@ G4int DetectionSystemPlastics::PlaceDetector(G4LogicalVolume* expHallLog) {
     G4RotationMatrix * rotate = new G4RotationMatrix;
     G4ThreeVector move = G4ThreeVector(0., 0., 0.);
 
-//    fAssemblyPlastics->MakeImprint(expHallLog, move, rotate);
-    fAssemblyPlastics->MakeImprint(expHallLog, move, rotate, 0, true);
+    fAssemblyPlastics->MakeImprint(expHallLog, move, rotate);
+	//To check overlaps
+//    fAssemblyPlastics->MakeImprint(expHallLog, move, rotate, 0, true);
 G4cout << "Calling place detector" << G4endl;
     return 1;
 }
@@ -210,18 +213,44 @@ G4double startPhi = 0. ;
 G4double endPhi = 2*M_PI;
 //G4double endPhi = M_PI;
 
-G4Sphere * plasticSphere = new G4Sphere("Plastic Detector", innerRadius, outerRadius, startPhi, endPhi, startTheta, endTheta);
+//for Plastic Hollow Sphere
+//G4Sphere * plasticSphere = new G4Sphere("Plastic Detector", innerRadius, outerRadius, startPhi, endPhi, startTheta, endTheta);
+
 move = G4ThreeVector(0., 0., 0.);
 rotate = new G4RotationMatrix;
-    
-    //logical volume for plastic scintillator
-    if(fPlasticLog == NULL ) {
-	//For Sphere like detector
-        fPlasticLog = new G4LogicalVolume(plasticSphere, plasticG4material, "PlasticDet", 0, 0, 0);
-        //fTestcanAlumCasingLog->SetVisAttributes(canVisAtt);
-    }
-    fAssemblyPlastics->AddPlacedVolume(fPlasticLog, move, rotate);
 
+G4VSolid * Sphere = new G4Sphere("Sphere", innerRadius, outerRadius, startPhi, endPhi, startTheta, endTheta);
+
+G4int NumDet = 10;
+
+G4RotationMatrix *rot1 = new G4RotationMatrix(0,0,0);
+
+G4double detWidth = 100.*cm/(NumDet);
+G4double startPos = 50.*cm-detWidth/2.;
+G4cout << "startPos: " << startPos << G4endl;
+G4cout << "detWidth: " << detWidth << G4endl;
+
+G4VSolid * box1 = new G4Box("box1", detWidth/2.,1.*m ,1.*m);
+G4IntersectionSolid * unionSolid;
+fPlasticLogArray.resize(NumDet);
+
+for (int i= 0 ; i < NumDet ; i++) {
+unionSolid = new G4IntersectionSolid("unionSolid", Sphere, box1, rot1, G4ThreeVector(startPos, 0, 50*cm));
+
+G4String name0 = "PlasticDet_";
+G4String name=name0+std::to_string(i);
+
+G4cout << "name: " << name << G4endl;
+G4cout << "startPos: " << startPos << G4endl;
+
+fPlasticLogArray[i] = new G4LogicalVolume(unionSolid, plasticG4material, name,0,0,0);
+if(i%2==0)
+fAssemblyPlastics->AddPlacedVolume(fPlasticLogArray[i], move, rotate);
+
+startPos = startPos-detWidth;
+G4cout << "startPos after : " << startPos << G4endl;
+
+}
 
  
     return 1;

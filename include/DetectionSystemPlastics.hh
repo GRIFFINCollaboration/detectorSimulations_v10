@@ -71,6 +71,7 @@ private:
     G4String fPlasticMaterial;
    
     G4LogicalVolume * fPlasticLog;
+    std::vector<G4LogicalVolume*>  fPlasticLogArray;
    
 //    G4double fScintillatorLength;
 //    G4double fScintillatorInnerRadius;
