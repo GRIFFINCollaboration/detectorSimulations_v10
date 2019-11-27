@@ -340,7 +340,20 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
    	fRecordGunCmd = new G4UIcmdWithABool("/DetSys/det/RecordGun",this);
 	fRecordGunCmd->SetGuidance("Record the particle for each event in the tree");
 	fRecordGunCmd->AvailableForStates(G4State_PreInit,G4State_Idle); 
+        
     
+   	fTrifFlatCmd = new G4UIcmdWithABool("/DetSys/det/TrificFlatWindow",this);
+	fTrifFlatCmd->SetGuidance("Set the window to be flat for future trific instances");
+	fTrifFlatCmd->AvailableForStates(G4State_PreInit,G4State_Idle); 
+    
+   	fTrifAluCmd = new G4UIcmdWithABool("/DetSys/det/TrificAluWindow",this);
+	fTrifAluCmd->SetGuidance("Set the window to be aluminsed for future trific instances");
+	fTrifAluCmd->AvailableForStates(G4State_PreInit,G4State_Idle); 
+    
+ 	fTrifWinCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/det/TrificWindowThickness", this);
+	fTrifWinCmd->SetGuidance("Set the window thickness for future trific instances");
+	fTrifWinCmd->AvailableForStates(G4State_PreInit, G4State_Idle);   
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -425,6 +438,11 @@ DetectorMessenger::~DetectorMessenger()
 
 	delete fUseTIGRESSPositionsCmd;
 	delete fRecordGunCmd;
+
+	delete fTrifWinCmd;
+	delete fTrifAluCmd;
+	delete fTrifFlatCmd;
+    
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -636,6 +654,18 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	if(command == fRecordGunCmd) {
 		fDetector->RecordGun(fRecordGunCmd->GetNewBoolValue(newValue));
 	}
+	
+	
+	if(command == fTrifWinCmd) {
+		fDetector->fTrifWindowThickness=fTrifWinCmd->GetNewDoubleValue(newValue);
+    }
+	if(command == fTrifAluCmd) {
+		fDetector->fTrifAluminised=fTrifAluCmd->GetNewBoolValue(newValue);
+    }
+	if(command == fTrifFlatCmd) {
+		fDetector->fTrifFlatWindow=fTrifFlatCmd->GetNewBoolValue(newValue);
+    }
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

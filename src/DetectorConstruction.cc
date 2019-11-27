@@ -190,6 +190,10 @@ DetectorConstruction::DetectorConstruction() :
 	fTestcan  = false;
     
     fRecordGun = false;
+    
+    fTrifWindowThickness=6*um;
+    fTrifAluminised=true;  
+    fTrifFlatWindow=false;  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -863,7 +867,8 @@ void DetectorConstruction::AddDetectionSystemTrific(G4double Torr) {
 	if(fLogicWorld == nullptr) {
 		Construct();
 	}
-	DetectionSystemTrific* pTrific = new DetectionSystemTrific(Torr) ;
+	
+	DetectionSystemTrific* pTrific = new DetectionSystemTrific(Torr,fTrifWindowThickness,fTrifAluminised,fTrifFlatWindow);
 	pTrific->BuildPlace(fLogicWorld); 
 
 }

@@ -18,6 +18,11 @@
 /gun/particle ion
 /DetSys/world/material Vacuum
 
+## These 3 lines may be omitted to use defaults
+/DetSys/det/TrificFlatWindow false
+/DetSys/det/TrificAluWindow true
+/DetSys/det/TrificWindowThickness 6 um
+
 ## The number input is the gas pressure in Torr
 /DetSys/det/addTrificDetector 91.0
 

@@ -4,6 +4,9 @@ int fXgrid=4;
 double pitchmm=2;
 double A=(60./180.)*TMath::Pi();
 
+double targetgrid=53.4;
+double windowgrid=2.8;
+
 int XYN(int det){
     if(det==fYgrid||det==fYgrid-1)return 1;
     if(det==fXgrid||det==fXgrid-1)return 2;
@@ -24,7 +27,11 @@ double yp(int seg){
     return ret;
 }   
 
-void NewTrificSort(const char *root1 = 0, const char *rootout = 0) {
+void NewTrificSort(bool flatwindow=false, const char *rootout = "TRIFIC.root", const char *rootin = "g4out.root") {
+    
+    if(flatwindow)windowgrid=6.16;
+    double targetwindow=targetgrid-windowgrid;
+    
     
     TF1 tail("tail","pol1",0,20);
     tail.SetParameters(14000,1000);
@@ -33,8 +40,10 @@ void NewTrificSort(const char *root1 = 0, const char *rootout = 0) {
     
 
     // get the merged root file
-    TFile *newfile = new TFile("g4out.root");
+    TFile *newfile = new TFile(rootin);
+    if(!newfile->IsOpen())return;
     TTree *newtree = (TTree*)newfile->Get("ntuple");
+    if(newtree==nullptr)return;
   
     
     double grid0mm=534;
@@ -55,7 +64,7 @@ void NewTrificSort(const char *root1 = 0, const char *rootout = 0) {
 	newtree->SetBranchAddress("cryNumber",&Segment);
 	newtree->SetBranchAddress("depEnergy",&Energy);
 
-	TFile out("TRIFIC.root","RECREATE");
+	TFile out(rootout,"RECREATE");
 	out.cd();	
 		TH2F* XYPos=new TH2F("XYPos","XY Position;X [mm];Y [mm]",200,-80,80,200,-80,80);
 
@@ -190,7 +199,13 @@ void NewTrificSort(const char *root1 = 0, const char *rootout = 0) {
                 if(TrificE[i]>0){
                     SegmentEnergy->Fill(i,TrificE[i]);
                     
-                    double basicZ=(dgmm*i*0.1)+2.5;
+                    double basicZ=(dgmm*i*0.1)+windowgrid;
+                    
+                    if(flatwindow){
+                        double dy=(particle.Unit().Y()/particle.Unit().Z())*targetwindow;
+                        double dz=dy/tan(A);
+                        basicZ+=dz;
+                    }
                     
                     double dE=TrificE[i]/ZratioX;
                     double x=basicZ*ZratioX;

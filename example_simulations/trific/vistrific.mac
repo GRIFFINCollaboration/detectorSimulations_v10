@@ -22,6 +22,9 @@
 
 /DetSys/world/material Vacuum
 
+/DetSys/det/TrificFlatWindow false
+/DetSys/det/TrificAluWindow true
+/DetSys/det/TrificWindowThickness 6 um
 /DetSys/det/addTrificDetector 91.0
 
 ### Required

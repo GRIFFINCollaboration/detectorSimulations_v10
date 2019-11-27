@@ -43,7 +43,8 @@
 class DetectionSystemTrific
 {
 public:
-	DetectionSystemTrific(G4double setpressure=760);
+    
+	DetectionSystemTrific(G4double setpressure=760,G4double setwindow=6*CLHEP::um,G4bool setal=true,G4bool setflat=true);
 	~DetectionSystemTrific();
 
 	//------------------------------------------------//
@@ -104,12 +105,16 @@ private:
 	G4double fChamberWindowZ;
 	G4double fWindowGridZ;
 	G4double fWindowWasherZ;
-	G4double fWindowTickness;
+	G4double fWindowThickness;
 	G4double fWindowCoatingThickness;
 	G4double fWindowInnerD;
 	G4double fWindowOuterD;
 	G4double fWindowChamberLength;
 	G4double fWindowPipeInnerD;
+    
+    G4bool fFlatWindow;
+    G4bool fAluminised;
+    
 	
 	//------------------------------------------------//
 	// internal methods in Build()
@@ -122,6 +127,7 @@ private:
 	void 	BuildPlaceYSense(G4LogicalVolume*);
 	void 	BuildPlaceXSense(G4LogicalVolume*);
 	void 	BuildPlaceWindow(G4LogicalVolume*);
+	void 	BuildPlaceFlatWindow(G4LogicalVolume*);
 	void 	BuildPlacePipe(G4LogicalVolume*);
 	void 	BuildGasVolume(G4LogicalVolume*);
 // 	void BuildPCB(G4LogicalVolume* ExpHallLog); 
