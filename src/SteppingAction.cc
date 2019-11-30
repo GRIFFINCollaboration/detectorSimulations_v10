@@ -84,6 +84,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		else if(particleName=="deuteron") particleType = 5;
 		else if(particleName=="C12") particleType = 6;
 		else if(particleName=="C13") particleType = 7;
+		else if(particleName=="opticalphoton") particleType = 8;
 
 
 	const G4VProcess* process = aStep->GetPostStepPoint()->GetProcessDefinedStep();
@@ -289,7 +290,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		// check edep again in case we use the grid cell but haven't hit it
 		//G4cout << "edep " << edep << G4endl; //Testing PLastic fillling ntuple
 		if(edep <= 0) return;
-//		G4cout << "Calling Add Hit Tracker" << G4endl;
+		G4cout << "Calling Add Hit Tracker" << G4endl;
 		fEventAction->AddHitTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle, final_angle, TOF, TOFPos, TOFMulti, TOFPosMulti, PlasticEkin, PlasticEdep);
 
 		if(trackSteps) {

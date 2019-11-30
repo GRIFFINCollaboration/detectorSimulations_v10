@@ -219,7 +219,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 		} else if(fNeedFileDistro){
 			z += fBeamDistribution->GetRandom();
 		}
-
+		G4cout << "Position of Beam: " << x << " "<<y <<" "<< z << G4endl;
 		G4ThreeVector thisEffPosition = G4ThreeVector(x,y,z);//in constructor
 
 		//////////

@@ -44,18 +44,13 @@ class G4AssemblyVolume;
 class DetectionSystemPlastics
 {
 public:
-   // DetectionSystemPlastics(G4double length, G4double height, G4double width, G4int material);
-    DetectionSystemPlastics(G4double thickness, G4int material, G4double spacing);
+    DetectionSystemPlastics(G4double thickness, G4int material, G4double numDet);
     ~DetectionSystemPlastics();
 
     G4int Build();
     G4int PlaceDetector(G4LogicalVolume* expHallLog);
 
 private:
-    // Logical volumes
-//    G4LogicalVolume* fTestcanAlumCasingLog;
-//    G4LogicalVolume* fTestcanScintillatorLog;   
-//    G4LogicalVolume* fTestcanQuartzWindowLog;
 
     // Assembly volumes
     G4AssemblyVolume* fAssemblyPlastics;                 // Contains all non-sensitive materials
@@ -67,31 +62,18 @@ private:
     G4double fRadialDistance;
     G4double fLeadShieldThickness;
     G4double fSpacing;
+   
+    G4double fNumDet;
 
+    G4String fWrapMaterial;
     G4String fPlasticMaterial;
    
-    G4LogicalVolume * fPlasticLog;
+ //   G4LogicalVolume * fPlasticLog;
     std::vector<G4LogicalVolume*>  fPlasticLogArray;
+    std::vector<G4LogicalVolume*>  fWrapLogArray;
    
-//    G4double fScintillatorLength;
-//    G4double fScintillatorInnerRadius;
-//    G4double fScintillatorOuterRadius;
-
-//    G4double fAlumCanThickness;
-//    G4double fQuartzThickness;
-//    G4double fQuartzRadius;
-
-//    G4double fStartPhi;
-//    G4double fEndPhi;
-
-//    G4String fCanMaterial;
-//    G4String fLiquidMaterial;
-//    G4String fQuartzMaterial;
-
-    // The colours of the detectors
-//    G4Colour fLiquidColour; // Scintillator colour
-//    G4Colour fGreyColour;   // can colour
-//    G4Colour fQuartzColour;
+    G4Color blue;
+    G4Color black;
 
     G4int BuildPlastics();
 

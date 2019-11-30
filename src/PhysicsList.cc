@@ -212,8 +212,9 @@ void PhysicsList::ConstructOp(G4bool constructOp)
 		G4cout<<"Building Optical Phyiscs... "<<G4endl;
 		// G4Cerenkov* cerenkovProcess = new G4Cerenkov("Cerenkov");
 
-		//   turning on particle-specific scintillation process
+		//   turning on scintillation process
 		G4Scintillation* scintillationProcess = new G4Scintillation("Scintillation");
+		//   making scintillation process  particle and energy-specific
 		//scintillationProcess->SetScintillationByParticleType(true);
 
 		G4OpAbsorption* absorptionProcess = new G4OpAbsorption();

@@ -142,6 +142,8 @@ void EventAction::AddHitTracker(const DetectorProperties& properties, const G4in
 	for(G4int i = 0; i < fNumberOfHits; i++) {
 		if(fProperties[i] == properties) {
 			// sum the new enery
+			// Optical photons do not obey energy conservation and their energy must not be tallied
+			//if (particleType == 8) continue;
 			fHitTrackerD[0][i] = fHitTrackerD[0][i] + depEnergy;
 			fHitTrackerD[20][i] = fHitTrackerD[20][i] + PEdep;
 
