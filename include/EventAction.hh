@@ -48,7 +48,7 @@ class HistoManager;
 
 static const int MAXSTEPS       = 1000;
 static const int MAXHITS        = 100;
-static const int NUMSTEPVARS    = 21;
+static const int NUMSTEPVARS    = 25; //last time 21
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -63,8 +63,8 @@ public:
 
 	G4int GetEventNumber() { return fEvtNb;};
 
-	void AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4ThreeVector TOFPos, G4double TOFMulti, G4ThreeVector TOFPosMulti, G4double PEkin, G4double PEdep);
-	void AddStepTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4ThreeVector TOFPos, G4double TOFMulti, G4ThreeVector TOFPosMulti, G4double PEkin, G4double PEdep);
+	void AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4ThreeVector TOFPos, G4double TOFMulti, G4ThreeVector TOFPosMulti, G4double PEkin, G4double PEdep, G4int numCollectedPhotonsTop, G4int numCollectedPhotonsBottom, G4double avgTimeTop, G4double avgTimeBottom);
+	void AddStepTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& trackerZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4ThreeVector TOFPos, G4double TOFMulti, G4ThreeVector TOFPosMulti, G4double PEkin, G4double PEdep, G4int numCollectedPhotonsTop, G4int numCollectedPhotonsBottom, G4double avgTimeTop, G4double avgTimeBottom);
 
 
 	// Energy deposit in detection systems
@@ -108,9 +108,27 @@ public:
 	G4ThreeVector GetTOFPosMulti() {return fTOFPosMulti;};
 
 	//Counting Scintillation photons
-	void CountOneScintPhoton() {++totScintPhotons;};
-	G4int GetTotScintPhoton() {return totScintPhotons;};
-	void SetTotScintPhoton(G4int total) {totScintPhotons = total;};
+	void CountOneScintPhoton() {++fTotScintPhotons;};
+	G4int GetTotScintPhoton() {return fTotScintPhotons;};
+	void SetTotScintPhoton(G4int total) {fTotScintPhotons = total;};
+	//Top PMT
+	void CountScintPhotonTop() {++fTotScintPhotonsCollectedTop;};
+	G4int GetTotScintPhotonTop() {return fTotScintPhotonsCollectedTop;};
+	void SetTotScintPhotonTop(G4int total) {fTotScintPhotonsCollectedTop = total;};
+	//Collection Time Top
+	void SetScintPhotonAvgTimeTop(G4int Atop) {fCollectionTimeTopAvg=Atop;};
+	G4int GetScintPhotonTimeTop() {return fCollectionTimeTopAvg=std::accumulate(fCollectionTimeTopVector.begin(), fCollectionTimeTopVector.end(), 0.0)/fCollectionTimeTopVector.size();};
+	void SetScintPhotonTimeTop(G4int top) {fCollectionTimeTopVector.push_back(top);};
+	//Bottom PMT
+	void CountScintPhotonBottom() {++fTotScintPhotonsCollectedBottom;};
+	G4int GetTotScintPhotonBottom() {return fTotScintPhotonsCollectedBottom;};
+	void SetTotScintPhotonBottom(G4int total) {fTotScintPhotonsCollectedBottom = total;};
+	//Collection Time Bottom
+	void SetScintPhotonAvgTimeBottom(G4int Abottom) {fCollectionTimeBottomAvg=Abottom;};
+	G4int GetScintPhotonTimeBottom() {return fCollectionTimeBottomAvg=std::accumulate(fCollectionTimeBottomVector.begin(), fCollectionTimeBottomVector.end(), 0.0)/fCollectionTimeBottomVector.size();};
+	void SetScintPhotonTimeBottom(G4int bottom) {fCollectionTimeBottomVector.push_back(bottom);};
+
+
 	
 	//Edep in Plastics
 	void AddPEdep(G4double pedep) {fPEdep = fPEdep + pedep;};
@@ -168,7 +186,13 @@ private:
 	G4int InelasticCounter;
 	G4int ElasticCounter;
 	//Optical Scintillation photon counter
-	G4int totScintPhotons;
+	G4int fTotScintPhotons;
+	G4int fTotScintPhotonsCollectedTop;
+	G4double  fCollectionTimeTopAvg;
+	std::vector<G4double>  fCollectionTimeTopVector;
+	G4int fTotScintPhotonsCollectedBottom;
+	G4double  fCollectionTimeBottomAvg;
+	std::vector<G4double>  fCollectionTimeBottomVector;
 	//Plastic edep
 	G4double fPEdep;
 	G4double fPEkin;

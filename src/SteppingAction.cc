@@ -85,6 +85,11 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		else if(particleName=="C12") particleType = 6;
 		else if(particleName=="C13") particleType = 7;
 		else if(particleName=="opticalphoton") particleType = 8;
+		else if(particleName=="e+") particleType = 9;
+		else if(particleName=="alpha") particleType = 10;
+		else if(particleName=="triton") particleType = 11;
+		else if(particleName=="Be9") particleType = 12;
+		else if(particleName=="Be10") particleType = 13;
 
 
 	const G4VProcess* process = aStep->GetPostStepPoint()->GetProcessDefinedStep();
@@ -147,7 +152,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	size_t found;
 
 	//Set Lab Angle
-	G4int nSecondaries = aStep->GetSecondary()->size();
 	G4double lab_angle = -1;
 	found = volname.find("PlasticDet");
 	if(postPoint->GetProcessDefinedStep()->GetProcessName() == "hadElastic" && fEventAction->GetLabAngle() == -1 && found != G4String::npos) {
@@ -202,7 +206,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 
 	//Counting number of scintillating photons -> Setting to zero at beginning of event ---- Not sure if it does though...
 	G4double numScintPhotons;
-	G4double numCollectedPhotons;
 	found = volname.find("PlasticDet");
 	//G4cout << "Found " << found << G4endl;
 	const std::vector<const G4Track*> *secondaries = aStep->GetSecondaryInCurrentStep();
@@ -218,8 +221,39 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 			}
 		}
 	}
+//	Does this interfere with counting?
 	numScintPhotons = fEventAction->GetTotScintPhoton();
 
+	//Top PMT
+	G4double numCollectedPhotonsTop;
+	G4double avgTimeTop;
+	found = volname.find("PMT1_top");
+	if(found!=G4String::npos && particleType == 8 && prePoint->GetStepStatus()==fGeomBoundary){ //should prepoint->GetStepStatus()==fGeomBoundary be in here?
+	//G4cout << "Calling kill track and Secondaries" << G4endl;
+	//G4cout << "Top Count: " <<  fEventAction->GetTotScintPhotonTop()<< G4endl;
+	fEventAction->CountScintPhotonTop();
+	fEventAction->SetScintPhotonTimeTop(postTime);
+	theTrack->SetTrackStatus(fKillTrackAndSecondaries);
+	//G4cout << "Calling kill track and Secondaries" << G4endl;
+	//G4cout << "Top Count: " <<  fEventAction->GetTotScintPhotonTop()<< G4endl;
+	}
+	numCollectedPhotonsTop = fEventAction->GetTotScintPhotonTop();
+	avgTimeTop = fEventAction->GetScintPhotonTimeTop();
+	//G4cout << "Top Count via numCollectedPhotonsTop " <<  numCollectedPhotonsTop<< G4endl;
+
+	//Bottom PMT
+	G4double numCollectedPhotonsBottom;
+	G4double avgTimeBottom;
+	found = volname.find("PMT2_bottom");
+	if(found!=G4String::npos && particleType == 8){ //should prepoint->GetStepStatus()==fGeomBoundary be in here?
+	fEventAction->CountScintPhotonBottom();
+	fEventAction->SetScintPhotonTimeBottom(postTime);
+	theTrack->SetTrackStatus(fKillTrackAndSecondaries);
+	//G4cout << "Calling kill track and Secondaries" << G4endl;
+	//G4cout << "Bottom Count: " <<  fEventAction->GetTotScintPhotonBottom()<< G4endl;
+	}
+	numCollectedPhotonsBottom = fEventAction->GetTotScintPhotonBottom();
+	avgTimeBottom = fEventAction->GetScintPhotonTimeBottom();
 		
 	//Kinetic energy of neutrons in Plastic Scintillator based off first scatter and TOF based off first scatter
 	G4double TOF;
@@ -291,10 +325,10 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		//G4cout << "edep " << edep << G4endl; //Testing PLastic fillling ntuple
 		if(edep <= 0) return;
 		G4cout << "Calling Add Hit Tracker" << G4endl;
-		fEventAction->AddHitTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle, final_angle, TOF, TOFPos, TOFMulti, TOFPosMulti, PlasticEkin, PlasticEdep);
+		fEventAction->AddHitTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle, final_angle, TOF, TOFPos, TOFMulti, TOFPosMulti, PlasticEkin, PlasticEdep, numCollectedPhotonsTop, numCollectedPhotonsBottom, avgTimeTop, avgTimeBottom);
 
 		if(trackSteps) {
-			fEventAction->AddStepTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle, final_angle, TOF, TOFPos, TOFMulti, TOFPosMulti, PlasticEkin, PlasticEdep);
+			fEventAction->AddStepTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle, final_angle, TOF, TOFPos, TOFMulti, TOFPosMulti, PlasticEkin, PlasticEdep, numCollectedPhotonsTop, numCollectedPhotonsBottom, avgTimeTop, avgTimeBottom);
 		}
 	}// if(fDetector->HasProperties(volume))
 }
