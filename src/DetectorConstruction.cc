@@ -879,9 +879,9 @@ void DetectorConstruction::AddDetectionSystemPlastics(G4ThreeVector input) {
 
 	G4double thickness = G4double(input.x())*cm;
 	G4int material = G4double(input.y());
-	G4double spacing = G4double(input.z())*cm;
+	G4double numDet = G4double(input.z());
 
-	DetectionSystemPlastics* pDetectionSystemPlastics = new DetectionSystemPlastics(thickness, material, spacing);
+	DetectionSystemPlastics* pDetectionSystemPlastics = new DetectionSystemPlastics(thickness, material, numDet);
 	pDetectionSystemPlastics->Build();
 	pDetectionSystemPlastics->PlaceDetector(fLogicWorld);
 
@@ -1258,6 +1258,16 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 	}
 
 	if(volumeName.find("PlasticDet") != G4String::npos) {
+		// strip "PlasticDet_" (11 characters) and everything before from the string
+		std::string tmpString = volumeName.substr(volumeName.find("PlasticDet")+11);
+		// replace all '_' with spaces so we can just use istringstream::operator>>
+		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
+		// create istringstream from the stripped and converted stream, and read detector and crystal number
+		std::istringstream is(tmpString);
+		is>>result.detectorNumber;
+		//is>>result.detectorNumber>>result.crystalNumber;
+		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
+		result.detectorNumber = result.detectorNumber+1;
 		result.systemID = 8700;
 		return result;
 	}

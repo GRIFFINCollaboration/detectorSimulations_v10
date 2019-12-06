@@ -45,8 +45,13 @@ DetectionSystemPlastics::DetectionSystemPlastics(G4double thickness, G4int mater
     fNumDet = numDet ;
     fPlasticLogArray.resize(numDet, NULL);
     fWrapLogArray.resize(numDet, NULL);
+    fPMT1LogArray.resize(numDet, NULL);
+    fPMT2LogArray.resize(numDet, NULL);
+
+    fWrapThickness = 0.5 * mm;
  
     fWrapMaterial = "Teflon";
+    fPMTMaterial = "G4_SILICON_DIOXIDE";
     
  //   blue=G4Color(0.,0.,1.);
     blue=G4Color(0.,1.,1.);
@@ -70,6 +75,8 @@ DetectionSystemPlastics::~DetectionSystemPlastics() {
 for (int i = 0; i<fNumDet; i++) {
 delete fPlasticLogArray[i];
 delete fWrapLogArray[i];
+delete fPMT1LogArray[i];
+delete fPMT2LogArray[i];
 }
 
 G4cout << "Calling Destructor" << G4endl;
@@ -122,6 +129,14 @@ G4cout << plasticG4material->GetName() << " is the name of the detector material
     }
       else {
 G4cout << wrapG4material->GetName() << " is the name of the wrapping material" << G4endl;
+}
+    G4Material* PMTG4material = G4Material::GetMaterial(fPMTMaterial);
+    if( !PMTG4material ) {
+        G4cout << " ----> Material " << fPMTMaterial << " not found, cannot build! " << G4endl;
+        return 0;
+    }
+      else {
+G4cout << PMTG4material->GetName() << " is the name of the wrapping material" << G4endl;
 }
 
  ////////Scintillation Properties ////////  --------- Might have to be put before the material is constructed
@@ -178,12 +193,12 @@ scintillatorMPT->AddProperty("RINDEX", photonEnergy, RIndex1, nEntries);  //refr
 //note if photon is created outside of energy range it will have no index of refraction
 //scintillatorMPT->AddProperty("ABSLENGTH", photonEnergy, absorption, nEntries); //absorption length doesnt change with energy - examples showing it can...
 scintillatorMPT->AddConstProperty("ABSLENGTH", 380.*cm); //Scintillation Efficiency - characteristic light yield
-scintillatorMPT->AddConstProperty("SCINTILLATIONYIELD", 10000./MeV); //Scintillation Efficiency - characteristic light yield
+scintillatorMPT->AddConstProperty("SCINTILLATIONYIELD", 10000./MeV); //Scintillation Efficiency - characteristic light yield //10000./MeV
 scintillatorMPT->AddConstProperty("RESOLUTIONSCALE", 1.0); // broadens the statistical distribution of generated photons, gaussian based on SCINTILLATIONYIELD, >1 broadens, 0 no distribution
 scintillatorMPT->AddConstProperty("FASTTIMECONSTANT", 2.1*ns); //only one decay constant given
 scintillatorMPT->AddConstProperty("SLOWTIMECONSTANT", 2.1*ns); //only one decay constant given - triplet-triplet annihilation 
 scintillatorMPT->AddConstProperty("YIELDRATIO", 1.0); //The relative strength of the fast component as a fraction of total scintillation yield is given by the YIELDRATIO.
-
+//Should these be in the physics list?
 G4OpticalPhysics * opticalPhysics = new G4OpticalPhysics();
 opticalPhysics->SetFiniteRiseTime(true);
 scintillatorMPT->AddConstProperty("FASTSCINTILLATIONRISETIME", 0.7*ns); //default rise time is 0ns, have to set manually
@@ -191,26 +206,56 @@ scintillatorMPT->AddConstProperty("SLOWSCINTILLATIONRISETIME", 0.7*ns); //defaul
 //properties I may be missing: scintillation, rayleigh
 plasticG4material->SetMaterialPropertiesTable(scintillatorMPT);
 
-//////Optical Surface - Mylar wrapping? //////
+const G4int numShort =3;
+G4double photonEnergyShort[numShort] = {1.7*eV,   2.82*eV, 3.44*eV}; //BC408 emission spectra & corresponding energies
+const G4int nEntriesShort = sizeof(photonEnergyShort)/sizeof(G4double);
+//////Optical Surface - Teflon wrapping //////
 G4OpticalSurface * ScintWrapper = new G4OpticalSurface("wrapper");
-ScintWrapper->SetModel(glisur);  // unified or glisur
-ScintWrapper->SetFinish(polishedfrontpainted);  // teflon wrapping on polished surface->front/back painted
+ScintWrapper->SetModel(unified);  // unified or glisur
 ScintWrapper->SetType(dielectric_dielectric);  // dielectric and dielectric or metal?
-ScintWrapper->SetPolish(0.9);  // specfic to the glisur model
+ScintWrapper->SetFinish(groundfrontpainted);  // teflon wrapping on polished surface->front/back painted // Teflon should be Lambertian in air, specular in optical grease
+//ScintWrapper->SetPolish(0.9);  // specfic to the glisur model
+G4MaterialPropertiesTable * ScintWrapperMPT = new G4MaterialPropertiesTable();
+G4double rIndex_Teflon[numShort] = {1.35, 1.35, 1.35}; //Taken from wikipedia
+ScintWrapperMPT->AddProperty("RINDEX", photonEnergyShort, rIndex_Teflon, nEntriesShort)->SetSpline(true);  //refractive index can change with energy
+G4double reflectivity[numShort] = {0.95, 0.95, 0.95};
+ScintWrapperMPT->AddProperty("REFLECTIVITY", photonEnergyShort, reflectivity, nEntriesShort);  //
+ScintWrapper->SetMaterialPropertiesTable(ScintWrapperMPT);
 ScintWrapper->DumpInfo();
+
+/*
+G4double reflectivity[numShort] = {0.95, 0.95, 0.95};
+assert(sizeof(reflectivity) == sizeof(photonEnergyShort));
+G4double efficiency[numShort] = {0., 0., 0.};
+assert(sizeof(efficiency) == sizeof(photonEnergyShort));
+const G4int nEntriesShort = sizeof(photonEnergyShort)/sizeof(G4double);
 
 G4double reflectivity[num] = {100., 100., 100., 100., 100., 100., 100., 100., 100., 100., 100., 100.};
 assert(sizeof(reflectivity) == sizeof(photonEnergy));
 G4double efficiency[num] = {100., 100., 100., 100., 100., 100., 100., 100., 100., 100., 100., 100.};
 assert(sizeof(efficiency) == sizeof(photonEnergy));
 
-G4MaterialPropertiesTable * ScintWrapperMPT = new G4MaterialPropertiesTable();
-ScintWrapperMPT->AddProperty("REFLECTIVITY", photonEnergy, reflectivity, nEntries);  //refractive index doesnt change with energy
-ScintWrapperMPT->AddProperty("EFFICIENCY", photonEnergy, efficiency, nEntries);  //refractive index doesnt change with energy
-
-ScintWrapper->SetMaterialPropertiesTable(ScintWrapperMPT);
+ScintWrapperMPT->AddProperty("REFLECTIVITY", photonEnergyShort, reflectivity, nEntriesShort);  //
+ScintWrapperMPT->AddProperty("EFFICIENCY", photonEnergyShort, efficiency, nEntriesShort);  //Detection efficiency?
+*/
 //ScintWrapper->SetMaterialPropertiesTable(scintillatorMPT);
 //plasticG4material->SetMaterialPropertiesTable(scintillatorMPT);
+
+//////// Quartz  ////////////
+G4MaterialPropertiesTable * QuartzMPT = new G4MaterialPropertiesTable();
+G4double rIndex_Quartz[numShort] = {1.474, 1.474, 1.474}; //Taken from Joey github
+QuartzMPT->AddProperty("RINDEX", photonEnergyShort, rIndex_Quartz, nEntriesShort)->SetSpline(true);  //refractive index can change with energy
+QuartzMPT->AddConstProperty("ABSLENGTH", 40.*cm); //from Joeys github
+PMTG4material->SetMaterialPropertiesTable(QuartzMPT);
+//This is for sensitive detectors
+/*
+G4double reflectivityQuartz[numShort] = {0., 0., 0.};
+assert(sizeof(reflectivityQuartz) == sizeof(photonEnergyShort));
+G4double efficiencyQuartz[numShort] = {1., 1., 1.};
+assert(sizeof(efficiencyQuartz) == sizeof(photonEnergyShort));
+QuartzMPT->AddProperty("REFLECTIVITY", photonEnergyShort, reflectivityQuartz, nEntriesShort);  //
+QuartzMPT->AddProperty("EFFICIENCY", photonEnergyShort, efficiencyQuartz, nEntriesShort);  //Detection efficiency?
+*/
 
 //Building the Plastic Geometry
 
@@ -223,18 +268,23 @@ G4double startPos = 50.*cm-detWidth/2.;
 //place outer radius of plastics at position of DESCANT detectors, without lead shield
 G4double outerRadius = fRadialDistance - fSpacing;
 G4double innerRadius = outerRadius - fScintillatorWidth;
-G4double wrapThick = 0.5 * mm;
-G4double outerWrap = outerRadius + wrapThick;
-G4double innerWrap = innerRadius - wrapThick;
-G4double wrapBoxThick = (detWidth+2.*wrapThick)/2.;
+G4double outerWrap = outerRadius + fWrapThickness;
+G4double innerWrap = innerRadius - fWrapThickness;
+G4double wrapBoxThick = (detWidth+2.*fWrapThickness)/2.;
 //Opening angle of DESCANT is 65.5 degrees, approx 1.143 radians. Limiting to 1.13
 G4double startTheta = 0.;
-G4double endTheta = 1.13;
+G4double deltaTheta = 1.13;
 G4double startPhi = 0. ;
-G4double endPhi = 2*M_PI;
+G4double deltaPhi = 2*M_PI;
+G4double startThetaPMT = 1.13;
+G4double deltaThetaPMT = 0.1;
+G4double startPhiPMT1 = 0.;
+G4double deltaPhiPMT1 = M_PI;
+G4double startPhiPMT2 = M_PI;
+G4double deltaPhiPMT2 = M_PI;
 
 //for Plastic Hollow Sphere
-//G4Sphere * plasticSphere = new G4Sphere("Plastic Detector", innerRadius, outerRadius, startPhi, endPhi, startTheta, endTheta);
+//G4Sphere * plasticSphere = new G4Sphere("Plastic Detector", innerRadius, outerRadius, startPhi, deltaPhi, startTheta, deltaTheta);
 
 //For placing volume
 move = G4ThreeVector(0., 0., 0.);
@@ -245,13 +295,20 @@ G4RotationMatrix *rot1 = new G4RotationMatrix(0,0,0);
 //G4cout << "detWidth: " << detWidth << G4endl;
 
 //G4Solids
-G4VSolid * box1 = new G4Box("box1", detWidth/2., 1.*m , 1.*m);
-G4VSolid * Sphere = new G4Sphere("Sphere", innerRadius, outerRadius, startPhi, endPhi, startTheta, endTheta);
-G4IntersectionSolid * unionSolid;
-G4VSolid * Sphere2 = new G4Sphere("Sphere2", innerWrap, outerWrap, startPhi, endPhi, startTheta, endTheta);
-G4VSolid * box2 = new G4Box("box2", wrapBoxThick, 1.*m , 1.*m);
-G4IntersectionSolid * unionSolid2;
-G4SubtractionSolid * subtractSolid;
+G4VSolid * boxBars = new G4Box("boxBars", detWidth/2., 1.*m , 1.*m);
+G4VSolid * SphereBars = new G4Sphere("SphereBars", innerRadius, outerRadius, startPhi, deltaPhi, startTheta, deltaTheta);
+G4IntersectionSolid * interSolidBars;
+G4VSolid * SphereWrap = new G4Sphere("SphereWrap", innerWrap, outerWrap, startPhi, deltaPhi, startTheta, deltaTheta);
+G4VSolid * boxWrap = new G4Box("boxWrap", wrapBoxThick, 1.*m , 1.*m);
+G4IntersectionSolid * interSolidWrap;
+G4SubtractionSolid * subtractSolidWrap;
+G4VSolid * SpherePMT1 = new G4Sphere("SpherePMT1", innerRadius, outerRadius, startPhiPMT1, deltaPhiPMT1, startThetaPMT, deltaThetaPMT);
+G4IntersectionSolid * interSolidPMT1;
+G4VSolid * SpherePMT2 = new G4Sphere("SpherePMT2", innerRadius, outerRadius, startPhiPMT2, deltaPhiPMT2, startThetaPMT, deltaThetaPMT);
+G4IntersectionSolid * interSolidPMT2;
+//G4double BeamLineXY = 6.5*cm;
+//G4Solid * boxBeamLine = new G4Box("boxBeamLine", BeamLineXY, BeamLineXY, 1*m); 
+
 
 //Set visual attributes
 G4VisAttributes * plastic_vis = new G4VisAttributes(blue);
@@ -262,22 +319,33 @@ wrap_vis->SetVisibility(true);
 
 //Build array of logical volumes
 for (int i= 0 ; i < fNumDet ; i++) {
-unionSolid = new G4IntersectionSolid("unionSolid", Sphere, box1, rot1, G4ThreeVector(startPos, 0, 50*cm));
+interSolidBars = new G4IntersectionSolid("interSolidBars", SphereBars, boxBars, rot1, G4ThreeVector(startPos, 0, 50*cm));
 G4String name0 = "PlasticDet_";
-//G4String name0 = "PlasticDet";
 G4String nameLog=name0+std::to_string(i);
-//G4String nameLog=name0;
 
-unionSolid2 = new G4IntersectionSolid("unionSolid2", Sphere2, box2, rot1, G4ThreeVector(startPos, 0, 50*cm));
-subtractSolid = new G4SubtractionSolid("subtractSolid", unionSolid2, unionSolid, rot1, G4ThreeVector(0,0,0));
+interSolidWrap = new G4IntersectionSolid("interSolidWrap", SphereWrap, boxWrap, rot1, G4ThreeVector(startPos, 0, 50*cm));
+subtractSolidWrap = new G4SubtractionSolid("subtractSolidWrap", interSolidWrap, interSolidBars, rot1, G4ThreeVector(0,0,0));
+
+interSolidPMT1 = new G4IntersectionSolid("interSolidPMT1", SpherePMT1, boxWrap, rot1, G4ThreeVector(startPos, 0, 50*cm));
+interSolidPMT2 = new G4IntersectionSolid("interSolidPMT2", SpherePMT2, boxWrap, rot1, G4ThreeVector(startPos, 0, 50*cm));
 
 G4String name1 = "wrapper_";
 G4String nameWrapper = name1+std::to_string(i);
+
+//Should confirm these are actually top
+G4String name2 = "PMT1_top_";
+G4String namePMT1 = name2+std::to_string(i);
+
+G4String name3 = "PMT2_bottom_";
+G4String namePMT2 = name3+std::to_string(i);
+
 //G4cout << "name: " << name << G4endl;
 //G4cout << "startPos: " << startPos << G4endl;
 
-fPlasticLogArray[i] = new G4LogicalVolume(unionSolid, plasticG4material, nameLog,0,0,0);
-fWrapLogArray[i] = new G4LogicalVolume(subtractSolid, wrapG4material, nameWrapper,0,0,0);
+fPlasticLogArray[i] = new G4LogicalVolume(interSolidBars, plasticG4material, nameLog,0,0,0);
+fWrapLogArray[i] = new G4LogicalVolume(subtractSolidWrap, wrapG4material, nameWrapper,0,0,0);
+fPMT1LogArray[i] = new G4LogicalVolume(interSolidPMT1, PMTG4material, namePMT1,0,0,0);
+fPMT2LogArray[i] = new G4LogicalVolume(interSolidPMT2, PMTG4material, namePMT2,0,0,0);
 
 G4LogicalSkinSurface * Surface = new G4LogicalSkinSurface(nameWrapper, fWrapLogArray[i], ScintWrapper);
 
@@ -286,11 +354,13 @@ fWrapLogArray[i]->SetVisAttributes(wrap_vis);
 
 
 //build every second detector
-//if(i%2==0)
+//if(i%2==0) {}
 fAssemblyPlastics->AddPlacedVolume(fPlasticLogArray[i], move, rotate);
 fAssemblyPlastics->AddPlacedVolume(fWrapLogArray[i], move, rotate);
+fAssemblyPlastics->AddPlacedVolume(fPMT1LogArray[i], move, rotate);
+fAssemblyPlastics->AddPlacedVolume(fPMT2LogArray[i], move, rotate);
 
-startPos = startPos-detWidth-2*wrapThick;
+startPos = startPos-detWidth-2*fWrapThickness;
 //G4cout << "startPos after : " << startPos << G4endl;
 
 }

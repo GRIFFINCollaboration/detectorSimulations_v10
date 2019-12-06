@@ -62,15 +62,19 @@ private:
     G4double fRadialDistance;
     G4double fLeadShieldThickness;
     G4double fSpacing;
+    G4double fWrapThickness;
    
     G4double fNumDet;
 
+    G4String fPMTMaterial;
     G4String fWrapMaterial;
     G4String fPlasticMaterial;
    
  //   G4LogicalVolume * fPlasticLog;
     std::vector<G4LogicalVolume*>  fPlasticLogArray;
     std::vector<G4LogicalVolume*>  fWrapLogArray;
+    std::vector<G4LogicalVolume*>  fPMT1LogArray;
+    std::vector<G4LogicalVolume*>  fPMT2LogArray;
    
     G4Color blue;
     G4Color black;
