@@ -223,23 +223,6 @@ ScintWrapperMPT->AddProperty("REFLECTIVITY", photonEnergyShort, reflectivity, nE
 ScintWrapper->SetMaterialPropertiesTable(ScintWrapperMPT);
 ScintWrapper->DumpInfo();
 
-/*
-G4double reflectivity[numShort] = {0.95, 0.95, 0.95};
-assert(sizeof(reflectivity) == sizeof(photonEnergyShort));
-G4double efficiency[numShort] = {0., 0., 0.};
-assert(sizeof(efficiency) == sizeof(photonEnergyShort));
-const G4int nEntriesShort = sizeof(photonEnergyShort)/sizeof(G4double);
-
-G4double reflectivity[num] = {100., 100., 100., 100., 100., 100., 100., 100., 100., 100., 100., 100.};
-assert(sizeof(reflectivity) == sizeof(photonEnergy));
-G4double efficiency[num] = {100., 100., 100., 100., 100., 100., 100., 100., 100., 100., 100., 100.};
-assert(sizeof(efficiency) == sizeof(photonEnergy));
-
-ScintWrapperMPT->AddProperty("REFLECTIVITY", photonEnergyShort, reflectivity, nEntriesShort);  //
-ScintWrapperMPT->AddProperty("EFFICIENCY", photonEnergyShort, efficiency, nEntriesShort);  //Detection efficiency?
-*/
-//ScintWrapper->SetMaterialPropertiesTable(scintillatorMPT);
-//plasticG4material->SetMaterialPropertiesTable(scintillatorMPT);
 
 //////// Quartz  ////////////
 G4MaterialPropertiesTable * QuartzMPT = new G4MaterialPropertiesTable();
@@ -247,21 +230,12 @@ G4double rIndex_Quartz[numShort] = {1.474, 1.474, 1.474}; //Taken from Joey gith
 QuartzMPT->AddProperty("RINDEX", photonEnergyShort, rIndex_Quartz, nEntriesShort)->SetSpline(true);  //refractive index can change with energy
 QuartzMPT->AddConstProperty("ABSLENGTH", 40.*cm); //from Joeys github
 PMTG4material->SetMaterialPropertiesTable(QuartzMPT);
-//This is for sensitive detectors
-/*
-G4double reflectivityQuartz[numShort] = {0., 0., 0.};
-assert(sizeof(reflectivityQuartz) == sizeof(photonEnergyShort));
-G4double efficiencyQuartz[numShort] = {1., 1., 1.};
-assert(sizeof(efficiencyQuartz) == sizeof(photonEnergyShort));
-QuartzMPT->AddProperty("REFLECTIVITY", photonEnergyShort, reflectivityQuartz, nEntriesShort);  //
-QuartzMPT->AddProperty("EFFICIENCY", photonEnergyShort, efficiencyQuartz, nEntriesShort);  //Detection efficiency?
-*/
 
 //Building the Plastic Geometry
 
 //Detector Placement
 G4double detWidth = 100.*cm/(fNumDet);
-G4double startPos = 50.*cm-detWidth/2.;
+G4double startPos = 50.*cm-detWidth/2.+2*fWrapThickness;
 
 //place outer radius of plastics at position of DESCANT detectors, taking into account lead shield
 //G4double outerRadius = fRadialDistance - fLeadShieldThickness - fSpacing;
@@ -306,8 +280,9 @@ G4VSolid * SpherePMT1 = new G4Sphere("SpherePMT1", innerRadius, outerRadius, sta
 G4IntersectionSolid * interSolidPMT1;
 G4VSolid * SpherePMT2 = new G4Sphere("SpherePMT2", innerRadius, outerRadius, startPhiPMT2, deltaPhiPMT2, startThetaPMT, deltaThetaPMT);
 G4IntersectionSolid * interSolidPMT2;
-//G4double BeamLineXY = 6.5*cm;
-//G4Solid * boxBeamLine = new G4Box("boxBeamLine", BeamLineXY, BeamLineXY, 1*m); 
+G4double BeamLineXY = 6.5*cm;
+G4SubtractionSolid * subtractSolidBeamLine_Bar;
+G4SubtractionSolid * subtractSolidBeamLine_Wrap;
 
 
 //Set visual attributes
@@ -340,10 +315,25 @@ G4String name3 = "PMT2_bottom_";
 G4String namePMT2 = name3+std::to_string(i);
 
 //G4cout << "name: " << name << G4endl;
-//G4cout << "startPos: " << startPos << G4endl;
+G4cout << "startPos: " << startPos << G4endl;
 
+//Counter for bottom detectors 
+int bCounter;
+//Putting in subtraction Beam Line 
+if( abs(startPos-detWidth/2.) < BeamLineXY || abs(startPos+detWidth/2.) < BeamLineXY || abs(startPos) < BeamLineXY) {
+G4cout << "startPos In loop: " << startPos << G4endl;
+//Implemented in a way where no partial subtractions occur.  change wrapBoxThick<->BeamLineXY in x position to revert to partial subtractions.
+G4VSolid * boxBeamLine = new G4Box("boxBeamLine", wrapBoxThick, BeamLineXY, 1*m); 
+//Implemented in a way where no partial subtractions occur.  change startPos<->0. in x position to revert to partial subtractions.
+subtractSolidBeamLine_Bar = new G4SubtractionSolid("subtractSolidBeamLine_Bar", interSolidBars, boxBeamLine, rot1, G4ThreeVector(startPos,0,50*cm));
+subtractSolidBeamLine_Wrap = new G4SubtractionSolid("subtractSolidBeamLine_Bar", subtractSolidWrap, boxBeamLine, rot1, G4ThreeVector(startPos,0,50*cm));
+fPlasticLogArray[i] = new G4LogicalVolume(subtractSolidBeamLine_Bar, plasticG4material, nameLog,0,0,0);
+fWrapLogArray[i] = new G4LogicalVolume(subtractSolidBeamLine_Wrap, wrapG4material, nameWrapper,0,0,0); 
+}
+else {
 fPlasticLogArray[i] = new G4LogicalVolume(interSolidBars, plasticG4material, nameLog,0,0,0);
 fWrapLogArray[i] = new G4LogicalVolume(subtractSolidWrap, wrapG4material, nameWrapper,0,0,0);
+}
 fPMT1LogArray[i] = new G4LogicalVolume(interSolidPMT1, PMTG4material, namePMT1,0,0,0);
 fPMT2LogArray[i] = new G4LogicalVolume(interSolidPMT2, PMTG4material, namePMT2,0,0,0);
 
