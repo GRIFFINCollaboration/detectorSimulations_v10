@@ -47,6 +47,8 @@ DetectionSystemPlastics::DetectionSystemPlastics(G4double thickness, G4int mater
     fWrapLogArray.resize(numDet, NULL);
     fPMT1LogArray.resize(numDet, NULL);
     fPMT2LogArray.resize(numDet, NULL);
+    fPlasticLogArrayBot.resize(numDet, NULL);
+    fWrapLogArrayBot.resize(numDet, NULL);
 
     fWrapThickness = 0.5 * mm;
  
@@ -78,7 +80,9 @@ delete fWrapLogArray[i];
 delete fPMT1LogArray[i];
 delete fPMT2LogArray[i];
 }
-
+for (int i = 0; i<fNumDetBot; i++) {
+delete fPlasticLogArrayBot[i];
+}
 G4cout << "Calling Destructor" << G4endl;
 
 }
@@ -231,24 +235,13 @@ QuartzMPT->AddProperty("RINDEX", photonEnergyShort, rIndex_Quartz, nEntriesShort
 QuartzMPT->AddConstProperty("ABSLENGTH", 40.*cm); //from Joeys github
 PMTG4material->SetMaterialPropertiesTable(QuartzMPT);
 
-//Building the Plastic Geometry
 
-//Detector Placement
-G4double detWidth = 100.*cm/(fNumDet);
-G4double startPos = 50.*cm-detWidth/2.+2*fWrapThickness;
+///// Building the Plastic Geometry /////
 
-//place outer radius of plastics at position of DESCANT detectors, taking into account lead shield
-//G4double outerRadius = fRadialDistance - fLeadShieldThickness - fSpacing;
-//place outer radius of plastics at position of DESCANT detectors, without lead shield
-G4double outerRadius = fRadialDistance - fSpacing;
-G4double innerRadius = outerRadius - fScintillatorWidth;
-G4double outerWrap = outerRadius + fWrapThickness;
-G4double innerWrap = innerRadius - fWrapThickness;
-G4double wrapBoxThick = (detWidth+2.*fWrapThickness)/2.;
 //Opening angle of DESCANT is 65.5 degrees, approx 1.143 radians. Limiting to 1.13
 G4double startTheta = 0.;
 G4double deltaTheta = 1.13;
-G4double startPhi = 0. ;
+G4double startPhi = 0.;
 G4double deltaPhi = 2*M_PI;
 G4double startThetaPMT = 1.13;
 G4double deltaThetaPMT = 0.1;
@@ -257,16 +250,26 @@ G4double deltaPhiPMT1 = M_PI;
 G4double startPhiPMT2 = M_PI;
 G4double deltaPhiPMT2 = M_PI;
 
-//for Plastic Hollow Sphere
-//G4Sphere * plasticSphere = new G4Sphere("Plastic Detector", innerRadius, outerRadius, startPhi, deltaPhi, startTheta, deltaTheta);
+//Detector Placement
+//place outer radius of plastics at position of DESCANT detectors, taking into account lead shield
+//G4double outerRadius = fRadialDistance - fLeadShieldThickness - fSpacing;
+//place outer radius of plastics at position of DESCANT detectors, without lead shield
+G4double outerRadius = fRadialDistance - fSpacing;
+G4double innerRadius = outerRadius - fScintillatorWidth;
+G4double outerWrap = outerRadius + fWrapThickness;
+G4double innerWrap = innerRadius - fWrapThickness;
+//To determine where the detectors start (left side ie +ve x-axis)
+G4double length = 80.*cm; //at maximum should be 2*outerRadius*sin(deltaTheta)?
+G4double detWidth = (length-2.*fWrapThickness*fNumDet)/fNumDet;
+G4double startPos = length/2.-detWidth/2.-fWrapThickness;
+G4double wrapBoxThick = (detWidth+2.*fWrapThickness)/2.;
+G4cout << "detWidth: " << detWidth <<G4endl;
 
 //For placing volume
 move = G4ThreeVector(0., 0., 0.);
 rotate = new G4RotationMatrix;
 //For intersection solid
 G4RotationMatrix *rot1 = new G4RotationMatrix(0,0,0);
-//G4cout << "startPos: " << startPos << G4endl;
-//G4cout << "detWidth: " << detWidth << G4endl;
 
 //G4Solids
 G4VSolid * boxBars = new G4Box("boxBars", detWidth/2., 1.*m , 1.*m);
@@ -291,23 +294,29 @@ plastic_vis->SetVisibility(true);
 G4VisAttributes * wrap_vis = new G4VisAttributes(black);
 wrap_vis->SetVisibility(true);
 
+//Counter for bottom detectors 
+G4int bCounter=0;
+G4double bStartPos;
+G4double startPosY = -1.*m+BeamLineXY;
 
-//Build array of logical volumes
+//Build array of logical volumes including top detectors above beam line
 for (int i= 0 ; i < fNumDet ; i++) {
+//For Plastics
 interSolidBars = new G4IntersectionSolid("interSolidBars", SphereBars, boxBars, rot1, G4ThreeVector(startPos, 0, 50*cm));
-G4String name0 = "PlasticDet_";
-G4String nameLog=name0+std::to_string(i);
-
+//For wrapping
 interSolidWrap = new G4IntersectionSolid("interSolidWrap", SphereWrap, boxWrap, rot1, G4ThreeVector(startPos, 0, 50*cm));
 subtractSolidWrap = new G4SubtractionSolid("subtractSolidWrap", interSolidWrap, interSolidBars, rot1, G4ThreeVector(0,0,0));
-
+//For PMT's
 interSolidPMT1 = new G4IntersectionSolid("interSolidPMT1", SpherePMT1, boxWrap, rot1, G4ThreeVector(startPos, 0, 50*cm));
 interSolidPMT2 = new G4IntersectionSolid("interSolidPMT2", SpherePMT2, boxWrap, rot1, G4ThreeVector(startPos, 0, 50*cm));
+
+//Names
+G4String name0 = "PlasticDet_";
+G4String nameLog=name0+std::to_string(i);
 
 G4String name1 = "wrapper_";
 G4String nameWrapper = name1+std::to_string(i);
 
-//Should confirm these are actually top
 G4String name2 = "PMT1_top_";
 G4String namePMT1 = name2+std::to_string(i);
 
@@ -317,44 +326,93 @@ G4String namePMT2 = name3+std::to_string(i);
 //G4cout << "name: " << name << G4endl;
 G4cout << "startPos: " << startPos << G4endl;
 
-//Counter for bottom detectors 
-int bCounter;
 //Putting in subtraction Beam Line 
 if( abs(startPos-detWidth/2.) < BeamLineXY || abs(startPos+detWidth/2.) < BeamLineXY || abs(startPos) < BeamLineXY) {
+
+//increment bottom counter and get the final position for use with below beamline detectors
+bCounter++;
+bStartPos = startPos;
 G4cout << "startPos In loop: " << startPos << G4endl;
 //Implemented in a way where no partial subtractions occur.  change wrapBoxThick<->BeamLineXY in x position to revert to partial subtractions.
-G4VSolid * boxBeamLine = new G4Box("boxBeamLine", wrapBoxThick, BeamLineXY, 1*m); 
+//G4VSolid * boxBeamLine = new G4Box("boxBeamLine", wrapBoxThick, BeamLineXY, 1*m); 
+//Only make top detector
+G4VSolid * boxBeamLine = new G4Box("boxBeamLine", wrapBoxThick+0.5*mm, 1*m, 1*m); 
 //Implemented in a way where no partial subtractions occur.  change startPos<->0. in x position to revert to partial subtractions.
-subtractSolidBeamLine_Bar = new G4SubtractionSolid("subtractSolidBeamLine_Bar", interSolidBars, boxBeamLine, rot1, G4ThreeVector(startPos,0,50*cm));
-subtractSolidBeamLine_Wrap = new G4SubtractionSolid("subtractSolidBeamLine_Bar", subtractSolidWrap, boxBeamLine, rot1, G4ThreeVector(startPos,0,50*cm));
+subtractSolidBeamLine_Bar = new G4SubtractionSolid("subtractSolidBeamLine_Bar", interSolidBars, boxBeamLine, rot1, G4ThreeVector(startPos,startPosY,50*cm));
+subtractSolidBeamLine_Wrap = new G4SubtractionSolid("subtractSolidBeamLine_Wrap", subtractSolidWrap, boxBeamLine, rot1, G4ThreeVector(startPos,startPosY,50*cm));
+//Assign Logical Volume for detectors and wrapping affected by beamline
 fPlasticLogArray[i] = new G4LogicalVolume(subtractSolidBeamLine_Bar, plasticG4material, nameLog,0,0,0);
 fWrapLogArray[i] = new G4LogicalVolume(subtractSolidBeamLine_Wrap, wrapG4material, nameWrapper,0,0,0); 
 }
 else {
+//Assign Logical Volume for detectors and wrapping unaffected by beamline
 fPlasticLogArray[i] = new G4LogicalVolume(interSolidBars, plasticG4material, nameLog,0,0,0);
 fWrapLogArray[i] = new G4LogicalVolume(subtractSolidWrap, wrapG4material, nameWrapper,0,0,0);
 }
+
+//Assign PMT Logical Volumes
 fPMT1LogArray[i] = new G4LogicalVolume(interSolidPMT1, PMTG4material, namePMT1,0,0,0);
 fPMT2LogArray[i] = new G4LogicalVolume(interSolidPMT2, PMTG4material, namePMT2,0,0,0);
-
+//Set Logical Skin for optical photons on wrapping
 G4LogicalSkinSurface * Surface = new G4LogicalSkinSurface(nameWrapper, fWrapLogArray[i], ScintWrapper);
-
+//Give everything colour
 fPlasticLogArray[i]->SetVisAttributes(plastic_vis);
 fWrapLogArray[i]->SetVisAttributes(wrap_vis);
 
 
 //build every second detector
 //if(i%2==0) {}
+//Place detectors
 fAssemblyPlastics->AddPlacedVolume(fPlasticLogArray[i], move, rotate);
 fAssemblyPlastics->AddPlacedVolume(fWrapLogArray[i], move, rotate);
 fAssemblyPlastics->AddPlacedVolume(fPMT1LogArray[i], move, rotate);
 fAssemblyPlastics->AddPlacedVolume(fPMT2LogArray[i], move, rotate);
 
+//Shift to the right ie all detectors except bottom detectors are built left to right (+ve x to -ve)
 startPos = startPos-detWidth-2*fWrapThickness;
 //G4cout << "startPos after : " << startPos << G4endl;
 
 }
+// Assign variables for bottom detectors
+fNumDetBot = bCounter;
+fPlasticLogArrayBot.resize(fNumDetBot, NULL);
+startPos = bStartPos;
 
+for(G4int k=0; k<fNumDetBot; ++k) {
+G4cout << "startPos In Bottom loop: " << startPos << G4endl;
+//Naming
+G4int detNumBottom = fNumDet + k +1;
+G4String name0 = "PlasticDet_";
+G4String nameLog=name0+std::to_string(detNumBottom);
+G4String name1 = "wrapper_";
+G4String nameWrapper = name1+std::to_string(detNumBottom);
+//For Beam Line subtraction
+startPosY = 1.*m-BeamLineXY;
+//For Plastics
+interSolidBars = new G4IntersectionSolid("interSolidBars", SphereBars, boxBars, rot1, G4ThreeVector(startPos, 0, 50*cm));
+//For Wrapping
+interSolidWrap = new G4IntersectionSolid("interSolidWrap", SphereWrap, boxWrap, rot1, G4ThreeVector(startPos, 0, 50*cm));
+subtractSolidWrap = new G4SubtractionSolid("subtractSolidWrap", interSolidWrap, interSolidBars, rot1, G4ThreeVector(0,0,0));
+//For Beamline
+G4VSolid * boxBeamLine = new G4Box("boxBeamLine", wrapBoxThick+0.5*mm, 1*m, 1*m); 
+subtractSolidBeamLine_Bar = new G4SubtractionSolid("subtractSolidBeamLine_Bar", interSolidBars, boxBeamLine, rot1, G4ThreeVector(startPos,startPosY,50*cm));
+subtractSolidBeamLine_Wrap = new G4SubtractionSolid("subtractSolidBeamLine_Wrap", subtractSolidWrap, boxBeamLine, rot1, G4ThreeVector(startPos,startPosY,50*cm));
+//Assign Logical Volumes
+fPlasticLogArrayBot[k] = new G4LogicalVolume(subtractSolidBeamLine_Bar, plasticG4material, nameLog,0,0,0);
+fWrapLogArrayBot[k] = new G4LogicalVolume(subtractSolidBeamLine_Wrap, wrapG4material, nameWrapper,0,0,0); 
+//Set Logical Skin for optical photons on wrapping
+G4LogicalSkinSurface * Surface = new G4LogicalSkinSurface(nameWrapper, fWrapLogArrayBot[k], ScintWrapper);
+//Give everything colour
+fPlasticLogArrayBot[k]->SetVisAttributes(plastic_vis);
+fWrapLogArrayBot[k]->SetVisAttributes(wrap_vis);
+//Place detectrs
+fAssemblyPlastics->AddPlacedVolume(fPlasticLogArrayBot[k], move, rotate);
+fAssemblyPlastics->AddPlacedVolume(fWrapLogArrayBot[k], move, rotate);
+//Shift to the left ie bottom detectors are built right to left
+startPos = startPos+detWidth+2*fWrapThickness;
+
+ 
+}
  
     return 1;
 }
