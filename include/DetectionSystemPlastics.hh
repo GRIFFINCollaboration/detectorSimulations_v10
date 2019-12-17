@@ -47,6 +47,7 @@ public:
     DetectionSystemPlastics(G4double thickness, G4int material, G4double numDet);
     ~DetectionSystemPlastics();
 
+    void SetWrapping(G4bool wrap){fAddWrap = wrap;};
     G4int Build();
     G4int PlaceDetector(G4LogicalVolume* expHallLog);
 
@@ -65,6 +66,8 @@ private:
     G4double fWrapThickness;
     G4double fAirGap;
    
+    G4bool fAddWrap;
+
     G4double fNumDet;
     G4double fNumDetBot;
 
