@@ -134,6 +134,7 @@ private:
 
 	G4UIcmdWith3Vector*         fAddDetectionSystemTestcanCmd;
 	G4UIcmdWith3Vector*         fAddDetectionSystemPlasticsCmd;
+	G4UIcmdWith3Vector*         fAddDetectionSystemPlasticsNoWrapCmd;
 	G4UIcmdWithAnInteger*       fAddDetectionSystemDescantNoLeadCmd;
 
 	G4UIcmdWithAnInteger*       fAddDetectionSystemSceptarCmd;

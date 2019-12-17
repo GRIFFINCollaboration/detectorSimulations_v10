@@ -882,6 +882,23 @@ void DetectorConstruction::AddDetectionSystemPlastics(G4ThreeVector input) {
 	G4double numDet = G4double(input.z());
 
 	DetectionSystemPlastics* pDetectionSystemPlastics = new DetectionSystemPlastics(thickness, material, numDet);
+	pDetectionSystemPlastics->SetWrapping(true);
+	pDetectionSystemPlastics->Build();
+	pDetectionSystemPlastics->PlaceDetector(fLogicWorld);
+
+	fPlastics = true;
+}
+void DetectorConstruction::AddDetectionSystemPlasticsNoWrap(G4ThreeVector input) {
+	if(fLogicWorld == nullptr) {
+		Construct();
+	}
+
+	G4double thickness = G4double(input.x())*cm;
+	G4int material = G4double(input.y());
+	G4double numDet = G4double(input.z());
+
+	DetectionSystemPlastics* pDetectionSystemPlastics = new DetectionSystemPlastics(thickness, material, numDet);
+	pDetectionSystemPlastics->SetWrapping(false);
 	pDetectionSystemPlastics->Build();
 	pDetectionSystemPlastics->PlaceDetector(fLogicWorld);
 
@@ -1267,7 +1284,8 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		is>>result.detectorNumber;
 		//is>>result.detectorNumber>>result.crystalNumber;
 		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
-		result.detectorNumber = result.detectorNumber+1;
+		//result.detectorNumber = result.detectorNumber+1;
+		result.detectorNumber = result.detectorNumber;
 		result.systemID = 8700;
 		return result;
 	}

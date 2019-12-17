@@ -159,6 +159,7 @@ public:
 
 	void AddDetectionSystemTestcan(G4ThreeVector input);
 	void AddDetectionSystemPlastics(G4ThreeVector input);
+	void AddDetectionSystemPlasticsNoWrap(G4ThreeVector input);
 
 	void AddDetectionSystem8piDetector(G4int ndet);
 	void AddDetectionSystemGriffinForward(G4int ndet);
