@@ -233,7 +233,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		//G4cout << "Top hit in pmt "  << G4endl;
 		//G4cout << "Calling kill track and Secondaries" << G4endl;
 		//G4cout << "Top Count: " <<  fEventAction->GetTotScintPhotonTop()<< G4endl;
-		fEventAction->CountScintPhotonTop();
 		// strip "PMT1_top_" (9 characters) and everything before from the string
 		std::string tmpString = volname.substr(found+9);
 		// replace all '_' with spaces so we can just use istringstream::operator>>
@@ -254,7 +253,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	found = volname.find("PMT2_bottom");
 	if(found!=G4String::npos && particleType == 8){ //should prepoint->GetStepStatus()==fGeomBoundary be in here?
 		//G4cout << "Bottom hit in pmt "<<particleType  << G4endl;
-		fEventAction->CountScintPhotonTop();
 		// strip "PMT2_bottom_" (12 characters) and everything before from the string
 		std::string tmpString = volname.substr(found+12);
 		// replace all '_' with spaces so we can just use istringstream::operator>>
@@ -264,7 +262,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		G4int detNumber;
 		is>>detNumber;
 		//G4cout << detNumber << " : is the detector number stepping action"<<G4endl;
-		fEventAction->CountScintPhotonBottom();
 		fEventAction->SetScintPhotonTimeBottom(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 		//G4cout << "Calling kill track and Secondaries" << G4endl;

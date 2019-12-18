@@ -114,16 +114,8 @@ public:
 	void CountOneScintPhoton() {++fTotScintPhotons;};
 	G4int GetTotScintPhoton() {return fTotScintPhotons;};
 	void SetTotScintPhoton(G4int total) {fTotScintPhotons = total;};
-	//Top PMT
-	void CountScintPhotonTop() {++fTotScintPhotonsCollectedTop;};
-	G4int GetTotScintPhotonTop() {return fTotScintPhotonsCollectedTop;};
-	void SetTotScintPhotonTop(G4int total) {fTotScintPhotonsCollectedTop = total;};
 	//Collection Time Top
 	void SetScintPhotonTimeTop(G4double top, G4int detNum);
-	//Bottom PMT
-	void CountScintPhotonBottom() {++fTotScintPhotonsCollectedBottom;};
-	G4int GetTotScintPhotonBottom() {return fTotScintPhotonsCollectedBottom;};
-	void SetTotScintPhotonBottom(G4int total) {fTotScintPhotonsCollectedBottom = total;};
 	//Collection Time Bottom
 	void SetScintPhotonTimeBottom(G4double bottom, G4int detNum);
 
@@ -188,11 +180,12 @@ private:
 	G4int ElasticCounter;
 	//Optical Scintillation photon counter
 	G4int fTotScintPhotons;
-	G4int fTotScintPhotonsCollectedTop;
-	G4int fTotScintPhotonsCollectedBottom;
 	//Optical Photon Time vectors
 	std::vector<G4double>  fCollectionTimeTopVector[MAXHITS];
 	std::vector<G4double>  fCollectionTimeBottomVector[MAXHITS];
+	//Optical Photon Counter Arrays
+	G4int fTopCounter[MAXHITS];
+	G4int fBottomCounter[MAXHITS];
 	//Plastic edep
 	G4double fPEdep;
 	G4double fPEkin;

@@ -62,8 +62,6 @@ EventAction::EventAction(RunAction* run, HistoManager* hist)
 	fPEdep =-1.;
 	fPEkin=-1.;
 	SetTotScintPhoton(0);
-	SetTotScintPhotonTop(0);
-	SetTotScintPhotonBottom(0);
 	fNumberOfHits = 0;
 	fNumberOfSteps = 0;
 
@@ -96,8 +94,6 @@ void EventAction::BeginOfEventAction(const G4Event* evt) {
 	
 	//Reset Optical Photon Counter
 	SetTotScintPhoton(0);
-	SetTotScintPhotonTop(0);
-	SetTotScintPhotonBottom(0);
 	//Reset Scatter Counters
 	SetElasticCounter(0);
 	SetInelasticCounter(0);
@@ -128,7 +124,7 @@ void EventAction::EndOfEventAction(const G4Event*) {
 				for(j = 0; j < fPlasticHits; ++j) {
 //G4cout<<i<<", "<<j<<": "<<fProperties[i].systemID<<", "<<fProperties[i].detectorNumber<<" == "<<fPlasticNumber[j]<<G4endl;
 					if(fProperties[i].systemID == 8700 && fProperties[i].detectorNumber == fPlasticNumber[j]) {	
-						fHistoManager->FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i], GetTotalCounter(), GetElasticCounter(), GetInelasticCounter(), GetTotScintPhoton(), fHitTrackerD[9][i]/degree, fHitTrackerD[10][i]/degree, fHitTrackerD[11][i]/nanosecond, fHitTrackerD[12][i]/cm, fHitTrackerD[13][i]/cm, fHitTrackerD[14][i]/cm, fHitTrackerD[15][i]/nanosecond, fHitTrackerD[16][i]/cm, fHitTrackerD[17][i]/cm, fHitTrackerD[18][i]/cm, fHitTrackerD[19][i]/keV, fHitTrackerD[20][i]/keV, GetTotScintPhotonTop(), GetTotScintPhotonBottom(), fCollectionTimeTopVector[j], fCollectionTimeBottomVector[j]);
+						fHistoManager->FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i], GetTotalCounter(), GetElasticCounter(), GetInelasticCounter(), GetTotScintPhoton(), fHitTrackerD[9][i]/degree, fHitTrackerD[10][i]/degree, fHitTrackerD[11][i]/nanosecond, fHitTrackerD[12][i]/cm, fHitTrackerD[13][i]/cm, fHitTrackerD[14][i]/cm, fHitTrackerD[15][i]/nanosecond, fHitTrackerD[16][i]/cm, fHitTrackerD[17][i]/cm, fHitTrackerD[18][i]/cm, fHitTrackerD[19][i]/keV, fHitTrackerD[20][i]/keV, fTopCounter[j], fBottomCounter[j], fCollectionTimeTopVector[j], fCollectionTimeBottomVector[j]);
 						break;
 					}					
 				}			
@@ -141,7 +137,7 @@ void EventAction::EndOfEventAction(const G4Event*) {
 				G4int j;
 				for(j = 0; j < fPlasticHits; ++j) {
 					if(fProperties[i].systemID == 8700 && fProperties[i].detectorNumber == fPlasticNumber[j]) {	
-				fHistoManager->FillStepNtuple(fStepTrackerI[0][i], fStepTrackerI[1][i], fStepTrackerI[2][i], fStepTrackerI[3][i],  fStepTrackerI[4][i], fStepTrackerI[5][i], fStepTrackerI[6][i], fStepTrackerI[7][i], fStepTrackerI[8][i], fStepTrackerD[0][i]/keV, fStepTrackerD[1][i]/mm, fStepTrackerD[2][i]/mm, fStepTrackerD[3][i]/mm, fStepTrackerD[4][i]/second, fStepTrackerI[9][i], fStepTrackerD[5][i], fStepTrackerD[6][i], fStepTrackerD[7][i], fStepTrackerD[8][i], fStepTrackerD[9][i], fStepTrackerD[10][i], fStepTrackerD[11][i]/nanosecond, fStepTrackerD[12][i]/cm, fStepTrackerD[13][i]/cm, fStepTrackerD[14][i]/cm, fStepTrackerD[15][i]/nanosecond, fStepTrackerD[16][i]/cm, fStepTrackerD[17][i]/cm, fStepTrackerD[18][i]/cm, fStepTrackerD[19][i]/keV, fStepTrackerD[20][i]/keV, GetTotScintPhotonTop(), GetTotScintPhotonBottom(), fCollectionTimeTopVector[j], fCollectionTimeBottomVector[j]);
+				fHistoManager->FillStepNtuple(fStepTrackerI[0][i], fStepTrackerI[1][i], fStepTrackerI[2][i], fStepTrackerI[3][i],  fStepTrackerI[4][i], fStepTrackerI[5][i], fStepTrackerI[6][i], fStepTrackerI[7][i], fStepTrackerI[8][i], fStepTrackerD[0][i]/keV, fStepTrackerD[1][i]/mm, fStepTrackerD[2][i]/mm, fStepTrackerD[3][i]/mm, fStepTrackerD[4][i]/second, fStepTrackerI[9][i], fStepTrackerD[5][i], fStepTrackerD[6][i], fStepTrackerD[7][i], fStepTrackerD[8][i], fStepTrackerD[9][i], fStepTrackerD[10][i], fStepTrackerD[11][i]/nanosecond, fStepTrackerD[12][i]/cm, fStepTrackerD[13][i]/cm, fStepTrackerD[14][i]/cm, fStepTrackerD[15][i]/nanosecond, fStepTrackerD[16][i]/cm, fStepTrackerD[17][i]/cm, fStepTrackerD[18][i]/cm, fStepTrackerD[19][i]/keV, fStepTrackerD[20][i]/keV, fTopCounter[j], fBottomCounter[j], fCollectionTimeTopVector[j], fCollectionTimeBottomVector[j]);
 						break;
 					}
 			}
@@ -296,6 +292,8 @@ void EventAction::ClearVariables() {
 	fCollectionTimeBottomVector[i].clear();
 	//fPlasticNumber[i].Clear();
 	fPlasticNumber[i]=-1;
+	fTopCounter[i] = 0;
+	fBottomCounter[i] = 0;
 	}
 	fPlasticHits = 0;
 }
@@ -409,13 +407,15 @@ void EventAction::SetScintPhotonTimeTop(G4double top, G4int detNum) {
 		if(fPlasticNumber[i]== detNum) {
 
 			fCollectionTimeTopVector[i].push_back(top);
-
+			fTopCounter[i]++;
+//	G4cout << "Top Counter function: " << fTopCounter[i] << G4endl;
 			return;
 		}
 	}
 
 	fPlasticNumber[fPlasticHits] = detNum;
 	fCollectionTimeTopVector[fPlasticHits].push_back(top);
+	fTopCounter[fPlasticHits]++;
 	fPlasticHits++;
 	if(fPlasticHits >= MAXHITS) {
 		G4cout<<"ERROR! Too many plastics hits!"<<G4endl;
@@ -428,13 +428,15 @@ void EventAction::SetScintPhotonTimeBottom(G4double bottom, G4int detNum) {
 		if(fPlasticNumber[i] == detNum) {
 
 			fCollectionTimeBottomVector[i].push_back(bottom);
-
+			fBottomCounter[i]++;
+			
 			return;
 		}
 	}
 
 	fPlasticNumber[fPlasticHits] = detNum;
 	fCollectionTimeBottomVector[fPlasticHits].push_back(bottom);
+	fBottomCounter[fPlasticHits]++;
 	fPlasticHits++;
 	
 	if(fPlasticHits >= MAXHITS) {
