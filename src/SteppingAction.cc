@@ -229,8 +229,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 
 	//Top PMT
 	found = volname.find("PMT1_top");
-	if(found!=G4String::npos && particleType == 8 && prePoint->GetStepStatus()==fGeomBoundary){ //should prepoint->GetStepStatus()==fGeomBoundary be in here?
-		G4cout << "Top hit in pmt "  << G4endl;
+	if(found!=G4String::npos && particleType == 8){ //should prepoint->GetStepStatus()==fGeomBoundary be in here?
+		//G4cout << "Top hit in pmt "  << G4endl;
 		//G4cout << "Calling kill track and Secondaries" << G4endl;
 		//G4cout << "Top Count: " <<  fEventAction->GetTotScintPhotonTop()<< G4endl;
 		fEventAction->CountScintPhotonTop();
@@ -242,7 +242,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		std::istringstream is(tmpString);
 		G4int detNumber;
 		is>>detNumber;
-		G4cout << detNumber << " : is the detector number stepping action"<<G4endl;
+		//G4cout << detNumber << " : is the detector number stepping action"<<G4endl;
 		fEventAction->SetScintPhotonTimeTop(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 		//G4cout << "Calling kill track and Secondaries" << G4endl;
@@ -252,9 +252,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 
 	//Bottom PMT
 	found = volname.find("PMT2_bottom");
-	if(found!=G4String::npos){// && particleType == 8){ //should prepoint->GetStepStatus()==fGeomBoundary be in here?
-		G4cout << "Bottom hit in pmt "<<particleType  << G4endl;
-		if(particleType == 8) {
+	if(found!=G4String::npos && particleType == 8){ //should prepoint->GetStepStatus()==fGeomBoundary be in here?
+		//G4cout << "Bottom hit in pmt "<<particleType  << G4endl;
 		fEventAction->CountScintPhotonTop();
 		// strip "PMT2_bottom_" (12 characters) and everything before from the string
 		std::string tmpString = volname.substr(found+12);
@@ -264,13 +263,12 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		std::istringstream is(tmpString);
 		G4int detNumber;
 		is>>detNumber;
-		G4cout << detNumber << " : is the detector number stepping action"<<G4endl;
+		//G4cout << detNumber << " : is the detector number stepping action"<<G4endl;
 		fEventAction->CountScintPhotonBottom();
 		fEventAction->SetScintPhotonTimeBottom(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 		//G4cout << "Calling kill track and Secondaries" << G4endl;
 		//G4cout << "Bottom Count: " <<  fEventAction->GetTotScintPhotonBottom()<< G4endl;
-		}
 	}
 
 	//Kinetic energy of neutrons in Plastic Scintillator based off first scatter and TOF based off first scatter
@@ -341,7 +339,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		// check edep again in case we use the grid cell but haven't hit it
 		//G4cout << "edep " << edep << G4endl; //Testing PLastic fillling ntuple
 		if(edep <= 0) return;
-		G4cout << "Calling Add Hit Tracker" << G4endl;
+		//G4cout << "Calling Add Hit Tracker" << G4endl;
 		fEventAction->AddHitTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, total, elastic, inelastic, numScintPhotons, lab_angle, final_angle, TOF, TOFPos, TOFMulti, TOFPosMulti, PlasticEkin, PlasticEdep);
 
 		if(trackSteps) {
