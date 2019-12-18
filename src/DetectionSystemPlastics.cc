@@ -216,7 +216,7 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	G4OpticalSurface * ScintWrapper = new G4OpticalSurface("wrapper");
 	ScintWrapper->SetModel(unified);  // unified or glisur
 	ScintWrapper->SetType(dielectric_dielectric);  // dielectric and dielectric or metal?
-	ScintWrapper->SetFinish(groundfrontpainted);  // teflon wrapping on polished surface->front/back painted // Teflon should be Lambertian in air, specular in optical grease
+	ScintWrapper->SetFinish(polishedfrontpainted);  // teflon wrapping on polished surface->front/back painted // Teflon should be Lambertian in air, specular in optical grease
 	//ScintWrapper->SetPolish(0.9);  // specfic to the glisur model
 	G4MaterialPropertiesTable * ScintWrapperMPT = new G4MaterialPropertiesTable();
 	G4double rIndex_Teflon[numShort] = {1.35, 1.35, 1.35}; //Taken from wikipedia
