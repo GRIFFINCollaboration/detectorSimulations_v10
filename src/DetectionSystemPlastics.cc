@@ -43,14 +43,14 @@ DetectionSystemPlastics::DetectionSystemPlastics(G4double thickness, G4int mater
 	fScintillatorWidth         = thickness;
 	fRadialDistance = 50*cm;
 	fLeadShieldThickness = 6.35*mm;
-	fSpacing = 0.5*mm; //assuming no lead on DESCANT but taking into account the optical wrapping
 	fNumDet = numDet ;
 	fPlasticLogArray.resize(numDet, NULL);
 	fWrapLogArray.resize(numDet, NULL);
 	fPMT1LogArray.resize(numDet, NULL);
 	fPMT2LogArray.resize(numDet, NULL);
 
-	fWrapThickness = 0.5 * mm; //Make thicker for visualization purposes
+	fWrapThickness = 0.5 * mm; //Factor of 10 should be  applied later for visualization purposes.  0.05 for simulations, 0.5 for visualization
+	fSpacing = fWrapThickness; //assuming no lead on DESCANT but taking into account the optical wrapping
 	//fWrapThickness = 0.1 * cm;
 	//fAirGap = 0.1 * fWrapThickness;
 	fAirGap = 0.;
@@ -151,27 +151,27 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	//This is SCINTILLATION YIELD as a function of energy and particle type,
 	//Have to uncomment line in ConstructOp that allows for this to work with boolean (true)
 	/*
-	   const G4int num2 = 4;
-	   G4double e_test[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
-	   G4double p_test[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
-	   G4double d_test[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
-	   G4double t_test[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
-	   G4double a_test[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
-	   G4double C_test[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
-	   G4double num_test[num2] = {10., 1000., 10000., 100000.};
-	   assert(sizeof(e_test) == sizeof(num_test));
-	   assert(sizeof(p_test) == sizeof(num_test));
-	   assert(sizeof(d_test) == sizeof(num_test));
-	   assert(sizeof(t_test) == sizeof(num_test));
-	   assert(sizeof(a_test) == sizeof(num_test));
-	   assert(sizeof(C_test) == sizeof(num_test));
+		const G4int num2 = 4;
+		G4double e_test[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
+		G4double p_test[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
+		G4double d_test[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
+		G4double t_test[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
+		G4double a_test[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
+		G4double C_test[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
+		G4double num_test[num2] = {10., 1000., 10000., 100000.};
+		assert(sizeof(e_test) == sizeof(num_test));
+		assert(sizeof(p_test) == sizeof(num_test));
+		assert(sizeof(d_test) == sizeof(num_test));
+		assert(sizeof(t_test) == sizeof(num_test));
+		assert(sizeof(a_test) == sizeof(num_test));
+		assert(sizeof(C_test) == sizeof(num_test));
 
-	   scintillatorMPT->AddProperty("ELECTRONSCINTILLATIONYIELD", e_test, num_test, num2);
-	   scintillatorMPT->AddProperty("PROTONSCINTILLATIONYIELD", p_test, num_test, num2);
-	   scintillatorMPT->AddProperty("DEUTERONSCINTILLATIONYIELD", d_test, num_test, num2);
-	   scintillatorMPT->AddProperty("TRITONSCINTILLATIONYIELD", t_test, num_test, num2);
-	   scintillatorMPT->AddProperty("ALPHASCINTILLATIONYIELD", a_test, num_test, num2);
-	   scintillatorMPT->AddProperty("IONSCINTILLATIONYIELD", C_test, num_test, num2);
+		scintillatorMPT->AddProperty("ELECTRONSCINTILLATIONYIELD", e_test, num_test, num2);
+		scintillatorMPT->AddProperty("PROTONSCINTILLATIONYIELD", p_test, num_test, num2);
+		scintillatorMPT->AddProperty("DEUTERONSCINTILLATIONYIELD", d_test, num_test, num2);
+		scintillatorMPT->AddProperty("TRITONSCINTILLATIONYIELD", t_test, num_test, num2);
+		scintillatorMPT->AddProperty("ALPHASCINTILLATIONYIELD", a_test, num_test, num2);
+		scintillatorMPT->AddProperty("IONSCINTILLATIONYIELD", C_test, num_test, num2);
 	///////
 	//
 	*/
@@ -214,15 +214,17 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	const G4int nEntriesShort = sizeof(photonEnergyShort)/sizeof(G4double);
 	//////Optical Surface - Teflon wrapping //////
 	G4OpticalSurface * ScintWrapper = new G4OpticalSurface("wrapper");
+	///Test 1
 	ScintWrapper->SetModel(unified);  // unified or glisur
 	ScintWrapper->SetType(dielectric_dielectric);  // dielectric and dielectric or metal?
 	ScintWrapper->SetFinish(polishedfrontpainted);  // teflon wrapping on polished surface->front/back painted // Teflon should be Lambertian in air, specular in optical grease
 	//ScintWrapper->SetPolish(0.9);  // specfic to the glisur model
+	
 	G4MaterialPropertiesTable * ScintWrapperMPT = new G4MaterialPropertiesTable();
 	G4double rIndex_Teflon[numShort] = {1.35, 1.35, 1.35}; //Taken from wikipedia
 	ScintWrapperMPT->AddProperty("RINDEX", photonEnergyShort, rIndex_Teflon, nEntriesShort)->SetSpline(true);  //refractive index can change with energy
 	G4double reflectivity[numShort] = {0.95, 0.95, 0.95};
-	ScintWrapperMPT->AddProperty("REFLECTIVITY", photonEnergyShort, reflectivity, nEntriesShort);  //
+	ScintWrapperMPT->AddProperty("REFLECTIVITY", photonEnergyShort, reflectivity, nEntriesShort)->SetSpline(true);  //
 	ScintWrapper->SetMaterialPropertiesTable(ScintWrapperMPT);
 	ScintWrapper->DumpInfo();
 
@@ -256,8 +258,10 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	//place outer radius of plastics at position of DESCANT detectors, without lead shield
 	G4double outerRadius = fRadialDistance - fSpacing;
 	G4double innerRadius = outerRadius - fScintillatorWidth;
-	G4double outerWrap = outerRadius + 10.*(fWrapThickness)+fAirGap; //factor of 10 for visualization purposes
-	G4double innerWrap = innerRadius - 10.*(fWrapThickness)-fAirGap;//factor of 10 for visualization purposes 
+	G4double outerWrap = outerRadius + fWrapThickness+fAirGap;
+	G4double innerWrap = innerRadius - fWrapThickness-fAirGap;
+	//G4double outerWrap = outerRadius + 10.*(fWrapThickness)+fAirGap; //factor of 10 for visualization purposes
+	//G4double innerWrap = innerRadius - 10.*(fWrapThickness)-fAirGap;//factor of 10 for visualization purposes 
 	//To determine where the detectors start (left side ie +ve x-axis)
 	G4double length = 80.*cm; //at maximum should be 2*outerRadius*sin(deltaTheta)?
 	G4double detWidth = (length-2.*(fWrapThickness+fAirGap)*fNumDet)/fNumDet;
