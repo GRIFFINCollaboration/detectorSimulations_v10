@@ -80,9 +80,9 @@ private:
     std::vector<G4LogicalVolume*>  fPMT1LogArray;
     std::vector<G4LogicalVolume*>  fPMT2LogArray;
    
-    G4Color blue;
+    G4Color bronze;
     G4Color black;
-    G4Color cyan;
+    G4Color silver;
 
     G4int BuildPlastics();
 

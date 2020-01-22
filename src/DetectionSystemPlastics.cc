@@ -57,8 +57,10 @@ DetectionSystemPlastics::DetectionSystemPlastics(G4double thickness, G4int mater
 	fWrapMaterial = "Teflon";
 	fPMTMaterial = "G4_SILICON_DIOXIDE";
 
-	blue=G4Color(0.,0.,1.);
-	cyan=G4Color(0.,1.,1.);
+	//blue=G4Color(0.,0.,1.);
+	bronze=G4Color(0.8,0.5,0.2);
+	//cyan=G4Color(0.,1.,1.);
+	silver=G4Color(0.75,0.75,0.75);
 	black=G4Color(0.,0.,0.);
 
 	if(material == 1)  fPlasticMaterial = "BC408";
@@ -219,7 +221,7 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	ScintWrapper->SetType(dielectric_dielectric);  // dielectric and dielectric or metal?
 	ScintWrapper->SetFinish(polishedfrontpainted);  // teflon wrapping on polished surface->front/back painted // Teflon should be Lambertian in air, specular in optical grease
 	//ScintWrapper->SetPolish(0.9);  // specfic to the glisur model
-	
+
 	G4MaterialPropertiesTable * ScintWrapperMPT = new G4MaterialPropertiesTable();
 	G4double rIndex_Teflon[numShort] = {1.35, 1.35, 1.35}; //Taken from wikipedia
 	ScintWrapperMPT->AddProperty("RINDEX", photonEnergyShort, rIndex_Teflon, nEntriesShort)->SetSpline(true);  //refractive index can change with energy
@@ -239,14 +241,15 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 
 	///// Building the Plastic Geometry /////
 
-	//Opening angle of DESCANT is 65.5 degrees, approx 1.143 radians. Limiting to 1.13
+	//Opening angle of DESCANT is 65.5 degrees, approx 1.143 radians. Limiting to 1.13, but 1.23 helps for making horizontal cuts for PMTs
 	G4double startTheta = 0.;
-	G4double deltaTheta = 1.13;
+	//G4double deltaTheta = 1.13;
+	G4double deltaTheta = 1.23;
 	G4double deltaThetaWrap = 1.23;
 	G4double startPhi = 0.;
 	G4double deltaPhi = 2*M_PI;
-	G4double startThetaPMT = 1.13;
-	G4double deltaThetaPMT = 0.1;
+	G4double startThetaPMT = 0.;
+	G4double deltaThetaPMT = 1.23;
 	G4double startPhiPMT1 = 0.;
 	G4double deltaPhiPMT1 = M_PI;
 	G4double startPhiPMT2 = M_PI;
@@ -258,10 +261,13 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	//place outer radius of plastics at position of DESCANT detectors, without lead shield
 	G4double outerRadius = fRadialDistance - fSpacing;
 	G4double innerRadius = outerRadius - fScintillatorWidth;
+
+	//Optical Wrap dimensions
 	G4double outerWrap = outerRadius + fWrapThickness+fAirGap;
 	G4double innerWrap = innerRadius - fWrapThickness-fAirGap;
 	//G4double outerWrap = outerRadius + 10.*(fWrapThickness)+fAirGap; //factor of 10 for visualization purposes
 	//G4double innerWrap = innerRadius - 10.*(fWrapThickness)-fAirGap;//factor of 10 for visualization purposes 
+
 	//To determine where the detectors start (left side ie +ve x-axis)
 	G4double length = 80.*cm; //at maximum should be 2*outerRadius*sin(deltaTheta)?
 	G4double detWidth = (length-2.*(fWrapThickness+fAirGap)*fNumDet)/fNumDet;
@@ -276,7 +282,12 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	G4RotationMatrix *rot1 = new G4RotationMatrix(0,0,0);
 
 	//G4Solids
+	G4double pmtSize = 4.5*cm;
+	//G4double pmtSize = 3.5*cm;
+	G4double YPosPMT1 = length/2.;
 	G4VSolid * boxBars = new G4Box("boxBars", detWidth/2., 1.*m , 1.*m);
+	G4VSolid * boxBarsPMTSmaller = new G4Box("boxBarsPMTSmaller", detWidth/2.-0.1*mm, 1.*m , 1.*m);
+	G4VSolid * boxBarsPMT = new G4Box("boxBarsPMT", detWidth/2.+fAirGap+0.01*cm, 2.*pmtSize , 1.*m);
 	G4VSolid * boxBarsLarger = new G4Box("boxBarsLarger", detWidth/2.+fAirGap, 1.*m , 1.*m);
 	G4VSolid * SphereBars = new G4Sphere("SphereBars", innerRadius, outerRadius, startPhi, deltaPhi, startTheta, deltaTheta);
 	G4IntersectionSolid * interSolidBars;
@@ -286,23 +297,26 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	G4IntersectionSolid * interSolidWrap;
 	G4SubtractionSolid * subtractSolidWrap;
 	G4VSolid * SphereInnerWrap = new G4Sphere("SphereInnerWrap", innerRadius-fAirGap, outerRadius+fAirGap, startPhi, deltaPhi, startTheta, deltaThetaWrap); //changed from innerRadius->Wrap
-	G4VSolid * SpherePMT1 = new G4Sphere("SpherePMT1", innerRadius, outerRadius, startPhiPMT1, deltaPhiPMT1, startThetaPMT, deltaThetaPMT); //changed from innerRadius->Wrap
-	G4IntersectionSolid * interSolidPMT1;
-	G4VSolid * SpherePMT2 = new G4Sphere("SpherePMT2", innerRadius, outerRadius, startPhiPMT2, deltaPhiPMT2, startThetaPMT, deltaThetaPMT);//changed from innerRadius->Wrap
-	G4IntersectionSolid * interSolidPMT2;
+	G4VSolid * SpherePMT1 = new G4Sphere("SpherePMT1", innerRadius+0.1*mm, outerRadius-0.1*mm, startPhiPMT1, deltaPhiPMT1, startThetaPMT, deltaThetaPMT); //changed from innerRadius->Wrap
+	G4VSolid * SpherePMT2 = new G4Sphere("SpherePMT2", innerRadius+0.1*mm, outerRadius-0.1*mm, startPhiPMT2, deltaPhiPMT2, startThetaPMT, deltaThetaPMT);//changed from innerRadius->Wrap
 	G4double BeamLineXY = 6.5*cm;
 	G4SubtractionSolid * subtractSolidBeamLine_temp;
 	G4SubtractionSolid * subtractSolidBeamLine_Bar;
 	G4SubtractionSolid * subtractSolidBeamLine_Wrap;
 	G4SubtractionSolid * subtractSolidBeamLine_PMT;
-
+	G4SubtractionSolid * bars_PMT1_Corrected;
+	G4SubtractionSolid * bars_PMT_Corrected;
+	G4IntersectionSolid * interSolidBarsPMT1;
+	G4IntersectionSolid * interSolidBarsPMT2;
+	G4SubtractionSolid * PMT1;
+	G4SubtractionSolid * PMT2;
 
 	//Set visual attributes
-	G4VisAttributes * plastic_vis = new G4VisAttributes(cyan);
+	G4VisAttributes * plastic_vis = new G4VisAttributes(silver);
 	plastic_vis->SetVisibility(true);
 	G4VisAttributes * wrap_vis = new G4VisAttributes(black);
 	wrap_vis->SetVisibility(true);
-	G4VisAttributes * pmt_vis = new G4VisAttributes(blue);
+	G4VisAttributes * pmt_vis = new G4VisAttributes(bronze);
 	pmt_vis->SetVisibility(true);
 
 	//Counter for bottom detectors 
@@ -312,11 +326,26 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 
 	//Build array of logical volumes including top detectors above beam line
 	for (int i= 0 ; i < fNumDet ; i++) {
+		//Determine where to make horizontal cuts on detectors to allow for PMTs.  This changes with x-position
+		if (startPos>0.){
+			YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos+detWidth/2.,2.0));
+		}
+		else if (startPos<0.){
+			YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos-detWidth/2.,2.0));
+		}
+		else if (startPos == 0) {
+			YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos-detWidth/2.,2.0));
+		}
 		//For Plastics
 		interSolidBars = new G4IntersectionSolid("interSolidBars", SphereBars, boxBars, rot1, G4ThreeVector(startPos, 0, 50*cm));
+		bars_PMT1_Corrected = new G4SubtractionSolid("bars_PMT1_Corrected", interSolidBars, boxBarsPMT, rot1, G4ThreeVector(startPos, YPosPMT1 , 50*cm));
+		bars_PMT_Corrected = new G4SubtractionSolid("bars_PMT_Corrected", bars_PMT1_Corrected, boxBarsPMT, rot1, G4ThreeVector(startPos, -YPosPMT1 , 50*cm));
 		//For PMT's
-		interSolidPMT1 = new G4IntersectionSolid("interSolidPMT1", SpherePMT1, boxBars, rot1, G4ThreeVector(startPos, 0, 50*cm));
-		interSolidPMT2 = new G4IntersectionSolid("interSolidPMT2", SpherePMT2, boxBars, rot1, G4ThreeVector(startPos, 0, 50*cm));
+		interSolidBarsPMT1 = new G4IntersectionSolid("interSolidBarsPMT1", SpherePMT1, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos, 0, 50*cm));
+		interSolidBarsPMT2 = new G4IntersectionSolid("interSolidBarsPMT2", SpherePMT2, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos, 0, 50*cm));
+		PMT1 = new G4SubtractionSolid("PMT1", interSolidBarsPMT1, bars_PMT_Corrected, rot1, G4ThreeVector(0., 0., 0.));
+		PMT2 = new G4SubtractionSolid("PMT2", interSolidBarsPMT2, bars_PMT_Corrected, rot1, G4ThreeVector(0., 0., 0.));
+
 		//For wrapping
 		interSolidBarsLarger = new G4IntersectionSolid("interSolidBarsLarger", SphereInnerWrap, boxBarsLarger, rot1, G4ThreeVector(startPos, 0, 50*cm));
 		interSolidWrap = new G4IntersectionSolid("interSolidWrap", SphereWrap, boxWrap, rot1, G4ThreeVector(startPos, 0, 50*cm));
@@ -349,28 +378,30 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 			//G4VSolid * boxBeamLine = new G4Box("boxBeamLine", wrapBoxThick, BeamLineXY, 1*m); 
 			//Only make top detector
 			G4double boxheight = 1.*m;
-			G4double pmtSize = 4.5*cm;
+			//		G4double pmtSize = 4.5*cm;
 			G4double subtractHeight = 2*boxheight + startPosY + pmtSize;
 			G4double subtractHeight2 = startPosY + pmtSize;
 			G4VSolid * boxBeamLine = new G4Box("boxBeamLine", wrapBoxThick+0.5*mm, boxheight, 1*m); 
 			//Implemented in a way where no partial subtractions occur.  change startPos<->0. in x position to revert to partial subtractions.
-			subtractSolidBeamLine_temp = new G4SubtractionSolid("subtractSolidBeamLine_temp", interSolidBars, boxBeamLine, rot1, G4ThreeVector(startPos,subtractHeight,50*cm));
-			subtractSolidBeamLine_Bar = new G4SubtractionSolid("subtractSolidBeamLine_Bar", interSolidBars, boxBeamLine, rot1, G4ThreeVector(startPos,subtractHeight2,50*cm));
+			subtractSolidBeamLine_temp = new G4SubtractionSolid("subtractSolidBeamLine_temp", bars_PMT_Corrected, boxBeamLine, rot1, G4ThreeVector(startPos,subtractHeight,50*cm));
+			subtractSolidBeamLine_Bar = new G4SubtractionSolid("subtractSolidBeamLine_Bar", bars_PMT_Corrected, boxBeamLine, rot1, G4ThreeVector(startPos,subtractHeight2,50*cm));
 			subtractSolidBeamLine_Wrap = new G4SubtractionSolid("subtractSolidBeamLine_Wrap", subtractSolidWrap, boxBeamLine, rot1, G4ThreeVector(startPos,startPosY,50*cm));
 			//Make top inner PMT
 			subtractSolidBeamLine_PMT = new G4SubtractionSolid("subtractSolidBeamLine_PMT", subtractSolidBeamLine_temp, boxBeamLine, rot1, G4ThreeVector(startPos,startPosY,50*cm));
 			//Assign Logical Volume for detectors and wrapping affected by beamline
 			fPlasticLogArray[i] = new G4LogicalVolume(subtractSolidBeamLine_Bar, plasticG4material, nameLog,0,0,0);
 			fWrapLogArray[i] = new G4LogicalVolume(subtractSolidBeamLine_Wrap, wrapG4material, nameWrapper,0,0,0); 
-			fPMT1LogArray[i] = new G4LogicalVolume(interSolidPMT1, PMTG4material, namePMT1,0,0,0);
+			fPMT1LogArray[i] = new G4LogicalVolume(PMT1, PMTG4material, namePMT1,0,0,0);
 			fPMT2LogArray[i] = new G4LogicalVolume(subtractSolidBeamLine_PMT, PMTG4material, namePMT2,0,0,0);
 		}
-		else {
+
+		else 
+		{
 			//Assign Logical Volume for detectors and wrapping unaffected by beamline
-			fPlasticLogArray[i] = new G4LogicalVolume(interSolidBars, plasticG4material, nameLog,0,0,0);
+			fPlasticLogArray[i] = new G4LogicalVolume(bars_PMT_Corrected, plasticG4material, nameLog,0,0,0);
 			fWrapLogArray[i] = new G4LogicalVolume(subtractSolidWrap, wrapG4material, nameWrapper,0,0,0);
-			fPMT1LogArray[i] = new G4LogicalVolume(interSolidPMT1, PMTG4material, namePMT1,0,0,0);
-			fPMT2LogArray[i] = new G4LogicalVolume(interSolidPMT2, PMTG4material, namePMT2,0,0,0);
+			fPMT1LogArray[i] = new G4LogicalVolume(PMT1, PMTG4material, namePMT1,0,0,0);
+			fPMT2LogArray[i] = new G4LogicalVolume(PMT2, PMTG4material, namePMT2,0,0,0);
 		}
 
 		//Set Logical Skin for optical photons on wrapping
@@ -419,24 +450,38 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		G4String namePMT1 = name2+std::to_string(detNumBottom);
 		G4String name3 = "PMT2_bottom_";
 		G4String namePMT2 = name3+std::to_string(detNumBottom);
+
+		if (startPos>0.){
+			YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos+detWidth/2.,2.0));
+		}
+		else if (startPos<0.){
+			YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos-detWidth/2.,2.0));
+		}
+		else if (startPos == 0) {
+			YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos-detWidth/2.,2.0));
+		}
 		//For Plastics
 		interSolidBars = new G4IntersectionSolid("interSolidBars", SphereBars, boxBars, rot1, G4ThreeVector(startPos, 0, 50*cm));
+		bars_PMT1_Corrected = new G4SubtractionSolid("bars_PMT1_Corrected", interSolidBars, boxBarsPMT, rot1, G4ThreeVector(startPos, YPosPMT1 , 50*cm));
+		bars_PMT_Corrected = new G4SubtractionSolid("bars_PMT_Corrected", bars_PMT1_Corrected, boxBarsPMT, rot1, G4ThreeVector(startPos, -YPosPMT1 , 50*cm));
 		//For PMT's
-		//interSolidPMT1 = new G4IntersectionSolid("interSolidPMT1", SpherePMT1, boxBars, rot1, G4ThreeVector(startPos, 0, 50*cm));
-		interSolidPMT2 = new G4IntersectionSolid("interSolidPMT2", SpherePMT2, boxBars, rot1, G4ThreeVector(startPos, 0, 50*cm));
+		interSolidBarsPMT1 = new G4IntersectionSolid("interSolidBarsPMT1", SpherePMT1, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos, 0, 50*cm));
+		interSolidBarsPMT2 = new G4IntersectionSolid("interSolidBarsPMT2", SpherePMT2, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos, 0, 50*cm));
+		PMT1 = new G4SubtractionSolid("PMT1", interSolidBarsPMT1, bars_PMT_Corrected, rot1, G4ThreeVector(0., 0., 0.));
+		PMT2 = new G4SubtractionSolid("PMT2", interSolidBarsPMT2, bars_PMT_Corrected, rot1, G4ThreeVector(0., 0., 0.));
 		//For wrapping
 		interSolidBarsLarger = new G4IntersectionSolid("interSolidBarsLarger", SphereInnerWrap, boxBarsLarger, rot1, G4ThreeVector(startPos, 0, 50*cm));
 		interSolidWrap = new G4IntersectionSolid("interSolidWrap", SphereWrap, boxWrap, rot1, G4ThreeVector(startPos, 0, 50*cm));
 		subtractSolidWrap = new G4SubtractionSolid("subtractSolidWrap", interSolidWrap, interSolidBarsLarger, rot1, G4ThreeVector(0,0,0));
 
 		G4double boxheight = 1.*m;
-		G4double pmtSize = 4.5*cm;
+		//G4double pmtSize = 4.5*cm;
 		G4double subtractHeight = -2*boxheight + startPosY - pmtSize;
 		G4double subtractHeight2 = startPosY - pmtSize;
 		G4VSolid * boxBeamLine = new G4Box("boxBeamLine", wrapBoxThick+0.5*mm, boxheight, 1*m); 
 		//Implemented in a way where no partial subtractions occur.  change startPos<->0. in x position to revert to partial subtractions.
-		subtractSolidBeamLine_temp = new G4SubtractionSolid("subtractSolidBeamLine_temp", interSolidBars, boxBeamLine, rot1, G4ThreeVector(startPos,subtractHeight,50*cm));
-		subtractSolidBeamLine_Bar = new G4SubtractionSolid("subtractSolidBeamLine_Bar", interSolidBars, boxBeamLine, rot1, G4ThreeVector(startPos,subtractHeight2,50*cm));
+		subtractSolidBeamLine_temp = new G4SubtractionSolid("subtractSolidBeamLine_temp", bars_PMT_Corrected, boxBeamLine, rot1, G4ThreeVector(startPos,subtractHeight,50*cm));
+		subtractSolidBeamLine_Bar = new G4SubtractionSolid("subtractSolidBeamLine_Bar", bars_PMT_Corrected, boxBeamLine, rot1, G4ThreeVector(startPos,subtractHeight2,50*cm));
 		subtractSolidBeamLine_Wrap = new G4SubtractionSolid("subtractSolidBeamLine_Wrap", subtractSolidWrap, boxBeamLine, rot1, G4ThreeVector(startPos,startPosY,50*cm));
 		//Make top inner PMT
 		subtractSolidBeamLine_PMT = new G4SubtractionSolid("subtractSolidBeamLine_PMT", subtractSolidBeamLine_temp, boxBeamLine, rot1, G4ThreeVector(startPos,startPosY,50*cm));
@@ -444,7 +489,7 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		fPlasticLogArray[detNumBottom] = new G4LogicalVolume(subtractSolidBeamLine_Bar, plasticG4material, nameLog,0,0,0);
 		fWrapLogArray[detNumBottom] = new G4LogicalVolume(subtractSolidBeamLine_Wrap, wrapG4material, nameWrapper,0,0,0); 
 		fPMT1LogArray[detNumBottom] = new G4LogicalVolume(subtractSolidBeamLine_PMT, PMTG4material, namePMT1,0,0,0);
-		fPMT2LogArray[detNumBottom] = new G4LogicalVolume(interSolidPMT2, PMTG4material, namePMT2,0,0,0);
+		fPMT2LogArray[detNumBottom] = new G4LogicalVolume(PMT2, PMTG4material, namePMT2,0,0,0);
 		//Set Logical Skin for optical photons on wrapping
 		G4LogicalSkinSurface * Surface = new G4LogicalSkinSurface(nameWrapper, fWrapLogArray[detNumBottom], ScintWrapper);
 		//Give everything colour
