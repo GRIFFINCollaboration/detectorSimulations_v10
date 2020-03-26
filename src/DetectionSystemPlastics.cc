@@ -141,26 +141,24 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		return 0;
 	}
 	else {
-		G4cout << PMTG4material->GetName() << " is the name of the wrapping material" << G4endl;
+		G4cout << PMTG4material->GetName() << " is the name of the pmt material" << G4endl;
 	}
 
 	////////Scintillation Properties ////////  --------- Might have to be put before the material is constructed
 	//Based on BC408 data
 	G4MaterialPropertiesTable * scintillatorMPT = new G4MaterialPropertiesTable();
 
-	////Can potentially comment this all out because i dont know what e yield should be.
-	//If I dont specify ny own scintillation yield for p,d,t,a,C then they all default to the electron.. Might be a good test...
-	//This is SCINTILLATION YIELD as a function of energy and particle type,
+	//If no scintillation yield for p,d,t,a,C then they all default to the electron yield.
 	//Have to uncomment line in ConstructOp that allows for this to work with boolean (true)
-	/*
+	//The following data is for BC400, very similar in properties and composition then BC408.
 		const G4int num2 = 4;
-		G4double e_test[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
-		G4double p_test[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
-		G4double d_test[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
-		G4double t_test[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
-		G4double a_test[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
-		G4double C_test[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
-		G4double num_test[num2] = {10., 1000., 10000., 100000.};
+		G4double e_range[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
+		G4double yield_e[num2] = {10., 1000., 10000., 100000.};
+		G4double yield_p[num2] = {1., 65., 1500., 45000.};
+		G4double yield_d[num2] = {1., 65., 1500., 45000.};//no data provided, assume same order of magnitude as proton
+		G4double yield_t[num2] = {1., 65., 1500., 45000.};//no data provided, assume same order of magnitude as proton
+		G4double yield_a[num2] = {1., 20., 200., 14000.};
+		G4double yield_C[num2] = {1., 10., 70., 600.};
 		assert(sizeof(e_test) == sizeof(num_test));
 		assert(sizeof(p_test) == sizeof(num_test));
 		assert(sizeof(d_test) == sizeof(num_test));
@@ -168,15 +166,15 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		assert(sizeof(a_test) == sizeof(num_test));
 		assert(sizeof(C_test) == sizeof(num_test));
 
-		scintillatorMPT->AddProperty("ELECTRONSCINTILLATIONYIELD", e_test, num_test, num2);
-		scintillatorMPT->AddProperty("PROTONSCINTILLATIONYIELD", p_test, num_test, num2);
-		scintillatorMPT->AddProperty("DEUTERONSCINTILLATIONYIELD", d_test, num_test, num2);
-		scintillatorMPT->AddProperty("TRITONSCINTILLATIONYIELD", t_test, num_test, num2);
-		scintillatorMPT->AddProperty("ALPHASCINTILLATIONYIELD", a_test, num_test, num2);
-		scintillatorMPT->AddProperty("IONSCINTILLATIONYIELD", C_test, num_test, num2);
+		scintillatorMPT->AddProperty("ELECTRONSCINTILLATIONYIELD", e_range, yield_e, num2)->SetSpline(true);
+		scintillatorMPT->AddProperty("PROTONSCINTILLATIONYIELD", e_range, yield_p, num2)->SetSpline(true);
+		scintillatorMPT->AddProperty("DEUTERONSCINTILLATIONYIELD", e_range, yield_d, num2)->SetSpline(true);
+		scintillatorMPT->AddProperty("TRITONSCINTILLATIONYIELD", e_range, yield_t, num2)->SetSpline(true);
+		scintillatorMPT->AddProperty("ALPHASCINTILLATIONYIELD", e_range, yield_a, num2)->SetSpline(true);
+		scintillatorMPT->AddProperty("IONSCINTILLATIONYIELD", e_range, yield_C, num2)->SetSpline(true);
 	///////
 	//
-	*/
+	
 	const G4int num = 12;
 
 	G4double photonEnergy[num] = {1.7*eV, 2.38*eV, 2.48*eV, 2.58*eV, 2.70*eV, 2.76*eV, 2.82*eV, 2.91*eV, 2.95*eV, 3.1*eV, 3.26*eV, 3.44*eV}; //BC408 emission spectra & corresponding energies
@@ -198,8 +196,9 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	//note if photon is created outside of energy range it will have no index of refraction
 	//scintillatorMPT->AddProperty("ABSLENGTH", photonEnergy, absorption, nEntries); //absorption length doesnt change with energy - examples showing it can...
 	scintillatorMPT->AddConstProperty("ABSLENGTH", 380.*cm); //Scintillation Efficiency - characteristic light yield
-	scintillatorMPT->AddConstProperty("SCINTILLATIONYIELD", 10000./MeV); //Scintillation Efficiency - characteristic light yield //10000./MeV
-	scintillatorMPT->AddConstProperty("RESOLUTIONSCALE", 1.0); // broadens the statistical distribution of generated photons, gaussian based on SCINTILLATIONYIELD, >1 broadens, 0 no distribution
+	//scintillatorMPT->AddConstProperty("SCINTILLATIONYIELD", 10000./MeV); //Scintillation Efficiency - characteristic light yield //10000./MeV
+	// The number of photons produced per interaction is sampled from a Gaussian distribution with a full-width at half-maximum set to 20% of the number of produced photons. From Joeys Thesis
+	scintillatorMPT->AddConstProperty("RESOLUTIONSCALE", 0.2); // broadens the statistical distribution of generated photons, gaussian based on SCINTILLATIONYIELD, >1 broadens, 0 no distribution. 20%
 	scintillatorMPT->AddConstProperty("FASTTIMECONSTANT", 2.1*ns); //only one decay constant given
 	scintillatorMPT->AddConstProperty("SLOWTIMECONSTANT", 2.1*ns); //only one decay constant given - triplet-triplet annihilation 
 	scintillatorMPT->AddConstProperty("YIELDRATIO", 1.0); //The relative strength of the fast component as a fraction of total scintillation yield is given by the YIELDRATIO.
@@ -216,17 +215,33 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	const G4int nEntriesShort = sizeof(photonEnergyShort)/sizeof(G4double);
 	//////Optical Surface - Teflon wrapping //////
 	G4OpticalSurface * ScintWrapper = new G4OpticalSurface("wrapper");
-	///Test 1
+	G4MaterialPropertiesTable * ScintWrapperMPT = new G4MaterialPropertiesTable();
 	ScintWrapper->SetModel(unified);  // unified or glisur
 	ScintWrapper->SetType(dielectric_dielectric);  // dielectric and dielectric or metal?
-	ScintWrapper->SetFinish(polishedfrontpainted);  // teflon wrapping on polished surface->front/back painted // Teflon should be Lambertian in air, specular in optical grease
-	//ScintWrapper->SetPolish(0.9);  // specfic to the glisur model
-
-	G4MaterialPropertiesTable * ScintWrapperMPT = new G4MaterialPropertiesTable();
+	// teflon wrapping on polished surface->front/back painted // Teflon should be Lambertian in air, specular in optical grease
+	//polished front painted is more simplified. Only specular spike reflection
+	ScintWrapper->SetFinish(polishedfrontpainted);  
+	
+	//poished back painted is maybe more realistic, need to then include sigma alpha (angle of the micro facet to the average normal surface) 
+/*
+	ScintWrapper->SetFinish(polishedbackpainted);	
+	ScintWrapper->SetSigmaAlpha(0.1); // 0 for smooth, 1 for max roughness
+	const G4int NUM =3;
+	G4double pp[NUM] = {2.038*eV, 4.144*eV};
+	G4double specularlobe[NUM] = {0.033, 0.033};
+	G4double specularspike[NUM] = {0.9, 0.9};
+	G4double backscatter[NUM] = {0.033, 0.033};
+	//Diffuse lobe constant is implicit, but spec lobe, spec spike, and backscatter all need to add up to 1. //diffuse lobe constant is the probability of internal lambertian refection
+	ScintWrapperMPT->AddProperty("SPECULARLOBECONSTANT",pp,specularlobe,NUM); //reflection probability about the normal of the micro facet
+	ScintWrapperMPT->AddProperty("SPECULARSPIKECONSTANT",pp,specularspike,NUM); //reflection probability about average surface normal
+	ScintWrapperMPT->AddProperty("BACKSCATTERCONSTANT",pp,backscatter,NUM); //probability of exact back scatter based on mutiple reflections within the deep groove
+*/
 	G4double rIndex_Teflon[numShort] = {1.35, 1.35, 1.35}; //Taken from wikipedia
 	ScintWrapperMPT->AddProperty("RINDEX", photonEnergyShort, rIndex_Teflon, nEntriesShort)->SetSpline(true);  //refractive index can change with energy
 	G4double reflectivity[numShort] = {0.95, 0.95, 0.95};
-	ScintWrapperMPT->AddProperty("REFLECTIVITY", photonEnergyShort, reflectivity, nEntriesShort)->SetSpline(true);  //
+	ScintWrapperMPT->AddProperty("REFLECTIVITY", photonEnergyShort, reflectivity, nEntriesShort)->SetSpline(true);  // light reflected / incident light.
+	//G4double efficiency[numShort] = {0.95, 0.95, 0.95};
+	//ScintWrapperMPT->AddProperty("EFFICIENCY",photonEnergyShort,efficiency,nEntriesShort); //This is the Quantum Efficiency of the photocathode = # electrons / # of incident photons
 	ScintWrapper->SetMaterialPropertiesTable(ScintWrapperMPT);
 	ScintWrapper->DumpInfo();
 
@@ -242,6 +257,7 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	///// Building the Plastic Geometry /////
 
 	//Opening angle of DESCANT is 65.5 degrees, approx 1.143 radians. Limiting to 1.13, but 1.23 helps for making horizontal cuts for PMTs
+	G4double realAngle = 1.13;
 	G4double startTheta = 0.;
 	//G4double deltaTheta = 1.13;
 	G4double deltaTheta = 1.23;
@@ -274,6 +290,8 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	G4double startPos = length/2.-detWidth/2.-fWrapThickness-fAirGap;
 	G4double wrapBoxThick = (detWidth+2.*fWrapThickness+2.*fAirGap)/2.;
 	G4cout << "detWidth: " << detWidth <<G4endl;
+	G4double zStartPos = innerRadius * cos (realAngle);
+	G4cout << "zStartPos: " << zStartPos <<G4endl;
 
 	//For placing volume
 	move = G4ThreeVector(0., 0., 0.);
@@ -288,6 +306,7 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	G4VSolid * boxBars = new G4Box("boxBars", detWidth/2., 1.*m , 1.*m);
 	G4VSolid * boxBarsPMTSmaller = new G4Box("boxBarsPMTSmaller", detWidth/2.-0.1*mm, 1.*m , 1.*m);
 	G4VSolid * boxBarsPMT = new G4Box("boxBarsPMT", detWidth/2.+fAirGap+0.01*cm, 2.*pmtSize , 1.*m);
+	//G4VSolid * boxBarsPMT = new G4Box("boxBarsPMT", detWidth/2.+fAirGap+0.01*cm, pmtSize , 1.*m);
 	G4VSolid * boxBarsLarger = new G4Box("boxBarsLarger", detWidth/2.+fAirGap, 1.*m , 1.*m);
 	G4VSolid * SphereBars = new G4Sphere("SphereBars", innerRadius, outerRadius, startPhi, deltaPhi, startTheta, deltaTheta);
 	G4IntersectionSolid * interSolidBars;
@@ -328,13 +347,16 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	for (int i= 0 ; i < fNumDet ; i++) {
 		//Determine where to make horizontal cuts on detectors to allow for PMTs.  This changes with x-position
 		if (startPos>0.){
-			YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos+detWidth/2.,2.0));
-		}
+			//YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos+detWidth/2.,2.0));
+			YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos+detWidth/2.,2.0) - pow(zStartPos, 2.)) + 2.*pmtSize;
+		} 
 		else if (startPos<0.){
-			YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos-detWidth/2.,2.0));
+			//YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos-detWidth/2.,2.0));
+			YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos-detWidth/2.,2.0) - pow(zStartPos, 2.)) + 2.*pmtSize;
 		}
 		else if (startPos == 0) {
-			YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos-detWidth/2.,2.0));
+			//YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos-detWidth/2.,2.0));
+			YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos-detWidth/2.,2.0) - pow(zStartPos, 2.)) + 2.*pmtSize;
 		}
 		//For Plastics
 		interSolidBars = new G4IntersectionSolid("interSolidBars", SphereBars, boxBars, rot1, G4ThreeVector(startPos, 0, 50*cm));
@@ -366,6 +388,8 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 
 		//G4cout << "name: " << name << G4endl;
 		G4cout << "startPos: " << startPos << G4endl;
+		G4cout << "YPosPMT1: " << YPosPMT1 <<G4endl;
+		G4cout << "YPos after PMT sub: " << YPosPMT1 - 2.*pmtSize <<G4endl;
 
 		//Putting in subtraction Beam Line 
 		if( abs(startPos-detWidth/2.) < BeamLineXY || abs(startPos+detWidth/2.) < BeamLineXY || abs(startPos) < BeamLineXY) {
@@ -452,13 +476,16 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		G4String namePMT2 = name3+std::to_string(detNumBottom);
 
 		if (startPos>0.){
-			YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos+detWidth/2.,2.0));
-		}
+			//YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos+detWidth/2.,2.0));
+			YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos+detWidth/2.,2.0) - pow(zStartPos, 2.)) + 2.*pmtSize;
+		} 
 		else if (startPos<0.){
-			YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos-detWidth/2.,2.0));
+			//YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos-detWidth/2.,2.0));
+			YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos-detWidth/2.,2.0) - pow(zStartPos, 2.)) + 2.*pmtSize;
 		}
 		else if (startPos == 0) {
-			YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos-detWidth/2.,2.0));
+			//YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos-detWidth/2.,2.0));
+			YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos-detWidth/2.,2.0) - pow(zStartPos, 2.)) + 2.*pmtSize;
 		}
 		//For Plastics
 		interSolidBars = new G4IntersectionSolid("interSolidBars", SphereBars, boxBars, rot1, G4ThreeVector(startPos, 0, 50*cm));
