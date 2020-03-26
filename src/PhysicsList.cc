@@ -215,7 +215,7 @@ void PhysicsList::ConstructOp(G4bool constructOp)
 		//   turning on scintillation process
 		G4Scintillation* scintillationProcess = new G4Scintillation("Scintillation");
 		//   making scintillation process  particle and energy-specific
-		//scintillationProcess->SetScintillationByParticleType(true);
+		scintillationProcess->SetScintillationByParticleType(true);
 
 		G4OpAbsorption* absorptionProcess = new G4OpAbsorption();
 		G4OpRayleigh* rayleighScatteringProcess = new G4OpRayleigh();

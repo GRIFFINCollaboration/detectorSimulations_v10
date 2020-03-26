@@ -527,9 +527,10 @@ void DetectionSystemGriffin::BuildOneDetector() {
 
 	// Include BGOs?
 	if(fBGOSelector == 1) {
+		G4cout<<"Building BGO "<<G4endl ;
 		ConstructNewSuppressorCasingWithShells() ;
 	} else if(fBGOSelector == 0) {
-		//G4cout<<"Not building BGO "<<G4endl ;
+		G4cout<<"Not building BGO "<<G4endl ;
 	} else {
 		G4cout<<"Error 234235"<<G4endl ;
 		exit(1);
@@ -566,9 +567,10 @@ void DetectionSystemGriffin::BuildEverythingButCrystals() {
 
 	// Include BGOs?
 	if(fBGOSelector == 1) {
+		G4cout<<"Building BGO "<<G4endl ;
 		ConstructNewSuppressorCasingWithShells();
 	} else if(fBGOSelector == 0) {
-		//G4cout<<"Not building BGO "<<G4endl;
+		G4cout<<"Not building BGO "<<G4endl;
 	} else {
 		G4cout<<"Error 234235"<<G4endl;
 		exit(1);
