@@ -134,7 +134,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		// check edep again in case we use the grid cell but haven't hit it
 		if(edep <= 0) return;
 
-		fEventAction->AddHitTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ);
+		fEventAction->AddHitTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ, ekin);
 
 		if(trackSteps) {
 			fEventAction->AddStepTracker(prop, evntNb, trackID, parentID, stepNumber, particleType, processType, edep, postPos, postTime, targetZ);

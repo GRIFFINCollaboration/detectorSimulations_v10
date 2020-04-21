@@ -126,6 +126,7 @@ void DetectionSystemGriffin::Build() {
 
 }//end ::Build
 
+/// These functions describe a rotation of coordinates x,y,z by theta around the y-axis and then by phi around the z-axis
 G4double DetectionSystemGriffin::TransX(G4double x, G4double y, G4double z, G4double theta, G4double phi) {
 	return (x*cos(theta)+z*sin(theta))*cos(phi)-y*sin(phi);
 }
@@ -179,6 +180,7 @@ G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* expHal
 	z = distFromOriginDet;
 
 	G4ThreeVector move(DetectionSystemGriffin::TransX(x,y,z,theta,phi), DetectionSystemGriffin::TransY(x,y,z,theta,phi), DetectionSystemGriffin::TransZ(x,z,theta));
+	// general note: MakeImprint first rotates, then translates
 	fAssembly->MakeImprint(expHallLog, move, rotate, 0, fSurfCheck);
 	fBackAndSideSuppressorShellAssembly->MakeImprint(expHallLog, move, rotate, 0, fSurfCheck);
 

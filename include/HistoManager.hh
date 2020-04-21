@@ -42,7 +42,7 @@
 
 #include "DetectorConstruction.hh"
 
-const G4int MAXNTCOL            = 15;
+const G4int MAXNTCOL            = 18;
 
 const G4bool WRITEEKINHISTOS    = true;//bools needed to write histos
 const G4bool WRITEEDEPHISTOS    = true;
@@ -110,6 +110,8 @@ public:
 	G4bool GetStepTrackerBool() { return fStepTrackerBool; }
 	G4bool GetHitTrackerBool()  { return fHitTrackerBool; }
 
+	void PushBack(G4double depEnergy, G4double kinEnergy, G4int particleType) { fEdepVector.push_back(depEnergy); fEkinVector.push_back(kinEnergy); fParticleTypeVector.push_back(particleType); }
+	void ClearVariables() { fEdepVector.clear(); fEkinVector.clear(); fParticleTypeVector.clear(); }
 	void BeamEnergy(G4double val) { fBeamEnergy = val; }
 	void BeamTheta(G4double val)  { fBeamTheta = val; }
 	void BeamPhi(G4double val)    { fBeamPhi = val; }
@@ -130,7 +132,7 @@ private:
 	DetectorConstruction* fDetectorConstruction;
 	G4bool        fFactoryOn;
 	G4int         fMakeHistogramIndex;
-	G4String      fFileName[2];
+	G4String      fFileName;
 
 	G4int         fHistId[MAXHISTO];
 	G4AnaH1*      fHistPt[MAXHISTO];
@@ -142,6 +144,10 @@ private:
 
 	G4bool fStepTrackerBool;
 	G4bool fHitTrackerBool;
+
+	std::vector<G4double> fEdepVector;
+	std::vector<G4double> fEkinVector;
+	std::vector<G4int> fParticleTypeVector;
 
 	G4double fBeamEnergy;
 	G4double fBeamTheta;

@@ -59,6 +59,8 @@
 #include "G4HadronPhysicsQGSP_BIC.hh"
 #include "G4HadronPhysicsQGSP_BERT_HP.hh"
 #include "G4HadronPhysicsQGSP_BIC_HP.hh"
+#include "G4HadronPhysicsFTFP_BERT.hh"
+#include "G4HadronPhysicsFTFP_BERT_HP.hh"
 
 #include "G4EmExtraPhysics.hh"
 #include "G4HadronElasticPhysics.hh"
@@ -178,6 +180,9 @@ void PhysicsList::SelectPhysicsList(const G4String& name)
 	} else if(name == "QGSP_BIC_HP"  && !fHadPhysicsList) {
 		AddExtraBuilders(true);
 		fHadPhysicsList = new G4HadronPhysicsQGSP_BIC_HP(verboseLevel);
+	} else if (name == "FTFP_BERT_HP" && !fHadPhysicsList) {
+		AddExtraBuilders(true);
+		fHadPhysicsList = new G4HadronPhysicsFTFP_BERT_HP(verboseLevel);
 	} else if(name == "emlivermore") {
 		delete fEmPhysicsList;
 		fEmPhysicsList = new G4EmLivermorePhysics(verboseLevel);
@@ -289,6 +294,14 @@ void PhysicsList::SetCuts()
 	SetCutValue(fCutForGamma, "gamma");
 	SetCutValue(fCutForElectron, "e-");
 	SetCutValue(fCutForPositron, "e+");
+
+	SetCutValue(1.0*nm, "proton");
+	SetCutValue(1.0*nm, "deuteron");
+	SetCutValue(1.0*nm, "C12");
+	SetCutValue(1.0*um, "C13");
+	SetCutValue(1.0*um, "Be9");
+	SetCutValue(1.0*um, "B10");
+
 	G4cout<<"world cuts are set"<<G4endl;
 
 	//  if(!fTargetCuts) SetTargetCut(fCutForElectron);

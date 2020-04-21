@@ -68,7 +68,7 @@
 #/DetSys/gun/position 0.0 0.0 -8.2 mm ### Position of "efficiency source"
 ###
 ### Reads in a file specifying a distribution in Z (relative to /DetSys/gun/position)
-#/Detsys/gun/FileDistro dist.dat
+#/DetSys/gun/FileDistro dist.dat
 ### see SPICE_help.txt for details
 ###
 ### Set beamspot xy sigma 0.5 mm equates to 90% through 2 mm
@@ -135,9 +135,9 @@
 ### When using a LayeredTarget you specify the beam/gun particle emission
 ### distributed through a target layer.
 ### Enter the index of the layer, starting at 0.
-#/Detsys/gun/TargetLayer 1 
+#/DetSys/gun/TargetLayer 1 
 ### Creates uniform emission through the layer
-### Will overide /Detsys/gun/FileDistro
+### Will overide /DetSys/gun/FileDistro
 ###### Target Construction End ######
 
 

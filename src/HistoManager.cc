@@ -39,7 +39,7 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 HistoManager::HistoManager(DetectorConstruction* detectorConstruction) {
-	fFileName[0] = "g4out";
+	fFileName = "g4out";
 	fFactoryOn = false;
 
 	// Only fill one NTuple at a time. If fStepTrackerBool is true, then fHitTrackerBool should be false, or vise-versa.
@@ -68,15 +68,16 @@ void HistoManager::Book() {
 	// The choice of analysis technology is done via selection of a namespace
 	// in HistoManager.hh
 	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-	//analysisManager->SetVerboseLevel(2);
-	G4String extension = analysisManager->GetFileType();
-	fFileName[1] = fFileName[0] + "." + extension; // creating root output file in build folder
+	// this merges the root files at the end, but puts all branches inside a branch called ntuple ...
+	//analysisManager->SetNtupleMerging(true);
+	//analysisManager->SetVerboseLevel(4);
 
 	// Create directories
 	// Open an output file
-	G4bool fileOpen = analysisManager->OpenFile(fFileName[0]); 
+	G4bool fileOpen = analysisManager->OpenFile(fFileName); 
 	if(!fileOpen) {
-		G4cout<<"---> HistoManager::book(): cannot open "<<fFileName[1]<<G4endl;
+		G4String extension = analysisManager->GetFileType();
+		G4cout<<"---> HistoManager::book(): cannot open "<<fFileName<<"."<<extension<<G4endl;
 		return;
 	}
 
@@ -99,6 +100,11 @@ void HistoManager::Book() {
 		fNtColIdHit[12] = analysisManager->CreateNtupleDColumn("posz");
 		fNtColIdHit[13] = analysisManager->CreateNtupleDColumn("time");
 		fNtColIdHit[14] = analysisManager->CreateNtupleIColumn("targetZ");
+		if(fDetectorConstruction->Descant() || fDetectorConstruction->Testcan()) {
+			fNtColIdHit[15] = analysisManager->CreateNtupleDColumn("eDepVector", fEdepVector);
+			fNtColIdHit[16] = analysisManager->CreateNtupleDColumn("eKinVector", fEkinVector);
+			fNtColIdHit[17] = analysisManager->CreateNtupleIColumn("particleTypeVector", fParticleTypeVector);
+		}
 		analysisManager->FinishNtuple();
 	}
 
@@ -137,7 +143,6 @@ void HistoManager::Save() {
 		G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 		analysisManager->Write();
 		analysisManager->CloseFile();
-		//G4cout<<"----> Histogram Tree is saved in "<<fFileName[1]<<G4endl;
 
 		delete G4AnalysisManager::Instance();
 		fFactoryOn = false;

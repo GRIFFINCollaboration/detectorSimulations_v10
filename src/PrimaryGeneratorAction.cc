@@ -177,7 +177,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 		fParticleGun->SetParticleMomentumDirection(thisDirection);
 		fParticleGun->SetParticleEnergy(thisEnergy);
 	} else  {
-		// Changed so that most grsi "/Detsys/gun/" commands still effect gun when using
+		// Changed so that most grsi "/DetSys/gun/" commands still effect gun when using
 		// Underlying geant4 commands such as '/gun/particle ion" & "/gun/ion"
 		if(fEffParticleBool) {
 			G4ParticleDefinition* effPart;

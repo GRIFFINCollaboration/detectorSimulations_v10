@@ -96,7 +96,7 @@ void EventAction::EndOfEventAction(const G4Event*) {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void EventAction::AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& targetZ) {
+void EventAction::AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& targetZ, const G4double& kinEnergy) {
 	for(G4int i = 0; i < fNumberOfHits; i++) {
 		if(fProperties[i] == properties) {
 			// sum the new enery
@@ -127,6 +127,10 @@ void EventAction::AddHitTracker(const DetectorProperties& properties, const G4in
 	if(fNumberOfHits >= MAXHITS) {
 		G4cout<<"ERROR! Too many hits!"<<G4endl;
 		throw;
+	}
+
+	if(fHistoManager->GetDetectorConstruction()->Descant() || fHistoManager->GetDetectorConstruction()->Testcan()) {
+		fHistoManager->PushBack(depEnergy, kinEnergy, particleType); //, time, processType);
 	}
 }
 
@@ -177,6 +181,10 @@ void EventAction::ClearVariables() {
 				fHitTrackerD[j][i] = 0.0;
 			}
 		}
+	}
+
+	if(fHistoManager->GetDetectorConstruction()->Descant() || fHistoManager->GetDetectorConstruction()->Testcan()) {
+		fHistoManager->ClearVariables();
 	}
 
 	if(fHistoManager->GetDetectorConstruction()->Spice()) {

@@ -108,7 +108,7 @@ PhysicsListMessenger::PhysicsListMessenger(PhysicsList* pPhys)
 	fConstructOpCmd = new G4UIcmdWithABool("/DetSys/phys/ConstructOpticalPhysics",this);
 	fConstructOpCmd->SetGuidance("Choose to build optical physics models");
 	fConstructOpCmd->SetDefaultValue(false);
-	fConstructOpCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	fConstructOpCmd->AvailableForStates(G4State_Idle);// Joey had removed the pre init state, not sure why
 
 	fSpiceStepperCmd = new G4UIcmdWithABool("/DetSys/phys/SpiceStepper",this);
 	fSpiceStepperCmd->SetGuidance("Choose to invoke SPICE stepper");
