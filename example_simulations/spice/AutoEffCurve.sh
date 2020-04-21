@@ -1,4 +1,5 @@
-### 
+g++ SpiceMiniSort.C `root-config --cflags --libs` -o sMini
+
 ### Because of the complex shape of the efficiency curves
 ### An uneven distribution of points is best, add more points in complex areas
 ### Low Energy Lens
@@ -7,6 +8,12 @@
 energypoints="100 200 250 300 350 375 400 425 450 475 500 525 550 575 600 650 700 750 800 850 900 1000 1100 1200 1400 1600 2000"
 
 rm -rf SPICE_*.root
+
+### Change based on time/precision
+### Set as low as 10,000 for a very rough fast answer and a maximum of 10,000,000 
+NumberOfPoints=10000
+
+echo $NumberOfPoints > EffPoints.txt
 
 for E in $energypoints;
 do
@@ -36,14 +43,15 @@ do
 	echo "/DetSys/app/LayeredTargetAddLayer Gold 1.8" >> spiceauto.mac 
 	echo "/DetSys/gun/TargetLayer 0" >> spiceauto.mac 
 
-	### Change based on time/precision
-	### Set as low as 10,000 for a very rough fast answer and a maximum of 10,000,000 
-	echo "/run/beamOn 100000" >> spiceauto.mac 
+	echo "/run/beamOn $NumberOfPoints" >> spiceauto.mac 
 
 	#running the sim with macro created here
 	./Griffinv10 spiceauto.mac 
 
+	counts=$(./sMini $E 0.05)
+    echo "$E $counts" >> EffPoints.txt
 	mv g4out.root SPICE_"$E".root
+	
 done
 
-root -nl MakeEfficiency.c
+root -b -l -q MakeEfficiency.c

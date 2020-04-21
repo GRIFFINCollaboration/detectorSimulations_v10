@@ -53,10 +53,6 @@ EventAction::EventAction(RunAction* run, HistoManager* hist)
 {
 	fNumberOfHits = 0;
 	fNumberOfSteps = 0;
-
-	if(fHistoManager->GetDetectorConstruction()->Spice()) {
-		SetupSpiceErfc();
-	}
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -79,16 +75,12 @@ void EventAction::BeginOfEventAction(const G4Event* evt) {
 
 void EventAction::EndOfEventAction(const G4Event*) {
 	if(fHistoManager != nullptr) {
-		if(fHistoManager->GetDetectorConstruction()->Spice()) {
-			FillSpice();
-		} else {
-			for(G4int i = 0; i < fNumberOfHits; i++) {
-				fHistoManager->FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i]);
-			}
-			for(G4int i = 0; i < fNumberOfSteps; i++) {
-				fHistoManager->FillStepNtuple(fStepTrackerI[0][i], fStepTrackerI[1][i], fStepTrackerI[2][i], fStepTrackerI[3][i],  fStepTrackerI[4][i], fStepTrackerI[5][i], fStepTrackerI[6][i], fStepTrackerI[7][i], fStepTrackerI[8][i], fStepTrackerD[0][i]/keV, fStepTrackerD[1][i]/mm, fStepTrackerD[2][i]/mm, fStepTrackerD[3][i]/mm, fStepTrackerD[4][i]/second, fStepTrackerI[9][i]);
-			}
-		}
+        for(G4int i = 0; i < fNumberOfHits; i++) {
+            fHistoManager->FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i]);
+        }
+        for(G4int i = 0; i < fNumberOfSteps; i++) {
+            fHistoManager->FillStepNtuple(fStepTrackerI[0][i], fStepTrackerI[1][i], fStepTrackerI[2][i], fStepTrackerI[3][i],  fStepTrackerI[4][i], fStepTrackerI[5][i], fStepTrackerI[6][i], fStepTrackerI[7][i], fStepTrackerI[8][i], fStepTrackerD[0][i]/keV, fStepTrackerD[1][i]/mm, fStepTrackerD[2][i]/mm, fStepTrackerD[3][i]/mm, fStepTrackerD[4][i]/second, fStepTrackerI[9][i]);
+        }
 
 		ClearVariables();
 	}
@@ -198,103 +190,56 @@ void EventAction::ClearVariables() {
 }
 
 
-void EventAction::FillSpice() {
-	G4double energySumDet = 0;
-	G4int fSpiceMultiplicity = 0;
-	G4double SpiceEnergy,SpiceEnergyRaw;
-	for(G4int ring=0; ring < MAXNUMDETSPICE; ring++) {
-		for(G4int seg=0; seg < 12; seg++) {
-			if(fSpiceEnergyDet[ring][seg] > 20.*CLHEP::keV&&WRITEEDEPHISTOS) {
-				SpiceEnergyRaw = fSpiceEnergyDet[ring][seg];// SpiceRawEnergy. No resolution applied
-				SpiceEnergy=SpiceEnergyRaw;
-				if(fHistoManager->GetDetectorConstruction()->SpiceRes()){
-					SpiceEnergy = ApplySpiceRes(SpiceEnergyRaw);
-					fHistoManager->FillHistogram(fHistoManager->AngleDistro(8),SpiceEnergy*1000);
-				}
-
-				//fill energies across all segments
-				fHistoManager->FillHistogram(fHistoManager->SpiceHistNumbers(0),(SpiceEnergy)*1000.);//+4keV for Bismuth
-				//fill standard energy spectra - no add-back
-
-				//2D all seg energies
-				fHistoManager->Fill2DHistogram(fHistoManager->AngleDistro(1), (G4double) MAXNUMSEGSPICE*ring+seg,SpiceEnergy*1000., 1.0);
-
-
-				fSpiceMultiplicity++;//iterates every deposition per fill to track multiplicity per event
-				energySumDet += SpiceEnergy;
-
-				//Gated angular histos
-				if(abs(SpiceEnergyRaw - fHistoManager->BeamEnergy()) < 10.*keV){//gating kinematics on (raw) detected energy
-
-					//Mapping phi to overlay mirrored segments
-					G4int remainder = seg%3;
-					G4double PhiMap = ((int)seg/3)*CLHEP::pi/2;
-					PhiMap = fHistoManager->BeamPhi()-PhiMap;
-					PhiMap = asin(sin(PhiMap));//if we went over 360
-
-					//THETA vs. PHI
-					fHistoManager->Fill2DHistogram(fHistoManager->SpiceAngleHists(MAXNUMSEGSPICE*ring+remainder), fHistoManager->BeamTheta(), PhiMap, 1.);//PHI M<AP!!!!!!!!!!!!!
-				}
-
-
-			}//end of filling histos with SPICE detections per individual seg
-		}//seg loop
-	}//ring loop
-
-	//wiritng add-backed energies
-	if(energySumDet > MINENERGYTHRES) {//after exiting loops for all rings/segs, will input summed (add-back) energy if above threshold
-		if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(fHistoManager->SpiceHistNumbers(1), energySumDet*1000.);
-	}
-}
+//void EventAction::FillSpice() {
+//	G4double energySumDet = 0;
+//	G4int fSpiceMultiplicity = 0;
+//	G4double SpiceEnergy,SpiceEnergyRaw;
+//	for(G4int ring=0; ring < MAXNUMDETSPICE; ring++) {
+//		for(G4int seg=0; seg < 12; seg++) {
+//			if(fSpiceEnergyDet[ring][seg] > 20.*CLHEP::keV&&WRITEEDEPHISTOS) {
+//				SpiceEnergyRaw = fSpiceEnergyDet[ring][seg];// SpiceRawEnergy. No resolution applied
+//				SpiceEnergy=SpiceEnergyRaw;
+//				if(fHistoManager->GetDetectorConstruction()->SpiceRes()){
+//					SpiceEnergy = ApplySpiceRes(SpiceEnergyRaw);
+//					fHistoManager->FillHistogram(fHistoManager->AngleDistro(8),SpiceEnergy*1000);
+//				}
+//
+//				//fill energies across all segments
+//				fHistoManager->FillHistogram(fHistoManager->SpiceHistNumbers(0),(SpiceEnergy)*1000.);//+4keV for Bismuth
+//				//fill standard energy spectra - no add-back
+//
+//				//2D all seg energies
+//				fHistoManager->Fill2DHistogram(fHistoManager->AngleDistro(1), (G4double) MAXNUMSEGSPICE*ring+seg,SpiceEnergy*1000., 1.0);
+//
+//
+//				fSpiceMultiplicity++;//iterates every deposition per fill to track multiplicity per event
+//				energySumDet += SpiceEnergy;
+//
+//				//Gated angular histos
+//				if(abs(SpiceEnergyRaw - fHistoManager->BeamEnergy()) < 10.*keV){//gating kinematics on (raw) detected energy
+//
+//					//Mapping phi to overlay mirrored segments
+//					G4int remainder = seg%3;
+//					G4double PhiMap = ((int)seg/3)*CLHEP::pi/2;
+//					PhiMap = fHistoManager->BeamPhi()-PhiMap;
+//					PhiMap = asin(sin(PhiMap));//if we went over 360
+//
+//					//THETA vs. PHI
+//					fHistoManager->Fill2DHistogram(fHistoManager->SpiceAngleHists(MAXNUMSEGSPICE*ring+remainder), fHistoManager->BeamTheta(), PhiMap, 1.);//PHI M<AP!!!!!!!!!!!!!
+//				}
+//
+//
+//			}//end of filling histos with SPICE detections per individual seg
+//		}//seg loop
+//	}//ring loop
+//
+//	//wiritng add-backed energies
+//	if(energySumDet > MINENERGYTHRES) {//after exiting loops for all rings/segs, will input summed (add-back) energy if above threshold
+//		if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(fHistoManager->SpiceHistNumbers(1), energySumDet*1000.);
+//	}
+//}
 
 
 G4bool EventAction::SpiceTest(){//is SPICE inputted
 	return fHistoManager->GetDetectorConstruction()->Spice();
-}
-
-
-G4double EventAction::ApplySpiceRes(G4double energy) {
-	//pre-calculated functions that scale with energy to give accurate resolution split
-	//depending on result, will be part of one of two Gaussians, or a ERFC-bsaed decay
-	G4double gaussPick = G4UniformRand(); 
-	G4double result = 0.;
-	if(gaussPick < 37./100.) {
-		G4double Sigma1 = (0.7E-6*energy/CLHEP::keV + 0.0009);//include ->keV conversion
-		result = G4RandGauss::shoot(energy, Sigma1);
-	} else if(gaussPick > 77./100.){
-		result = SpiceErfc()*(0.5E-6*energy + 0.0012)+energy/CLHEP::keV/1000.;//ERFC from (from http://radware.phy.ornl.gov/gf3/)
-	} else {
-		G4double Sigma2 = (1.8E-6*energy/CLHEP::keV + 0.00500);
-		result = G4RandGauss::shoot(energy, Sigma2);
-	}
-	return result;
-}
-
-void EventAction::SetupSpiceErfc() {
-	//10000 bins between -0.5 and 0.5 containing decay function information for SPICE pre-amps
-	fAmpTot = 0.;
-
-	//making fixed ERFC func - accessed via a getter (local to this class)
-	for(int i = 0; i < 10000; ++i) {
-		//Full function from -80 to +20
-		double channel = static_cast<double>(i);
-		channel /=100.;
-		channel -= 80.;
-		fAmp[i] = exp(channel/30.)*erfc(channel/sqrt(2.)/sqrt(2.) + 1./(sqrt(2.)*30.));
-		fAmpx[i] = channel; //have a corresponding x-array to the Ampitudes
-		fAmpTot += fAmp[i];
-	}
-}
-
-G4double EventAction::SpiceErfc() {
-	G4double erfcRand = G4UniformRand()*fAmpTot;
-	G4double c = 0.;
-	for(int i = 0; i < 10000; ++i) {
-		c += fAmp[i];
-		if(c > erfcRand) {
-			return fAmpx[i];
-		}
-	}
-
-	return 0.;
 }

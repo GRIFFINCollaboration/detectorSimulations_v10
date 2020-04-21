@@ -188,6 +188,8 @@ DetectorConstruction::DetectorConstruction() :
 	fPaces    = false;
 	fDescant  = false;
 	fTestcan  = false;
+    
+    fRecordGun = false;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -889,11 +891,18 @@ void DetectorConstruction::SetProperties() {
 	if(G4Threading::G4GetThreadId() < 0) {
 		G4cout<<fLogicWorld->GetNoDaughters()<<" daughter volumes"<<std::endl;
 	}
-	for(int i = 0; i < fLogicWorld->GetNoDaughters(); ++i) {
-		if(!HasProperties(fLogicWorld->GetDaughter(i)) && CheckVolumeName(fLogicWorld->GetDaughter(i)->GetName())) {
-			fPropertiesMap[fLogicWorld->GetDaughter(i)] = ParseVolumeName(fLogicWorld->GetDaughter(i)->GetName());
+    SetPropertiesRecursive(fLogicWorld);
+}
+
+
+void DetectorConstruction::SetPropertiesRecursive(G4LogicalVolume* vol) {
+    for(int i = 0; i < vol->GetNoDaughters(); ++i) {
+		if(!HasProperties(vol->GetDaughter(i)) && CheckVolumeName(vol->GetDaughter(i)->GetName())) {
+			fPropertiesMap[vol->GetDaughter(i)] = ParseVolumeName(vol->GetDaughter(i)->GetName());
 		}
+		SetPropertiesRecursive(vol->GetDaughter(i)->GetLogicalVolume());
 	}
+    
 }
 
 void DetectorConstruction::Print() {
@@ -904,13 +913,19 @@ void DetectorConstruction::Print() {
 
 	SetProperties();
 
-	for(int i = 0; i < fLogicWorld->GetNoDaughters(); ++i) {
-		std::cout<<i<<": "<<fLogicWorld->GetDaughter(i)<<" - "<<fLogicWorld->GetDaughter(i)->GetName();
-		if(HasProperties(fLogicWorld->GetDaughter(i))) {
-			auto prop = GetProperties(fLogicWorld->GetDaughter(i));
+    PrintRecursive(fLogicWorld);
+}
+
+void DetectorConstruction::PrintRecursive(G4LogicalVolume* vol){
+    
+    for(int i = 0; i < vol->GetNoDaughters(); ++i) {
+		std::cout<<i<<": "<<vol->GetDaughter(i)<<" - "<<vol->GetDaughter(i)->GetName();
+		if(HasProperties(vol->GetDaughter(i))) {
+			auto prop = GetProperties(vol->GetDaughter(i));
 			std::cout<<" - "<<prop.detectorNumber<<", "<<prop.crystalNumber<<", "<<prop.systemID;
 		}
 		std::cout<<std::endl;
+        PrintRecursive(vol->GetDaughter(i)->GetLogicalVolume());
 	}
 }
 
@@ -960,8 +975,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		std::istringstream is(tmpString);
 		is>>result.detectorNumber>>result.crystalNumber;
 		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
-		++result.detectorNumber;//start from 1 instead of 0
-		++result.crystalNumber;//start from 1 instead of 0
 		result.systemID = 1000;
 		if(debug) {
 			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<std::endl;
@@ -978,8 +991,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		std::istringstream is(tmpString);
 		is>>result.detectorNumber>>result.crystalNumber;
 		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
-		++result.detectorNumber;//start from 1 instead of 0
-		++result.crystalNumber;//start from 1 instead of 0
 		result.systemID = 1000;
 		if(debug) {
 			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<std::endl;
@@ -1011,8 +1022,8 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
 		// create istringstream from the stripped and converted stream, and read detector and crystal number
 		std::istringstream is(tmpString);
-		is>>result.detectorNumber;
-		result.systemID = 10;//?? why the same as SiSegmentPhys??
+		is>>result.detectorNumber>>result.crystalNumber;
+		result.systemID = 20;
 		if(debug) {
 			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<std::endl;
 		}
@@ -1127,16 +1138,41 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 
 	if(volumeName.find("sceptarSquareScintillatorLog") != G4String::npos) {
 		// to number SCEPTAR paddles correctly:
-		if(result.detectorNumber== 1) result.detectorNumber= 6;
-		else if(result.detectorNumber== 2) result.detectorNumber= 10;
-		else if(result.detectorNumber== 3) result.detectorNumber= 9;
-		else if(result.detectorNumber== 4) result.detectorNumber= 8;
-		else if(result.detectorNumber== 5) result.detectorNumber= 7;
-		else if(result.detectorNumber== 6) result.detectorNumber= 14;
-		else if(result.detectorNumber== 7) result.detectorNumber= 13;
-		else if(result.detectorNumber== 8) result.detectorNumber= 12;
-		else if(result.detectorNumber== 9) result.detectorNumber= 11;
-		else if(result.detectorNumber== 10) result.detectorNumber= 15;
+		switch(result.detectorNumber) {
+			case 0:
+				result.detectorNumber = 5;
+				break;
+			case 1:
+				result.detectorNumber = 9;
+				break;
+			case 2:
+				result.detectorNumber = 8;
+				break;
+			case 3:
+				result.detectorNumber = 7;
+				break;
+			case 4:
+				result.detectorNumber = 6;
+				break;
+			case 5:
+				result.detectorNumber = 13;
+				break;
+			case 6:
+				result.detectorNumber = 12;
+				break;
+			case 7:
+				result.detectorNumber = 11;
+				break;
+			case 8:
+				result.detectorNumber = 10;
+				break;
+			case 9:
+				result.detectorNumber = 14;
+				break;
+			default:
+				std::cerr<<"Unknown detector number "<<result.detectorNumber<<" for square SCEPTAR!"<<std::endl;
+				break;
+		}
 		result.systemID = 5000;
 		if(debug) {
 			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<std::endl;
@@ -1146,15 +1182,41 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 
 	if(volumeName.find("sceptarAngledScintillatorLog") != G4String::npos) {
 		// to number SCEPTAR paddles correctly (1 stays 1):
-		if(result.detectorNumber== 2) result.detectorNumber= 5;
-		else if(result.detectorNumber== 3) result.detectorNumber= 4;
-		else if(result.detectorNumber== 4) result.detectorNumber= 3;
-		else if(result.detectorNumber== 5) result.detectorNumber= 2;
-		else if(result.detectorNumber== 6) result.detectorNumber= 19;
-		else if(result.detectorNumber== 7) result.detectorNumber= 18;
-		else if(result.detectorNumber== 8) result.detectorNumber= 17;
-		else if(result.detectorNumber== 9) result.detectorNumber= 16;
-		else if(result.detectorNumber== 10) result.detectorNumber= 20;
+		switch(result.detectorNumber) {
+			case 0:
+				result.detectorNumber = 0;
+				break;
+			case 1:
+				result.detectorNumber = 4;
+				break;
+			case 2:
+				result.detectorNumber = 3;
+				break;
+			case 3:
+				result.detectorNumber = 2;
+				break;
+			case 4:
+				result.detectorNumber = 1;
+				break;
+			case 5:
+				result.detectorNumber = 18;
+				break;
+			case 6:
+				result.detectorNumber = 17;
+				break;
+			case 7:
+				result.detectorNumber = 16;
+				break;
+			case 8:
+				result.detectorNumber = 15;
+				break;
+			case 9:
+				result.detectorNumber = 19;
+				break;
+			default:
+				std::cerr<<"Unknown detector number "<<result.detectorNumber<<" for angled SCEPTAR!"<<std::endl;
+				break;
+		}
 		result.systemID = 5000;
 		if(debug) {
 			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<std::endl;

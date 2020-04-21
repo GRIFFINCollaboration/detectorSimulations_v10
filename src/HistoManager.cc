@@ -85,25 +85,34 @@ void HistoManager::Book() {
 	// Create 1 ntuple
 	if(fHitTrackerBool) {
 		analysisManager->CreateNtuple("ntuple", "HitTracker");
-		fNtColIdHit[0] = analysisManager->CreateNtupleIColumn("eventNumber");
-		fNtColIdHit[1] = analysisManager->CreateNtupleIColumn("trackID");
-		fNtColIdHit[2] = analysisManager->CreateNtupleIColumn("parentID");
-		fNtColIdHit[3] = analysisManager->CreateNtupleIColumn("stepNumber");
-		fNtColIdHit[4] = analysisManager->CreateNtupleIColumn("particleType");
-		fNtColIdHit[5] = analysisManager->CreateNtupleIColumn("processType");
-		fNtColIdHit[6] = analysisManager->CreateNtupleIColumn("systemID");
-		fNtColIdHit[7] = analysisManager->CreateNtupleIColumn("cryNumber");
-		fNtColIdHit[8] = analysisManager->CreateNtupleIColumn("detNumber");
-		fNtColIdHit[9] = analysisManager->CreateNtupleDColumn("depEnergy");
-		fNtColIdHit[10] = analysisManager->CreateNtupleDColumn("posx");
-		fNtColIdHit[11] = analysisManager->CreateNtupleDColumn("posy");
-		fNtColIdHit[12] = analysisManager->CreateNtupleDColumn("posz");
-		fNtColIdHit[13] = analysisManager->CreateNtupleDColumn("time");
-		fNtColIdHit[14] = analysisManager->CreateNtupleIColumn("targetZ");
+		int colId = 0;
+		fNtColIdHit[colId++] = analysisManager->CreateNtupleIColumn("eventNumber");
+		fNtColIdHit[colId++] = analysisManager->CreateNtupleIColumn("trackID");
+		fNtColIdHit[colId++] = analysisManager->CreateNtupleIColumn("parentID");
+		fNtColIdHit[colId++] = analysisManager->CreateNtupleIColumn("stepNumber");
+		fNtColIdHit[colId++] = analysisManager->CreateNtupleIColumn("particleType");
+		fNtColIdHit[colId++] = analysisManager->CreateNtupleIColumn("processType");
+		fNtColIdHit[colId++] = analysisManager->CreateNtupleIColumn("systemID");
+		fNtColIdHit[colId++] = analysisManager->CreateNtupleIColumn("cryNumber");
+		fNtColIdHit[colId++] = analysisManager->CreateNtupleIColumn("detNumber");
+		fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("depEnergy");
+		fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("posx");
+		fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("posy");
+		fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("posz");
+		fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("time");
+		fNtColIdHit[colId++] = analysisManager->CreateNtupleIColumn("targetZ"); // 14 here
 		if(fDetectorConstruction->Descant() || fDetectorConstruction->Testcan()) {
-			fNtColIdHit[15] = analysisManager->CreateNtupleDColumn("eDepVector", fEdepVector);
-			fNtColIdHit[16] = analysisManager->CreateNtupleDColumn("eKinVector", fEkinVector);
-			fNtColIdHit[17] = analysisManager->CreateNtupleIColumn("particleTypeVector", fParticleTypeVector);
+			fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("eDepVector", fEdepVector);
+			fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("eKinVector", fEkinVector);
+			fNtColIdHit[colId++] = analysisManager->CreateNtupleIColumn("particleTypeVector", fParticleTypeVector); // 17 here
+		}
+		if(GetDetectorConstruction()->RecordingGun()) {
+			  fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("primaryE");
+			  fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("primaryTheta");
+			  fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("primaryPhi");
+			  fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("originX");
+			  fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("originY");
+			  fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("originZ"); // 20 or 23 here
 		}
 		analysisManager->FinishNtuple();
 	}
@@ -127,10 +136,6 @@ void HistoManager::Book() {
 		fNtColIdStep[13] = analysisManager->CreateNtupleDColumn("time");
 		fNtColIdStep[14] = analysisManager->CreateNtupleIColumn("targetZ");
 		analysisManager->FinishNtuple();
-	}
-
-	if(fDetectorConstruction->Spice()) {
-		BookSpiceHistograms();
 	}
 
 	fFactoryOn = true;
@@ -167,7 +172,17 @@ void HistoManager::FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentI
 		analysisManager->FillNtupleDColumn(fNtColIdHit[12], posz);
 		analysisManager->FillNtupleDColumn(fNtColIdHit[13], time);
 		analysisManager->FillNtupleIColumn(fNtColIdHit[14], targetZ);
-		analysisManager->AddNtupleRow();
+        
+        if(GetDetectorConstruction()->RecordingGun()){
+            analysisManager->FillNtupleDColumn(fNtColIdHit[15], BeamEnergy());
+            analysisManager->FillNtupleDColumn(fNtColIdHit[16], BeamTheta());
+            analysisManager->FillNtupleDColumn(fNtColIdHit[17], BeamPhi());
+            analysisManager->FillNtupleDColumn(fNtColIdHit[18], BeamPos().x());
+            analysisManager->FillNtupleDColumn(fNtColIdHit[19], BeamPos().y());
+            analysisManager->FillNtupleDColumn(fNtColIdHit[20], BeamPos().z());
+        }
+        
+        analysisManager->AddNtupleRow();
 	}
 }
 
@@ -207,320 +222,6 @@ G4String HistoManager::G4intToG4String(G4int value) {
 	return theString;
 }
 
-void HistoManager::BookSpiceHistograms() {
-	// create selected histograms
-	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-	G4String name;
-	G4String title;
-	G4String detString;
-	G4String cryString;
-	G4String segString;//for spice segment for-loop
-	G4double xmin;
-	G4double xmax;
-	G4int    nbins;
-
-	analysisManager->SetFirstHistoId(1);
-	name  = "astats_particle_type_in_each_step";
-	title     = "Particle Creation";
-	nbins     = 20;
-	xmin      = 0.;
-	xmax      = 20.;
-	MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-
-	name  = "astats_particle_type_in_each_event";
-	title     = "Number of Particle Types in Event";
-	nbins     = 100;
-	xmin      = 0.;
-	xmax      = 100.;
-	MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-
-	if(fDetectorConstruction->GridCell() && WRITEEKINHISTOS) {
-		for(G4int i=0; i < MAXNUMDET; i++) {
-			detString = G4intToG4String(i);
-			name  = "gridcell_electron_ekin_det" + detString;
-			title     = "EKin in cell (keV)";
-			nbins     = EKINNBINS;
-			xmin      = EKINXMIN;
-			xmax      = EKINXMAX;
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-		}
-	}
-
-	if(fDetectorConstruction->GridCell() && WRITETRACKLHISTOS) {
-		for(G4int i=0; i < MAXNUMDET; i++) {
-			detString = G4intToG4String(i);
-			name  = "gridcell_electron_trackl_det" + detString;
-			title     = "Trackl in cell (keV)";
-			nbins     = TRACKLNBINS;
-			xmin      = TRACKLXMIN;
-			xmax      = TRACKLXMAX;
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-		}
-	}
-
-	if(fDetectorConstruction->GridCell() && WRITEEKINHISTOS) {
-		for(G4int i=0; i < MAXNUMDET; i++) {
-			detString = G4intToG4String(i);
-			name  = "gridcell_gamma_ekin_det" + detString;
-			title     = "EKin in cell (keV)";
-			nbins     = EKINNBINS;
-			xmin      = EKINXMIN;
-			xmax      = EKINXMAX;
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-		}
-	}
-
-	if(fDetectorConstruction->GridCell() && WRITETRACKLHISTOS) {
-		for(G4int i=0; i < MAXNUMDET; i++) {
-			detString = G4intToG4String(i);
-			name  = "gridcell_gamma_trackl_det" + detString;
-			title     = "Trackl in cell (keV)";
-			nbins     = TRACKLNBINS;
-			xmin      = TRACKLXMIN;
-			xmax      = TRACKLXMAX;
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-		}
-	}
-
-	if(fDetectorConstruction->GridCell() && WRITEEKINHISTOS) {
-		for(G4int i=0; i < MAXNUMDET; i++) {
-			detString = G4intToG4String(i);
-			name  = "gridcell_neutron_ekin_det" + detString;
-			title     = "EKin in cell (keV)";
-			nbins     = EKINNBINS;
-			xmin      = EKINXMIN;
-			xmax      = EKINXMAX;
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-		}
-	}
-
-	if(fDetectorConstruction->GridCell() && WRITETRACKLHISTOS) {
-		for(G4int i=0; i < MAXNUMDET; i++) {
-			detString = G4intToG4String(i);
-			name  = "gridcell_neutron_trackl_det" + detString;
-			title     = "Trackl in cell (keV)";
-			nbins     = TRACKLNBINS;
-			xmin      = TRACKLXMIN;
-			xmax      = TRACKLXMAX;
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-		}
-	}
-
-	if(WRITEEDEPHISTOS) {
-		// Variables and title used for all detectors
-		nbins     = EDEPNBINS;
-		xmin      = EDEPXMIN;
-		xmax      = EDEPXMAX;
-		title     = "Edep in crystal (keV)";
-		if(fDetectorConstruction->Griffin()) {
-			// Griffin Suppressors
-			name  = "griffin_crystal_sup_edep";
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-
-			name  = "griffin_crystal_sup_edep_cry";
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-
-			name  = "griffin_crystal_sup_edep_sum";
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-
-			for(G4int i=0; i < MAXNUMDETGRIFFIN; i++) {
-				detString = G4intToG4String(i);
-
-				name  = "griffin_crystal_sup_edep_det" + detString ;
-				MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-			}
-
-			for(G4int j=0; j < MAXNUMCRYGRIFFIN; j++) {
-				for(G4int i=0; i < MAXNUMDETGRIFFIN; i++) {
-					detString = G4intToG4String(i);
-					cryString = G4intToG4String(j);
-
-					name  = "griffin_crystal_sup_edep_det" + detString + "_cry" + cryString;
-					MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-				}
-			}
-
-			// Griffin Crystal Unsuppressed
-			name  = "griffin_crystal_unsup_edep";
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-
-			name  = "griffin_crystal_unsup_edep_cry";
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-
-			name  = "griffin_crystal_unsup_edep_sum";
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-
-			for(G4int i=0; i < MAXNUMDETGRIFFIN; i++) {
-				detString = G4intToG4String(i);
-
-				name  = "griffin_crystal_unsup_edep_det" + detString;
-				MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-			}
-
-			for(G4int j=0; j < MAXNUMCRYGRIFFIN; j++) {
-				for(G4int i=0; i < MAXNUMDETGRIFFIN; i++) {
-					detString = G4intToG4String(i);
-					cryString = G4intToG4String(j);
-
-					name  = "griffin_crystal_unsup_edep_det" + detString + "_cry" + cryString;
-					MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-				}
-			}
-		}//if(fGriffin)
-
-		if(fDetectorConstruction->LaBr()) {
-			// Brilliance Detector
-			name  = "labr_crystal_edep";
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-
-			name  = "labr_crystal_edep_sum";
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-
-			for(G4int i=0; i < MAXNUMDET; i++) {
-				detString = G4intToG4String(i);
-
-				name  = "labr_crystal_edep_det" + detString;
-				MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-			}
-		}//if(LaBr)
-
-		if(fDetectorConstruction->AncBgo()) {
-			// Ancillary BGO Detector
-			name  = "ancillary_bgo_crystal_edep";
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-
-			name  = "ancillary_bgo_crystal_edep_sum";
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-
-			for(G4int i=0; i < MAXNUMDET; i++) {
-				detString = G4intToG4String(i);
-
-				name  = "ancillary_bgo_crystal_edep_det" + detString;
-				MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-			}
-		}//if(fAncBgo)
-
-		if(fDetectorConstruction->NaI()) {
-			// Sodium Iodide detector
-			name  = "sodiumIodide_crystal_edep";
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-
-			name  = "sodiumIodide_crystal_edep_sum";
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-
-			for(G4int i=0; i < MAXNUMDET; i++) {
-				detString = G4intToG4String(i);
-
-				name  = "sodiumIodide_crystal_edep_det" + detString;
-				MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-			}
-		}//if(fNaI)
-
-		if(fDetectorConstruction->Sceptar()) {
-			// Sceptar detector
-			name  = "sceptar_edep";
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-
-			name  = "sceptar_edep_sum";
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-
-			for(G4int i=0; i < MAXNUMDET; i++) {
-				detString = G4intToG4String(i);
-
-				name  = "sceptar_edep_det" + detString;
-				MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-			}
-		}//if(fSceptar)
-
-		if(fDetectorConstruction->EightPi()) {
-			// 8pi detector
-			name  = "Eightpi_crystal_edep";
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-
-			name  = "Eightpi_crystal_edep_sum";
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-
-			for(G4int i=0; i < MAXNUMDET; i++) {
-				detString = G4intToG4String(i);
-
-				name  = "Eightpi_crystal_edep_det" + detString;
-				MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-			}
-		}//if(fEightPi)
-
-		if(fDetectorConstruction->Spice()) {// spice detector
-			nbins     = EDEPNBINSSPICE;
-			xmin      = EDEPXMINSPICE;
-			xmax      = EDEPXMAXSPICE;
-
-			title     = "Edep in crystal (keV)";
-			name  = "FullEdep"; //edep = energy deposition
-			MakeHistogram(analysisManager, name,  title, xmin*1000., xmax*1000., nbins);
-			fSpiceHistNumbers[0] = fMakeHistogramIndex; //assigns array item the histo index, for reference by FillHisto()
-
-			name  = "Edep_Addback";// summed
-			MakeHistogram(analysisManager, name,  title, xmin*1000., xmax*1000., nbins);
-			fSpiceHistNumbers[1] = fMakeHistogramIndex;
-
-			name = "BeamEnergy";
-			title ="Energy of Input Beam";
-			MakeHistogram(analysisManager, name, title, xmin, xmax, nbins);
-			fAngleDistro[0] = fMakeHistogramIndex;
-
-			name = "AllSegEnergies";
-			title = "Energy vs. Segment";
-			Make2DHistogram(analysisManager, name, title,
-					120, 0., 120., nbins, 0., xmax*1000.);
-			fAngleDistro[1] = fMakeHistogramIndex;
-
-			name  = "x-y";
-			title     = "X-Y 2D distribution";
-			nbins = 100;
-			xmin      = -6.;
-			xmax      = 6.;
-			Make2DHistogram(analysisManager, name,  title, nbins, xmin, xmax, nbins, xmin, xmax);
-			fAngleDistro[2] = fMakeHistogramIndex;
-
-			title  = "z-distribution";
-			name     = "z-distro";
-			MakeHistogram(analysisManager, name,  title, -0.1, 0.1, 1000);
-			fAngleDistro[3] = fMakeHistogramIndex;
-
-			for(G4int ring=0; ring < MAXNUMDETSPICE; ring++){
-				for(G4int seg=0; seg < 3; seg++) {
-
-					title  = "AngR" + std::to_string(ring) + "S" +std::to_string(seg);
-					name     = "AngR" + std::to_string(ring) + "S" +std::to_string(seg);
-					nbins     = 200;
-					xmin      = 0.;//explicitly defined for clarity
-					xmax      = CLHEP::pi;
-					Make2DHistogram(analysisManager, name, title,
-							nbins/2, xmin, xmax, nbins, -xmax, xmax);
-
-					fSpiceAngleHists[ring*MAXNUMSEGSPICE+seg] = fMakeHistogramIndex;
-				}
-			}
-		}
-		if(fDetectorConstruction->Paces()) {// paces detector
-			name  = "paces_crystal_edep";
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-			fPacesHistNumbers[0] = fMakeHistogramIndex;
-
-			name  = "paces_crystal_edep_sum";
-			MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-			fPacesHistNumbers[1] = fMakeHistogramIndex;
-
-			for(G4int i=0; i < MAXNUMDETPACES; i++) {//[MAXNUMDET];
-				detString = G4intToG4String(i);
-
-				name  = "paces_crystal_edep_det" + detString;
-				MakeHistogram(analysisManager, name,  title, xmin, xmax, nbins);
-
-				fPacesHistNumbers[i+2] = fMakeHistogramIndex;
-			}
-		}//if(fPaces)
-	}//if(WRITEEDEPHISTOS)
-}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
