@@ -18,10 +18,15 @@
 /gun/particle ion
 /DetSys/world/material Vacuum
 
-## These 3 lines may be omitted to use defaults
+### These 3 lines may be omitted to use defaults
+### Options must be set BEFORE addTrificDetector
 /DetSys/det/TrificFlatWindow false
 /DetSys/det/TrificAluWindow true
 /DetSys/det/TrificWindowThickness 6 um
+
+### Optionally add a degrader when the energy is too high.
+/DetSys/det/TrificDegraderThickness 1 um
+/DetSys/det/TrificDegraderMaterial G4_Al
 
 ## The number input is the gas pressure in Torr
 /DetSys/det/addTrificDetector 91.0

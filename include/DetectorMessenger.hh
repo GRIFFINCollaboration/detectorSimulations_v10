@@ -155,6 +155,8 @@ private:
 	G4UIcmdWithABool*           fRecordGunCmd;
     
 	G4UIcmdWithADoubleAndUnit*  fTrifWinCmd;
+	G4UIcmdWithADoubleAndUnit*  fTrifDegCmd;
+	G4UIcmdWithAString*         fTrifDMatCmd;
 	G4UIcmdWithABool*           fTrifAluCmd;
 	G4UIcmdWithABool*           fTrifFlatCmd;
 };

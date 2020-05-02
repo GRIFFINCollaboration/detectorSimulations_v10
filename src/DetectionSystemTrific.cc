@@ -39,7 +39,7 @@
 
 using namespace CLHEP;
 
-DetectionSystemTrific::DetectionSystemTrific(G4double setpressure,G4double setwindow,G4bool setal,G4bool setflat):fFlatWindow(setflat),fAluminised(setal)
+DetectionSystemTrific::DetectionSystemTrific(G4double setpressure,G4double setwindow,G4bool setal,G4bool setflat,G4double setdegrader,G4String degradermat):fFlatWindow(setflat),fAluminised(setal)
 {
 
 	
@@ -54,6 +54,8 @@ DetectionSystemTrific::DetectionSystemTrific(G4double setpressure,G4double setwi
 	this->fWindowSurfaceMaterial = "G4_Al";
 	this->fGasMaterial = "TrificCF4";
 
+	this->fDegraderThickness=setdegrader;
+	this->fDegraderMaterial=degradermat;
 	
 	G4double a, z, density, temperature, pressure;
 	G4String name, symbol;
@@ -614,6 +616,17 @@ void DetectionSystemTrific::BuildPlaceWindow(G4LogicalVolume* TrificGasVol){
 	new G4PVPlacement(0, sWindWashTrans, WindowWasher, "fWindowwash", TrificGasVol, false, 0);		
 	
 
+//     ///// Degrader material before window
+	if(fDegraderThickness>0){
+		material = G4Material::GetMaterial(fDegraderMaterial);
+		if( material ) {
+			G4Tubs* degrad = new G4Tubs("CellTube",0,40*mm, fDegraderThickness, 0, 360.*deg);
+			G4LogicalVolume* deglog = new G4LogicalVolume(degrad, material, "deglog", 0, 0, 0);
+			deglog->SetVisAttributes(vis_att);
+			G4ThreeVector degpod(0, 0, -fChamberLength/2);	
+			new G4PVPlacement(0, degpod, deglog, "degr", TrificGasVol, false, 0);
+		}
+	}
 }
 
 

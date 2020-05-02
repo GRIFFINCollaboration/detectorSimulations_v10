@@ -44,7 +44,7 @@ class DetectionSystemTrific
 {
 public:
     
-	DetectionSystemTrific(G4double setpressure=760,G4double setwindow=6*CLHEP::um,G4bool setal=true,G4bool setflat=true);
+	DetectionSystemTrific(G4double setpressure=760,G4double setwindow=6*CLHEP::um,G4bool setal=true,G4bool setflat=true,G4double setdegrader=0,G4String degradermat="");
 	~DetectionSystemTrific();
 
 	//------------------------------------------------//
@@ -74,6 +74,7 @@ private:
 	G4String fWindowMaterial;
 	G4String fWindowSurfaceMaterial;
 	G4String fGasMaterial;
+	G4String fDegraderMaterial;
 
 
 	// ----------------------------
@@ -111,6 +112,8 @@ private:
 	G4double fWindowOuterD;
 	G4double fWindowChamberLength;
 	G4double fWindowPipeInnerD;
+	
+	G4double fDegraderThickness;
     
     G4bool fFlatWindow;
     G4bool fAluminised;
