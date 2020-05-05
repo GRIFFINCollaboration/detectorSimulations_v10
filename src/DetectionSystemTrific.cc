@@ -39,7 +39,7 @@
 
 using namespace CLHEP;
 
-DetectionSystemTrific::DetectionSystemTrific(G4double setpressure) 
+DetectionSystemTrific::DetectionSystemTrific(G4double setpressure,G4double setwindow,G4bool setal,G4bool setflat,G4double setdegrader,G4String degradermat):fFlatWindow(setflat),fAluminised(setal)
 {
 
 	
@@ -54,6 +54,8 @@ DetectionSystemTrific::DetectionSystemTrific(G4double setpressure)
 	this->fWindowSurfaceMaterial = "G4_Al";
 	this->fGasMaterial = "TrificCF4";
 
+	this->fDegraderThickness=setdegrader;
+	this->fDegraderMaterial=degradermat;
 	
 	G4double a, z, density, temperature, pressure;
 	G4String name, symbol;
@@ -100,7 +102,8 @@ DetectionSystemTrific::DetectionSystemTrific(G4double setpressure)
 	this->fChamberWindowZ = 5.2*cm;
 	this->fWindowWasherZ = 1.5*cm;
 	this->fWindowGridZ = this->fWindowWasherZ+0.8*cm;
-	this->fWindowTickness = 6*um;
+// 	this->fWindowThickness = 6*um;
+	this->fWindowThickness = setwindow;
 	this->fWindowCoatingThickness = 0.9*um;
 	this->fWindowInnerD = 7*cm;
 	this->fWindowOuterD = 14.4*cm;
@@ -110,7 +113,7 @@ DetectionSystemTrific::DetectionSystemTrific(G4double setpressure)
     //This is the correct offset to place the first grid at 53.4 cm which is correct for BAMBINO
 	this->fTargetChamberZOffset = 53.4*cm-(fChamberWindowZ+fWindowGridZ);
     
-    G4cout<<G4endl<<"TRIFIC grid 0 Z position : "<<fTargetChamberZOffset<<G4endl;
+    G4cout<<G4endl<<"TRIFIC grid 0 Z position : "<<fTargetChamberZOffset+fChamberWindowZ+fWindowGridZ<<G4endl;
 	
     //Set XY grid no. >23 <0 to turn off
 	this->fYgrid=2;
@@ -491,7 +494,8 @@ void DetectionSystemTrific::BuildGasVolume(G4LogicalVolume* ExpHallLog){
 
 	BuildPCB();
 	PlacePCBs(TrificGasVol);	
-	BuildPlaceWindow(TrificGasVol);
+	if(fFlatWindow) BuildPlaceFlatWindow(TrificGasVol);
+    else BuildPlaceWindow(TrificGasVol);
     
 	G4double sPosZ = fTargetChamberZOffset+fChamberLength/2; 
 	G4ThreeVector sTranslate(0, 0, sPosZ);	
@@ -560,7 +564,7 @@ void DetectionSystemTrific::BuildPlaceWindow(G4LogicalVolume* TrificGasVol){
 	}	
 
 	G4Tubs* WindowTube = new G4Tubs("CellTube",0,fWindowOuterD/2, winframhalfrise, 0, 360.*deg);
-	cutZ =winframhalfrise/cos(fGridAngle)+fWindowTickness/2;
+	cutZ =winframhalfrise/cos(fGridAngle)+fWindowThickness/2;
 	G4VSolid* WindowA = new G4SubtractionSolid("WindowA", WindowTube, CutBox,rotate, G4ThreeVector(0,0,cutZ));
 	G4VSolid* WindowB = new G4SubtractionSolid("WindowB", WindowA, CutBox,rotate, G4ThreeVector(0,0,-cutZ));
 	G4LogicalVolume* Window = new G4LogicalVolume(WindowB, material, "Window", 0, 0, 0);
@@ -568,32 +572,33 @@ void DetectionSystemTrific::BuildPlaceWindow(G4LogicalVolume* TrificGasVol){
 	vis_att->SetVisibility(true);  
 	Window->SetVisAttributes(vis_att);
 
-	sPosZ = fChamberWindowZ+fWindowTickness/2-fChamberLength/2; 
+	sPosZ = fChamberWindowZ+fWindowThickness/2-fChamberLength/2; 
 	G4ThreeVector sWindTrans(0, 0, sPosZ);	
 	new G4PVPlacement(0, sWindTrans, Window, "fWindow", TrificGasVol, false, 0);
 	
 	//
 	// Next we add the window aluminised layer
 	//	
-	
-	material = G4Material::GetMaterial(this->fWindowSurfaceMaterial);
-		if( !material ) {
-		G4cout << " ----> Material " << this->fWindowMaterial<< " not found, cannot build the Trific detector! " << G4endl;
-		return;
-	}	
+	if(fAluminised){
+        
+        material = G4Material::GetMaterial(this->fWindowSurfaceMaterial);
+            if( !material ) {
+            G4cout << " ----> Material " << this->fWindowMaterial<< " not found, cannot build the Trific detector! " << G4endl;
+            return;
+        }	
 
-	cutZ =winframhalfrise/cos(fGridAngle)+fWindowCoatingThickness/2;
-	G4VSolid* WindowCoverA = new G4SubtractionSolid("WindowCoverA", WindowTube, CutBox,rotate, G4ThreeVector(0,0,cutZ));
-	G4VSolid* WindowCoverB = new G4SubtractionSolid("WindowCoverB", WindowCoverA, CutBox,rotate, G4ThreeVector(0,0,-cutZ));
-	G4LogicalVolume* WindowCo = new G4LogicalVolume(WindowCoverB, material, "WindowCo", 0, 0, 0);
-	vis_att = new G4VisAttributes(G4Colour(1.0,0.5,1.0));
-	vis_att->SetVisibility(true);  
-	WindowCo->SetVisAttributes(vis_att);
-	
-	sPosZ = fChamberWindowZ+fWindowTickness+fWindowCoatingThickness/2-fChamberLength/2; 
-	G4ThreeVector sWindCoTrans(0, 0, sPosZ);	
-	new G4PVPlacement(0, sWindCoTrans, WindowCo, "fWindowcov", TrificGasVol, false, 0);
-	
+        cutZ =winframhalfrise/cos(fGridAngle)+fWindowCoatingThickness/2;
+        G4VSolid* WindowCoverA = new G4SubtractionSolid("WindowCoverA", WindowTube, CutBox,rotate, G4ThreeVector(0,0,cutZ));
+        G4VSolid* WindowCoverB = new G4SubtractionSolid("WindowCoverB", WindowCoverA, CutBox,rotate, G4ThreeVector(0,0,-cutZ));
+        G4LogicalVolume* WindowCo = new G4LogicalVolume(WindowCoverB, material, "WindowCo", 0, 0, 0);
+        vis_att = new G4VisAttributes(G4Colour(1.0,0.5,1.0));
+        vis_att->SetVisibility(true);  
+        WindowCo->SetVisAttributes(vis_att);
+        
+        sPosZ = fChamberWindowZ+fWindowThickness+fWindowCoatingThickness/2-fChamberLength/2; 
+        G4ThreeVector sWindCoTrans(0, 0, sPosZ);	
+        new G4PVPlacement(0, sWindCoTrans, WindowCo, "fWindowcov", TrificGasVol, false, 0);
+    }
 	
 	//
 	// Finally we add the window washer
@@ -606,9 +611,118 @@ void DetectionSystemTrific::BuildPlaceWindow(G4LogicalVolume* TrificGasVol){
 	G4VSolid* WindowWasherB = new G4SubtractionSolid("WindowWasherB", WindowWasherA, CutBox,rotate, G4ThreeVector(0,0,-cutZ));
 	G4LogicalVolume* WindowWasher = new G4LogicalVolume(WindowWasherB, material, "WindowWasher", 0, 0, 0);
 	
-	sPosZ = fChamberWindowZ+fWindowTickness+fWindowCoatingThickness+fWindowWasherZ/2-fChamberLength/2; 
+	sPosZ = fChamberWindowZ+fWindowThickness+fWindowCoatingThickness+fWindowWasherZ/2-fChamberLength/2; 
 	G4ThreeVector sWindWashTrans(0, 0, sPosZ);	
 	new G4PVPlacement(0, sWindWashTrans, WindowWasher, "fWindowwash", TrificGasVol, false, 0);		
 	
 
+//     ///// Degrader material before window
+	if(fDegraderThickness>0){
+		material = G4Material::GetMaterial(fDegraderMaterial);
+		if( material ) {
+			G4Tubs* degrad = new G4Tubs("CellTube",0,40*mm, fDegraderThickness, 0, 360.*deg);
+			G4LogicalVolume* deglog = new G4LogicalVolume(degrad, material, "deglog", 0, 0, 0);
+			deglog->SetVisAttributes(vis_att);
+			G4ThreeVector degpod(0, 0, -fChamberLength/2);	
+			new G4PVPlacement(0, degpod, deglog, "degr", TrificGasVol, false, 0);
+		}
+	}
+}
+
+
+
+void DetectionSystemTrific::BuildPlaceFlatWindow(G4LogicalVolume* TrificGasVol){
+	
+	//
+	// First we make the part of the window frame that is inside the gas volume
+	//
+	
+	// Define the material, return error if not found
+	G4Material* material = G4Material::GetMaterial(this->fWindowFrameMaterial);
+		if( !material ) {
+		G4cout << " ----> Material " << this->fWindowFrameMaterial<< " not found, cannot build the Trific detector! " << G4endl;
+		return;
+	}	
+	
+	G4double winframhalfrise =(fWindowOuterD*tan(fGridAngle))/2;
+	G4double fFlatChamberWindowZ=fChamberWindowZ-winframhalfrise+8*mm;
+	
+	G4double winframhalflength =fFlatChamberWindowZ/2;
+	G4Tubs* CellTube = new G4Tubs("CellTube",fWindowInnerD/2,fWindowOuterD/2, winframhalflength, 0, 360.*deg);
+	G4LogicalVolume* fWindowFrame = new G4LogicalVolume(CellTube, material, "fWindowFrame", 0, 0, 0);
+
+	G4double sPosZ = winframhalflength-fChamberLength/2; 
+	G4ThreeVector sTranslate(0, 0, sPosZ);	
+	new G4PVPlacement(0, sTranslate, fWindowFrame, "fTrificGasVol", TrificGasVol, false, 0);
+	
+    //
+	// Next we add vacuum to the small bit of pipe to displace the gas in that region of the mother volume TrificGasVol
+	//	
+	
+	material = G4Material::GetMaterial("Vacuum");
+	if( !material ) {
+		G4cout << " ----> Material Vacuum not found, cannot build the Trific detector! " << G4endl;
+		return;
+	}	
+	
+	G4Tubs* VacTube = new G4Tubs("VacTube",0,(fWindowInnerD/2)-0.1*mm, winframhalflength, 0, 360.*deg);
+	G4LogicalVolume* VacLog = new G4LogicalVolume(VacTube, material, "VacLog", 0, 0, 0);
+	VacLog->SetVisAttributes(G4VisAttributes::Invisible); 
+	new G4PVPlacement(0, sTranslate, VacLog, "fVacLog", TrificGasVol, false, 0);
+	
+	//
+	// Next we add the window itself
+	//	
+	
+	material = G4Material::GetMaterial(this->fWindowMaterial);
+		if( !material ) {
+		G4cout << " ----> Material " << this->fWindowMaterial<< " not found, cannot build the Trific detector! " << G4endl;
+		return;
+	}	
+
+	G4Tubs* WindowTube = new G4Tubs("CellTube",0,fWindowOuterD/2, fWindowThickness/2, 0, 360.*deg);
+	G4LogicalVolume* Window = new G4LogicalVolume(WindowTube, material, "Window", 0, 0, 0);
+	G4VisAttributes* vis_att = new G4VisAttributes(G4Colour(1.0,0.5,0.0));
+	vis_att->SetVisibility(true);  
+	Window->SetVisAttributes(vis_att);
+
+	sPosZ = fFlatChamberWindowZ+fWindowThickness/2-fChamberLength/2; 
+	G4ThreeVector sWindTrans(0, 0, sPosZ);	
+	new G4PVPlacement(0, sWindTrans, Window, "fWindow", TrificGasVol, false, 0);
+	
+// 	//
+// 	// Next we add the window aluminised layer
+// 	//	
+	if(fAluminised){
+        
+        material = G4Material::GetMaterial(this->fWindowSurfaceMaterial);
+            if( !material ) {
+            G4cout << " ----> Material " << this->fWindowMaterial<< " not found, cannot build the Trific detector! " << G4endl;
+            return;
+        }	
+
+        G4Tubs* CoatingTube = new G4Tubs("CellTube",0,fWindowOuterD/2, fWindowCoatingThickness/2, 0, 360.*deg);
+        G4LogicalVolume* WindowCo = new G4LogicalVolume(CoatingTube, material, "WindowCo", 0, 0, 0);
+        vis_att = new G4VisAttributes(G4Colour(1.0,0.5,1.0));
+        vis_att->SetVisibility(true);  
+        WindowCo->SetVisAttributes(vis_att);
+        
+        sPosZ = fFlatChamberWindowZ+fWindowThickness+fWindowCoatingThickness/2-fChamberLength/2; 
+        G4ThreeVector sWindCoTrans(0, 0, sPosZ);	
+        new G4PVPlacement(0, sWindCoTrans, WindowCo, "fWindowcov", TrificGasVol, false, 0);
+    }
+	
+	//
+	// Finally we add the window washer
+	//	
+	
+	material = G4Material::GetMaterial(this->fWindowFrameMaterial);
+
+	G4Tubs* WasherTube = new G4Tubs("CellTube",fWindowInnerD/2,fWindowOuterD/2, fWindowWasherZ/2, 0, 360.*deg);
+	G4LogicalVolume* WindowWasher = new G4LogicalVolume(WasherTube, material, "WindowWasher", 0, 0, 0);
+	
+	sPosZ = fFlatChamberWindowZ+fWindowThickness+fWindowCoatingThickness+fWindowWasherZ/2-fChamberLength/2; 
+	G4ThreeVector sWindWashTrans(0, 0, sPosZ);	
+	new G4PVPlacement(0, sWindWashTrans, WindowWasher, "fWindowwash", TrificGasVol, false, 0);
+    
 }
