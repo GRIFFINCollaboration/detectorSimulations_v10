@@ -63,12 +63,14 @@ DetectionSystemPlastics::DetectionSystemPlastics(G4double thickness, G4int mater
 	silver=G4Color(0.75,0.75,0.75);
 	black=G4Color(0.,0.,0.);
 
-	if(material == 1)  fPlasticMaterial = "BC408";
-	else if (material == 2) fPlasticMaterial = "deuterium";
-	else if (material == 3) fPlasticMaterial = "Hydrogen";
-	else if (material == 4) fPlasticMaterial = "Carbon";
-	else if (material == 5) fPlasticMaterial = "Deuterated Scintillator";
-	else if (material == 6) fPlasticMaterial = "BC537";
+	if(material == 1)  fPlasticMaterial = "BC404";
+	else if (material == 2) fPlasticMaterial = "BC408";
+	else if (material == 3) fPlasticMaterial = "deuterium";
+	else if (material == 4) fPlasticMaterial = "Hydrogen";
+	else if (material == 5) fPlasticMaterial = "Carbon";
+	else if (material == 6) fPlasticMaterial = "Deuterated Scintillator";
+	else if (material == 7) fPlasticMaterial = "Dense";
+	else if (material == 8) fPlasticMaterial = "BC537";
 	else G4cout<< "Material Unknown" << G4endl;
 
 
@@ -175,18 +177,20 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	///////
 	//
 	
-	const G4int num = 12;
+	const G4int num = 20;
 
-	G4double photonEnergy[num] = {1.7*eV, 2.38*eV, 2.48*eV, 2.58*eV, 2.70*eV, 2.76*eV, 2.82*eV, 2.91*eV, 2.95*eV, 3.1*eV, 3.26*eV, 3.44*eV}; //BC408 emission spectra & corresponding energies
+	//G4double photonEnergy[num] = {1.7*eV, 2.38*eV, 2.48*eV, 2.58*eV, 2.70*eV, 2.76*eV, 2.82*eV, 2.91*eV, 2.95*eV, 3.1*eV, 3.26*eV, 3.44*eV}; //BC408 emission spectra & corresponding energies
+	G4double photonEnergy[num] = {1.7*eV, 2.38*eV, 2.48*eV, 2.58*eV, 2.70*eV, 2.76*eV, 2.82*eV, 2.91*eV, 2.95*eV, 2.97*eV, 3.0*eV, 3.02*eV, 3.04*eV,  3.06*eV, 3.1*eV, 3.14*eV, 3.18*eV, 3.21*eV, 3.26*eV, 3.44*eV}; //BC404 emission spectra & corresponding energies
 
-	G4double RIndex1[num] = {1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58};
+	G4double RIndex1[num] = {1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58,  1.58, 1.58, 1.58};
 	assert(sizeof(RIndex1) == sizeof(photonEnergy));
 	const G4int nEntries = sizeof(photonEnergy)/sizeof(G4double);
 
-	//G4double absorption[num] = {380.*cm, 380*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm}; ///light attenuation
-	//assert(sizeof(absorption) == sizeof(photonEnergy));
+	G4double absorption[num] = {160.*cm, 160*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm}; ///light attenuation
+	assert(sizeof(absorption) == sizeof(photonEnergy));
 
-	G4double scint[num] = {3., 3., 8., 18., 43., 55., 80., 100., 80., 20., 7., 3. }; ///// Based off emission spectra for BC408
+	//G4double scint[num] = {3., 3., 8., 18., 43., 55., 80., 100., 80., 20., 7., 3. }; ///// Based off emission spectra for BC408
+	G4double scint[num] = {1., 1., 2., 5., 13., 20., 35., 50., 55., 60., 85., 93., 100., 96., 87., 70., 38., 18., 5., 1. }; ///// Based off emission spectra for BC404
 	assert(sizeof(scint) == sizeof(photonEnergy));
 
 
@@ -194,13 +198,14 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	scintillatorMPT->AddProperty("SLOWCOMPONENT", photonEnergy, scint, nEntries)->SetSpline(true); // BC408 emission spectra
 	scintillatorMPT->AddProperty("RINDEX", photonEnergy, RIndex1, nEntries);  //refractive index can change with energy
 	//note if photon is created outside of energy range it will have no index of refraction
-	//scintillatorMPT->AddProperty("ABSLENGTH", photonEnergy, absorption, nEntries); //absorption length doesnt change with energy - examples showing it can...
-	scintillatorMPT->AddConstProperty("ABSLENGTH", 380.*cm); //Scintillation Efficiency - characteristic light yield
+	scintillatorMPT->AddProperty("ABSLENGTH", photonEnergy, absorption, nEntries)->SetSpline(true); //absorption length doesnt change with energy - examples showing it can...
+	//scintillatorMPT->AddConstProperty("ABSLENGTH", 160.*cm); //Bulk light attenuation - 380 for 408
 	//scintillatorMPT->AddConstProperty("SCINTILLATIONYIELD", 10000./MeV); //Scintillation Efficiency - characteristic light yield //10000./MeV
+	
 	// The number of photons produced per interaction is sampled from a Gaussian distribution with a full-width at half-maximum set to 20% of the number of produced photons. From Joeys Thesis
-	scintillatorMPT->AddConstProperty("RESOLUTIONSCALE", 0.2); // broadens the statistical distribution of generated photons, gaussian based on SCINTILLATIONYIELD, >1 broadens, 0 no distribution. 20%
-	scintillatorMPT->AddConstProperty("FASTTIMECONSTANT", 2.1*ns); //only one decay constant given
-	scintillatorMPT->AddConstProperty("SLOWTIMECONSTANT", 2.1*ns); //only one decay constant given - triplet-triplet annihilation 
+	scintillatorMPT->AddConstProperty("RESOLUTIONSCALE", 1.2); // broadens the statistical distribution of generated photons, sqrt(num generated)* resScale, gaussian based on SCINTILLATIONYIELD, >1 broadens, 0 no distribution. 20%
+	scintillatorMPT->AddConstProperty("FASTTIMECONSTANT", 1.8*ns); //only one decay constant given - 2.1ns for 408
+	scintillatorMPT->AddConstProperty("SLOWTIMECONSTANT", 1.8*ns); //only one decay constant given - triplet-triplet annihilation 
 	scintillatorMPT->AddConstProperty("YIELDRATIO", 1.0); //The relative strength of the fast component as a fraction of total scintillation yield is given by the YIELDRATIO.
 	//Should these be in the physics list?
 	G4OpticalPhysics * opticalPhysics = new G4OpticalPhysics();
@@ -345,7 +350,7 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 
 	//Build array of logical volumes including top detectors above beam line
 	for (int i= 0 ; i < fNumDet ; i++) {
-		//Determine where to make horizontal cuts on detectors to allow for PMTs.  This changes with x-position
+		//Determine where to make horizontal cuts on detectors to allow for PMTs.  This changes with x-position. Factor of 2 on pmtSize is to match boxBarsPMT and the eliminate any piece of plastic above the pmt size upon construction.
 		if (startPos>0.){
 			//YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos+detWidth/2.,2.0));
 			YPosPMT1 = sqrt(pow(innerRadius, 2.0) - pow(startPos+detWidth/2.,2.0) - pow(zStartPos, 2.)) + 2.*pmtSize;
@@ -390,6 +395,7 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		G4cout << "startPos: " << startPos << G4endl;
 		G4cout << "YPosPMT1: " << YPosPMT1 <<G4endl;
 		G4cout << "YPos after PMT sub: " << YPosPMT1 - 2.*pmtSize <<G4endl;
+		G4cout << "ZPos: " <<  sqrt(pow(innerRadius, 2.0) - pow(startPos,2.0) - pow(YPosPMT1 - 2.*pmtSize, 2.)) << G4endl;
 
 		//Putting in subtraction Beam Line 
 		if( abs(startPos-detWidth/2.) < BeamLineXY || abs(startPos+detWidth/2.) < BeamLineXY || abs(startPos) < BeamLineXY) {

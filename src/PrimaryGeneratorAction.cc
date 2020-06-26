@@ -257,7 +257,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 		}
 
 		//Set Direction of Beam Manually
-	//	effdirection = G4ThreeVector(0. , 0. , 1.);
+		//effdirection = G4ThreeVector(1. , 0. , 4.);
 		
 
 		//after running through if-statements above we now have particle type definition, position, mom. direction, and the energy (or their initialised values)
