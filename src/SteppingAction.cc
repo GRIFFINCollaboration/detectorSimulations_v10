@@ -226,10 +226,26 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	}
 	//	Does this interfere with counting?
 	numScintPhotons = fEventAction->GetTotScintPhoton();
+	//Scint photon in plastic
+	found = volname.find("PlasticDet");
+
+	if(found!=G4String::npos && particleType == 8 && fEventAction->GetOldTrackID() != trackID  && aStep->IsFirstStepInVolume() == true){ //should prepoint->GetStepStatus()==fGeomBoundary be in here?
+		// strip "PlasticDet_" (9 characters) and everything before from the string
+		std::string tmpString = volname.substr(found+11);
+		// replace all '_' with spaces so we can just use istringstream::operator>>
+		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
+		// create istringstream from the stripped and converted stream, and read detector and crystal number
+		std::istringstream is(tmpString);
+		G4int detNumber;
+		is>>detNumber;
+		fEventAction->SetScintPhotonEnergyTime(postTime, ekin, detNumber);
+		fEventAction->SetOldTrackID(trackID);
+	}
 
 	//Top PMT
 	found = volname.find("PMT1_top");
-	if(found!=G4String::npos && particleType == 8){ //should prepoint->GetStepStatus()==fGeomBoundary be in here?
+	//if(found!=G4String::npos && particleType == 8){ 
+	if(found!=G4String::npos && particleType == 8 && prePoint->GetStepStatus()==fGeomBoundary){
 		//G4cout << "Top hit in pmt "  << G4endl;
 		//G4cout << "Calling kill track and Secondaries" << G4endl;
 		//G4cout << "Top Count: " <<  fEventAction->GetTotScintPhotonTop()<< G4endl;
@@ -251,7 +267,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 
 	//Bottom PMT
 	found = volname.find("PMT2_bottom");
-	if(found!=G4String::npos && particleType == 8){ //should prepoint->GetStepStatus()==fGeomBoundary be in here?
+	//if(found!=G4String::npos && particleType == 8){ 
+	if(found!=G4String::npos && particleType == 8 && prePoint->GetStepStatus()==fGeomBoundary){
 		//G4cout << "Bottom hit in pmt "<<particleType  << G4endl;
 		// strip "PMT2_bottom_" (12 characters) and everything before from the string
 		std::string tmpString = volname.substr(found+12);

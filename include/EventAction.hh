@@ -118,6 +118,10 @@ public:
 	void SetScintPhotonTimeTop(G4double top, G4int detNum);
 	//Collection Time Bottom
 	void SetScintPhotonTimeBottom(G4double bottom, G4int detNum);
+	//Optical Photon Time and Energy
+	void SetScintPhotonEnergyTime(G4double OpTime, G4double OpEnergy, G4int detNum);
+	void SetOldTrackID(G4int num) {foldTrackID = num;};
+	G4int GetOldTrackID() {return foldTrackID;};
 
 	//Edep in Plastics
 	void AddPEdep(G4double pedep) {fPEdep = fPEdep + pedep;};
@@ -186,6 +190,10 @@ private:
 	//Optical Photon Counter Arrays
 	G4int fTopCounter[MAXHITS];
 	G4int fBottomCounter[MAXHITS];
+	//Optical Photon Creation energy and time
+	std::vector<G4double>  fOpTimeVector[MAXHITS];
+	std::vector<G4double>  fOpEnergyVector[MAXHITS];
+	G4int foldTrackID;
 	//Plastic edep
 	G4double fPEdep;
 	G4double fPEkin;

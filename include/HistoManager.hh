@@ -42,7 +42,7 @@
 
 #include "DetectorConstruction.hh"
 
-const G4int MAXNTCOL            = 35; // Number of Columns
+const G4int MAXNTCOL            = 37; // Number of Columns
 
 const G4bool WRITEEKINHISTOS    = true;//bools needed to write histos
 const G4bool WRITEEDEPHISTOS    = true;
@@ -96,7 +96,7 @@ public:
 	void Book();
 	void Save();
 
-	void FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz, G4double TOFMulti, G4double TOFPosMultix, G4double TOFPosMultiy, G4double TOFPosMultiz, G4double PEkin, G4double PEdep, G4int numCollectedPhotonsTop = 0, G4int numCollectedPhotonsBottom = 0, std::vector<G4double> PhotonTimeTop = std::vector<G4double>(), std::vector<G4double> PhotonTimeBottom = std::vector<G4double>());
+	void FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz, G4double TOFMulti, G4double TOFPosMultix, G4double TOFPosMultiy, G4double TOFPosMultiz, G4double PEkin, G4double PEdep, G4int numCollectedPhotonsTop = 0, G4int numCollectedPhotonsBottom = 0, std::vector<G4double> PhotonTimeTop = std::vector<G4double>(), std::vector<G4double> PhotonTimeBottom = std::vector<G4double>(), std::vector<G4double> OpTime = std::vector<G4double>(), std::vector<G4double> OpEnergy = std::vector<G4double>() );
 	void FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz, G4double TOFMulti, G4double TOFPosMultix, G4double TOFPosMultiy, G4double TOFPosMultiz, G4double PEkin, G4double PEdep, G4int numCollectedPhotonsTop = 0, G4int numCollectedPhotonsBottom = 0, std::vector<G4double> PhotonTimeTop = std::vector<G4double>(), std::vector<G4double> PhotonTimeBottom = std::vector<G4double>());
 
 	void FillHistogram(G4int ih, G4double e, G4double weight = 1.0);
@@ -151,6 +151,10 @@ private:
 
 	std::vector<G4double> fTopTimeVector;
 	std::vector<G4double> fBottomTimeVector;
+
+	std::vector<G4double> fOpTimeVec;
+	std::vector<G4double> fOpEnergyVec;
+
 public:
 	short PacesHistNumbers(int i) { return fPacesHistNumbers[i]; }
 	short SpiceHistNumbers(int i) { return fSpiceHistNumbers[i]; }

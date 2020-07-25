@@ -76,6 +76,7 @@
 #include "G4OpRayleigh.hh"
 #include "G4Scintillation.hh"
 #include "G4OpBoundaryProcess.hh"
+#include "G4OpticalPhysics.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -221,6 +222,8 @@ void PhysicsList::ConstructOp(G4bool constructOp)
 		G4OpRayleigh* rayleighScatteringProcess = new G4OpRayleigh();
 		//G4OpMieHG* mieHGScatteringProcess = new G4OpMieHG();
 		G4OpBoundaryProcess* boundaryProcess = new G4OpBoundaryProcess();
+		//G4OpticalPhysics * opticalPhysics = new G4OpticalPhysics();
+		//opticalPhysics->SetFiniteRiseTime(true);
 
 		// Use Birks Correction in the Scintillation process
 		if(!G4Threading::IsWorkerThread())
@@ -249,7 +252,7 @@ void PhysicsList::ConstructOp(G4bool constructOp)
 				pmanager->AddDiscreteProcess(absorptionProcess);
 				pmanager->AddDiscreteProcess(rayleighScatteringProcess);
 				// pmanager->AddDiscreteProcess(mieHGScatteringProcess);
-				  pmanager->AddDiscreteProcess(boundaryProcess);
+				pmanager->AddDiscreteProcess(boundaryProcess);
 			}
 		}
 		G4cout<<"Done Building Optical Physics"<<G4endl;
@@ -337,7 +340,7 @@ void PhysicsList::SetCutForNeutron(G4double cut)
 	G4NeutronTrackingCut * nCut = new G4NeutronTrackingCut();
 	nCut->SetKineticEnergyLimit(fCutForNeutron);
 	nCut->ConstructProcess();
-	
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

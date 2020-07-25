@@ -155,7 +155,8 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	//The following data is for BC400, very similar in properties and composition then BC408.
 		const G4int num2 = 4;
 		G4double e_range[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
-		G4double yield_e[num2] = {10., 1000., 10000., 100000.};
+		G4double yield_e[num2] = {10., 1000., 10000., 100000.};//More realistic
+		//G4double yield_e[num2] = {1000., 10000., 10000., 100000.}; //testing
 		G4double yield_p[num2] = {1., 65., 1500., 45000.};
 		G4double yield_d[num2] = {1., 65., 1500., 45000.};//no data provided, assume same order of magnitude as proton
 		G4double yield_t[num2] = {1., 65., 1500., 45000.};//no data provided, assume same order of magnitude as proton
@@ -187,10 +188,12 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	const G4int nEntries = sizeof(photonEnergy)/sizeof(G4double);
 
 	G4double absorption[num] = {160.*cm, 160*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm, 160.*cm}; ///light attenuation
+	//G4double absorption[num] = {400.*cm, 400*cm, 400.*cm, 400.*cm, 400.*cm, 400.*cm, 400.*cm, 400.*cm, 400.*cm, 400.*cm, 400.*cm, 400.*cm, 400.*cm, 400.*cm, 400.*cm, 400.*cm, 400.*cm, 400.*cm, 400.*cm, 400.*cm}; ///light attenuation
 	assert(sizeof(absorption) == sizeof(photonEnergy));
 
 	//G4double scint[num] = {3., 3., 8., 18., 43., 55., 80., 100., 80., 20., 7., 3. }; ///// Based off emission spectra for BC408
 	G4double scint[num] = {1., 1., 2., 5., 13., 20., 35., 50., 55., 60., 85., 93., 100., 96., 87., 70., 38., 18., 5., 1. }; ///// Based off emission spectra for BC404
+	//G4double scint[num] = {0.0011976048, 0.0011976048, 0.0023952096, 0.0059880240, 0.015568862, 0.023952096, 0.041916168, 0.059880240, 0.065868263, 0.071856287, 0.10179641, 0.11137725, 0.11976048, 0.11497006, 0.10419162, 0.083832335, 0.045508982, 0.021556886, 0.0059880240, 0.0011976048 }; ///// Based off emission spectra for BC404 . Normalized (total 835)
 	assert(sizeof(scint) == sizeof(photonEnergy));
 
 
@@ -206,6 +209,8 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	scintillatorMPT->AddConstProperty("RESOLUTIONSCALE", 1.2); // broadens the statistical distribution of generated photons, sqrt(num generated)* resScale, gaussian based on SCINTILLATIONYIELD, >1 broadens, 0 no distribution. 20%
 	scintillatorMPT->AddConstProperty("FASTTIMECONSTANT", 1.8*ns); //only one decay constant given - 2.1ns for 408
 	scintillatorMPT->AddConstProperty("SLOWTIMECONSTANT", 1.8*ns); //only one decay constant given - triplet-triplet annihilation 
+	//scintillatorMPT->AddConstProperty("FASTTIMECONSTANT", 0.5*ns); // for testing
+	//scintillatorMPT->AddConstProperty("SLOWTIMECONSTANT", 0.5*ns); // for testing
 	scintillatorMPT->AddConstProperty("YIELDRATIO", 1.0); //The relative strength of the fast component as a fraction of total scintillation yield is given by the YIELDRATIO.
 	//Should these be in the physics list?
 	G4OpticalPhysics * opticalPhysics = new G4OpticalPhysics();
@@ -227,8 +232,7 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	//polished front painted is more simplified. Only specular spike reflection
 	ScintWrapper->SetFinish(polishedfrontpainted);  
 	
-	//poished back painted is maybe more realistic, need to then include sigma alpha (angle of the micro facet to the average normal surface) 
-/*
+/*	//poished back painted is maybe more realistic, need to then include sigma alpha (angle of the micro facet to the average normal surface) 
 	ScintWrapper->SetFinish(polishedbackpainted);	
 	ScintWrapper->SetSigmaAlpha(0.1); // 0 for smooth, 1 for max roughness
 	const G4int NUM =3;
@@ -240,6 +244,7 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	ScintWrapperMPT->AddProperty("SPECULARLOBECONSTANT",pp,specularlobe,NUM); //reflection probability about the normal of the micro facet
 	ScintWrapperMPT->AddProperty("SPECULARSPIKECONSTANT",pp,specularspike,NUM); //reflection probability about average surface normal
 	ScintWrapperMPT->AddProperty("BACKSCATTERCONSTANT",pp,backscatter,NUM); //probability of exact back scatter based on mutiple reflections within the deep groove
+	//end of polished back painted
 */
 	G4double rIndex_Teflon[numShort] = {1.35, 1.35, 1.35}; //Taken from wikipedia
 	ScintWrapperMPT->AddProperty("RINDEX", photonEnergyShort, rIndex_Teflon, nEntriesShort)->SetSpline(true);  //refractive index can change with energy
