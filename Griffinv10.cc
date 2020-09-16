@@ -38,6 +38,7 @@
 #include "ActionInitialization.hh"
 
 #include "Randomize.hh"
+#include "G4ParticleHPManager.hh"
 
 #ifdef G4MULTITHREADED
 #include "G4MTRunManager.hh"
@@ -47,79 +48,70 @@
 
 #include "G4UImanager.hh"
 
-#ifdef G4VIS_USE
 #include "G4VisExecutive.hh"
-#endif
 
-#ifdef G4UI_USE
 #include "G4UIExecutive.hh"
-#endif
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 int main(int argc, char** argv)
 {
-    // Choose the Random engine
-    G4Random::setTheEngine(new CLHEP::RanecuEngine);
-	 // G4long is at least 32 bits. 
-    G4long seed = time(NULL);
-    G4Random::setTheSeed(seed);
+	// Choose the Random engine
+	G4Random::setTheEngine(new CLHEP::RanecuEngine);
+	// G4long is at least 32 bits. 
+	G4long seed = time(NULL);
+	G4Random::setTheSeed(seed);
 
-    // Construct the default run manager
+	// Construct the default run manager
 #ifdef G4MULTITHREADED
-	 G4int nThreads = 2;
-	 if(argc == 3) {
-		 nThreads = strtol(argv[2], nullptr, 10);
-	 }
-	 G4cout<<"RUNNING MULTITHREADED WITH "<<nThreads<<" THREADS"<<G4endl;
-	 G4MTRunManager* runManager = new G4MTRunManager;
-	 runManager->SetNumberOfThreads(nThreads);
+	G4int nThreads = 2;
+	if(argc == 3) {
+		nThreads = strtol(argv[2], nullptr, 10);
+	}
+	G4cout<<"RUNNING MULTITHREADED WITH "<<nThreads<<" THREADS"<<G4endl;
+	G4MTRunManager* runManager = new G4MTRunManager;
+	runManager->SetNumberOfThreads(nThreads);
 #else
-	 G4cout<<"NOT RUNNING MULTITHREADED"<<G4endl;
-	 G4RunManager* runManager = new G4RunManager;
+	G4cout<<"NOT RUNNING MULTITHREADED"<<G4endl;
+	G4RunManager* runManager = new G4RunManager;
 #endif
 
-	 // Set mandatory initialization classes
-	 DetectorConstruction* detector = new DetectorConstruction;
-	 runManager->SetUserInitialization(detector);
-	 runManager->SetUserInitialization(new PhysicsList);
-	 runManager->SetUserInitialization(new ActionInitialization(detector));
+	// turn off messages from particle HP manager (/process/had/particle_hp/verbose command does not work?)
+	G4ParticleHPManager::GetInstance()->SetVerboseLevel(0);
 
-	 // We don't initialize the G4 kernel at run time so the physics list can be changed!
+	// Set mandatory initialization classes
+	DetectorConstruction* detector = new DetectorConstruction;
+	runManager->SetUserInitialization(detector);
+	runManager->SetUserInitialization(new PhysicsList);
+	runManager->SetUserInitialization(new ActionInitialization(detector));
 
-	 // Get the pointer to the User Interface manager
-	 G4UImanager* UImanager = G4UImanager::GetUIpointer();
+	// We don't initialize the G4 kernel at run time so the physics list can be changed!
 
-#ifdef G4VIS_USE
-	 G4VisManager* visManager = new G4VisExecutive;
-	 visManager->Initialize();
-#endif
+	// Get the pointer to the User Interface manager
+	G4UImanager* UImanager = G4UImanager::GetUIpointer();
 
-	 if(argc != 1) { // batch mode
-		 G4String command = "/control/execute ";
-		 G4String fileName = argv[1];
-		 UImanager->ApplyCommand(command+fileName);
-	 } else { // interactive mode : define visualization and UI terminal
-#ifdef G4UI_USE
-		 G4UIExecutive* ui = new G4UIExecutive(argc, argv);
-#endif
-		 UImanager->ApplyCommand("/control/execute vis.mac");
+	G4VisManager* visManager = new G4VisExecutive;
+	visManager->Initialize();
 
-#ifdef G4UI_USE
-		 ui->SessionStart();
+	if(argc != 1) { // batch mode
+		G4String command = "/control/execute ";
+		G4String fileName = argv[1];
+		UImanager->ApplyCommand(command+fileName);
+	} else { // interactive mode : define visualization and UI terminal
+		G4UIExecutive* ui = new G4UIExecutive(argc, argv);
+		UImanager->ApplyCommand("/control/execute vis.mac");
 
-		 delete ui;
-#endif
-	 }
+		ui->SessionStart();
 
-#ifdef G4VIS_USE
-		 delete visManager;
-#endif
+		delete ui;
+	}
 
-	 // Job termination
-	 delete runManager;
+	delete visManager;
 
-	 return 0;
+	// Job termination
+	delete runManager;
+
+	return 0;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
