@@ -297,10 +297,18 @@ void EventAction::ClearVariables() {
 	fPlasticNumber[i]=-1;
 	fTopCounter[i] = 0;
 	fBottomCounter[i] = 0;
+	//fOpTimeVector[i].clear();
+	//fOpEnergyVector[i].clear();
+	}
+	fPlasticHits = 0;
+	for(int i=0; i<fPlasticHits2; ++i){
 	fOpTimeVector[i].clear();
 	fOpEnergyVector[i].clear();
 	}
-	fPlasticHits = 0;
+	fPlasticHits2 = 0;
+
+
+
 }
 
 
@@ -451,8 +459,8 @@ void EventAction::SetScintPhotonTimeBottom(G4double bottom, G4int detNum) {
 }
 
 void EventAction::SetScintPhotonEnergyTime(G4double OpTime, G4double OpEnergy, G4int detNum) {
-	for(G4int i = 0; i < fPlasticHits; i++) {
-		if(fPlasticNumber[i] == detNum) {
+	for(G4int i = 0; i < fPlasticHits2; i++) {
+		if(fPlasticNumber2[i] == detNum) {
 
 			fOpTimeVector[i].push_back(OpTime);
 			fOpEnergyVector[i].push_back(OpEnergy);
@@ -461,10 +469,15 @@ void EventAction::SetScintPhotonEnergyTime(G4double OpTime, G4double OpEnergy, G
 		}
 	}
 
-	//fPlasticNumber[fPlasticHits] = detNum;
-	fOpTimeVector[fPlasticHits].push_back(OpTime);
-	fOpEnergyVector[fPlasticHits].push_back(OpEnergy);
+	fPlasticNumber2[fPlasticHits2] = detNum;
+	fOpTimeVector[fPlasticHits2].push_back(OpTime);
+	fOpEnergyVector[fPlasticHits2].push_back(OpEnergy);
+	fPlasticHits2++;
 	
+	if(fPlasticHits2 >= MAXHITS) {
+		G4cout<<"ERROR! Too many plastics2 hits!"<<G4endl;
+		throw;
+	}
 }
 
 

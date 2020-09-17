@@ -133,6 +133,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		else if(processName == "tInelastic")         processType = 20;
 		else if(processName == "photonNuclear")         processType = 21;
 		else if(processName == "He3Inelastic")         processType = 22;
+		else if(processName == "RadioactiveDecayBase")         processType = 23;
 		else {                                      processType = 0;
 			G4cout << "unknown process -> " << processName << G4endl;
 		}
@@ -151,6 +152,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	G4StepPoint* postPoint = aStep->GetPostStepPoint();
 	G4ThreeVector postPos = postPoint->GetPosition();
 	G4double postTime = postPoint->GetGlobalTime();
+	G4double preTimeLocal = prePoint->GetLocalTime();
+	G4double preTimeGlobal = prePoint->GetGlobalTime();
 
 	size_t found;
 
@@ -229,7 +232,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	//Scint photon in plastic
 	found = volname.find("PlasticDet");
 
-	if(found!=G4String::npos && particleType == 8 && fEventAction->GetOldTrackID() != trackID  && aStep->IsFirstStepInVolume() == true){ //should prepoint->GetStepStatus()==fGeomBoundary be in here?
+	//if(found!=G4String::npos && particleType == 8 && fEventAction->GetOldTrackID() != trackID  && aStep->IsFirstStepInVolume() == true){ //should prepoint->GetStepStatus()==fGeomBoundary be in here?
+	if(found!=G4String::npos && particleType == 8 && fEventAction->GetOldTrackID() != trackID  && preTimeLocal == 0){ //should prepoint->GetStepStatus()==fGeomBoundary be in here?
 		// strip "PlasticDet_" (9 characters) and everything before from the string
 		std::string tmpString = volname.substr(found+11);
 		// replace all '_' with spaces so we can just use istringstream::operator>>
@@ -238,7 +242,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		std::istringstream is(tmpString);
 		G4int detNumber;
 		is>>detNumber;
-		fEventAction->SetScintPhotonEnergyTime(postTime, ekin, detNumber);
+		//fEventAction->SetScintPhotonEnergyTime(postTime, ekin, detNumber);
+		fEventAction->SetScintPhotonEnergyTime(preTimeGlobal, ekin, detNumber);
 		fEventAction->SetOldTrackID(trackID);
 	}
 
