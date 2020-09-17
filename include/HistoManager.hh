@@ -135,8 +135,10 @@ private:
 	G4String      fFileName[2];
 
 	G4int         fHistId[MAXHISTO];
-	G4AnaH1*      fHistPt[MAXHISTO];
-	G4AnaH2*      fHistPt2[MAXHISTO];
+	//G4AnaH1*      fHistPt[MAXHISTO];
+	//G4AnaH2*      fHistPt2[MAXHISTO];
+	G4H1*      fHistPt[MAXHISTO];
+	G4H2*      fHistPt2[MAXHISTO];
 
 	G4int         fNtColId[MAXNTCOL];
 	G4int         fNtColIdHit[MAXNTCOL];
