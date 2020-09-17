@@ -47,13 +47,13 @@
 
 #include "G4UImanager.hh"
 
-#ifdef G4VIS_USE
+//#ifdef G4VIS_USE //uncomment later
 #include "G4VisExecutive.hh"
-#endif
+//#endif
 
-#ifdef G4UI_USE
+//#ifdef G4UI_USE
 #include "G4UIExecutive.hh"
-#endif
+//#endif
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -94,31 +94,32 @@ int main(int argc, char** argv)
 	 // Get the pointer to the User Interface manager
 	 G4UImanager* UImanager = G4UImanager::GetUIpointer();
 
-#ifdef G4VIS_USE
+//#ifdef G4VIS_USE //uncomment later
 	 G4VisManager* visManager = new G4VisExecutive;
 	 visManager->Initialize();
-#endif
+	 G4cout<<"VisManager"<<G4endl;
+//#endif
 
 	 if(argc != 1) { // batch mode
 		 G4String command = "/control/execute ";
 		 G4String fileName = argv[1];
 		 UImanager->ApplyCommand(command+fileName);
 	 } else { // interactive mode : define visualization and UI terminal
-#ifdef G4UI_USE
+//#ifdef G4UI_USE
 		 G4UIExecutive* ui = new G4UIExecutive(argc, argv);
-#endif
+//#endif
 		 UImanager->ApplyCommand("/control/execute vis.mac");
 
-#ifdef G4UI_USE
+//#ifdef G4UI_USE
 		 ui->SessionStart();
 
 		 delete ui;
-#endif
+//#endif
 	 }
 
-#ifdef G4VIS_USE
+//#ifdef G4VIS_USE //uncomment later
 		 delete visManager;
-#endif
+//#endif
 
 	 // Job termination
 	 delete runManager;
