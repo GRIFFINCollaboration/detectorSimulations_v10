@@ -67,6 +67,7 @@ private:
     G4double fAirGap;
    
     G4bool fAddWrap;
+    G4bool fAddFrontPMTs;
 
     G4double fNumDet;
     G4double fNumDetBot;
@@ -79,6 +80,9 @@ private:
     std::vector<G4LogicalVolume*>  fWrapLogArray;
     std::vector<G4LogicalVolume*>  fPMT1LogArray;
     std::vector<G4LogicalVolume*>  fPMT2LogArray;
+    std::vector<G4LogicalVolume*>  fPMTFace1LogArray;
+    std::vector<G4LogicalVolume*>  fPMTFace2LogArray;
+    std::vector<G4LogicalVolume*>  fPMTFaceMidLogArray;
    
     G4Color bronze;
     G4Color black;
