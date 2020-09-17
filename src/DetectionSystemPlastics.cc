@@ -36,7 +36,7 @@
 
 DetectionSystemPlastics::DetectionSystemPlastics(G4double thickness, G4int material, G4double numDet)
 {
-	fAddFrontPMTs = false;
+	fAddFrontPMTs = true;
 	fAddWrap = true;
 	// detector dimensions  properties
 	fScintillatorLength        = 6.*cm;
@@ -53,11 +53,12 @@ DetectionSystemPlastics::DetectionSystemPlastics(G4double thickness, G4int mater
 	fPMTFace2LogArray.resize(numDet, NULL);
 	fPMTFaceMidLogArray.resize(numDet, NULL);
 
-	fWrapThickness = 5. * mm; //Factor of 10 should be  applied later for visualization purposes.  0.05 for simulations, 0.5 for visualization
+	fWrapThickness = 0.5 * mm; //Factor of 10 should be  applied later for visualization purposes.  0.05 for simulations, 0.5 for visualization
 	fSpacing = fWrapThickness; //assuming no lead on DESCANT but taking into account the optical wrapping
 	//fWrapThickness = 0.1 * cm;
 	//fAirGap = 0.1 * fWrapThickness;
-	fAirGap = 0.000001*m;
+	//fAirGap = 0.000001*m;
+	fAirGap = 0.;
 	fWrapMaterial = "Teflon";
 	fPMTMaterial = "G4_SILICON_DIOXIDE";
 

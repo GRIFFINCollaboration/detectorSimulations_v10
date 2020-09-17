@@ -290,6 +290,70 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		//G4cout << "Bottom Count: " <<  fEventAction->GetTotScintPhotonBottom()<< G4endl;
 	}
 
+
+	//Front Top PMT
+	found = volname.find("PMTFront1_top");
+	//if(found!=G4String::npos && particleType == 8){ 
+	if(found!=G4String::npos && particleType == 8 && prePoint->GetStepStatus()==fGeomBoundary){
+		//G4cout << "Bottom hit in pmt "<<particleType  << G4endl;
+		// strip "PMTFront1_top_" (14 characters) and everything before from the string
+		std::string tmpString = volname.substr(found+14);
+		// replace all '_' with spaces so we can just use istringstream::operator>>
+		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
+		// create istringstream from the stripped and converted stream, and read detector and crystal number
+		std::istringstream is(tmpString);
+		G4int detNumber;
+		is>>detNumber;
+		//G4cout << detNumber << " : is the detector number stepping action"<<G4endl;
+		fEventAction->SetScintPhotonTimeFrontTop(postTime, detNumber);
+		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
+		//G4cout << "Calling kill track and Secondaries" << G4endl;
+		//G4cout << "Bottom Count: " <<  fEventAction->GetTotScintPhotonBottom()<< G4endl;
+	}
+
+
+	//Front Mid PMT
+	found = volname.find("PMTFront_mid");
+	//if(found!=G4String::npos && particleType == 8){ 
+	if(found!=G4String::npos && particleType == 8 && prePoint->GetStepStatus()==fGeomBoundary){
+		//G4cout << "Bottom hit in pmt "<<particleType  << G4endl;
+		// strip "PMTFront_mid_" (13 characters) and everything before from the string
+		std::string tmpString = volname.substr(found+13);
+		// replace all '_' with spaces so we can just use istringstream::operator>>
+		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
+		// create istringstream from the stripped and converted stream, and read detector and crystal number
+		std::istringstream is(tmpString);
+		G4int detNumber;
+		is>>detNumber;
+		//G4cout << detNumber << " : is the detector number stepping action"<<G4endl;
+		fEventAction->SetScintPhotonTimeFrontMid(postTime, detNumber);
+		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
+		//G4cout << "Calling kill track and Secondaries" << G4endl;
+		//G4cout << "Bottom Count: " <<  fEventAction->GetTotScintPhotonBottom()<< G4endl;
+	}
+
+	//Front Bot PMT
+	found = volname.find("PMTFront2_bottom");
+	//if(found!=G4String::npos && particleType == 8){ 
+	if(found!=G4String::npos && particleType == 8 && prePoint->GetStepStatus()==fGeomBoundary){
+		//G4cout << "Bottom hit in pmt "<<particleType  << G4endl;
+		// strip "PMTFront2_bottom_" (17 characters) and everything before from the string
+		std::string tmpString = volname.substr(found+17);
+		// replace all '_' with spaces so we can just use istringstream::operator>>
+		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
+		// create istringstream from the stripped and converted stream, and read detector and crystal number
+		std::istringstream is(tmpString);
+		G4int detNumber;
+		is>>detNumber;
+		//G4cout << detNumber << " : is the detector number stepping action"<<G4endl;
+		fEventAction->SetScintPhotonTimeFrontBottom(postTime, detNumber);
+		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
+		//G4cout << "Calling kill track and Secondaries" << G4endl;
+		//G4cout << "Bottom Count: " <<  fEventAction->GetTotScintPhotonBottom()<< G4endl;
+	}
+
+
+
 	//Kinetic energy of neutrons in Plastic Scintillator based off first scatter and TOF based off first scatter
 	G4double TOF;
 	G4ThreeVector TOFPos;

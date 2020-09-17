@@ -118,6 +118,12 @@ public:
 	void SetScintPhotonTimeTop(G4double top, G4int detNum);
 	//Collection Time Bottom
 	void SetScintPhotonTimeBottom(G4double bottom, G4int detNum);
+	//Collection Time Front Top
+	void SetScintPhotonTimeFrontTop(G4double frontTop, G4int detNum);
+	//Collection Time Front Mid
+	void SetScintPhotonTimeFrontMid(G4double frontMid, G4int detNum);
+	//Collection Time Front Bottom
+	void SetScintPhotonTimeFrontBottom(G4double frontBot, G4int detNum);
 	//Optical Photon Time and Energy
 	void SetScintPhotonEnergyTime(G4double OpTime, G4double OpEnergy, G4int detNum);
 	void SetOldTrackID(G4int num) {foldTrackID = num;};
@@ -189,9 +195,15 @@ private:
 	//Optical Photon Time vectors
 	std::vector<G4double>  fCollectionTimeTopVector[MAXHITS];
 	std::vector<G4double>  fCollectionTimeBottomVector[MAXHITS];
+	std::vector<G4double>  fCollectionTimeFrontTopVector[MAXHITS];
+	std::vector<G4double>  fCollectionTimeFrontMidVector[MAXHITS];
+	std::vector<G4double>  fCollectionTimeFrontBottomVector[MAXHITS];
 	//Optical Photon Counter Arrays
 	G4int fTopCounter[MAXHITS];
 	G4int fBottomCounter[MAXHITS];
+	G4int fFrontTopCounter[MAXHITS];
+	G4int fFrontMidCounter[MAXHITS];
+	G4int fFrontBottomCounter[MAXHITS];
 	//Optical Photon Creation energy and time
 	std::vector<G4double>  fOpTimeVector[MAXHITS];
 	std::vector<G4double>  fOpEnergyVector[MAXHITS];
