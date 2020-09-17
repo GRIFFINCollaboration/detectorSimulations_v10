@@ -158,6 +158,8 @@ private:
 	// Tracking info for Plastic Detectors
 	G4int    fPlasticHits;
 	G4int    fPlasticNumber[MAXHITS];
+	G4int    fPlasticHits2;
+	G4int    fPlasticNumber2[MAXHITS];
 	
 
 	G4int    fStepTrackerI[NUMSTEPVARS][MAXSTEPS];
