@@ -121,8 +121,12 @@ DetectionSystemGriffin::~DetectionSystemGriffin() {
 void DetectionSystemGriffin::Build() { 
 
     fSurfCheck = true;
+    // begin CRN 
+    G4int det = 1;
+    G4int cry = 1;
 
-    BuildOneDetector();
+    BuildOneDetector(det, cry);
+    // end CRN
 
 }//end ::Build
 
@@ -488,7 +492,7 @@ G4int DetectionSystemGriffin::PlaceDeadLayerSpecificCrystal(G4LogicalVolume* exp
 ///////////////////////////////////////////////////////////////////////
 // BuildOneDetector()
 ///////////////////////////////////////////////////////////////////////
-void DetectionSystemGriffin::BuildOneDetector() {
+void DetectionSystemGriffin::BuildOneDetector(G4int det, G4int cry) {
     // Build assembly volumes
     // Holds all pieces that are not a detector (ie. the can, nitrogen tank, cold finger, electrodes, etc.)
     fAssembly                           = new G4AssemblyVolume();
@@ -527,7 +531,7 @@ void DetectionSystemGriffin::BuildOneDetector() {
 
     // Include BGOs?
     if(fBGOSelector == 1) {
-        ConstructNewSuppressorCasingWithShells() ;
+        ConstructNewSuppressorCasingWithShells(det, cry) ;
     } else if(fBGOSelector == 0) {
         //G4cout<<"Not building BGO "<<G4endl ;
     } else {
@@ -542,7 +546,9 @@ void DetectionSystemGriffin::BuildOneDetector() {
 
 } // end BuildOneDetector()
 
-void DetectionSystemGriffin::BuildEverythingButCrystals() {
+//begin CRN 
+void DetectionSystemGriffin::BuildEverythingButCrystals(G4int det) {
+// end CRN 
     // Build assembly volumes
     fAssembly                           = new G4AssemblyVolume();
     fLeftSuppressorCasingAssembly       = new G4AssemblyVolume();
@@ -1791,7 +1797,7 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells(G4int det, G
 
     G4SubtractionSolid* leftSuppressor = FrontSlantSuppressor("left", false); // Left, non-chopping.
 
-    fLeftSuppressorLog = new G4LogicalVolume(leftSuppressor, materialBGO, leftSuppressorLogName 0, 0, 0);
+    fLeftSuppressorLog = new G4LogicalVolume(leftSuppressor, materialBGO, leftSuppressorLogName, 0, 0, 0);
     fLeftSuppressorLog->SetVisAttributes(innardsVisAtt);
     // end CRN 
 

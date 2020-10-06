@@ -603,7 +603,9 @@ void DetectorConstruction::AddDetectionSystemGriffinCustom(G4int ndet) {
 
 		pGriffinCustom->BuildDeadLayerSpecificCrystal(detNum-1);
 		pGriffinCustom->PlaceDeadLayerSpecificCrystal(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
-		pGriffinCustom->BuildEverythingButCrystals();
+        //begin CRN 
+		pGriffinCustom->BuildEverythingButCrystals(detNum-1);
+        // end CRN
 		pGriffinCustom->PlaceEverythingButCrystals(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 
 	}
@@ -663,7 +665,9 @@ void DetectorConstruction::AddDetectionSystemGriffinForward(G4int ndet) {
 
 		pGriffinDLS->BuildDeadLayerSpecificCrystal(detNum-1);
 		pGriffinDLS->PlaceDeadLayerSpecificCrystal(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
-		pGriffinDLS->BuildEverythingButCrystals();
+        //begin CRN
+		pGriffinDLS->BuildEverythingButCrystals(detNum-1);
+        // end CRN 
 		pGriffinDLS->PlaceEverythingButCrystals(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 	}
 
@@ -687,7 +691,9 @@ void DetectorConstruction::AddDetectionSystemGriffinForwardDetector(G4int ndet) 
 
 	pGriffinDLS->PlaceDeadLayerSpecificCrystal(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 
-	pGriffinDLS->BuildEverythingButCrystals();
+    // begin CRN 
+	pGriffinDLS->BuildEverythingButCrystals(detNum-1);
+    // end CRN
 
 	pGriffinDLS->PlaceEverythingButCrystals(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 
@@ -713,7 +719,9 @@ void DetectorConstruction::AddDetectionSystemGriffinBack(G4int ndet) {
 
 		pGriffinDLS->BuildDeadLayerSpecificCrystal(detNum-1);
 		pGriffinDLS->PlaceDeadLayerSpecificCrystal(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
-		pGriffinDLS->BuildEverythingButCrystals();
+        //begin CRN
+		pGriffinDLS->BuildEverythingButCrystals(detNum-1);
+        // end CRN
 		pGriffinDLS->PlaceEverythingButCrystals(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 	}
 
@@ -736,7 +744,9 @@ void DetectorConstruction::AddDetectionSystemGriffinBackDetector(G4int ndet) {
 
 	pGriffinDLS->BuildDeadLayerSpecificCrystal(detNum-1);
 	pGriffinDLS->PlaceDeadLayerSpecificCrystal(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
-	pGriffinDLS->BuildEverythingButCrystals();
+    // begin CRN 
+	pGriffinDLS->BuildEverythingButCrystals(detNum-1);
+    // end CRN
 	pGriffinDLS->PlaceEverythingButCrystals(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 
 	fGriffin = true;

@@ -287,7 +287,9 @@ private:
     G4LogicalVolume* fAirBoxLog;
 
     // methods to construct all of the components of the detector
-    void ConstructNewSuppressorCasingWithShells();
+    // begin CRN 
+    void ConstructNewSuppressorCasingWithShells(G4int det, G4int cry);
+    // end CRN
     void BuildelectrodeMatElectrodes();
     void ConstructComplexDetectorBlockWithDeadLayer();
 
@@ -458,7 +460,9 @@ private:
     G4Colour fGriffinDeadLayerColours[4];
 
     // internal methods
-    void BuildOneDetector();
+    // begin CRN 
+    void BuildOneDetector(G4int det, G4int cry);
+    //end CRN 
     //    void PlaceDetector(G4int detectorNumber);
 };
 
