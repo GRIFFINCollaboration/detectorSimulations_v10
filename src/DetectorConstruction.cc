@@ -576,7 +576,9 @@ void DetectorConstruction::AddDetectionSystemGriffinCustomDetector(G4int) {
 
 	pGriffinCustom->PlaceDeadLayerSpecificCrystal(fLogicWorld, fCustomDetectorNumber-1, fCustomDetectorPosition-1, fUseTigressPositions);
 
-	pGriffinCustom->BuildEverythingButCrystals();
+    // begin CRN 
+	pGriffinCustom->BuildEverythingButCrystals(fCustomDetectorNumber-1);
+    // end CRN
 
 	pGriffinCustom->PlaceEverythingButCrystals(fLogicWorld, fCustomDetectorNumber-1, fCustomDetectorPosition-1, fUseTigressPositions);
 
@@ -967,6 +969,12 @@ bool DetectorConstruction::CheckVolumeName(G4String volumeName) {
 
 DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 	DetectorProperties result;
+
+    // begin CRN 
+    G4cout << "* ----- " << G4endl;
+    G4cout << "DetectorConstruction::volumeName " << volumeName << G4endl;
+    // end CRN 
+
 	// GRIFFIN detectors have the detector and crystal number in their names
 	if(volumeName.find("germaniumBlock1") != G4String::npos) {
 		// strip "germaniumBlock1_" (16 characters) and everything before from the string
