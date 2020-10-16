@@ -576,9 +576,7 @@ void DetectorConstruction::AddDetectionSystemGriffinCustomDetector(G4int) {
 
     pGriffinCustom->PlaceDeadLayerSpecificCrystal(fLogicWorld, fCustomDetectorNumber-1, fCustomDetectorPosition-1, fUseTigressPositions);
 
-    // begin CRN 
     pGriffinCustom->BuildEverythingButCrystals(fCustomDetectorNumber-1);
-    // end CRN
 
     pGriffinCustom->PlaceEverythingButCrystals(fLogicWorld, fCustomDetectorNumber-1, fCustomDetectorPosition-1, fUseTigressPositions);
 
@@ -603,9 +601,7 @@ void DetectorConstruction::AddDetectionSystemGriffinCustom(G4int ndet) {
 
         pGriffinCustom->BuildDeadLayerSpecificCrystal(detNum-1);
         pGriffinCustom->PlaceDeadLayerSpecificCrystal(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
-        //begin CRN 
         pGriffinCustom->BuildEverythingButCrystals(detNum-1);
-        // end CRN
         pGriffinCustom->PlaceEverythingButCrystals(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 
     }
@@ -665,9 +661,7 @@ void DetectorConstruction::AddDetectionSystemGriffinForward(G4int ndet) {
 
         pGriffinDLS->BuildDeadLayerSpecificCrystal(detNum-1);
         pGriffinDLS->PlaceDeadLayerSpecificCrystal(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
-        //begin CRN
         pGriffinDLS->BuildEverythingButCrystals(detNum-1);
-        // end CRN 
         pGriffinDLS->PlaceEverythingButCrystals(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
     }
 
@@ -691,9 +685,7 @@ void DetectorConstruction::AddDetectionSystemGriffinForwardDetector(G4int ndet) 
 
     pGriffinDLS->PlaceDeadLayerSpecificCrystal(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 
-    // begin CRN 
     pGriffinDLS->BuildEverythingButCrystals(detNum-1);
-    // end CRN
 
     pGriffinDLS->PlaceEverythingButCrystals(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 
@@ -719,9 +711,7 @@ void DetectorConstruction::AddDetectionSystemGriffinBack(G4int ndet) {
 
         pGriffinDLS->BuildDeadLayerSpecificCrystal(detNum-1);
         pGriffinDLS->PlaceDeadLayerSpecificCrystal(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
-        //begin CRN
         pGriffinDLS->BuildEverythingButCrystals(detNum-1);
-        // end CRN
         pGriffinDLS->PlaceEverythingButCrystals(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
     }
 
@@ -744,9 +734,7 @@ void DetectorConstruction::AddDetectionSystemGriffinBackDetector(G4int ndet) {
 
     pGriffinDLS->BuildDeadLayerSpecificCrystal(detNum-1);
     pGriffinDLS->PlaceDeadLayerSpecificCrystal(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
-    // begin CRN 
     pGriffinDLS->BuildEverythingButCrystals(detNum-1);
-    // end CRN
     pGriffinDLS->PlaceEverythingButCrystals(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 
     fGriffin = true;
@@ -980,11 +968,6 @@ bool DetectorConstruction::CheckVolumeName(G4String volumeName) {
 DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
     DetectorProperties result;
 
-    // begin CRN 
-    G4cout << "* ----- " << G4endl;
-    G4cout << "DetectorConstruction::volumeName " << volumeName << G4endl;
-    // end CRN 
-
     // GRIFFIN detectors have the detector and crystal number in their names
     if(volumeName.find("germaniumBlock1") != G4String::npos) {
         // strip "germaniumBlock1_" (16 characters) and everything before from the string
@@ -1066,54 +1049,42 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
     }
 
     if(volumeName.find("leftSuppressorExtension") != G4String::npos) {
-        std::string tmpString = volumeName.substr(volumeName.find("leftSuppressorExtension")+23);
-        std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
-        std::istringstream is(tmpString);
-        is>>result.detectorNumber;
+        std::string temp_string = volumeName.substr(volumeName.find("leftSuppressorExtension")+23);
+        std::replace(temp_string.begin(), temp_string.end(), '_', ' ');
+        std::istringstream temp_stream(temp_string);
+        temp_stream>>result.detectorNumber;
         // converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
         result.systemID = 1010;
-        // CRNTest
-        G4cout << "det: " << result.detectorNumber << " cry: " << result.crystalNumber << " type: " << result.systemID << G4endl;
-        // CRNTest
         return result;
     }
 
     if(volumeName.find("rightSuppressorExtension") != G4String::npos) {
-        std::string tmpString = volumeName.substr(volumeName.find("rightSuppressorExtension")+24);
-        std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
-        std::istringstream is(tmpString);
-        is>>result.detectorNumber;
+        std::string temp_string = volumeName.substr(volumeName.find("rightSuppressorExtension")+24);
+        std::replace(temp_string.begin(), temp_string.end(), '_', ' ');
+        std::istringstream temp_stream(temp_string);
+        temp_stream>>result.detectorNumber;
         // converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
         result.systemID = 1020;
-        // CRNTest
-        G4cout << "det: " << result.detectorNumber << " cry: " << result.crystalNumber << " type: " << result.systemID << G4endl;
-        // CRNTest
         return result;
     }
 
     if(volumeName.find("leftSuppressorCasing") != G4String::npos) {
-        std::string tmpString = volumeName.substr(volumeName.find("leftSuppressorCasing")+20);
-        std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
-        std::istringstream is(tmpString);
-        is>>result.detectorNumber;
+        std::string temp_string = volumeName.substr(volumeName.find("leftSuppressorCasing")+20);
+        std::replace(temp_string.begin(), temp_string.end(), '_', ' ');
+        std::istringstream temp_stream(temp_string);
+        temp_stream>>result.detectorNumber;
         // converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
         result.systemID = 1030;
-        // CRNTest
-        G4cout << "det: " << result.detectorNumber << " cry: " << result.crystalNumber << " type: " << result.systemID << G4endl;
-        // CRNTest
         return result;
     }
 
     if(volumeName.find("rightSuppressorCasing") != G4String::npos) {
-        std::string tmpString = volumeName.substr(volumeName.find("rightSuppressorCasing")+21);
-        std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
-        std::istringstream is(tmpString);
-        is>>result.detectorNumber;
+        std::string temp_string = volumeName.substr(volumeName.find("rightSuppressorCasing")+21);
+        std::replace(temp_string.begin(), temp_string.end(), '_', ' ');
+        std::istringstream temp_stream(temp_string);
+        temp_stream>>result.detectorNumber;
         // converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
         result.systemID = 1040;
-        // CRNTest
-        G4cout << "det: " << result.detectorNumber << " cry: " << result.crystalNumber << " type: " << result.systemID << G4endl;
-        // CRNTest
         return result;
     }
 
