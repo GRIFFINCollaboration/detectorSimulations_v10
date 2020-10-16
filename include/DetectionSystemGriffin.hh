@@ -288,7 +288,7 @@ private:
 
     // methods to construct all of the components of the detector
     // begin CRN 
-    void ConstructNewSuppressorCasingWithShells(G4int det, G4int cry);
+    void ConstructNewSuppressorCasingWithShells(G4int det);
     // end CRN
     void BuildelectrodeMatElectrodes();
     void ConstructComplexDetectorBlockWithDeadLayer();
@@ -461,7 +461,7 @@ private:
 
     // internal methods
     // begin CRN 
-    void BuildOneDetector(G4int det, G4int cry);
+    void BuildOneDetector(G4int det);
     //end CRN 
     //    void PlaceDetector(G4int detectorNumber);
 };

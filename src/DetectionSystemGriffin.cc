@@ -123,9 +123,8 @@ void DetectionSystemGriffin::Build() {
     fSurfCheck = true;
     // begin CRN 
     G4int det = 1;
-    G4int cry = 1;
 
-    BuildOneDetector(det, cry);
+    BuildOneDetector(det);
     // end CRN
 
 }//end ::Build
@@ -492,7 +491,7 @@ G4int DetectionSystemGriffin::PlaceDeadLayerSpecificCrystal(G4LogicalVolume* exp
 ///////////////////////////////////////////////////////////////////////
 // BuildOneDetector()
 ///////////////////////////////////////////////////////////////////////
-void DetectionSystemGriffin::BuildOneDetector(G4int det, G4int cry) {
+void DetectionSystemGriffin::BuildOneDetector(G4int det) {
     // Build assembly volumes
     // Holds all pieces that are not a detector (ie. the can, nitrogen tank, cold finger, electrodes, etc.)
     fAssembly                           = new G4AssemblyVolume();
@@ -531,7 +530,7 @@ void DetectionSystemGriffin::BuildOneDetector(G4int det, G4int cry) {
 
     // Include BGOs?
     if(fBGOSelector == 1) {
-        ConstructNewSuppressorCasingWithShells(det, cry) ;
+        ConstructNewSuppressorCasingWithShells(det) ;
     } else if(fBGOSelector == 0) {
         //G4cout<<"Not building BGO "<<G4endl ;
     } else {
@@ -573,8 +572,7 @@ void DetectionSystemGriffin::BuildEverythingButCrystals(G4int det) {
     // Include BGOs?
     if(fBGOSelector == 1) {
         // begin CRN 
-        G4int cry = 0;
-        ConstructNewSuppressorCasingWithShells(det, cry);
+        ConstructNewSuppressorCasingWithShells(det);
         // end CRN 
     } else if(fBGOSelector == 0) {
         //G4cout<<"Not building BGO "<<G4endl;
@@ -1662,9 +1660,8 @@ G4Tubs* DetectionSystemGriffin::StructureMatColdFinger() {
 // of structureMat that surrounds the physical pieces.
 ///////////////////////////////////////////////////////////////////////
 // begin CRN 
-void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells(G4int det, G4int cry) {
+void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells(G4int det) {
     G4String strdet = G4UIcommand::ConvertToString(det);
-    G4String strcry = G4UIcommand::ConvertToString(cry);
     // end CRN 
     G4int i;
     G4double x0, y0, z0, x, y, z;
@@ -1717,12 +1714,9 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells(G4int det, G
     // the suppressor pieces themselves.  As an error checking method, the suppressor
     // pieces are given a copy number value far out of range of any useful copy number.
     if(fIncludeBackSuppressors) {
-        // begin CRN 
-        G4String backQuarterSuppressorShellLogName = "backQuarterSuppressorShell_" + strdet + "_" + strcry + "_log";
         fBackQuarterSuppressorShellLog = new G4LogicalVolume(
                 backQuarterSuppressorShell, structureMat,
-                backQuarterSuppressorShellLogName, 0, 0, 0);
-        // end CRN 
+                "backQuarterSuppressorShell", 0, 0, 0);
 
         fBackQuarterSuppressorShellLog->SetVisAttributes(SuppressorVisAtt);
 
@@ -1732,11 +1726,8 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells(G4int det, G
             exit(1);
         }
 
-        // begin CRN 
-        G4String backQuarterSuppressorLogName = "backQuarterSuppressor_" + strdet + "_" + strcry + "_log";
         fBackQuarterSuppressorLog = new G4LogicalVolume(backQuarterSuppressor, backMaterial,
-                backQuarterSuppressorLogName, 0, 0, 0);
-        // end CRN
+                "backQuarterSuppressor", 0, 0, 0);
         fBackQuarterSuppressorLog->SetVisAttributes(backInnardsVisAtt);
 
         fSuppressorBackAssembly->AddPlacedVolume(fBackQuarterSuppressorLog, fMoveNull, fRotateNull);
@@ -1771,23 +1762,20 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells(G4int det, G
     // now we add the side pieces of suppressor that taper off towards the front of the can
     ////////////////////////////////////////////////////////////////////////////////////////
     // begin CRN 
-    G4String rightSuppressorShellLogName = "rightSuppressorShell_" + strdet + "_" + strcry + "_log";
-    G4String leftSuppressorShellLogName = "leftSuppressorShell_" + strdet + "_" + strcry + "_log";
-
-    G4String rightSuppressorLogName = "rightSuppressor_" + strdet + "_" + strcry + "_log";
-    G4String leftSuppressorLogName = "leftSuppressor_" + strdet + "_" + strcry + "_log";
+    G4String rightSuppressorLogName = "rightSuppressor_" + strdet + "_log";
+    G4String leftSuppressorLogName = "leftSuppressor_" + strdet + "_log";
 
     // Define the structureMat shell logical volume
     G4SubtractionSolid* rightSuppressorShell = ShellForFrontSlantSuppressor("right");
 
     fRightSuppressorShellLog = new G4LogicalVolume(rightSuppressorShell, structureMat,
-            rightSuppressorShellLogName, 0,0,0);
+            "rightSuppressorShell", 0,0,0);
     fRightSuppressorShellLog->SetVisAttributes(SuppressorVisAtt);
 
     G4SubtractionSolid* leftSuppressorShell = ShellForFrontSlantSuppressor("left");
 
     fLeftSuppressorShellLog = new G4LogicalVolume(leftSuppressorShell, structureMat,
-            leftSuppressorShellLogName, 0,0,0);
+            "leftSuppressorShell", 0,0,0);
     fLeftSuppressorShellLog->SetVisAttributes(SuppressorVisAtt);
 
     G4SubtractionSolid* rightSuppressor = FrontSlantSuppressor("right", false); // Right, non-chopping.
@@ -1867,11 +1855,11 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells(G4int det, G
     // now we add the side pieces of suppressor that extend out in front of the can when it's in the back position
     ////////////////////////////////////////////////////////////////////////////////////////
     // begin CRN 
-    G4String rightSuppressorExtensionLogName = "rightSuppressorExtension_" + strdet + "_" + strcry + "_log";
-    G4String leftSuppressorExtensionLogName = "leftSuppressorExtension_" + strdet + "_" + strcry + "_log";
+    G4String rightSuppressorExtensionLogName = "rightSuppressorExtension_" + strdet + "_log";
+    G4String leftSuppressorExtensionLogName = "leftSuppressorExtension_" + strdet + "_log";
 
-    G4String rightSuppressorShellExtensionLogName = "rightSuppressorShellExtension_" + strdet + "_" + strcry + "_log";
-    G4String leftSuppressorShellExtensionLogName = "leftSuppressorShellExtension_" + strdet + "_" + strcry + "_log";
+    G4String rightSuppressorShellExtensionLogName = "rightSuppressorShellExtension_" + strdet + "_log";
+    G4String leftSuppressorShellExtensionLogName = "leftSuppressorShellExtension_" + strdet + "_log";
     // end CRN
 
     // Define the shell right logical volume
