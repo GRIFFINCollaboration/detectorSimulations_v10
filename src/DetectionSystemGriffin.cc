@@ -1753,8 +1753,8 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells(G4int det) {
     ////////////////////////////////////////////////////////////////////////////////////////
     // now we add the side pieces of suppressor that taper off towards the front of the can
     ////////////////////////////////////////////////////////////////////////////////////////
-    G4String rightSuppressorLogName = "rightSuppressor_" + strdet + "_log";
-    G4String leftSuppressorLogName = "leftSuppressor_" + strdet + "_log";
+    G4String rightSuppressorLogName = "rightSuppressorCasing_" + strdet + "_log";
+    G4String leftSuppressorLogName = "leftSuppressorCasing_" + strdet + "_log";
 
     // Define the structureMat shell logical volume
     G4SubtractionSolid* rightSuppressorShell = ShellForFrontSlantSuppressor("right");
