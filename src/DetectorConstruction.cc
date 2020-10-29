@@ -968,10 +968,6 @@ bool DetectorConstruction::CheckVolumeName(G4String volumeName) {
 DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
     DetectorProperties result;
 
-    // begin CRN
-    std::cout << "Vol name: " << volumeName << std::endl;
-    // end CRN
-
     // GRIFFIN detectors have the detector and crystal number in their names
     if(volumeName.find("germaniumBlock1") != G4String::npos) {
         // strip "germaniumBlock1_" (16 characters) and everything before from the string
@@ -1055,9 +1051,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
         temp_stream>>result.detectorNumber;
         // converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
         result.systemID = 1010;
-        // begin CRN
-        std::cout << "Det: " << result.detectorNumber << " Cry: " << result.crystalNumber << std::endl;
-        // end CRN
         return result;
     }
 
@@ -1068,9 +1061,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
         temp_stream>>result.detectorNumber;
         // converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
         result.systemID = 1020;
-        // begin CRN
-        std::cout << "Det: " << result.detectorNumber << " Cry: " << result.crystalNumber << std::endl;
-        // end CRN
         return result;
     }
 
@@ -1081,9 +1071,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
         temp_stream>>result.detectorNumber;
         // converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
         result.systemID = 1030;
-        // begin CRN
-        std::cout << "Det: " << result.detectorNumber << " ID: " << result.crystalNumber << std::endl;
-        // end CRN
         return result;
     }
 
@@ -1094,9 +1081,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
         temp_stream>>result.detectorNumber;
         // converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
         result.systemID = 1040;
-        // begin CRN
-        std::cout << "Det: " << result.detectorNumber << " ID: " << result.crystalNumber << std::endl;
-        // end CRN
         return result;
     }
 
@@ -1107,9 +1091,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
         temp_stream>>result.detectorNumber;
         // converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
         result.systemID = 1050;
-        // begin CRN
-        std::cout << "Det: " << result.detectorNumber << " ID: " << result.crystalNumber << std::endl;
-        // end CRN
         return result;
     }
 
