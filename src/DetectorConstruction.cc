@@ -1043,7 +1043,7 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 
     // for griffin "components" (aka suppressors) we get the detector number from the name
     // and the crystal number is the imprint number (fNumberOfAssemblyVols was hard-coded to be 13 in the constructor)
-    result.crystalNumber = imprintNumber;
+    result.crystalNumber = imprintNumber - 1;
     if(volumeName.find("leftSuppressorExtension") != G4String::npos) {
         std::string temp_string = volumeName.substr(volumeName.find("leftSuppressorExtension")+23);
         std::replace(temp_string.begin(), temp_string.end(), '_', ' ');
