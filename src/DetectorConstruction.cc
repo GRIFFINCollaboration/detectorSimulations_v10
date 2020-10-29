@@ -194,13 +194,13 @@ DetectorConstruction::DetectorConstruction() :
     fTrifWindowThickness=6*um;
     fTrifDegraderThickness=0;
     fTrifDegraderMat="G4_Al";
-    fTrifAluminised=true;  
-    fTrifFlatWindow=false;  
+    fTrifAluminised=true;
+    fTrifFlatWindow=false;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-DetectorConstruction::~DetectorConstruction() { 
+DetectorConstruction::~DetectorConstruction() {
     delete fDetectorMessenger;
 }
 
@@ -286,7 +286,7 @@ void DetectorConstruction::LayeredTargetAdd(G4String Material, G4double Areal)
     if(fApparatusLayeredTarget->BuildTargetLayer(Material,Areal)){
         if(fLogicWorld == nullptr) {
             Construct();
-        }  
+        }
         fApparatusLayeredTarget->PlaceTarget(fLogicWorld);
     }
 }
@@ -859,7 +859,7 @@ void DetectorConstruction::AddDetectionSystemSpice() {
         Construct();
     }
     DetectionSystemSpice* pSpice = new DetectionSystemSpice() ;
-    pSpice->BuildPlace(fLogicWorld); 
+    pSpice->BuildPlace(fLogicWorld);
 
     fSpice = true;
     //HistoManager::Instance().Spice(true);//boolean needed to make SPICE histograms
@@ -871,7 +871,7 @@ void DetectorConstruction::AddDetectionSystemTrific(G4double Torr) {
     }
 
     DetectionSystemTrific* pTrific = new DetectionSystemTrific(Torr,fTrifWindowThickness,fTrifAluminised,fTrifFlatWindow,fTrifDegraderThickness,fTrifDegraderMat);
-    pTrific->BuildPlace(fLogicWorld); 
+    pTrific->BuildPlace(fLogicWorld);
 
 }
 
@@ -1044,10 +1044,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
     // for griffin "components" (aka suppressors) we get the detector number from the name
     // and the crystal number is the imprint number (fNumberOfAssemblyVols was hard-coded to be 13 in the constructor)
     result.crystalNumber = imprintNumber;
-    if(volumeName.find("backQuarterSuppressor") != G4String::npos) {
-        return result;
-    }
-
     if(volumeName.find("leftSuppressorExtension") != G4String::npos) {
         std::string temp_string = volumeName.substr(volumeName.find("leftSuppressorExtension")+23);
         std::replace(temp_string.begin(), temp_string.end(), '_', ' ');
@@ -1087,6 +1083,17 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
         result.systemID = 1040;
         return result;
     }
+
+    if(volumeName.find("backQuarterSuppressor") != G4String::npos) {
+        std::string temp_string = volumeName.substr(volumeName.find("backQuarterSuppressor")+21);
+        std::replace(temp_string.begin(), temp_string.end(), '_', ' ');
+        std::istringstream temp_stream(temp_string);
+        temp_stream>>result.detectorNumber;
+        // converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
+        result.systemID = 1050;
+        return result;
+    }
+
 
     // for ancillary BGOs the detector number is the (ceiling of the) imprint number divided by 3
     // and the crystal number is the imprint number minus 3 times the detector number minus one
@@ -1254,4 +1261,3 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 
     return result;
 }
-
