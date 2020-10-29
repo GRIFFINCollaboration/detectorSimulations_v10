@@ -2,3 +2,5 @@ DetectionSystemGriffinSuppressed.cc
 DetectorConstructionSuppressed.cc
 testXYZ.cc
 .DS_Store
+myBuild
+suppressed
