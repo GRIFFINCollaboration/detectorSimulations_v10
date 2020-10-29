@@ -37,10 +37,10 @@
 
 
 ///////////////////////////////////////////////////////////////////////
-// The ::DetectionSystemGriffin constructor instatiates all the 
+// The ::DetectionSystemGriffin constructor instatiates all the
 // Logical and Physical Volumes used in the detector geometery (found
 // in our local files as it contains NDA-protected info), and the
-// ::~DetectionSystemGriffin destructor deletes them from the stack 
+// ::~DetectionSystemGriffin destructor deletes them from the stack
 // when they go out of scope
 ///////////////////////////////////////////////////////////////////////
 
@@ -115,10 +115,10 @@ DetectionSystemGriffin::~DetectionSystemGriffin() {
 }// end ::~DetectionSystemGriffin
 
 ///////////////////////////////////////////////////////////////////////
-// ConstructDetectionSystemGriffin builds the DetectionSystemGriffin 
+// ConstructDetectionSystemGriffin builds the DetectionSystemGriffin
 // at the origin
 ///////////////////////////////////////////////////////////////////////
-void DetectionSystemGriffin::Build() { 
+void DetectionSystemGriffin::Build() {
 
     fSurfCheck = true;
     G4int det = 1;
@@ -650,7 +650,7 @@ void DetectionSystemGriffin::ConstructComplexDetectorBlock() {
 }//end ::ConstructComplexDetectorBlock
 
 ///////////////////////////////////////////////////////////////////////
-// ConstructComplexDetectorBlockWithDeadLayer builds four quarters of 
+// ConstructComplexDetectorBlockWithDeadLayer builds four quarters of
 // germanium, with dead layers
 ///////////////////////////////////////////////////////////////////////
 void DetectionSystemGriffin::ConstructComplexDetectorBlockWithDeadLayer() {
@@ -844,7 +844,7 @@ void DetectionSystemGriffin::ConstructComplexDetectorBlockWithDetectorSpecificDe
 
 ///////////////////////////////////////////////////////////////////////
 // Builds a layer of electrodeMat between germanium crystals to
-// approximate electrodes, etc. that Eurisys won't tell us 
+// approximate electrodes, etc. that Eurisys won't tell us
 ///////////////////////////////////////////////////////////////////////
 void DetectionSystemGriffin::BuildelectrodeMatElectrodes() {
 
@@ -893,9 +893,9 @@ void DetectionSystemGriffin::BuildelectrodeMatElectrodes() {
 }//end ::BuildelectrodeMatElectrodes
 
 ///////////////////////////////////////////////////////////////////////
-// ConstructDetector builds the structureMat can, cold finger shell, 
-// and liquid nitrogen tank. Since the can's face is built first, 
-// everything else is placed relative to it  
+// ConstructDetector builds the structureMat can, cold finger shell,
+// and liquid nitrogen tank. Since the can's face is built first,
+// everything else is placed relative to it
 ///////////////////////////////////////////////////////////////////////
 void DetectionSystemGriffin::ConstructDetector()  {
 
@@ -1212,11 +1212,11 @@ void DetectionSystemGriffin::ConstructDetector()  {
 }// end::ConstructDetector
 
 ///////////////////////////////////////////////////////////////////////
-// ConstructColdFinger has changed in this version!  It now 
-// incorporates all the internal details released in Nov 2004 by 
-// Eurisys. ConstructColdFinger builds the cold finger as well as the 
-// cold plate. The finger extends to the Liquid Nitrogen tank, while 
-// the plate is always the same distance from the back of the germanium  
+// ConstructColdFinger has changed in this version!  It now
+// incorporates all the internal details released in Nov 2004 by
+// Eurisys. ConstructColdFinger builds the cold finger as well as the
+// cold plate. The finger extends to the Liquid Nitrogen tank, while
+// the plate is always the same distance from the back of the germanium
 ///////////////////////////////////////////////////////////////////////
 void DetectionSystemGriffin::ConstructColdFinger() {
 
@@ -1647,8 +1647,8 @@ G4Tubs* DetectionSystemGriffin::StructureMatColdFinger() {
 
 
 ///////////////////////////////////////////////////////////////////////
-// ConstructNewSuppressorCasingWithShells builds the suppressor that 
-// surrounds the can. It tapers off at the front, and there is a thick 
+// ConstructNewSuppressorCasingWithShells builds the suppressor that
+// surrounds the can. It tapers off at the front, and there is a thick
 // piece covering the back of the can, which is divided in the middle,
 // as per the design in the specifications. Also, there is a layer
 // of structureMat that surrounds the physical pieces.
@@ -1706,9 +1706,11 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells(G4int det) {
     // the suppressor pieces themselves.  As an error checking method, the suppressor
     // pieces are given a copy number value far out of range of any useful copy number.
     if(fIncludeBackSuppressors) {
+        G4String backQuarterSuppressorShellName = "backQuarterSuppressor_" + strdet + "_log";
+
         fBackQuarterSuppressorShellLog = new G4LogicalVolume(
                 backQuarterSuppressorShell, structureMat,
-                "backQuarterSuppressorShell", 0, 0, 0);
+                backQuarterSuppressorShellName, 0, 0, 0);
 
         fBackQuarterSuppressorShellLog->SetVisAttributes(SuppressorVisAtt);
 
@@ -1718,8 +1720,10 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells(G4int det) {
             exit(1);
         }
 
+        G4String backQuarterSuppressorName = "backQuarterSuppressor_" + strdet + "_log";
+
         fBackQuarterSuppressorLog = new G4LogicalVolume(backQuarterSuppressor, backMaterial,
-                "backQuarterSuppressor", 0, 0, 0);
+                backQuarterSuppressorName, 0, 0, 0);
         fBackQuarterSuppressorLog->SetVisAttributes(backInnardsVisAtt);
 
         fSuppressorBackAssembly->AddPlacedVolume(fBackQuarterSuppressorLog, fMoveNull, fRotateNull);
@@ -1753,30 +1757,32 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells(G4int det) {
     ////////////////////////////////////////////////////////////////////////////////////////
     // now we add the side pieces of suppressor that taper off towards the front of the can
     ////////////////////////////////////////////////////////////////////////////////////////
-    G4String rightSuppressorLogName = "rightSuppressor_" + strdet + "_log";
-    G4String leftSuppressorLogName = "leftSuppressor_" + strdet + "_log";
+    G4String rightSuppressorShellLogName = "rightSuppressorShell_" + strdet + "_log";
+    G4String leftSuppressorShellLogName = "leftSuppressorShell_" + strdet + "_log";
+    G4String rightSuppressorCasingLogName = "rightSuppressorCasing_" + strdet + "_log";
+    G4String leftSuppressorCasingLogName = "leftSuppressorCasing_" + strdet + "_log";
 
     // Define the structureMat shell logical volume
     G4SubtractionSolid* rightSuppressorShell = ShellForFrontSlantSuppressor("right");
 
     fRightSuppressorShellLog = new G4LogicalVolume(rightSuppressorShell, structureMat,
-            "rightSuppressorShell", 0,0,0);
+            rightSuppressorShellLogName, 0,0,0);
     fRightSuppressorShellLog->SetVisAttributes(SuppressorVisAtt);
 
     G4SubtractionSolid* leftSuppressorShell = ShellForFrontSlantSuppressor("left");
 
     fLeftSuppressorShellLog = new G4LogicalVolume(leftSuppressorShell, structureMat,
-            "leftSuppressorShell", 0,0,0);
+            leftSuppressorShellLogName, 0,0,0);
     fLeftSuppressorShellLog->SetVisAttributes(SuppressorVisAtt);
 
     G4SubtractionSolid* rightSuppressor = FrontSlantSuppressor("right", false); // Right, non-chopping.
 
-    fRightSuppressorLog = new G4LogicalVolume(rightSuppressor, materialBGO, rightSuppressorLogName, 0, 0, 0);
+    fRightSuppressorLog = new G4LogicalVolume(rightSuppressor, materialBGO, rightSuppressorCasingLogName, 0, 0, 0);
     fRightSuppressorLog->SetVisAttributes(innardsVisAtt);
 
     G4SubtractionSolid* leftSuppressor = FrontSlantSuppressor("left", false); // Left, non-chopping.
 
-    fLeftSuppressorLog = new G4LogicalVolume(leftSuppressor, materialBGO, leftSuppressorLogName, 0, 0, 0);
+    fLeftSuppressorLog = new G4LogicalVolume(leftSuppressor, materialBGO, leftSuppressorCasingLogName, 0, 0, 0);
     fLeftSuppressorLog->SetVisAttributes(innardsVisAtt);
 
     fRightSuppressorCasingAssembly->AddPlacedVolume(fRightSuppressorLog, fMoveNull, fRotateNull);
@@ -2153,9 +2159,9 @@ G4UnionSolid* DetectionSystemGriffin::InterCrystalelectrodeMatFront() {
 } //end ::interCrystalelectrodeMatFront
 
 ///////////////////////////////////////////////////////////////////////
-// ConstructNewHeavyMet builds the heavy metal that goes on the front 
-// of the Suppressor. It only goes on when the extensions are in their 
-// forward position   
+// ConstructNewHeavyMet builds the heavy metal that goes on the front
+// of the Suppressor. It only goes on when the extensions are in their
+// forward position
 ///////////////////////////////////////////////////////////////////////
 void DetectionSystemGriffin::ConstructNewHeavyMet() {
     G4Material* materialHevimetal = G4Material::GetMaterial("Hevimetal");
@@ -2224,7 +2230,7 @@ G4Trap* DetectionSystemGriffin::CornerWedge() {
 
 ///////////////////////////////////////////////////////////////////////
 // The bent side pieces attach to the front faceface they angle
-// outwards, so the face is smaller than the main part of 
+// outwards, so the face is smaller than the main part of
 // the can four are needed for a square-faced detector
 ///////////////////////////////////////////////////////////////////////
 G4Para* DetectionSystemGriffin::BentSidePiece() {
@@ -3052,5 +3058,3 @@ G4SubtractionSolid* DetectionSystemGriffin::NewHeavyMet() {
 
     return hevimet;
 }//end ::newHeavyMet
-
-
