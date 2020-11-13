@@ -76,6 +76,8 @@ private:
     G4String fWrapMaterial;
     G4String fPlasticMaterial;
    
+    //std::vector<G4LogicalVolume*>  fPlasticTileLogArray; // comment out if not using tiles
+    //std::vector<G4LogicalVolume*>  fPMTTileLogArray;// comment out if not using tiles
     std::vector<G4LogicalVolume*>  fPlasticLogArray;
     std::vector<G4LogicalVolume*>  fWrapLogArray;
     std::vector<G4LogicalVolume*>  fPMT1LogArray;

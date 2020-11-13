@@ -47,7 +47,7 @@
 
 SteppingAction::SteppingAction(DetectorConstruction* detcon,
 		EventAction* evt)
-: G4UserSteppingAction(),
+	: G4UserSteppingAction(),
 	fDetector(detcon), fEventAction(evt)
 {
 }
@@ -157,6 +157,18 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 
 	size_t found;
 
+	found = volname.find("impr");
+	// strip "impr_" (5 characters) and everything before from the string
+	std::string tmpString = volname.substr(found+5);
+	// replace all '_' with spaces so we can just use istringstream::operator>>
+	std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
+	// create istringstream from the stripped and converted stream, and read detector and crystal number
+	std::istringstream is(tmpString);
+	G4int imprintNumber;
+	is>>imprintNumber;
+	//G4cout<< imprintNumber << "is the imprintNumber for volume " << volname  << G4endl;
+	
+	
 	//Set Lab Angle
 	G4double lab_angle = -1;
 	found = volname.find("PlasticDet");
@@ -229,13 +241,52 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	}
 	//	Does this interfere with counting?
 	numScintPhotons = fEventAction->GetTotScintPhoton();
-	//Scint photon in plastic
-	found = volname.find("PlasticDet");
 
+	//Kinetic energy of neutrons in Plastic Scintillator based off first scatter and TOF based off first scatter
+	G4double TOF;
+	G4ThreeVector TOFPos;
+	G4double PlasticEkin;		
+	G4double TOFMulti;
+	G4ThreeVector TOFPosMulti;
+	found  = volname.find("PlasticDet");
+	if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && prePoint->GetStepStatus() == fGeomBoundary && postPoint->GetStepStatus() != fGeomBoundary) {	
+		fEventAction->SetTOFMulti(postTime);
+		fEventAction->SetTOFPosMulti(postPos);
+		fEventAction->totalCounter();
+
+		if (fEventAction->GetPEkin()==-1) {
+			fEventAction->SetPEkin(ekin);
+			fEventAction->SetTOF(postTime);
+			fEventAction->SetTOFPos(postPos);
+			//	G4cout << "Stepping action ekin, postTime, posPos " << ekin << "  " << postTime << "  " << postPos << G4endl;
+		}
+	}
+	PlasticEkin = fEventAction->GetPEkin();
+	TOF = fEventAction->GetTOF();
+	TOFPos = fEventAction->GetTOFPos();
+	TOFMulti = fEventAction->GetTOFMulti();
+	TOFPosMulti = fEventAction->GetTOFPosMulti();
+	G4int total = fEventAction->GetTotalCounter();
+
+
+
+	//Energy Deposited in Plastic Scintillators for quick reference
+	G4double PlasticEdep;		
+	found  = volname.find("PlasticDet");
+	if (found != G4String::npos && edep >  0 && fDetector->HasProperties(volume)) {	
+		//fEventAction->AddPEdep(edep);
+		fEventAction->SetPEdep(edep);
+	}
+	PlasticEdep = fEventAction->GetPEdep();
+
+
+	//////////////// Bars //////////////////
+	//Scint photon in plastic
+	found = volname.find("BarsPlasticDet");
 	//if(found!=G4String::npos && particleType == 8 && fEventAction->GetOldTrackID() != trackID  && aStep->IsFirstStepInVolume() == true){ //should prepoint->GetStepStatus()==fGeomBoundary be in here?
 	if(found!=G4String::npos && particleType == 8 && fEventAction->GetOldTrackID() != trackID  && preTimeLocal == 0){ //should prepoint->GetStepStatus()==fGeomBoundary be in here?
-		// strip "PlasticDet_" (9 characters) and everything before from the string
-		std::string tmpString = volname.substr(found+11);
+		// strip "BarsPlasticDet_" (15 characters) and everything before from the string
+		std::string tmpString = volname.substr(found+15);
 		// replace all '_' with spaces so we can just use istringstream::operator>>
 		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
 		// create istringstream from the stripped and converted stream, and read detector and crystal number
@@ -353,43 +404,44 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	}
 
 
-
-	//Kinetic energy of neutrons in Plastic Scintillator based off first scatter and TOF based off first scatter
-	G4double TOF;
-	G4ThreeVector TOFPos;
-	G4double PlasticEkin;		
-	G4double TOFMulti;
-	G4ThreeVector TOFPosMulti;
-	found  = volname.find("PlasticDet");
-	if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && prePoint->GetStepStatus() == fGeomBoundary && postPoint->GetStepStatus() != fGeomBoundary) {	
-		fEventAction->SetTOFMulti(postTime);
-		fEventAction->SetTOFPosMulti(postPos);
-		fEventAction->totalCounter();
-
-		if (fEventAction->GetPEkin()==-1) {
-			fEventAction->SetPEkin(ekin);
-			fEventAction->SetTOF(postTime);
-			fEventAction->SetTOFPos(postPos);
-			//	G4cout << "Stepping action ekin, postTime, posPos " << ekin << "  " << postTime << "  " << postPos << G4endl;
-		}
+	//////////////// Tiles //////////////////
+	//Scint photon in plastic
+	found = volname.find("TilePlasticDet");
+	//if(found!=G4String::npos && particleType == 8 && fEventAction->GetOldTrackID() != trackID  && aStep->IsFirstStepInVolume() == true){ //should prepoint->GetStepStatus()==fGeomBoundary be in here?
+	if(found!=G4String::npos && particleType == 8 && fEventAction->GetOldTrackID() != trackID  && preTimeLocal == 0){ //should prepoint->GetStepStatus()==fGeomBoundary be in here?
+		G4int detNumber = imprintNumber;
+		//fEventAction->SetScintPhotonEnergyTime(postTime, ekin, detNumber);
+		fEventAction->SetScintPhotonEnergyTime(preTimeGlobal, ekin, detNumber);
+		fEventAction->SetOldTrackID(trackID);
 	}
-	PlasticEkin = fEventAction->GetPEkin();
-	TOF = fEventAction->GetTOF();
-	TOFPos = fEventAction->GetTOFPos();
-	TOFMulti = fEventAction->GetTOFMulti();
-	TOFPosMulti = fEventAction->GetTOFPosMulti();
-	G4int total = fEventAction->GetTotalCounter();
-
-
-
-	//Energy Deposited in Plastic Scintillators for quick reference
-	G4double PlasticEdep;		
-	found  = volname.find("PlasticDet");
-	if (found != G4String::npos && edep >  0 && fDetector->HasProperties(volume)) {	
-		//fEventAction->AddPEdep(edep);
-		fEventAction->SetPEdep(edep);
+	//Top PMT (positive x positive y) if unsegmented this one is filled
+	found = volname.find("PMT_1");
+	if(found!=G4String::npos && particleType == 8 && prePoint->GetStepStatus()==fGeomBoundary){
+		G4int detNumber = imprintNumber;
+		fEventAction->SetScintPhotonTimeTop(postTime, detNumber);
+		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 	}
-	PlasticEdep = fEventAction->GetPEdep();
+	//Front Top PMT (negative x positive y)
+	found = volname.find("PMT_2");
+	if(found!=G4String::npos && particleType == 8 && prePoint->GetStepStatus()==fGeomBoundary){
+		G4int detNumber = imprintNumber;
+		fEventAction->SetScintPhotonTimeFrontTop(postTime, detNumber);
+		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
+	}
+	//Bottom PMT (positive x negative y)
+	found = volname.find("PMT_3");
+	if(found!=G4String::npos && particleType == 8 && prePoint->GetStepStatus()==fGeomBoundary){
+		G4int detNumber = imprintNumber;
+		fEventAction->SetScintPhotonTimeBottom(postTime, detNumber);
+		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
+	}
+	//Front Bottom PMT (negative x negative y)
+	found = volname.find("PMT_4");
+	if(found!=G4String::npos && particleType == 8 && prePoint->GetStepStatus()==fGeomBoundary){
+		G4int detNumber = imprintNumber;
+		fEventAction->SetScintPhotonTimeFrontBottom(postTime, detNumber);
+		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
+	}
 
 
 

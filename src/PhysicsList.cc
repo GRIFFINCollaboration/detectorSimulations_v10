@@ -222,8 +222,8 @@ void PhysicsList::ConstructOp(G4bool constructOp)
 		G4OpRayleigh* rayleighScatteringProcess = new G4OpRayleigh();
 		//G4OpMieHG* mieHGScatteringProcess = new G4OpMieHG();
 		G4OpBoundaryProcess* boundaryProcess = new G4OpBoundaryProcess();
-		//G4OpticalPhysics * opticalPhysics = new G4OpticalPhysics();
-		//opticalPhysics->SetFiniteRiseTime(true);
+		G4OpticalPhysics * opticalPhysics = new G4OpticalPhysics();
+		opticalPhysics->SetFiniteRiseTime(true);
 
 		// Use Birks Correction in the Scintillation process
 		if(!G4Threading::IsWorkerThread())

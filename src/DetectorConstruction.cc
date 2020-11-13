@@ -71,6 +71,7 @@
 
 #include "DetectionSystemTestcan.hh"
 #include "DetectionSystemPlastics.hh"
+#include "DetectionSystemDaemonTiles.hh"
 
 #include "G4FieldManager.hh"
 #include "G4UniformMagField.hh"
@@ -192,6 +193,7 @@ DetectorConstruction::DetectorConstruction() :
 	fDescant  = false;
 	fTestcan  = false;
 	fPlastics  = false;
+	fDaemonTiles  = false;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -904,6 +906,24 @@ void DetectorConstruction::AddDetectionSystemPlasticsNoWrap(G4ThreeVector input)
 
 	fPlastics = true;
 }
+//void DetectorConstruction::AddDetectionSystemDaemonTiles(G4int ndet) {
+void DetectorConstruction::AddDetectionSystemDaemonTiles(G4ThreeVector input) {
+	if(fLogicWorld == nullptr) {
+		Construct();
+	}
+	
+	G4double thickness = G4double(input.x())*cm;
+	G4int material = G4double(input.y());
+	G4double ndet = G4double(input.z());
+
+	//DetectionSystemDaemonTiles* pDetectionSystemDaemonTiles = new DetectionSystemDaemonTiles(true) ;
+	DetectionSystemDaemonTiles* pDetectionSystemDaemonTiles = new DetectionSystemDaemonTiles(thickness, material) ;
+	//pDetectionSystemDaemonTiles->SetWrapping(true);
+	pDetectionSystemDaemonTiles->Build() ;
+	pDetectionSystemDaemonTiles->PlaceDetector(fLogicWorld, ndet) ;
+
+	fDaemonTiles = true;
+}
 
 void DetectorConstruction::AddDetectionSystemSpice() {
 	if(fLogicWorld == nullptr) {
@@ -1002,7 +1022,12 @@ bool DetectorConstruction::CheckVolumeName(G4String volumeName) {
 	if(volumeName.find("whiteScintillatorVolumeLog") != G4String::npos) return true;
 	if(volumeName.find("yellowScintillatorVolumeLog") != G4String::npos) return true;
 	if(volumeName.find("testcanScintillatorLog") != G4String::npos) return true;
-	if(volumeName.find("PlasticDet") != G4String::npos) return true;
+	if(volumeName.find("BarsPlasticDet") != G4String::npos) return true;
+	if(volumeName.find("BlueTilePlasticDet") != G4String::npos) return true;
+	if(volumeName.find("WhiteTilePlasticDet") != G4String::npos) return true;
+	if(volumeName.find("RedTilePlasticDet") != G4String::npos) return true;
+	if(volumeName.find("GreenTilePlasticDet") != G4String::npos) return true;
+	if(volumeName.find("YellowTilePlasticDet") != G4String::npos) return true;
 	return false;
 }
 
@@ -1274,9 +1299,100 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		return result;
 	}
 
-	if(volumeName.find("PlasticDet") != G4String::npos) {
-		// strip "PlasticDet_" (11 characters) and everything before from the string
-		std::string tmpString = volumeName.substr(volumeName.find("PlasticDet")+11);
+	if(volumeName.find("BlueTilePlasticDet") != G4String::npos) {
+		result.systemID = 8710;
+/*		// for "generic" detectors the detector number is the imprint number
+		result.detectorNumber = imprintNumber;
+		// strip "BlueTilePlasticDet_" (19 characters) and everything before from the string
+		std::string tmpString = volumeName.substr(volumeName.find("BlueTilePlasticDet")+19);
+		// replace all '_' with spaces so we can just use istringstream::operator>>
+		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
+		// create istringstream from the stripped and converted stream, and read detector and crystal number
+		std::istringstream is(tmpString);
+		is>>result.crystalNumber;
+*/		result.crystalNumber = 0;
+		//is>>result.detectorNumber>>result.crystalNumber;
+		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
+		result.detectorNumber = imprintNumber;
+		//result.detectorNumber = result.detectorNumber+1;
+		return result;
+	}
+	if(volumeName.find("WhiteTilePlasticDet") != G4String::npos) {
+		result.systemID = 8720;
+/*		// for "generic" detectors the detector number is the imprint number
+		result.detectorNumber = imprintNumber;
+		// strip "WhiteTilePlasticDet_" (20 characters) and everything before from the string
+		std::string tmpString = volumeName.substr(volumeName.find("WhiteTilePlasticDet")+20);
+		// replace all '_' with spaces so we can just use istringstream::operator>>
+		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
+		// create istringstream from the stripped and converted stream, and read detector and crystal number
+		std::istringstream is(tmpString);
+		is>>result.crystalNumber;
+*/		result.crystalNumber = 0;
+		//is>>result.detectorNumber>>result.crystalNumber;
+		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
+		result.detectorNumber = imprintNumber;
+		//result.detectorNumber = result.detectorNumber+1;
+		return result;
+	}
+	if(volumeName.find("RedTilePlasticDet") != G4String::npos) {
+		result.systemID = 8730;
+/*		// for "generic" detectors the detector number is the imprint number
+		result.detectorNumber = imprintNumber;
+		// strip "RedTilePlasticDet_" (18 characters) and everything before from the string
+		std::string tmpString = volumeName.substr(volumeName.find("RedTilePlasticDet")+18);
+		// replace all '_' with spaces so we can just use istringstream::operator>>
+		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
+		// create istringstream from the stripped and converted stream, and read detector and crystal number
+		std::istringstream is(tmpString);
+		is>>result.crystalNumber;
+*/		result.crystalNumber = 0;
+		//is>>result.detectorNumber>>result.crystalNumber;
+		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
+		result.detectorNumber = imprintNumber;
+		//result.detectorNumber = result.detectorNumber+1;
+		return result;
+	}
+	if(volumeName.find("GreenTilePlasticDet") != G4String::npos) {
+		result.systemID = 8740;
+/*		// for "generic" detectors the detector number is the imprint number
+		result.detectorNumber = imprintNumber;
+		// strip "GreenTilePlasticDet_" (20 characters) and everything before from the string
+		std::string tmpString = volumeName.substr(volumeName.find("GreenTilePlasticDet")+20);
+		// replace all '_' with spaces so we can just use istringstream::operator>>
+		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
+		// create istringstream from the stripped and converted stream, and read detector and crystal number
+		std::istringstream is(tmpString);
+		is>>result.crystalNumber;
+*/		result.crystalNumber = 0;
+		//is>>result.detectorNumber>>result.crystalNumber;
+		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
+		result.detectorNumber = imprintNumber;
+		//result.detectorNumber = result.detectorNumber+1;
+		return result;
+	}
+	if(volumeName.find("YellowTilePlasticDet") != G4String::npos) {
+		result.systemID = 8750;
+/*		// for "generic" detectors the detector number is the imprint number
+		result.detectorNumber = imprintNumber;
+		// strip "YellowTilePlasticDet_" (21 characters) and everything before from the string
+		std::string tmpString = volumeName.substr(volumeName.find("YellowTilePlasticDet")+21);
+		// replace all '_' with spaces so we can just use istringstream::operator>>
+		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
+		// create istringstream from the stripped and converted stream, and read detector and crystal number
+		std::istringstream is(tmpString);
+		is>>result.crystalNumber;
+*/		result.crystalNumber = 0;
+		//is>>result.detectorNumber>>result.crystalNumber;
+		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
+		result.detectorNumber = imprintNumber;
+		//result.detectorNumber = result.detectorNumber+1;
+		return result;
+	}
+
+	if(volumeName.find("BarsPlasticDet") != G4String::npos) {
+		// strip "BarsPlasticDet_" (15 characters) and everything before from the string
+		std::string tmpString = volumeName.substr(volumeName.find("BarsPlasticDet")+15);
 		// replace all '_' with spaces so we can just use istringstream::operator>>
 		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
 		// create istringstream from the stripped and converted stream, and read detector and crystal number

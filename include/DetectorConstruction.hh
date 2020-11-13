@@ -71,6 +71,7 @@ class DetectionSystemBox;
 class DetectionSystemAncillaryBGO;
 
 class DetectionSystemPlastics;
+class DetectionSystemDaemonTiles;
 //class MagneticField;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -160,6 +161,8 @@ public:
 	void AddDetectionSystemTestcan(G4ThreeVector input);
 	void AddDetectionSystemPlastics(G4ThreeVector input);
 	void AddDetectionSystemPlasticsNoWrap(G4ThreeVector input);
+	//void AddDetectionSystemDaemonTiles(G4int ndet);
+	void AddDetectionSystemDaemonTiles(G4ThreeVector input);
 
 	void AddDetectionSystem8piDetector(G4int ndet);
 	void AddDetectionSystemGriffinForward(G4int ndet);
@@ -203,6 +206,7 @@ public:
 	G4bool   Descant()    { return fDescant;    }
 	G4bool   Testcan()    { return fTestcan;    }
 	G4bool   Plastics()    { return fPlastics;    }
+	G4bool   DaemonTiles()    { return fDaemonTiles;    }
 
 	void SpiceRes(G4bool val) { fSpiceRes = val; }
 	bool SpiceRes() { return fSpiceRes; }
@@ -300,6 +304,7 @@ private:
 	G4bool fSpice;
 	G4bool fPaces;
 	G4bool fPlastics;
+	G4bool fDaemonTiles;
 
 	//unordered maps which hold properties of the physical volumes created
 	std::unordered_map<G4VPhysicalVolume*, DetectorProperties> fPropertiesMap;
