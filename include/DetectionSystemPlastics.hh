@@ -80,11 +80,18 @@ private:
     //std::vector<G4LogicalVolume*>  fPMTTileLogArray;// comment out if not using tiles
     std::vector<G4LogicalVolume*>  fPlasticLogArray;
     std::vector<G4LogicalVolume*>  fWrapLogArray;
-    std::vector<G4LogicalVolume*>  fPMT1LogArray;
-    std::vector<G4LogicalVolume*>  fPMT2LogArray;
-    std::vector<G4LogicalVolume*>  fPMTFace1LogArray;
-    std::vector<G4LogicalVolume*>  fPMTFace2LogArray;
-    std::vector<G4LogicalVolume*>  fPMTFaceMidLogArray;
+    std::vector<G4LogicalVolume*>  fPMT11LogArray;
+    std::vector<G4LogicalVolume*>  fPMT12LogArray;
+    std::vector<G4LogicalVolume*>  fPMT13LogArray;
+    std::vector<G4LogicalVolume*>  fPMT21LogArray;
+    std::vector<G4LogicalVolume*>  fPMT22LogArray;
+    std::vector<G4LogicalVolume*>  fPMT23LogArray;
+    std::vector<G4LogicalVolume*>  fPMTFace11LogArray;
+    std::vector<G4LogicalVolume*>  fPMTFace12LogArray;
+    std::vector<G4LogicalVolume*>  fPMTFace21LogArray;
+    std::vector<G4LogicalVolume*>  fPMTFace22LogArray;
+    std::vector<G4LogicalVolume*>  fPMTFaceMid1LogArray;
+    std::vector<G4LogicalVolume*>  fPMTFaceMid2LogArray;
    
     G4Color bronze;
     G4Color black;

@@ -117,18 +117,32 @@ void HistoManager::Book() {
 		fNtColIdHit[28] = analysisManager->CreateNtupleDColumn("TOFPosMultiz");
 		fNtColIdHit[29] = analysisManager->CreateNtupleDColumn("PEkin");
 		fNtColIdHit[30] = analysisManager->CreateNtupleDColumn("PEdep");
-		fNtColIdHit[31] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsTop");
-		fNtColIdHit[32] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsBottom");
-		fNtColIdHit[33] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsFrontTop");
-		fNtColIdHit[34] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsFrontMid");
-		fNtColIdHit[35] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsFrontBottom");
-		fNtColIdHit[36] = analysisManager->CreateNtupleDColumn("CollectionTimeTop", fTopTimeVector);
-		fNtColIdHit[37] = analysisManager->CreateNtupleDColumn("CollectionTimeBottom", fBottomTimeVector);
-		fNtColIdHit[38] = analysisManager->CreateNtupleDColumn("CollectionTimeFrontTop", fFrontTopTimeVector);
-		fNtColIdHit[39] = analysisManager->CreateNtupleDColumn("CollectionTimeFrontMid", fFrontMidTimeVector);
-		fNtColIdHit[40] = analysisManager->CreateNtupleDColumn("CollectionTimeFrontBottom", fFrontBottomTimeVector);
-		fNtColIdHit[41] = analysisManager->CreateNtupleDColumn("OpCreationTime", fOpTimeVec);
-		fNtColIdHit[42] = analysisManager->CreateNtupleDColumn("OpCreationEnergy", fOpEnergyVec);
+		fNtColIdHit[31] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsTop1");
+		fNtColIdHit[32] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsTop2");
+		fNtColIdHit[33] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsTop3");
+		fNtColIdHit[34] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsBottom1");
+		fNtColIdHit[35] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsBottom2");
+		fNtColIdHit[36] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsBottom3");
+		fNtColIdHit[37] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsFrontTop1");
+		fNtColIdHit[38] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsFrontTop2");
+		fNtColIdHit[39] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsFrontMid1");
+		fNtColIdHit[40] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsFrontMid2");
+		fNtColIdHit[41] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsFrontBottom1");
+		fNtColIdHit[42] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsFrontBottom2");
+		fNtColIdHit[43] = analysisManager->CreateNtupleDColumn("CollectionTimeTop1", fTop1TimeVector);
+		fNtColIdHit[44] = analysisManager->CreateNtupleDColumn("CollectionTimeTop2", fTop2TimeVector);
+		fNtColIdHit[45] = analysisManager->CreateNtupleDColumn("CollectionTimeTop3", fTop3TimeVector);
+		fNtColIdHit[46] = analysisManager->CreateNtupleDColumn("CollectionTimeBottom1", fBottom1TimeVector);
+		fNtColIdHit[47] = analysisManager->CreateNtupleDColumn("CollectionTimeBottom2", fBottom2TimeVector);
+		fNtColIdHit[48] = analysisManager->CreateNtupleDColumn("CollectionTimeBottom3", fBottom3TimeVector);
+		fNtColIdHit[49] = analysisManager->CreateNtupleDColumn("CollectionTimeFrontTop1", fFrontTop1TimeVector);
+		fNtColIdHit[50] = analysisManager->CreateNtupleDColumn("CollectionTimeFrontTop2", fFrontTop2TimeVector);
+		fNtColIdHit[51] = analysisManager->CreateNtupleDColumn("CollectionTimeFrontMid1", fFrontMid1TimeVector);
+		fNtColIdHit[52] = analysisManager->CreateNtupleDColumn("CollectionTimeFrontMid2", fFrontMid2TimeVector);
+		fNtColIdHit[53] = analysisManager->CreateNtupleDColumn("CollectionTimeFrontBottom1", fFrontBottom1TimeVector);
+		fNtColIdHit[54] = analysisManager->CreateNtupleDColumn("CollectionTimeFrontBottom2", fFrontBottom2TimeVector);
+		fNtColIdHit[55] = analysisManager->CreateNtupleDColumn("OpCreationTime", fOpTimeVec);
+		fNtColIdHit[56] = analysisManager->CreateNtupleDColumn("OpCreationEnergy", fOpEnergyVec);
 		analysisManager->FinishNtuple();
 	}
 
@@ -166,18 +180,32 @@ void HistoManager::Book() {
 		fNtColIdStep[28] = analysisManager->CreateNtupleDColumn("TOFPosMultiz");
 		fNtColIdStep[29] = analysisManager->CreateNtupleDColumn("PEkin");
 		fNtColIdStep[30] = analysisManager->CreateNtupleDColumn("PEdep");
-		fNtColIdStep[31] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsTop");
-		fNtColIdStep[32] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsBottom");
-		fNtColIdStep[33] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsFrontTop");
-		fNtColIdStep[34] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsFrontMid");
-		fNtColIdStep[35] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsFrontBottom");
-		fNtColIdStep[36] = analysisManager->CreateNtupleDColumn("CollectionTimeTop", fTopTimeVector);
-		fNtColIdStep[37] = analysisManager->CreateNtupleDColumn("CollectionTimeBottom", fBottomTimeVector);
-		fNtColIdStep[38] = analysisManager->CreateNtupleDColumn("CollectionTimeFrontTop", fFrontTopTimeVector);
-		fNtColIdStep[39] = analysisManager->CreateNtupleDColumn("CollectionTimeFrontMid", fFrontMidTimeVector);
-		fNtColIdStep[40] = analysisManager->CreateNtupleDColumn("CollectionTimeFrontBottom", fFrontBottomTimeVector);
-		fNtColIdStep[41] = analysisManager->CreateNtupleDColumn("OpCreationTime", fOpTimeVec);
-		fNtColIdStep[42] = analysisManager->CreateNtupleDColumn("OpCreationEnergy", fOpEnergyVec);
+		fNtColIdStep[31] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsTop1");
+		fNtColIdStep[32] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsTop2");
+		fNtColIdStep[33] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsTop3");
+		fNtColIdStep[34] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsBottom1");
+		fNtColIdStep[35] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsBottom2");
+		fNtColIdStep[36] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsBottom3");
+		fNtColIdStep[37] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsFrontTop1");
+		fNtColIdStep[38] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsFrontTop2");
+		fNtColIdStep[39] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsFrontMid1");
+		fNtColIdStep[40] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsFrontMid2");
+		fNtColIdStep[41] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsFrontBottom1");
+		fNtColIdStep[42] = analysisManager->CreateNtupleDColumn("numCollectedPhotonsFrontBottom2");
+		fNtColIdStep[43] = analysisManager->CreateNtupleDColumn("CollectionTimeTop1", fTop1TimeVector);
+		fNtColIdStep[44] = analysisManager->CreateNtupleDColumn("CollectionTimeTop2", fTop2TimeVector);
+		fNtColIdStep[45] = analysisManager->CreateNtupleDColumn("CollectionTimeTop3", fTop3TimeVector);
+		fNtColIdStep[46] = analysisManager->CreateNtupleDColumn("CollectionTimeBottom1", fBottom1TimeVector);
+		fNtColIdStep[47] = analysisManager->CreateNtupleDColumn("CollectionTimeBottom2", fBottom2TimeVector);
+		fNtColIdStep[48] = analysisManager->CreateNtupleDColumn("CollectionTimeBottom3", fBottom3TimeVector);
+		fNtColIdStep[49] = analysisManager->CreateNtupleDColumn("CollectionTimeFrontTop1", fFrontTop1TimeVector);
+		fNtColIdStep[50] = analysisManager->CreateNtupleDColumn("CollectionTimeFrontTop2", fFrontTop2TimeVector);
+		fNtColIdStep[51] = analysisManager->CreateNtupleDColumn("CollectionTimeFrontMid1", fFrontMid1TimeVector);
+		fNtColIdStep[52] = analysisManager->CreateNtupleDColumn("CollectionTimeFrontMid2", fFrontMid2TimeVector);
+		fNtColIdStep[53] = analysisManager->CreateNtupleDColumn("CollectionTimeFrontBottom1", fFrontBottom1TimeVector);
+		fNtColIdStep[54] = analysisManager->CreateNtupleDColumn("CollectionTimeFrontBottom2", fFrontBottom2TimeVector);
+		fNtColIdStep[55] = analysisManager->CreateNtupleDColumn("OpCreationTime", fOpTimeVec);
+		fNtColIdStep[56] = analysisManager->CreateNtupleDColumn("OpCreationEnergy", fOpEnergyVec);
 		analysisManager->FinishNtuple();
 	}
 
@@ -202,7 +230,7 @@ void HistoManager::Save() {
 	}
 }
 
-void HistoManager::FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScinPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz, G4double TOFMulti, G4double TOFPosMultix, G4double TOFPosMultiy, G4double TOFPosMultiz, G4double PEkin, G4double PEdep, G4int numCollectedPhotonsTop, G4int numCollectedPhotonsBottom, G4int numCollectedPhotonsFrontTop, G4int numCollectedPhotonsFrontMid, G4int numCollectedPhotonsFrontBottom, std::vector<G4double> PhotonTimeTop, std::vector<G4double> PhotonTimeBottom, std::vector<G4double> PhotonTimeFrontTop, std::vector<G4double> PhotonTimeFrontMid, std::vector<G4double> PhotonTimeFrontBottom, std::vector<G4double> OpTime, std::vector<G4double> OpEnergy) {
+void HistoManager::FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScinPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz, G4double TOFMulti, G4double TOFPosMultix, G4double TOFPosMultiy, G4double TOFPosMultiz, G4double PEkin, G4double PEdep, G4int numCollectedPhotonsTop1, G4int numCollectedPhotonsTop2, G4int numCollectedPhotonsTop3, G4int numCollectedPhotonsBottom1, G4int numCollectedPhotonsBottom2, G4int numCollectedPhotonsBottom3, G4int numCollectedPhotonsFrontTop1, G4int numCollectedPhotonsFrontTop2, G4int numCollectedPhotonsFrontMid1, G4int numCollectedPhotonsFrontMid2, G4int numCollectedPhotonsFrontBottom1, G4int numCollectedPhotonsFrontBottom2, std::vector<G4double> PhotonTimeTop1, std::vector<G4double> PhotonTimeTop2, std::vector<G4double> PhotonTimeTop3, std::vector<G4double> PhotonTimeBottom1, std::vector<G4double> PhotonTimeBottom2, std::vector<G4double> PhotonTimeBottom3, std::vector<G4double> PhotonTimeFrontTop1, std::vector<G4double> PhotonTimeFrontTop2, std::vector<G4double> PhotonTimeFrontMid1, std::vector<G4double> PhotonTimeFrontMid2, std::vector<G4double> PhotonTimeFrontBottom1, std::vector<G4double> PhotonTimeFrontBottom2, std::vector<G4double> OpTime, std::vector<G4double> OpEnergy) {
 	
 	if(fHitTrackerBool) {
 		G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
@@ -237,16 +265,30 @@ void HistoManager::FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentI
 		analysisManager->FillNtupleDColumn(fNtColIdHit[28], TOFPosMultiz);
 		analysisManager->FillNtupleDColumn(fNtColIdHit[29], PEkin);
 		analysisManager->FillNtupleDColumn(fNtColIdHit[30], PEdep);
-		analysisManager->FillNtupleDColumn(fNtColIdHit[31], numCollectedPhotonsTop);
-		analysisManager->FillNtupleDColumn(fNtColIdHit[32], numCollectedPhotonsBottom);
-		analysisManager->FillNtupleDColumn(fNtColIdHit[33], numCollectedPhotonsFrontTop);
-		analysisManager->FillNtupleDColumn(fNtColIdHit[34], numCollectedPhotonsFrontMid);
-		analysisManager->FillNtupleDColumn(fNtColIdHit[35], numCollectedPhotonsFrontBottom);
-		fTopTimeVector= PhotonTimeTop;
-		fBottomTimeVector= PhotonTimeBottom;
-		fFrontTopTimeVector= PhotonTimeFrontTop;
-		fFrontMidTimeVector= PhotonTimeFrontMid;
-		fFrontBottomTimeVector= PhotonTimeFrontBottom;
+		analysisManager->FillNtupleDColumn(fNtColIdHit[31], numCollectedPhotonsTop1);
+		analysisManager->FillNtupleDColumn(fNtColIdHit[32], numCollectedPhotonsTop2);
+		analysisManager->FillNtupleDColumn(fNtColIdHit[33], numCollectedPhotonsTop3);
+		analysisManager->FillNtupleDColumn(fNtColIdHit[34], numCollectedPhotonsBottom1);
+		analysisManager->FillNtupleDColumn(fNtColIdHit[35], numCollectedPhotonsBottom2);
+		analysisManager->FillNtupleDColumn(fNtColIdHit[36], numCollectedPhotonsBottom3);
+		analysisManager->FillNtupleDColumn(fNtColIdHit[37], numCollectedPhotonsFrontTop1);
+		analysisManager->FillNtupleDColumn(fNtColIdHit[38], numCollectedPhotonsFrontTop2);
+		analysisManager->FillNtupleDColumn(fNtColIdHit[39], numCollectedPhotonsFrontMid1);
+		analysisManager->FillNtupleDColumn(fNtColIdHit[40], numCollectedPhotonsFrontMid2);
+		analysisManager->FillNtupleDColumn(fNtColIdHit[41], numCollectedPhotonsFrontBottom1);
+		analysisManager->FillNtupleDColumn(fNtColIdHit[42], numCollectedPhotonsFrontBottom2);
+		fTop1TimeVector= PhotonTimeTop1;
+		fTop2TimeVector= PhotonTimeTop2;
+		fTop3TimeVector= PhotonTimeTop3;
+		fBottom1TimeVector= PhotonTimeBottom1;
+		fBottom2TimeVector= PhotonTimeBottom2;
+		fBottom3TimeVector= PhotonTimeBottom3;
+		fFrontTop1TimeVector= PhotonTimeFrontTop1;
+		fFrontTop2TimeVector= PhotonTimeFrontTop2;
+		fFrontMid1TimeVector= PhotonTimeFrontMid1;
+		fFrontMid2TimeVector= PhotonTimeFrontMid2;
+		fFrontBottom1TimeVector= PhotonTimeFrontBottom1;
+		fFrontBottom2TimeVector= PhotonTimeFrontBottom2;
 		fOpTimeVec = OpTime;
 		fOpEnergyVec = OpEnergy;
 		
@@ -254,7 +296,8 @@ void HistoManager::FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentI
 	}
 }
 
-void HistoManager::FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScinPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz, G4double TOFMulti, G4double TOFPosMultix, G4double TOFPosMultiy, G4double TOFPosMultiz, G4double PEkin, G4double PEdep, G4int numCollectedPhotonsTop, G4int numCollectedPhotonsBottom, G4int numCollectedPhotonsFrontTop, G4int numCollectedPhotonsFrontMid, G4int numCollectedPhotonsFrontBottom, std::vector<G4double> PhotonTimeTop, std::vector<G4double> PhotonTimeBottom, std::vector<G4double> PhotonTimeFrontTop, std::vector<G4double> PhotonTimeFrontMid, std::vector<G4double> PhotonTimeFrontBottom, std::vector<G4double> OpTime, std::vector<G4double> OpEnergy) {
+void HistoManager::FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScinPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz, G4double TOFMulti, G4double TOFPosMultix, G4double TOFPosMultiy, G4double TOFPosMultiz, G4double PEkin, G4double PEdep, G4int numCollectedPhotonsTop1, G4int numCollectedPhotonsTop2, G4int numCollectedPhotonsTop3, G4int numCollectedPhotonsBottom1, G4int numCollectedPhotonsBottom2, G4int numCollectedPhotonsBottom3, G4int numCollectedPhotonsFrontTop1, G4int numCollectedPhotonsFrontTop2, G4int numCollectedPhotonsFrontMid1, G4int numCollectedPhotonsFrontMid2, G4int numCollectedPhotonsFrontBottom1, G4int numCollectedPhotonsFrontBottom2, std::vector<G4double> PhotonTimeTop1, std::vector<G4double> PhotonTimeTop2, std::vector<G4double> PhotonTimeTop3, std::vector<G4double> PhotonTimeBottom1, std::vector<G4double> PhotonTimeBottom2, std::vector<G4double> PhotonTimeBottom3, std::vector<G4double> PhotonTimeFrontTop1, std::vector<G4double> PhotonTimeFrontTop2, std::vector<G4double> PhotonTimeFrontMid1, std::vector<G4double> PhotonTimeFrontMid2, std::vector<G4double> PhotonTimeFrontBottom1, std::vector<G4double> PhotonTimeFrontBottom2, std::vector<G4double> OpTime, std::vector<G4double> OpEnergy) {	
+	
 	if(fStepTrackerBool) {
 		G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 		analysisManager->FillNtupleIColumn(fNtColIdStep[0], eventNumber);
@@ -288,16 +331,30 @@ void HistoManager::FillStepNtuple(G4int eventNumber, G4int trackID, G4int parent
 		analysisManager->FillNtupleDColumn(fNtColIdStep[28], TOFPosMultiz);
 		analysisManager->FillNtupleDColumn(fNtColIdStep[29], PEkin);
 		analysisManager->FillNtupleDColumn(fNtColIdStep[30], PEdep);
-		analysisManager->FillNtupleDColumn(fNtColIdStep[31], numCollectedPhotonsTop);
-		analysisManager->FillNtupleDColumn(fNtColIdStep[32], numCollectedPhotonsBottom);
-		analysisManager->FillNtupleDColumn(fNtColIdStep[31], numCollectedPhotonsFrontTop);
-		analysisManager->FillNtupleDColumn(fNtColIdStep[32], numCollectedPhotonsFrontMid);
-		analysisManager->FillNtupleDColumn(fNtColIdStep[32], numCollectedPhotonsFrontBottom);
-		fTopTimeVector= PhotonTimeTop;
-		fBottomTimeVector= PhotonTimeBottom;
-		fFrontTopTimeVector= PhotonTimeFrontTop;
-		fFrontMidTimeVector= PhotonTimeFrontMid;
-		fFrontBottomTimeVector= PhotonTimeFrontBottom;
+		analysisManager->FillNtupleDColumn(fNtColIdStep[31], numCollectedPhotonsTop1);
+		analysisManager->FillNtupleDColumn(fNtColIdStep[32], numCollectedPhotonsTop2);
+		analysisManager->FillNtupleDColumn(fNtColIdStep[33], numCollectedPhotonsTop3);
+		analysisManager->FillNtupleDColumn(fNtColIdStep[34], numCollectedPhotonsBottom1);
+		analysisManager->FillNtupleDColumn(fNtColIdStep[35], numCollectedPhotonsBottom2);
+		analysisManager->FillNtupleDColumn(fNtColIdStep[36], numCollectedPhotonsBottom3);
+		analysisManager->FillNtupleDColumn(fNtColIdStep[37], numCollectedPhotonsFrontTop1);
+		analysisManager->FillNtupleDColumn(fNtColIdStep[38], numCollectedPhotonsFrontTop2);
+		analysisManager->FillNtupleDColumn(fNtColIdStep[39], numCollectedPhotonsFrontMid1);
+		analysisManager->FillNtupleDColumn(fNtColIdStep[40], numCollectedPhotonsFrontMid2);
+		analysisManager->FillNtupleDColumn(fNtColIdStep[41], numCollectedPhotonsFrontBottom1);
+		analysisManager->FillNtupleDColumn(fNtColIdStep[42], numCollectedPhotonsFrontBottom2);
+		fTop1TimeVector= PhotonTimeTop1;           
+		fTop2TimeVector= PhotonTimeTop2;
+		fTop3TimeVector= PhotonTimeTop3;
+		fBottom1TimeVector= PhotonTimeBottom1;
+		fBottom2TimeVector= PhotonTimeBottom2;
+		fBottom3TimeVector= PhotonTimeBottom3;
+		fFrontTop1TimeVector= PhotonTimeFrontTop1;
+		fFrontTop2TimeVector= PhotonTimeFrontTop2;
+		fFrontMid1TimeVector= PhotonTimeFrontMid1;
+		fFrontMid2TimeVector= PhotonTimeFrontMid2;
+		fFrontBottom1TimeVector= PhotonTimeFrontBottom1;
+		fFrontBottom2TimeVector= PhotonTimeFrontBottom2;
 		fOpTimeVec = OpTime;
 		fOpEnergyVec = OpEnergy;
 		analysisManager->AddNtupleRow();

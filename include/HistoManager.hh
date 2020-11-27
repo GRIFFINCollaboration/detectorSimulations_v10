@@ -42,7 +42,7 @@
 
 #include "DetectorConstruction.hh"
 
-const G4int MAXNTCOL            = 43; // Number of Columns
+const G4int MAXNTCOL            = 57; // Number of Columns
 
 const G4bool WRITEEKINHISTOS    = true;//bools needed to write histos
 const G4bool WRITEEDEPHISTOS    = true;
@@ -96,8 +96,8 @@ public:
 	void Book();
 	void Save();
 
-	void FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz, G4double TOFMulti, G4double TOFPosMultix, G4double TOFPosMultiy, G4double TOFPosMultiz, G4double PEkin, G4double PEdep, G4int numCollectedPhotonsTop = 0, G4int numCollectedPhotonsBottom = 0, G4int numCollectedPhotonsFrontTop = 0, G4int numCollectedPhotonsFrontMid = 0, G4int numCollectedPhotonsFrontBottom = 0, std::vector<G4double> PhotonTimeTop = std::vector<G4double>(), std::vector<G4double> PhotonTimeBottom = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontTop = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontMid = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontBottom = std::vector<G4double>(), std::vector<G4double> OpTime = std::vector<G4double>(), std::vector<G4double> OpEnergy = std::vector<G4double>() );
-	void FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz, G4double TOFMulti, G4double TOFPosMultix, G4double TOFPosMultiy, G4double TOFPosMultiz, G4double PEkin, G4double PEdep, G4int numCollectedPhotonsTop = 0, G4int numCollectedPhotonsBottom = 0, G4int numCollectedPhotonsFrontTop = 0, G4int numCollectedPhotonsFrontMid = 0, G4int numCollectedPhotonsFrontBottom = 0, std::vector<G4double> PhotonTimeTop = std::vector<G4double>(), std::vector<G4double> PhotonTimeBottom = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontTop = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontMid = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontBottom = std::vector<G4double>(), std::vector<G4double> OpTime = std::vector<G4double>(), std::vector<G4double> OpEnergy = std::vector<G4double>());
+	void FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz, G4double TOFMulti, G4double TOFPosMultix, G4double TOFPosMultiy, G4double TOFPosMultiz, G4double PEkin, G4double PEdep, G4int numCollectedPhotonsTop1 = 0, G4int numCollectedPhotonsTop2 = 0, G4int numCollectedPhotonsTop3 = 0, G4int numCollectedPhotonsBottom1 = 0, G4int numCollectedPhotonsBottom2 = 0, G4int numCollectedPhotonsBottom3 = 0, G4int numCollectedPhotonsFrontTop1 = 0, G4int numCollectedPhotonsFrontTop2 = 0, G4int numCollectedPhotonsFrontMid1 = 0, G4int numCollectedPhotonsFrontMid2 = 0, G4int numCollectedPhotonsFrontBottom1 = 0, G4int numCollectedPhotonsFrontBottom2 = 0, std::vector<G4double> PhotonTimeTop1 = std::vector<G4double>(), std::vector<G4double> PhotonTimeTop2 = std::vector<G4double>(), std::vector<G4double> PhotonTimeTop3 = std::vector<G4double>(), std::vector<G4double> PhotonTimeBottom1 = std::vector<G4double>(), std::vector<G4double> PhotonTimeBottom2 = std::vector<G4double>(), std::vector<G4double> PhotonTimeBottom3 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontTop1 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontTop2 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontMid1 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontMid2 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontBottom1 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontBottom2 = std::vector<G4double>(), std::vector<G4double> OpTime = std::vector<G4double>(), std::vector<G4double> OpEnergy = std::vector<G4double>() );
+	void FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz, G4double TOFMulti, G4double TOFPosMultix, G4double TOFPosMultiy, G4double TOFPosMultiz, G4double PEkin, G4double PEdep, G4int numCollectedPhotonsTop1 = 0, G4int numCollectedPhotonsTop2 = 0, G4int numCollectedPhotonsTop3 = 0, G4int numCollectedPhotonsBottom1 = 0, G4int numCollectedPhotonsBottom2 = 0, G4int numCollectedPhotonsBottom3 = 0, G4int numCollectedPhotonsFrontTop1 = 0, G4int numCollectedPhotonsFrontTop2 = 0, G4int numCollectedPhotonsFrontMid1 = 0, G4int numCollectedPhotonsFrontMid2 = 0, G4int numCollectedPhotonsFrontBottom1 = 0, G4int numCollectedPhotonsFrontBottom2 = 0, std::vector<G4double> PhotonTimeTop1 = std::vector<G4double>(), std::vector<G4double> PhotonTimeTop2 = std::vector<G4double>(), std::vector<G4double> PhotonTimeTop3 = std::vector<G4double>(), std::vector<G4double> PhotonTimeBottom1 = std::vector<G4double>(), std::vector<G4double> PhotonTimeBottom2 = std::vector<G4double>(), std::vector<G4double> PhotonTimeBottom3 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontTop1 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontTop2 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontMid1 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontMid2 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontBottom1 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontBottom2 = std::vector<G4double>(), std::vector<G4double> OpTime = std::vector<G4double>(), std::vector<G4double> OpEnergy = std::vector<G4double>() );
 
 	void FillHistogram(G4int ih, G4double e, G4double weight = 1.0);
 	void Fill2DHistogram(G4int ih, G4double xbin, G4double ybin, G4double weight = 1.0);
@@ -151,11 +151,18 @@ private:
 	G4double fBeamTheta;
 	G4double fBeamPhi;
 
-	std::vector<G4double> fTopTimeVector;
-	std::vector<G4double> fBottomTimeVector;
-	std::vector<G4double> fFrontTopTimeVector;
-	std::vector<G4double> fFrontMidTimeVector;
-	std::vector<G4double> fFrontBottomTimeVector;
+	std::vector<G4double> fTop1TimeVector;
+	std::vector<G4double> fTop2TimeVector;
+	std::vector<G4double> fTop3TimeVector;
+	std::vector<G4double> fBottom1TimeVector;
+	std::vector<G4double> fBottom2TimeVector;
+	std::vector<G4double> fBottom3TimeVector;
+	std::vector<G4double> fFrontTop1TimeVector;
+	std::vector<G4double> fFrontTop2TimeVector;
+	std::vector<G4double> fFrontMid1TimeVector;
+	std::vector<G4double> fFrontMid2TimeVector;
+	std::vector<G4double> fFrontBottom1TimeVector;
+	std::vector<G4double> fFrontBottom2TimeVector;
 
 	std::vector<G4double> fOpTimeVec;
 	std::vector<G4double> fOpEnergyVec;

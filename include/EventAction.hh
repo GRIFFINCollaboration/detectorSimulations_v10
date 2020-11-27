@@ -115,15 +115,22 @@ public:
 	G4int GetTotScintPhoton() {return fTotScintPhotons;};
 	void SetTotScintPhoton(G4int total) {fTotScintPhotons = total;};
 	//Collection Time Top
-	void SetScintPhotonTimeTop(G4double top, G4int detNum);
+	void SetScintPhotonTimeTop1(G4double top, G4int detNum);
+	void SetScintPhotonTimeTop2(G4double top, G4int detNum);
+	void SetScintPhotonTimeTop3(G4double top, G4int detNum);
 	//Collection Time Bottom
-	void SetScintPhotonTimeBottom(G4double bottom, G4int detNum);
+	void SetScintPhotonTimeBottom1(G4double bottom, G4int detNum);
+	void SetScintPhotonTimeBottom2(G4double bottom, G4int detNum);
+	void SetScintPhotonTimeBottom3(G4double bottom, G4int detNum);
 	//Collection Time Front Top
-	void SetScintPhotonTimeFrontTop(G4double frontTop, G4int detNum);
+	void SetScintPhotonTimeFrontTop1(G4double frontTop, G4int detNum);
+	void SetScintPhotonTimeFrontTop2(G4double frontTop, G4int detNum);
 	//Collection Time Front Mid
-	void SetScintPhotonTimeFrontMid(G4double frontMid, G4int detNum);
+	void SetScintPhotonTimeFrontMid1(G4double frontMid, G4int detNum);
+	void SetScintPhotonTimeFrontMid2(G4double frontMid, G4int detNum);
 	//Collection Time Front Bottom
-	void SetScintPhotonTimeFrontBottom(G4double frontBot, G4int detNum);
+	void SetScintPhotonTimeFrontBottom1(G4double frontBot, G4int detNum);
+	void SetScintPhotonTimeFrontBottom2(G4double frontBot, G4int detNum);
 	//Optical Photon Time and Energy
 	void SetScintPhotonEnergyTime(G4double OpTime, G4double OpEnergy, G4int detNum);
 	void SetOldTrackID(G4int num) {foldTrackID = num;};
@@ -193,17 +200,31 @@ private:
 	//Optical Scintillation photon counter
 	G4int fTotScintPhotons;
 	//Optical Photon Time vectors
-	std::vector<G4double>  fCollectionTimeTopVector[MAXHITS];
-	std::vector<G4double>  fCollectionTimeBottomVector[MAXHITS];
-	std::vector<G4double>  fCollectionTimeFrontTopVector[MAXHITS];
-	std::vector<G4double>  fCollectionTimeFrontMidVector[MAXHITS];
-	std::vector<G4double>  fCollectionTimeFrontBottomVector[MAXHITS];
+	std::vector<G4double>  fCollectionTimeTop1Vector[MAXHITS];
+	std::vector<G4double>  fCollectionTimeTop2Vector[MAXHITS];
+	std::vector<G4double>  fCollectionTimeTop3Vector[MAXHITS];
+	std::vector<G4double>  fCollectionTimeBottom1Vector[MAXHITS];
+	std::vector<G4double>  fCollectionTimeBottom2Vector[MAXHITS];
+	std::vector<G4double>  fCollectionTimeBottom3Vector[MAXHITS];
+	std::vector<G4double>  fCollectionTimeFrontTop1Vector[MAXHITS];
+	std::vector<G4double>  fCollectionTimeFrontTop2Vector[MAXHITS];
+	std::vector<G4double>  fCollectionTimeFrontMid1Vector[MAXHITS];
+	std::vector<G4double>  fCollectionTimeFrontMid2Vector[MAXHITS];
+	std::vector<G4double>  fCollectionTimeFrontBottom1Vector[MAXHITS];
+	std::vector<G4double>  fCollectionTimeFrontBottom2Vector[MAXHITS];
 	//Optical Photon Counter Arrays
-	G4int fTopCounter[MAXHITS];
-	G4int fBottomCounter[MAXHITS];
-	G4int fFrontTopCounter[MAXHITS];
-	G4int fFrontMidCounter[MAXHITS];
-	G4int fFrontBottomCounter[MAXHITS];
+	G4int fTop1Counter[MAXHITS];
+	G4int fTop2Counter[MAXHITS];
+	G4int fTop3Counter[MAXHITS];
+	G4int fBottom1Counter[MAXHITS];
+	G4int fBottom2Counter[MAXHITS];
+	G4int fBottom3Counter[MAXHITS];
+	G4int fFrontTop1Counter[MAXHITS];
+	G4int fFrontTop2Counter[MAXHITS];
+	G4int fFrontMid1Counter[MAXHITS];
+	G4int fFrontMid2Counter[MAXHITS];
+	G4int fFrontBottom1Counter[MAXHITS];
+	G4int fFrontBottom2Counter[MAXHITS];
 	//Optical Photon Creation energy and time
 	std::vector<G4double>  fOpTimeVector[MAXHITS];
 	std::vector<G4double>  fOpEnergyVector[MAXHITS];
