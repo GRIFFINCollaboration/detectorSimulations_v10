@@ -50,7 +50,8 @@ public:
     void Build() ;
     // For detector specific dead layers
     void BuildDeadLayerSpecificCrystal(G4int det);
-    void BuildEverythingButCrystals();
+
+    void BuildEverythingButCrystals(G4int det);
     G4double GetCrystalDistanceFromOrigin() {return fCrystalDistFromOrigin;}
 
     G4double TransX(G4double x, G4double y, G4double z, G4double theta, G4double phi);
@@ -284,7 +285,7 @@ private:
     G4LogicalVolume* fAirBoxLog;
 
     // methods to construct all of the components of the detector
-    void ConstructNewSuppressorCasingWithShells();
+    void ConstructNewSuppressorCasingWithShells(G4int det);
     void BuildelectrodeMatElectrodes();
     void ConstructComplexDetectorBlockWithDeadLayer();
 
@@ -455,7 +456,7 @@ private:
     G4Colour fGriffinDeadLayerColours[4];
 
     // internal methods
-    void BuildOneDetector();
+    void BuildOneDetector(G4int det);
     //    void PlaceDetector(G4int detectorNumber);
 };
 

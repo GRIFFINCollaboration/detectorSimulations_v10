@@ -150,7 +150,7 @@ DetectorConstruction::DetectorConstruction() :
 	fExtensionSuppressorLocation = 0 ; // Back by default (Detector Forward)
 	fHevimetSelector = 0 ; // Chooses whether or not to include a hevimet
 
-	fCustomDetectorNumber 		= 1 ; // detNum
+	fCustomDetectorNumber       = 1 ; // detNum
 	fCustomDetectorPosition  = 1 ; // posNum
 
 	// create commands for interactive definition
@@ -188,11 +188,17 @@ DetectorConstruction::DetectorConstruction() :
 	fPaces    = false;
 	fDescant  = false;
 	fTestcan  = false;
+
+	fTrifWindowThickness=6*um;
+	fTrifDegraderThickness=0;
+	fTrifDegraderMat="G4_Al";
+	fTrifAluminised=true;
+	fTrifFlatWindow=false;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-DetectorConstruction::~DetectorConstruction() {	
+DetectorConstruction::~DetectorConstruction() {
 	delete fDetectorMessenger;
 }
 
@@ -219,12 +225,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 
 	fSolidWorld = new G4Box("World", fWorldSizeX/2,fWorldSizeY/2,fWorldSizeZ/2);
 
-	fLogicWorld = new G4LogicalVolume(fSolidWorld,		//its solid
-			matWorld,	//its material
-			"World");		//its name
+	fLogicWorld = new G4LogicalVolume(fSolidWorld,      //its solid
+			matWorld,   //its material
+			"World");       //its name
 
 	fPhysiWorld = new G4PVPlacement(0,                  //no rotation
-			G4ThreeVector(),	//at (0,0,0)
+			G4ThreeVector(),    //at (0,0,0)
 			fLogicWorld,         //its logical volume
 			"World",            //its name
 			0,                  //its mother  volume
@@ -278,7 +284,7 @@ void DetectorConstruction::LayeredTargetAdd(G4String Material, G4double Areal)
 	if(fApparatusLayeredTarget->BuildTargetLayer(Material,Areal)){
 		if(fLogicWorld == nullptr) {
 			Construct();
-		}  
+		}
 		fApparatusLayeredTarget->PlaceTarget(fLogicWorld);
 	}
 }
@@ -350,7 +356,7 @@ void DetectorConstruction::AddGrid() {
 
 	if(fGridSize != 0.0*mm)
 	{
-		DetectionSystemGrid* pGrid = new DetectionSystemGrid(	fGridDimensions.x(),
+		DetectionSystemGrid* pGrid = new DetectionSystemGrid(   fGridDimensions.x(),
 				fGridDimensions.y(),
 				fGridDimensions.z(),
 				fGridSize,
@@ -412,22 +418,22 @@ void DetectorConstruction::AddDetectionSystemSodiumIodide(G4int ndet) {
 	G4double theta,phi,position;
 	G4ThreeVector move,direction;
 
-	detectorAngles[0][0] 	= 0.0;
-	detectorAngles[1][0] 	= 45.0;
-	detectorAngles[2][0] 	= 90.0;
-	detectorAngles[3][0] 	= 135.0;
-	detectorAngles[4][0] 	= 180.0;
-	detectorAngles[5][0] 	= 225.0;
-	detectorAngles[6][0] 	= 270.0;
-	detectorAngles[7][0] 	= 315.0;
-	detectorAngles[0][1] 	= 90.0;
-	detectorAngles[1][1] 	= 90.0;
-	detectorAngles[2][1] 	= 90.0;
-	detectorAngles[3][1] 	= 90.0;
-	detectorAngles[4][1] 	= 90.0;
-	detectorAngles[5][1] 	= 90.0;
-	detectorAngles[6][1] 	= 90.0;
-	detectorAngles[7][1] 	= 90.0;
+	detectorAngles[0][0]    = 0.0;
+	detectorAngles[1][0]    = 45.0;
+	detectorAngles[2][0]    = 90.0;
+	detectorAngles[3][0]    = 135.0;
+	detectorAngles[4][0]    = 180.0;
+	detectorAngles[5][0]    = 225.0;
+	detectorAngles[6][0]    = 270.0;
+	detectorAngles[7][0]    = 315.0;
+	detectorAngles[0][1]    = 90.0;
+	detectorAngles[1][1]    = 90.0;
+	detectorAngles[2][1]    = 90.0;
+	detectorAngles[3][1]    = 90.0;
+	detectorAngles[4][1]    = 90.0;
+	detectorAngles[5][1]    = 90.0;
+	detectorAngles[6][1]    = 90.0;
+	detectorAngles[7][1]    = 90.0;
 
 	DetectionSystemSodiumIodide* pSodiumIodide = new DetectionSystemSodiumIodide() ;
 	pSodiumIodide->Build() ;
@@ -441,7 +447,7 @@ void DetectorConstruction::AddDetectionSystemSodiumIodide(G4int ndet) {
 		position = 25.0*cm + (pSodiumIodide->GetDetectorLengthOfUnitsCM()/2.0);
 		move = position * direction;
 
-		G4RotationMatrix* rotate = new G4RotationMatrix; 		//rotation matrix corresponding to direction vector
+		G4RotationMatrix* rotate = new G4RotationMatrix;        //rotation matrix corresponding to direction vector
 		rotate->rotateX(theta);
 		rotate->rotateY(0);
 		rotate->rotateZ(phi+0.5*M_PI);
@@ -568,7 +574,7 @@ void DetectorConstruction::AddDetectionSystemGriffinCustomDetector(G4int) {
 
 	pGriffinCustom->PlaceDeadLayerSpecificCrystal(fLogicWorld, fCustomDetectorNumber-1, fCustomDetectorPosition-1, fUseTigressPositions);
 
-	pGriffinCustom->BuildEverythingButCrystals();
+	pGriffinCustom->BuildEverythingButCrystals(fCustomDetectorNumber-1);
 
 	pGriffinCustom->PlaceEverythingButCrystals(fLogicWorld, fCustomDetectorNumber-1, fCustomDetectorPosition-1, fUseTigressPositions);
 
@@ -593,7 +599,7 @@ void DetectorConstruction::AddDetectionSystemGriffinCustom(G4int ndet) {
 
 		pGriffinCustom->BuildDeadLayerSpecificCrystal(detNum-1);
 		pGriffinCustom->PlaceDeadLayerSpecificCrystal(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
-		pGriffinCustom->BuildEverythingButCrystals();
+		pGriffinCustom->BuildEverythingButCrystals(detNum-1);
 		pGriffinCustom->PlaceEverythingButCrystals(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 
 	}
@@ -653,7 +659,7 @@ void DetectorConstruction::AddDetectionSystemGriffinForward(G4int ndet) {
 
 		pGriffinDLS->BuildDeadLayerSpecificCrystal(detNum-1);
 		pGriffinDLS->PlaceDeadLayerSpecificCrystal(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
-		pGriffinDLS->BuildEverythingButCrystals();
+		pGriffinDLS->BuildEverythingButCrystals(detNum-1);
 		pGriffinDLS->PlaceEverythingButCrystals(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 	}
 
@@ -677,7 +683,7 @@ void DetectorConstruction::AddDetectionSystemGriffinForwardDetector(G4int ndet) 
 
 	pGriffinDLS->PlaceDeadLayerSpecificCrystal(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 
-	pGriffinDLS->BuildEverythingButCrystals();
+	pGriffinDLS->BuildEverythingButCrystals(detNum-1);
 
 	pGriffinDLS->PlaceEverythingButCrystals(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 
@@ -703,7 +709,7 @@ void DetectorConstruction::AddDetectionSystemGriffinBack(G4int ndet) {
 
 		pGriffinDLS->BuildDeadLayerSpecificCrystal(detNum-1);
 		pGriffinDLS->PlaceDeadLayerSpecificCrystal(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
-		pGriffinDLS->BuildEverythingButCrystals();
+		pGriffinDLS->BuildEverythingButCrystals(detNum-1);
 		pGriffinDLS->PlaceEverythingButCrystals(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 	}
 
@@ -726,7 +732,7 @@ void DetectorConstruction::AddDetectionSystemGriffinBackDetector(G4int ndet) {
 
 	pGriffinDLS->BuildDeadLayerSpecificCrystal(detNum-1);
 	pGriffinDLS->PlaceDeadLayerSpecificCrystal(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
-	pGriffinDLS->BuildEverythingButCrystals();
+	pGriffinDLS->BuildEverythingButCrystals(detNum-1);
 	pGriffinDLS->PlaceEverythingButCrystals(fLogicWorld, detNum-1, posNum-1, fUseTigressPositions) ;
 
 	fGriffin = true;
@@ -852,7 +858,7 @@ void DetectorConstruction::AddDetectionSystemSpice() {
 		Construct();
 	}
 	DetectionSystemSpice* pSpice = new DetectionSystemSpice() ;
-	pSpice->BuildPlace(fLogicWorld); 
+	pSpice->BuildPlace(fLogicWorld);
 
 	fSpice = true;
 	//HistoManager::Instance().Spice(true);//boolean needed to make SPICE histograms
@@ -862,8 +868,9 @@ void DetectorConstruction::AddDetectionSystemTrific(G4double Torr) {
 	if(fLogicWorld == nullptr) {
 		Construct();
 	}
-	DetectionSystemTrific* pTrific = new DetectionSystemTrific(Torr) ;
-	pTrific->BuildPlace(fLogicWorld); 
+
+	DetectionSystemTrific* pTrific = new DetectionSystemTrific(Torr,fTrifWindowThickness,fTrifAluminised,fTrifFlatWindow,fTrifDegraderThickness,fTrifDegraderMat);
+	pTrific->BuildPlace(fLogicWorld);
 
 }
 
@@ -887,20 +894,20 @@ void DetectorConstruction::SetProperties() {
 	// thread id is -1 for master, -2 in sequential mode
 	// so this only outputs the number of volumes once
 	if(G4Threading::G4GetThreadId() < 0) {
-		G4cout<<fLogicWorld->GetNoDaughters()<<" daughter volumes"<<G4endl;
+		G4cout<<fLogicWorld->GetNoDaughters()<<" daughter volumes"<<std::endl;
 	}
-    SetPropertiesRecursive(fLogicWorld);
+	SetPropertiesRecursive(fLogicWorld);
 }
 
 
 void DetectorConstruction::SetPropertiesRecursive(G4LogicalVolume* vol) {
-    for(size_t i = 0; i < vol->GetNoDaughters(); ++i) {
+	for(size_t i = 0; i < vol->GetNoDaughters(); ++i) {
 		if(!HasProperties(vol->GetDaughter(i)) && CheckVolumeName(vol->GetDaughter(i)->GetName())) {
 			fPropertiesMap[vol->GetDaughter(i)] = ParseVolumeName(vol->GetDaughter(i)->GetName());
 		}
 		SetPropertiesRecursive(vol->GetDaughter(i)->GetLogicalVolume());
 	}
-    
+
 }
 
 void DetectorConstruction::Print() {
@@ -911,19 +918,19 @@ void DetectorConstruction::Print() {
 
 	SetProperties();
 
-    PrintRecursive(fLogicWorld);
+	PrintRecursive(fLogicWorld);
 }
 
 void DetectorConstruction::PrintRecursive(G4LogicalVolume* vol){
-    
-    for(size_t i = 0; i < vol->GetNoDaughters(); ++i) {
+	for(size_t i = 0; i < vol->GetNoDaughters(); ++i) {
 		G4cout<<i<<": "<<vol->GetDaughter(i)<<" - "<<vol->GetDaughter(i)->GetName();
 		if(HasProperties(vol->GetDaughter(i))) {
 			auto prop = GetProperties(vol->GetDaughter(i));
 			G4cout<<" - "<<prop.detectorNumber<<", "<<prop.crystalNumber<<", "<<prop.systemID;
 		}
 		G4cout<<G4endl;
-        PrintRecursive(vol->GetDaughter(i)->GetLogicalVolume());
+
+		PrintRecursive(vol->GetDaughter(i)->GetLogicalVolume());
 	}
 }
 
@@ -959,10 +966,7 @@ bool DetectorConstruction::CheckVolumeName(G4String volumeName) {
 
 DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 	DetectorProperties result;
-	bool debug = false;
-	if(debug) {
-		G4cout<<"Parsing volume name "<<volumeName<<G4endl;
-	}
+
 	// GRIFFIN detectors have the detector and crystal number in their names
 	if(volumeName.find("germaniumBlock1") != G4String::npos) {
 		// strip "germaniumBlock1_" (16 characters) and everything before from the string
@@ -974,9 +978,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		is>>result.detectorNumber>>result.crystalNumber;
 		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
 		result.systemID = 1000;
-		if(debug) {
-			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
@@ -990,9 +991,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		is>>result.detectorNumber>>result.crystalNumber;
 		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
 		result.systemID = 1000;
-		if(debug) {
-			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
@@ -1006,9 +1004,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		std::istringstream is(tmpString);
 		is>>result.detectorNumber>>result.crystalNumber;
 		result.systemID = 10;
-		if(debug) {
-			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
@@ -1022,16 +1017,13 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		std::istringstream is(tmpString);
 		is>>result.detectorNumber>>result.crystalNumber;
 		result.systemID = 20;
-		if(debug) {
-			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
 	// for all other detectors we need to get the assembly and imprint number
 	// the name has the form av_<assembly volume number>_impr_<imprint number>_<volume name>_pv_<??? number>
 	if(volumeName.find("av_") != 0 || volumeName.find("_impr_") == G4String::npos) {
-		G4cerr<<"wrongly formed volume name '"<<volumeName<<"', should start with 'av_' and have '_impr_' in it?"<<G4endl;
+		std::cerr<<"wrongly formed volume name '"<<volumeName<<"', should start with 'av_' and have '_impr_' in it?"<<std::endl;
 		throw std::invalid_argument("unexpected volume name");
 	}
 	// create new string that starts with the assembly number and use stringstream to read it
@@ -1048,52 +1040,59 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 	G4int imprintNumber;
 	is>>imprintNumber;
 
-	if(debug) {
-		G4cout<<"assembly number "<<assemblyNumber<<", imprint number "<<imprintNumber<<G4endl;
-	}
-	// for griffin "components" (aka suppressors) we get the detector number from the assembly volume number (av-5)/fNumberOfAssemblyVols
+	// for griffin "components" (aka suppressors) we get the detector number from the name
 	// and the crystal number is the imprint number (fNumberOfAssemblyVols was hard-coded to be 13 in the constructor)
-	result.detectorNumber = static_cast<G4int>(ceil((assemblyNumber-5.)/13.));
-	result.crystalNumber = imprintNumber;
-	if(volumeName.find("backQuarterSuppressor") != G4String::npos) {
-		result.systemID = 1050;
-		if(debug) {
-			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
-		return result;
-	}
-
+	result.crystalNumber = imprintNumber - 1;
 	if(volumeName.find("leftSuppressorExtension") != G4String::npos) {
+		std::string temp_string = volumeName.substr(volumeName.find("leftSuppressorExtension")+23);
+		std::replace(temp_string.begin(), temp_string.end(), '_', ' ');
+		std::istringstream temp_stream(temp_string);
+		temp_stream>>result.detectorNumber;
+		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
 		result.systemID = 1010;
-		if(debug) {
-			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
 	if(volumeName.find("rightSuppressorExtension") != G4String::npos) {
+		std::string temp_string = volumeName.substr(volumeName.find("rightSuppressorExtension")+24);
+		std::replace(temp_string.begin(), temp_string.end(), '_', ' ');
+		std::istringstream temp_stream(temp_string);
+		temp_stream>>result.detectorNumber;
+		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
 		result.systemID = 1020;
-		if(debug) {
-			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
 	if(volumeName.find("leftSuppressorCasing") != G4String::npos) {
+		std::string temp_string = volumeName.substr(volumeName.find("leftSuppressorCasing")+20);
+		std::replace(temp_string.begin(), temp_string.end(), '_', ' ');
+		std::istringstream temp_stream(temp_string);
+		temp_stream>>result.detectorNumber;
+		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
 		result.systemID = 1030;
-		if(debug) {
-			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
 	if(volumeName.find("rightSuppressorCasing") != G4String::npos) {
+		std::string temp_string = volumeName.substr(volumeName.find("rightSuppressorCasing")+21);
+		std::replace(temp_string.begin(), temp_string.end(), '_', ' ');
+		std::istringstream temp_stream(temp_string);
+		temp_stream>>result.detectorNumber;
+		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
 		result.systemID = 1040;
-		if(debug) {
-			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
+
+	if(volumeName.find("backQuarterSuppressor") != G4String::npos) {
+		std::string temp_string = volumeName.substr(volumeName.find("backQuarterSuppressor")+21);
+		std::replace(temp_string.begin(), temp_string.end(), '_', ' ');
+		std::istringstream temp_stream(temp_string);
+		temp_stream>>result.detectorNumber;
+		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
+		result.systemID = 1050;
+		return result;
+	}
+
 
 	// for ancillary BGOs the detector number is the (ceiling of the) imprint number divided by 3
 	// and the crystal number is the imprint number minus 3 times the detector number minus one
@@ -1101,9 +1100,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 	result.crystalNumber = imprintNumber - (result.detectorNumber-1)*3;
 	if(volumeName.find("ancillaryBgoBlock") != G4String::npos) {
 		result.systemID = 3000;
-		if(debug) {
-			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
@@ -1112,25 +1108,16 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 	result.crystalNumber = 0;
 	if(volumeName.find("lanthanumBromideCrystalBlock") != G4String::npos) {
 		result.systemID = 2000;
-		if(debug) {
-			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
 	if(volumeName.find("sodiumIodideCrystalBlock") != G4String::npos) {
 		result.systemID = 4000;
-		if(debug) {
-			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
 	if(volumeName.find("pacesSiliconBlockLog") != G4String::npos) {
 		result.systemID = 50;
-		if(debug) {
-			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
@@ -1168,13 +1155,10 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 				result.detectorNumber = 14;
 				break;
 			default:
-				G4cerr<<"Unknown detector number "<<result.detectorNumber<<" for square SCEPTAR!"<<G4endl;
+				std::cerr<<"Unknown detector number "<<result.detectorNumber<<" for square SCEPTAR!"<<std::endl;
 				break;
 		}
 		result.systemID = 5000;
-		if(debug) {
-			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
@@ -1212,53 +1196,35 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 				result.detectorNumber = 19;
 				break;
 			default:
-				G4cerr<<"Unknown detector number "<<result.detectorNumber<<" for angled SCEPTAR!"<<G4endl;
+				std::cerr<<"Unknown detector number "<<result.detectorNumber<<" for angled SCEPTAR!"<<std::endl;
 				break;
 		}
 		result.systemID = 5000;
-		if(debug) {
-			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
 	if(volumeName.find("8piGermaniumBlockLog") != G4String::npos) {
 		result.systemID = 6000;
-		if(debug) {
-			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
 	if(volumeName.find("8piInnerBGOAnnulus") != G4String::npos) {
 		result.systemID = 6010;
-		if(debug) {
-			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
 	if(volumeName.find("8piOuterLowerBGOAnnulus") != G4String::npos) {
 		result.systemID = 6020;
-		if(debug) {
-			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
 	if(volumeName.find("8piOuterUpperBGOAnnulus") != G4String::npos) {
 		result.systemID = 6030;
-		if(debug) {
-			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
 	if(volumeName.find("gridcellLog") != G4String::npos) {
 		result.systemID = 7000;
-		if(debug) {
-			G4cout<<"got custom "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
@@ -1311,9 +1277,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 				result.detectorNumber = 49;
 				break;
 		}
-		if(debug) {
-			G4cout<<"got blue "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
@@ -1350,9 +1313,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 			case 10:
 				result.detectorNumber = 70;
 				break;
-		}
-		if(debug) {
-			G4cout<<"got green "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
 		}
 		return result;
 	}
@@ -1406,9 +1366,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 				result.detectorNumber = 50;
 				break;
 		}
-		if(debug) {
-			G4cout<<"got red "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
@@ -1459,9 +1416,6 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 				result.detectorNumber = 47;
 				break;
 		}
-		if(debug) {
-			G4cout<<"got white "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
@@ -1499,24 +1453,13 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 				result.detectorNumber = 69;
 				break;
 		}
-		if(debug) {
-			G4cout<<"got yellow "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
 	}
 
 	if(volumeName.find("testcanScintillatorLog") != G4String::npos) {
 		result.systemID = 8500;
-		if(debug) {
-			G4cout<<"got testcan "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
-		}
 		return result;
-	}
-
-	if(debug) {
-		G4cout<<"got default "<<result.detectorNumber<<", "<<result.crystalNumber<<" for system id "<<result.systemID<<G4endl;
 	}
 
 	return result;
 }
-

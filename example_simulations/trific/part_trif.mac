@@ -1,0 +1,16 @@
+/process/em/fluo true # atomic dexcitations (apparently required otherwise exception thrown)
+/process/em/auger false # auger electrons
+/process/em/pixe false # particle induced X-ray emission
+/control/verbose 2
+/run/verbose 2
+/event/verbose 0
+/tracking/verbose 0
+/run/initialize
+/DetSys/phys/setECut 3 cm
+/gun/particle ion
+/DetSys/world/material Vacuum
+/DetSys/gun/position 0.0 0.0 0.0 cm
+/DetSys/gun/coneMinAngle 0.0 deg
+/DetSys/gun/coneMaxAngle 3.8 deg
+/DetSys/gun/BeamSpot 0.5 mm
+/grdm/nucleusLimits 1 1 1 1 # we dont want decay

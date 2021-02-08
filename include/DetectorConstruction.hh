@@ -205,6 +205,12 @@ public:
 
 	void Print();
 	void PrintRecursive(G4LogicalVolume* vol);
+    
+    G4double  fTrifWindowThickness;
+    G4double  fTrifDegraderThickness;
+    G4String  fTrifDegraderMat; 
+    G4bool    fTrifAluminised;  
+    G4bool    fTrifFlatWindow;   
 
 private:
 	bool CheckVolumeName(G4String volumeName);

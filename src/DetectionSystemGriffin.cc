@@ -37,10 +37,10 @@
 
 
 ///////////////////////////////////////////////////////////////////////
-// The ::DetectionSystemGriffin constructor instatiates all the 
+// The ::DetectionSystemGriffin constructor instatiates all the
 // Logical and Physical Volumes used in the detector geometery (found
 // in our local files as it contains NDA-protected info), and the
-// ::~DetectionSystemGriffin destructor deletes them from the stack 
+// ::~DetectionSystemGriffin destructor deletes them from the stack
 // when they go out of scope
 ///////////////////////////////////////////////////////////////////////
 
@@ -115,14 +115,15 @@ DetectionSystemGriffin::~DetectionSystemGriffin() {
 }// end ::~DetectionSystemGriffin
 
 ///////////////////////////////////////////////////////////////////////
-// ConstructDetectionSystemGriffin builds the DetectionSystemGriffin 
+// ConstructDetectionSystemGriffin builds the DetectionSystemGriffin
 // at the origin
 ///////////////////////////////////////////////////////////////////////
-void DetectionSystemGriffin::Build() { 
+void DetectionSystemGriffin::Build() {
 
 	fSurfCheck = true;
+	G4int det = 1;
 
-	BuildOneDetector();
+	BuildOneDetector(det);
 
 }//end ::Build
 
@@ -490,7 +491,7 @@ G4int DetectionSystemGriffin::PlaceDeadLayerSpecificCrystal(G4LogicalVolume* exp
 ///////////////////////////////////////////////////////////////////////
 // BuildOneDetector()
 ///////////////////////////////////////////////////////////////////////
-void DetectionSystemGriffin::BuildOneDetector() {
+void DetectionSystemGriffin::BuildOneDetector(G4int det) {
 	// Build assembly volumes
 	// Holds all pieces that are not a detector (ie. the can, nitrogen tank, cold finger, electrodes, etc.)
 	fAssembly                           = new G4AssemblyVolume();
@@ -529,7 +530,7 @@ void DetectionSystemGriffin::BuildOneDetector() {
 
 	// Include BGOs?
 	if(fBGOSelector == 1) {
-		ConstructNewSuppressorCasingWithShells() ;
+		ConstructNewSuppressorCasingWithShells(det) ;
 	} else if(fBGOSelector == 0) {
 		//G4cout<<"Not building BGO "<<G4endl ;
 	} else {
@@ -544,7 +545,7 @@ void DetectionSystemGriffin::BuildOneDetector() {
 
 } // end BuildOneDetector()
 
-void DetectionSystemGriffin::BuildEverythingButCrystals() {
+void DetectionSystemGriffin::BuildEverythingButCrystals(G4int det) {
 	// Build assembly volumes
 	fAssembly                           = new G4AssemblyVolume();
 	fLeftSuppressorCasingAssembly       = new G4AssemblyVolume();
@@ -568,7 +569,7 @@ void DetectionSystemGriffin::BuildEverythingButCrystals() {
 
 	// Include BGOs?
 	if(fBGOSelector == 1) {
-		ConstructNewSuppressorCasingWithShells();
+		ConstructNewSuppressorCasingWithShells(det);
 	} else if(fBGOSelector == 0) {
 		//G4cout<<"Not building BGO "<<G4endl;
 	} else {
@@ -651,7 +652,7 @@ void DetectionSystemGriffin::ConstructComplexDetectorBlock() {
 }//end ::ConstructComplexDetectorBlock
 
 ///////////////////////////////////////////////////////////////////////
-// ConstructComplexDetectorBlockWithDeadLayer builds four quarters of 
+// ConstructComplexDetectorBlockWithDeadLayer builds four quarters of
 // germanium, with dead layers
 ///////////////////////////////////////////////////////////////////////
 void DetectionSystemGriffin::ConstructComplexDetectorBlockWithDeadLayer() {
@@ -845,7 +846,7 @@ void DetectionSystemGriffin::ConstructComplexDetectorBlockWithDetectorSpecificDe
 
 ///////////////////////////////////////////////////////////////////////
 // Builds a layer of electrodeMat between germanium crystals to
-// approximate electrodes, etc. that Eurisys won't tell us 
+// approximate electrodes, etc. that Eurisys won't tell us
 ///////////////////////////////////////////////////////////////////////
 void DetectionSystemGriffin::BuildelectrodeMatElectrodes() {
 
@@ -894,9 +895,9 @@ void DetectionSystemGriffin::BuildelectrodeMatElectrodes() {
 }//end ::BuildelectrodeMatElectrodes
 
 ///////////////////////////////////////////////////////////////////////
-// ConstructDetector builds the structureMat can, cold finger shell, 
-// and liquid nitrogen tank. Since the can's face is built first, 
-// everything else is placed relative to it  
+// ConstructDetector builds the structureMat can, cold finger shell,
+// and liquid nitrogen tank. Since the can's face is built first,
+// everything else is placed relative to it
 ///////////////////////////////////////////////////////////////////////
 void DetectionSystemGriffin::ConstructDetector()  {
 
@@ -1213,11 +1214,11 @@ void DetectionSystemGriffin::ConstructDetector()  {
 }// end::ConstructDetector
 
 ///////////////////////////////////////////////////////////////////////
-// ConstructColdFinger has changed in this version!  It now 
-// incorporates all the internal details released in Nov 2004 by 
-// Eurisys. ConstructColdFinger builds the cold finger as well as the 
-// cold plate. The finger extends to the Liquid Nitrogen tank, while 
-// the plate is always the same distance from the back of the germanium  
+// ConstructColdFinger has changed in this version!  It now
+// incorporates all the internal details released in Nov 2004 by
+// Eurisys. ConstructColdFinger builds the cold finger as well as the
+// cold plate. The finger extends to the Liquid Nitrogen tank, while
+// the plate is always the same distance from the back of the germanium
 ///////////////////////////////////////////////////////////////////////
 void DetectionSystemGriffin::ConstructColdFinger() {
 
@@ -1550,7 +1551,7 @@ G4SubtractionSolid* DetectionSystemGriffin::ExtraColdBlock() {
 G4Trd* DetectionSystemGriffin::TrianglePost() {
 	// Calculations that are also done in ConstructColdFinger for positioning
 	// First, find how far from the centre to place the tips of the triangles
-	G4double distanceOfTheTip	= fGermaniumSeparation/2.0
+	G4double distanceOfTheTip   = fGermaniumSeparation/2.0
 		+ (fGermaniumWidth/2.0 - fGermaniumShift) //centre of the middle hole
 		+ sqrt(pow((fGermaniumOuterRadius
 						+ fTrianglePostsDistanceFromCrystals), 2.0)
@@ -1561,7 +1562,7 @@ G4Trd* DetectionSystemGriffin::TrianglePost() {
 		+ fGermaniumWidth;
 
 	// The distance away from the boundary between crystals of the side points
-	G4double distanceOfTheSidePoints 	= sqrt(pow((fGermaniumOuterRadius
+	G4double distanceOfTheSidePoints    = sqrt(pow((fGermaniumOuterRadius
 					+ fTrianglePostsDistanceFromCrystals), 2.0)
 			- pow(fGermaniumWidth/2.0 +/*notice*/ fGermaniumShift, 2.0));
 
@@ -1575,7 +1576,7 @@ G4Trd* DetectionSystemGriffin::TrianglePost() {
 
 	G4double halfWidthOfTop = fTrianglePostDim; //the easiest way to make a triangle
 	//G4Trd(const G4String& pName,G4double  dx1, G4double dx2, G4double  dy1, G4double dy2,G4double  dz)
-	G4Trd* trianglePost = new G4Trd(	"trianglePost", length / 2.0, length / 2.0,
+	G4Trd* trianglePost = new G4Trd(    "trianglePost", length / 2.0, length / 2.0,
 			halfWidthOfTop, halfWidthOfBase, baseToTipHeight / 2.0);
 
 	return trianglePost;
@@ -1648,13 +1649,14 @@ G4Tubs* DetectionSystemGriffin::StructureMatColdFinger() {
 
 
 ///////////////////////////////////////////////////////////////////////
-// ConstructNewSuppressorCasingWithShells builds the suppressor that 
-// surrounds the can. It tapers off at the front, and there is a thick 
+// ConstructNewSuppressorCasingWithShells builds the suppressor that
+// surrounds the can. It tapers off at the front, and there is a thick
 // piece covering the back of the can, which is divided in the middle,
 // as per the design in the specifications. Also, there is a layer
 // of structureMat that surrounds the physical pieces.
 ///////////////////////////////////////////////////////////////////////
-void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells() {
+void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells(G4int det) {
+	G4String strdet = G4UIcommand::ConvertToString(det);
 	G4int i;
 	G4double x0, y0, z0, x, y, z;
 
@@ -1706,9 +1708,11 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells() {
 	// the suppressor pieces themselves.  As an error checking method, the suppressor
 	// pieces are given a copy number value far out of range of any useful copy number.
 	if(fIncludeBackSuppressors) {
+		G4String backQuarterSuppressorShellName = "backQuarterSuppressor_" + strdet + "_log";
+
 		fBackQuarterSuppressorShellLog = new G4LogicalVolume(
 				backQuarterSuppressorShell, structureMat,
-				"backQuarterSuppressorLog", 0, 0, 0);
+				backQuarterSuppressorShellName, 0, 0, 0);
 
 		fBackQuarterSuppressorShellLog->SetVisAttributes(SuppressorVisAtt);
 
@@ -1718,13 +1722,15 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells() {
 			exit(1);
 		}
 
+		G4String backQuarterSuppressorName = "backQuarterSuppressor_" + strdet + "_log";
+
 		fBackQuarterSuppressorLog = new G4LogicalVolume(backQuarterSuppressor, backMaterial,
-				"backQuarterSuppressorLog", 0, 0, 0);
+				backQuarterSuppressorName, 0, 0, 0);
 		fBackQuarterSuppressorLog->SetVisAttributes(backInnardsVisAtt);
 
 		fSuppressorBackAssembly->AddPlacedVolume(fBackQuarterSuppressorLog, fMoveNull, fRotateNull);
 
-		x0 = 	(fBackBGOThickness -fCanFaceThickness)/2.0 + fSuppressorShellThickness
+		x0 =    (fBackBGOThickness -fCanFaceThickness)/2.0 + fSuppressorShellThickness
 			+ fDetectorTotalLength +fBGOCanSeperation
 			+ fShift + fAppliedBackShift ;
 
@@ -1750,29 +1756,35 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells() {
 		}
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////////
 	// now we add the side pieces of suppressor that taper off towards the front of the can
+	////////////////////////////////////////////////////////////////////////////////////////
+	G4String rightSuppressorShellLogName = "rightSuppressorShell_" + strdet + "_log";
+	G4String leftSuppressorShellLogName = "leftSuppressorShell_" + strdet + "_log";
+	G4String rightSuppressorCasingLogName = "rightSuppressorCasing_" + strdet + "_log";
+	G4String leftSuppressorCasingLogName = "leftSuppressorCasing_" + strdet + "_log";
 
 	// Define the structureMat shell logical volume
 	G4SubtractionSolid* rightSuppressorShell = ShellForFrontSlantSuppressor("right");
 
 	fRightSuppressorShellLog = new G4LogicalVolume(rightSuppressorShell, structureMat,
-			"rightSuppressorShellLog", 0,0,0);
+			rightSuppressorShellLogName, 0,0,0);
 	fRightSuppressorShellLog->SetVisAttributes(SuppressorVisAtt);
 
 	G4SubtractionSolid* leftSuppressorShell = ShellForFrontSlantSuppressor("left");
 
 	fLeftSuppressorShellLog = new G4LogicalVolume(leftSuppressorShell, structureMat,
-			"leftSuppressorShellLog", 0,0,0);
+			leftSuppressorShellLogName, 0,0,0);
 	fLeftSuppressorShellLog->SetVisAttributes(SuppressorVisAtt);
 
 	G4SubtractionSolid* rightSuppressor = FrontSlantSuppressor("right", false); // Right, non-chopping.
 
-	fRightSuppressorLog = new G4LogicalVolume(rightSuppressor, materialBGO, "rightSuppressorCasingLog", 0, 0, 0);
+	fRightSuppressorLog = new G4LogicalVolume(rightSuppressor, materialBGO, rightSuppressorCasingLogName, 0, 0, 0);
 	fRightSuppressorLog->SetVisAttributes(innardsVisAtt);
 
 	G4SubtractionSolid* leftSuppressor = FrontSlantSuppressor("left", false); // Left, non-chopping.
 
-	fLeftSuppressorLog = new G4LogicalVolume(leftSuppressor, materialBGO, "leftSuppressorCasingLog", 0, 0, 0);
+	fLeftSuppressorLog = new G4LogicalVolume(leftSuppressor, materialBGO, leftSuppressorCasingLogName, 0, 0, 0);
 	fLeftSuppressorLog->SetVisAttributes(innardsVisAtt);
 
 	fRightSuppressorCasingAssembly->AddPlacedVolume(fRightSuppressorLog, fMoveNull, fRotateNull);
@@ -1837,20 +1849,27 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells() {
 	}
 
 
+	////////////////////////////////////////////////////////////////////////////////////////
 	// now we add the side pieces of suppressor that extend out in front of the can when it's in the back position
+	////////////////////////////////////////////////////////////////////////////////////////
+	G4String rightSuppressorExtensionLogName = "rightSuppressorExtension_" + strdet + "_log";
+	G4String leftSuppressorExtensionLogName = "leftSuppressorExtension_" + strdet + "_log";
+
+	G4String rightSuppressorShellExtensionLogName = "rightSuppressorShellExtension_" + strdet + "_log";
+	G4String leftSuppressorShellExtensionLogName = "leftSuppressorShellExtension_" + strdet + "_log";
 
 	// Define the shell right logical volume
 	// G4SubtractionSolid* rightSuppressorShellExtension = ShellForRightSuppressorExtension();
 	G4SubtractionSolid* rightSuppressorShellExtension = ShellForSuppressorExtension("right");
 
 	fRightSuppressorShellExtensionLog = new G4LogicalVolume(rightSuppressorShellExtension,
-			materialBGO, "rightSuppressorShellExtensionLog", 0, 0, 0);
+			materialBGO, rightSuppressorShellExtensionLogName, 0, 0, 0);
 	fRightSuppressorShellExtensionLog->SetVisAttributes(SuppressorVisAtt);
 
 	G4SubtractionSolid* rightSuppressorExtension = SideSuppressorExtension("right", false); // Right, non-chopping // CALLED
 
 	fRightSuppressorExtensionLog = new G4LogicalVolume(rightSuppressorExtension, materialBGO,
-			"rightSuppressorExtensionLog", 0, 0, 0);
+			rightSuppressorExtensionLogName, 0, 0, 0);
 	fRightSuppressorExtensionLog->SetVisAttributes(innardsVisAtt);
 
 	// Define the left shell logical volume
@@ -1859,13 +1878,13 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells() {
 
 
 	fLeftSuppressorShellExtensionLog = new G4LogicalVolume(leftSuppressorShellExtension,
-			materialBGO, "leftSuppressorShellExtensionLog", 0, 0, 0);
+			materialBGO, leftSuppressorShellExtensionLogName, 0, 0, 0);
 	fLeftSuppressorShellExtensionLog->SetVisAttributes(SuppressorVisAtt);
 
 	G4SubtractionSolid* leftSuppressorExtension = SideSuppressorExtension("left", false); // Left, Non-chopping // CALLED
 
 	fLeftSuppressorExtensionLog = new G4LogicalVolume(leftSuppressorExtension, materialBGO,
-			"leftSuppressorExtensionLog", 0, 0, 0);
+			leftSuppressorExtensionLogName, 0, 0, 0);
 	fLeftSuppressorExtensionLog->SetVisAttributes(innardsVisAtt);
 
 	fRightSuppressorExtensionAssembly->AddPlacedVolume(fRightSuppressorExtensionLog, fMoveNull, fRotateNull);
@@ -2142,9 +2161,9 @@ G4UnionSolid* DetectionSystemGriffin::InterCrystalelectrodeMatFront() {
 } //end ::interCrystalelectrodeMatFront
 
 ///////////////////////////////////////////////////////////////////////
-// ConstructNewHeavyMet builds the heavy metal that goes on the front 
-// of the Suppressor. It only goes on when the extensions are in their 
-// forward position   
+// ConstructNewHeavyMet builds the heavy metal that goes on the front
+// of the Suppressor. It only goes on when the extensions are in their
+// forward position
 ///////////////////////////////////////////////////////////////////////
 void DetectionSystemGriffin::ConstructNewHeavyMet() {
 	G4Material* materialHevimetal = G4Material::GetMaterial("Hevimetal");
@@ -2213,7 +2232,7 @@ G4Trap* DetectionSystemGriffin::CornerWedge() {
 
 ///////////////////////////////////////////////////////////////////////
 // The bent side pieces attach to the front faceface they angle
-// outwards, so the face is smaller than the main part of 
+// outwards, so the face is smaller than the main part of
 // the can four are needed for a square-faced detector
 ///////////////////////////////////////////////////////////////////////
 G4Para* DetectionSystemGriffin::BentSidePiece() {
@@ -2263,9 +2282,9 @@ G4Cons* DetectionSystemGriffin::RoundedEndEdge() {
 
 
 G4Tubs* DetectionSystemGriffin::CornerTube() {
-	G4double outerRadius 	= fBentEndLength *tan(fBentEndAngle);
-	G4double innerRadius 	= outerRadius - fCanSideThickness;
-	G4double halfHeightZ 	= (fDetectorTotalLength -fBentEndLength
+	G4double outerRadius    = fBentEndLength *tan(fBentEndAngle);
+	G4double innerRadius    = outerRadius - fCanSideThickness;
+	G4double halfHeightZ    = (fDetectorTotalLength -fBentEndLength
 			-fRearPlateThickness)/2.0;
 
 	G4double startAngle = 0.0*M_PI;
@@ -2372,7 +2391,7 @@ G4Tubs* DetectionSystemGriffin::LiquidNitrogen() {
 G4Box* DetectionSystemGriffin::RectangularSegment() {
 	G4double halfLengthX = fDetectorBlockHeight/2.0;
 	G4double halfLengthY = fDetectorBlockLength/2.0;
-	G4double halfLengthZ = halfLengthY; 	// Since it is symmetric
+	G4double halfLengthZ = halfLengthY;     // Since it is symmetric
 
 	G4Box* rectangularSegment = new G4Box("rectangularSegment", halfLengthX, halfLengthY, halfLengthZ);
 
@@ -2382,11 +2401,11 @@ G4Box* DetectionSystemGriffin::RectangularSegment() {
 
 
 G4Trd* DetectionSystemGriffin::TrapezoidalSegment() {
-	G4double halfBaseX 		= fDetectorBlockLength/2.0;
-	G4double halfTopX 		= halfBaseX - (fDetectorBlockTrapezoidalHeight *tan(fBentEndAngle));
-	G4double halfBaseY 		= halfBaseX; 	// Since it is symmetric
-	G4double halfTopY 		= halfTopX;
-	G4double halfHeightZ 	= fDetectorBlockTrapezoidalHeight/2.0;
+	G4double halfBaseX      = fDetectorBlockLength/2.0;
+	G4double halfTopX       = halfBaseX - (fDetectorBlockTrapezoidalHeight *tan(fBentEndAngle));
+	G4double halfBaseY      = halfBaseX;    // Since it is symmetric
+	G4double halfTopY       = halfTopX;
+	G4double halfHeightZ    = fDetectorBlockTrapezoidalHeight/2.0;
 
 	G4Trd* trapezoidalSegment = new G4Trd("trapezoidalSegment",
 			halfBaseX, halfTopX, halfBaseY, halfTopY, halfHeightZ);
@@ -2402,11 +2421,11 @@ G4Trd* DetectionSystemGriffin::TrapezoidalSegment() {
 ///////////////////////////////////////////////////////////////////////
 G4SubtractionSolid* DetectionSystemGriffin::QuarterDetector() {
 
-	G4double halfWidthX 	= fGermaniumWidth/2.0;
-	G4double halfWidthY 	= halfWidthX;
-	G4double halfLengthZ 	= fGermaniumLength/2.0;
+	G4double halfWidthX     = fGermaniumWidth/2.0;
+	G4double halfWidthY     = halfWidthX;
+	G4double halfLengthZ    = fGermaniumLength/2.0;
 
-	G4Box* rectangularGermanium 	= new G4Box("rectangularGermanium", halfWidthX, halfWidthY, halfLengthZ);
+	G4Box* rectangularGermanium     = new G4Box("rectangularGermanium", halfWidthX, halfWidthY, halfLengthZ);
 
 	G4double outerRadius = ((fGermaniumWidth +fGermaniumShift)*1.5)/2.0;
 
@@ -2455,9 +2474,9 @@ G4SubtractionSolid* DetectionSystemGriffin::QuarterDetector() {
 			moveRoundedEdge);
 
 	// now we make the diagonal slices
-	G4double halfChopPieceWidthX 	= fGermaniumWidth/2.0;
-	G4double halfChopPieceWidthY 	= fGermaniumWidth/2.0;
-	G4double halfChopPieceLengthZ 	= (fGermaniumBentLength/cos(fBentEndAngle))/2.0;
+	G4double halfChopPieceWidthX    = fGermaniumWidth/2.0;
+	G4double halfChopPieceWidthY    = fGermaniumWidth/2.0;
+	G4double halfChopPieceLengthZ   = (fGermaniumBentLength/cos(fBentEndAngle))/2.0;
 	G4Box* chopPiece = new G4Box("chopPiece", halfChopPieceWidthX,
 			halfChopPieceWidthY, halfChopPieceLengthZ);
 
@@ -2528,11 +2547,11 @@ G4SubtractionSolid* DetectionSystemGriffin::QuarterDetector() {
 
 G4SubtractionSolid* DetectionSystemGriffin::QuarterSpecificDeadLayerDetector(G4int det, G4int cry) {
 
-	G4double halfWidthX 	= fGermaniumWidth/2.0;
-	G4double halfWidthY 	= halfWidthX;
-	G4double halfLengthZ 	= fGermaniumLength/2.0;
+	G4double halfWidthX     = fGermaniumWidth/2.0;
+	G4double halfWidthY     = halfWidthX;
+	G4double halfLengthZ    = fGermaniumLength/2.0;
 
-	G4Box* rectangularGermanium 	= new G4Box("rectangularGermanium", halfWidthX, halfWidthY, halfLengthZ);
+	G4Box* rectangularGermanium     = new G4Box("rectangularGermanium", halfWidthX, halfWidthY, halfLengthZ);
 
 	G4double outerRadius = ((fGermaniumWidth +fGermaniumShift)*1.5)/2.0;
 
@@ -2577,9 +2596,9 @@ G4SubtractionSolid* DetectionSystemGriffin::QuarterSpecificDeadLayerDetector(G4i
 			moveRoundedEdge);
 
 	// now we make the diagonal slices
-	G4double halfChopPieceWidthX 	= fGermaniumWidth/2.0;
-	G4double halfChopPieceWidthY 	= fGermaniumWidth/2.0;
-	G4double halfChopPieceLengthZ 	= (fGermaniumBentLength/cos(fBentEndAngle))/2.0;
+	G4double halfChopPieceWidthX    = fGermaniumWidth/2.0;
+	G4double halfChopPieceWidthY    = fGermaniumWidth/2.0;
+	G4double halfChopPieceLengthZ   = (fGermaniumBentLength/cos(fBentEndAngle))/2.0;
 	G4Box* chopPiece = new G4Box("chopPiece", halfChopPieceWidthX,
 			halfChopPieceWidthY, halfChopPieceLengthZ);
 
@@ -2991,9 +3010,9 @@ G4SubtractionSolid* DetectionSystemGriffin::NewHeavyMet() {
 
 
 	G4double halfLengthShorterX  = fSuppressorForwardRadius * sin(fBentEndAngle);
-	G4double halfLengthLongerX 	= halfLengthShorterX +2.0*halfThicknessZ*tan(fBentEndAngle);
+	G4double halfLengthLongerX  = halfLengthShorterX +2.0*halfThicknessZ*tan(fBentEndAngle);
 	G4double  halfLengthShorterY = halfLengthShorterX;
-	G4double halfLengthLongerY 	= halfLengthLongerX;
+	G4double halfLengthLongerY  = halfLengthLongerX;
 
 	G4Trd* uncutHevimet = new G4Trd("uncutHevimet", halfLengthLongerX,
 			halfLengthShorterX, halfLengthLongerY, halfLengthShorterY, halfThicknessZ);
@@ -3006,9 +3025,9 @@ G4SubtractionSolid* DetectionSystemGriffin::NewHeavyMet() {
 					* tan(fHevimetTipAngle)) / cos(fBentEndAngle)
 				- halfShorterLengthX)*tan(fBentEndAngle)) / 2.0;
 
-	G4double halfLongerLengthX 	= halfShorterLengthX + 2.0 * halfHeightZ/tan(fBentEndAngle) ;
-	G4double halfShorterLengthY 	= halfShorterLengthX;
-	G4double halfLongerLengthY 	= halfLongerLengthX;
+	G4double halfLongerLengthX  = halfShorterLengthX + 2.0 * halfHeightZ/tan(fBentEndAngle) ;
+	G4double halfShorterLengthY     = halfShorterLengthX;
+	G4double halfLongerLengthY  = halfLongerLengthX;
 
 	G4Trd* intersector = new G4Trd("intersector", halfShorterLengthX,
 			halfLongerLengthX, halfShorterLengthY, halfLongerLengthY, halfHeightZ);
@@ -3041,5 +3060,3 @@ G4SubtractionSolid* DetectionSystemGriffin::NewHeavyMet() {
 
 	return hevimet;
 }//end ::newHeavyMet
-
-
