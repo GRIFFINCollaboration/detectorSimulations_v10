@@ -54,12 +54,16 @@ HistoManager::HistoManager(DetectorConstruction* detectorConstruction) {
 	}
 
 	fDetectorConstruction = detectorConstruction;
+	fMessenger = new HistoMessenger(this);
+	fFirstRecordingId = 0;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 HistoManager::~HistoManager()
-{ }
+{
+	delete fMessenger;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -102,17 +106,20 @@ void HistoManager::Book() {
 		fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("time");
 		fNtColIdHit[colId++] = analysisManager->CreateNtupleIColumn("targetZ"); // 14 here
 		if(fDetectorConstruction->Descant() || fDetectorConstruction->Testcan()) {
+			G4cout<<"Filling descant settings after "<<colId<<G4endl;
 			fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("eDepVector", fEdepVector);
 			fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("eKinVector", fEkinVector);
 			fNtColIdHit[colId++] = analysisManager->CreateNtupleIColumn("particleTypeVector", fParticleTypeVector); // 17 here
 		}
-		if(GetDetectorConstruction()->RecordingGun()) {
-			  fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("primaryE");
-			  fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("primaryTheta");
-			  fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("primaryPhi");
-			  fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("originX");
-			  fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("originY");
-			  fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("originZ"); // 20 or 23 here
+		if(fRecordGun) {
+			fFirstRecordingId = colId; // this is actually one less than the first recording ID!
+			G4cout<<"Creating gun settings after "<<fFirstRecordingId<<G4endl;
+			fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("primaryE");
+			fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("primaryTheta");
+			fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("primaryPhi");
+			fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("originX");
+			fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("originY");
+			fNtColIdHit[colId++] = analysisManager->CreateNtupleDColumn("originZ"); // 20 or 23 here
 		}
 		analysisManager->FinishNtuple();
 	}
@@ -154,6 +161,10 @@ void HistoManager::Save() {
 	}
 }
 
+void HistoManager::FillHitNtuple(G4int eventNumber) {
+	FillHitNtuple(eventNumber, -1, -1, -1, -1, -1, -1, -1, -1, -1., -1., -1., -1., -1., -1);
+}
+
 void HistoManager::FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ) {
 	if(fHitTrackerBool) {
 		G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
@@ -172,18 +183,22 @@ void HistoManager::FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentI
 		analysisManager->FillNtupleDColumn(fNtColIdHit[12], posz);
 		analysisManager->FillNtupleDColumn(fNtColIdHit[13], time);
 		analysisManager->FillNtupleIColumn(fNtColIdHit[14], targetZ);
-        
-        if(GetDetectorConstruction()->RecordingGun()){
-            analysisManager->FillNtupleDColumn(fNtColIdHit[15], BeamEnergy());
-            analysisManager->FillNtupleDColumn(fNtColIdHit[16], BeamTheta());
-            analysisManager->FillNtupleDColumn(fNtColIdHit[17], BeamPhi());
-            analysisManager->FillNtupleDColumn(fNtColIdHit[18], BeamPos().x());
-            analysisManager->FillNtupleDColumn(fNtColIdHit[19], BeamPos().y());
-            analysisManager->FillNtupleDColumn(fNtColIdHit[20], BeamPos().z());
-        }
-        
-        analysisManager->AddNtupleRow();
+
+		if(fRecordGun) {
+			analysisManager->FillNtupleDColumn(fNtColIdHit[fFirstRecordingId+0], fBeamEnergy/CLHEP::keV);
+			analysisManager->FillNtupleDColumn(fNtColIdHit[fFirstRecordingId+1], fBeamTheta);
+			analysisManager->FillNtupleDColumn(fNtColIdHit[fFirstRecordingId+2], fBeamPhi);
+			analysisManager->FillNtupleDColumn(fNtColIdHit[fFirstRecordingId+3], fBeamPos.x());
+			analysisManager->FillNtupleDColumn(fNtColIdHit[fFirstRecordingId+4], fBeamPos.y());
+			analysisManager->FillNtupleDColumn(fNtColIdHit[fFirstRecordingId+5], fBeamPos.z());
+		}
+
+		analysisManager->AddNtupleRow();
 	}
+}
+
+void HistoManager::FillStepNtuple(G4int eventNumber) {
+	FillStepNtuple(eventNumber, -1, -1, -1, -1, -1, -1, -1, -1, -1., -1., -1., -1., -1., -1);
 }
 
 void HistoManager::FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ) {

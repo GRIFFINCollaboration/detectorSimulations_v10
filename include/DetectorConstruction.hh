@@ -196,10 +196,7 @@ public:
 	G4bool   Descant()    { return fDescant;    }
 	G4bool   Testcan()    { return fTestcan;    }
 
-	void RecordGun( G4bool input ){fRecordGun = input;};
-	G4bool RecordingGun(){return fRecordGun;};
-	
-	void UseTIGRESSPositions( G4bool input ) {fUseTigressPositions = input;};
+	void UseTIGRESSPositions(G4bool input) { fUseTigressPositions = input; }
 
 	bool HasProperties(G4VPhysicalVolume* vol) { return fPropertiesMap.find(vol) != fPropertiesMap.end(); }
 	DetectorProperties GetProperties(G4VPhysicalVolume* vol) { return fPropertiesMap.at(vol); }
@@ -230,7 +227,6 @@ private:
 	G4int     fCustomDetectorVal ;
 	G4int     fHevimetSelector ;
 	G4bool    fUseTigressPositions;
-    G4bool    fRecordGun;  
 
 	// Box
 	G4String           fBoxMat;

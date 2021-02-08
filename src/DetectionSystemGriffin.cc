@@ -141,7 +141,7 @@ G4double DetectionSystemGriffin::TransZ(G4double x, G4double z, G4double theta) 
 
 G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* expHallLog, G4int detectorNumber, G4int positionNumber, G4bool posTigress) {
 	if(expHallLog == nullptr) {
-		std::cerr<<__PRETTY_FUNCTION__<<": expHallLog == nullptr!"<<std::endl;
+		G4cerr<<__PRETTY_FUNCTION__<<": expHallLog == nullptr!"<<std::endl;
 		exit(1);
 	}
 

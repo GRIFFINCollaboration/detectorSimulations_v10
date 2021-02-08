@@ -89,8 +89,8 @@
 #/control/execute vis.mac
 
 ###################### USER DEFINED RAD DECAY FILES #####################################
-/grdm/setRadioactiveDecayFile 27 60 UserData/UserRadData_z27.a60
-/grdm/setPhotoEvaporationFile 28 60 UserData/UserEvapData_z28.a60
+#/grdm/setRadioactiveDecayFile 27 60 UserData/UserRadData_z27.a60
+#/grdm/setPhotoEvaporationFile 28 60 UserData/UserEvapData_z28.a60
 
 ###################### RAD DECAY, EFF SIM, LaBr3 DECAY SIM ##############################
 /gun/particle ion
@@ -104,4 +104,4 @@
 
 ###################### BEAM ON ##########################################################
 
-/run/beamOn 1
+/run/beamOn 10
