@@ -76,8 +76,15 @@ private:
     G4UIcmdWithADoubleAndUnit*     fConeAngleCmd;
     G4UIcmdWithADoubleAndUnit*     fConeMinAngleCmd;
     G4UIcmdWithADoubleAndUnit*     fBeamSpotSigmaCmd;
-    G4UIcmdWithAnInteger* 	   fBeamDistroCmd;
-    G4UIcmdWithAString* 	   fBeamFileCmd;
+    G4UIcmdWithAnInteger*			  fBeamDistroCmd;
+    G4UIcmdWithAString*				  fBeamFileCmd;
+    G4UIcmdWithADoubleAndUnit*     fKentuckyEnergyCmd;
+    G4UIcmdWithAString*            fKentuckyReactionCmd;
+    G4UIcmdWithADoubleAndUnit*     fMinimumPhiCmd;
+    G4UIcmdWithADoubleAndUnit*     fMaximumPhiCmd;
+    G4UIcmdWithADoubleAndUnit*     fMinimumThetaCmd;
+    G4UIcmdWithADoubleAndUnit*     fMaximumThetaCmd;
+    G4UIcmdWithAnInteger*			  fVerbosityCmd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

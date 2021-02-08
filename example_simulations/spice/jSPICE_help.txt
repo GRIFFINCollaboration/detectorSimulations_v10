@@ -48,7 +48,7 @@ You can use the visualiser to ensure the targets are positioned as expected
 DISTRIBUTION:
 You may wish to distribute emission along the (z) beam axis according
 to some non-uniform reaction distribution
-Used "/Detsys/gun/FileDistro data.dat" where data.dat is any plain text file
+Used "/DetSys/gun/FileDistro data.dat" where data.dat is any plain text file
 containing white space delimited position and probability weight.
 Position should be in um and relative to /DetSys/gun/position 
 Weight does not need to be normalised.

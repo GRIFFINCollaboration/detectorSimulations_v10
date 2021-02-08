@@ -41,7 +41,7 @@ do
 	### Position should match options (bunny nominally Z=-8.)
 	echo "/DetSys/gun/position 0.0 0.0 -8. mm " >> spiceauto.mac 
 	echo "/DetSys/app/LayeredTargetAddLayer Gold 1.8" >> spiceauto.mac 
-	echo "/Detsys/gun/TargetLayer 0" >> spiceauto.mac 
+	echo "/DetSys/gun/TargetLayer 0" >> spiceauto.mac 
 
 	echo "/run/beamOn $NumberOfPoints" >> spiceauto.mac 
 

@@ -94,13 +94,41 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun
 	fBeamSpotSigmaCmd->SetUnitCategory("Length");
 	fBeamSpotSigmaCmd->AvailableForStates(G4State_PreInit,G4State_Idle);   
 
-	fBeamDistroCmd = new G4UIcmdWithAnInteger("/Detsys/gun/TargetLayer",this);//with target, can apply a distribution
+	fBeamDistroCmd = new G4UIcmdWithAnInteger("/DetSys/gun/TargetLayer",this);//with target, can apply a distribution
 	fBeamDistroCmd->SetGuidance("Set beam distribution within a target layer, zero indexed");
 	fBeamDistroCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-	fBeamFileCmd = new G4UIcmdWithAString("/Detsys/gun/FileDistro",this);//with target, can apply a distribution
+	fBeamFileCmd = new G4UIcmdWithAString("/DetSys/gun/FileDistro",this);//with target, can apply a distribution
 	fBeamFileCmd->SetGuidance("Set beam distribution within a target using definitions in a data file");
 	fBeamFileCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	fKentuckyEnergyCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/KentuckyEnergy",this);
+	fKentuckyEnergyCmd->SetGuidance("Set neutron energy at zero-degree for Kentucky experiment.");
+	fKentuckyEnergyCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	fKentuckyReactionCmd = new G4UIcmdWithAString("/DetSys/gun/KentuckyReaction",this);
+	fKentuckyReactionCmd->SetGuidance("Set reaction for Kentucky experiment (can be 'p,t','d,t', or 'd,d').");
+	fKentuckyReactionCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	fMinimumPhiCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/MinimumPhi",this);
+	fMinimumPhiCmd->SetGuidance("Set minimum phi for primary particle (has to be used before first call to KentuckyEnergy/KentuckyReaction!!!)");
+	fMinimumPhiCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	fMaximumPhiCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/MaximumPhi",this);
+	fMaximumPhiCmd->SetGuidance("Set maximum phi for primary particle (has to be used before first call to KentuckyEnergy/KentuckyReaction!!!)");
+	fMaximumPhiCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	fMinimumThetaCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/MinimumTheta",this);
+	fMinimumThetaCmd->SetGuidance("Set minimum theta for primary particle (has to be used before first call to KentuckyEnergy/KentuckyReaction!!!)");
+	fMinimumThetaCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	fMaximumThetaCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/gun/MaximumTheta",this);
+	fMaximumThetaCmd->SetGuidance("Set maximum theta for primary particle (has to be used before first call to KentuckyEnergy/KentuckyReaction!!!)");
+	fMaximumThetaCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	fVerbosityCmd = new G4UIcmdWithAnInteger("/DetSys/gun/verbose", this);
+	fVerbosityCmd->SetGuidance("Set verbosity of PrimaryGeneratorAction. Call before setting Kentucky properties if this should be applied to that class as well.");
+	fVerbosityCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 }
 
@@ -116,6 +144,13 @@ PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger() {
 	delete fBeamSpotSigmaCmd;
 	delete fBeamDistroCmd;
 	delete fBeamFileCmd;
+	delete fKentuckyEnergyCmd;
+	delete fKentuckyReactionCmd;
+	delete fMinimumPhiCmd;
+	delete fMaximumPhiCmd;
+	delete fMinimumThetaCmd;
+	delete fMaximumThetaCmd;
+	delete fVerbosityCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -160,13 +195,42 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
 		G4cout<<"Beam Spot sigma supplied"<<G4endl;
 		return;
 	}  
-
 	if(command == fBeamDistroCmd) {
 		fAction->SetLayeredTargetBeamDistro(fBeamDistroCmd->GetNewIntValue(newValue));
+		return;
 	}
 	if(command == fBeamFileCmd) {
 		G4cout<<"Beam Distribution from file "<<newValue<<" selected "<< G4endl;
 		fAction->PrepareBeamFile(newValue);
+		return;
+	}
+	if(command == fKentuckyEnergyCmd) {
+		fAction->SetKentuckyEnergy(fKentuckyEnergyCmd->GetNewDoubleValue(newValue));
+		return;
+	}
+	if(command == fKentuckyReactionCmd) {
+		fAction->SetKentuckyReaction(newValue);
+		return;
+	}
+	if(command == fMinimumPhiCmd) {
+		fAction->SetMinimumPhi(fMinimumPhiCmd->GetNewDoubleValue(newValue));
+		return;
+	}
+	if(command == fMaximumPhiCmd) {
+		fAction->SetMaximumPhi(fMaximumPhiCmd->GetNewDoubleValue(newValue));
+		return;
+	}
+	if(command == fMinimumThetaCmd) {
+		fAction->SetMinimumTheta(fMinimumThetaCmd->GetNewDoubleValue(newValue));
+		return;
+	}
+	if(command == fMaximumThetaCmd) {
+		fAction->SetMaximumTheta(fMaximumThetaCmd->GetNewDoubleValue(newValue));
+		return;
+	}
+	if(command == fVerbosityCmd) {
+		fAction->SetVerbosityLevel(fVerbosityCmd->GetNewIntValue(newValue));
+		return;
 	}
 }
 

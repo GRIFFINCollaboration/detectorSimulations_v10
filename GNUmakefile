@@ -22,13 +22,15 @@ clean_setup:
 	@echo "Removing files copied from common"
 	@$(G4INSTALL)/examples/extended/common/scripts/clean_files.sh
 
+EXTRALIBS += -L/usr/lib -lgsl -lgslcblas
+LDLIBS += -L/usr/lib -lgsl -lgslcblas
+
 # HBOOK support
 #
 #### G4_USE_HBOOK := true
 include GNUmakefile.tools_hbook
 
 include $(G4INSTALL)/config/binmake.gmk
-
 
 visclean:
 	rm -f g4*.prim g4*.eps g4*.wrl

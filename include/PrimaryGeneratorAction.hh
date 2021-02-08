@@ -40,12 +40,16 @@
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "globals.hh"
 #include "G4ThreeVector.hh"
-#include "G4SystemOfUnits.hh"
 
 #include "PrimaryGeneratorMessenger.hh"
 #include "DetectorConstruction.hh"
 #include "HistoManager.hh"
 #include "BeamDistribution.hh"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
+#include "Kentucky.hh"
+#include "G4SystemOfUnits.hh"
+#pragma GCC diagnostic pop
 
 class G4ParticleGun;
 class G4Event;
@@ -65,6 +69,7 @@ public:
     PrimaryGeneratorAction(HistoManager*);
     virtual ~PrimaryGeneratorAction();
     virtual void GeneratePrimaries(G4Event*);
+	 virtual void GenerateKentuckyPrimaries(G4Event*);
     
 
     void SetNumberOfDecayingLaBrDetectors(G4int num) { fNumberOfDecayingLaBrDetectors = num; }
@@ -83,9 +88,19 @@ public:
     void PrepareBeamFile(G4String);
     void SetLayeredTargetBeamDistro(G4int layer);
 
+	 void SetKentuckyEnergy(G4double val);
+	 void SetKentuckyReaction(G4String reaction);
+	 void SetMinimumPhi(G4double val);
+	 void SetMaximumPhi(G4double val);
+	 void SetMinimumTheta(G4double val);
+	 void SetMaximumTheta(G4double val);
     
+	 void SetVerbosityLevel(G4int val) { fVerbosityLevel = val; }
+
 private:
     //variables
+	 G4int fVerbosityLevel;
+
     G4int fNumberOfDecayingLaBrDetectors;
     G4double fEffEnergy;
     G4ThreeVector fEffDirection;
@@ -108,11 +123,15 @@ private:
     G4double fLayerLength;
     G4bool fNeedFileDistro;
 
+	 G4double fMinimumPhi;
+	 G4double fMaximumPhi;
+	 G4double fMinimumTheta;
+	 G4double fMaximumTheta;
+
+	 Kentucky* fKentucky;
     
     //functions
     void LaBrinit();
-        
-    
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

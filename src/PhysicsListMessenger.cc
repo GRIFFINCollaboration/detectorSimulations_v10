@@ -108,7 +108,7 @@ PhysicsListMessenger::PhysicsListMessenger(PhysicsList* pPhys)
 	fConstructOpCmd = new G4UIcmdWithABool("/DetSys/phys/ConstructOpticalPhysics",this);
 	fConstructOpCmd->SetGuidance("Choose to build optical physics models");
 	fConstructOpCmd->SetDefaultValue(false);
-	fConstructOpCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	fConstructOpCmd->AvailableForStates(G4State_Idle);// Joey had removed the pre init state, not sure why
 
 	fSpiceStepperCmd = new G4UIcmdWithABool("/DetSys/phys/SpiceStepper",this);
 	fSpiceStepperCmd->SetGuidance("Choose to invoke SPICE stepper");
@@ -137,51 +137,42 @@ PhysicsListMessenger::~PhysicsListMessenger()
 void PhysicsListMessenger::SetNewValue(G4UIcommand* command,
 		G4String newValue)
 {
-	if(command == fGammaCutCmd)
-	{
+	if(command == fGammaCutCmd) {
 		fPPhysicsList->SetCutForGamma(fGammaCutCmd->GetNewDoubleValue(newValue));
 	}
 
-	if(command == fElectCutCmd)
-	{
+	if(command == fElectCutCmd) {
 		fPPhysicsList->SetCutForElectron(fElectCutCmd->GetNewDoubleValue(newValue));
 	}
 
-	if(command == fProtoCutCmd)
-	{
+	if(command == fProtoCutCmd) {
 		fPPhysicsList->SetCutForPositron(fProtoCutCmd->GetNewDoubleValue(newValue));
 	}
 
-	if(command == fAllCutCmd)
-	{
+	if(command == fAllCutCmd) {
 		G4double cut = fAllCutCmd->GetNewDoubleValue(newValue);
 		fPPhysicsList->SetCutForGamma(cut);
 		fPPhysicsList->SetCutForElectron(cut);
 		fPPhysicsList->SetCutForPositron(cut);
 	}
 
-	if(command == fECutCmd)
-	{
+	if(command == fECutCmd) {
 		fPPhysicsList->SetTargetCut(fECutCmd->GetNewDoubleValue(newValue));
 	}
 
-	if(command == fMCutCmd)
-	{
+	if(command == fMCutCmd) {
 		fPPhysicsList->SetDetectorCut(fMCutCmd->GetNewDoubleValue(newValue));
 	}
 
-	if(command == fPListCmd)
-	{
+	if(command == fPListCmd) {
 		fPPhysicsList->SelectPhysicsList(newValue);
 	}
 
-	if(command == fConstructOpCmd)
-	{
+	if(command == fConstructOpCmd) {
 		fPPhysicsList->ConstructOp(fConstructOpCmd->GetNewBoolValue(newValue));
 	}
 
-	if(command == fSpiceStepperCmd)
-	{
+	if(command == fSpiceStepperCmd) {
 		fPPhysicsList->SpiceStepper(fSpiceStepperCmd->GetNewBoolValue(newValue));
 	}
 }

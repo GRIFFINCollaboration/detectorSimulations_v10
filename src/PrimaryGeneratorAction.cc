@@ -81,8 +81,15 @@
 
 	fBeamSpotSigma = 0.*mm;
 
-	fTargetDistro=false;
+	fTargetDistro = false;
 	fNeedFileDistro = false;
+
+	fMinimumPhi = 0.*deg;
+	fMaximumPhi = 360.*deg;
+	fMinimumTheta = 0.*deg;
+	fMaximumTheta = 180.*deg;
+
+	fKentucky = nullptr;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -98,6 +105,10 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
+	if(fKentucky != nullptr) {
+		return GenerateKentuckyPrimaries(anEvent);
+	}
+
 	//G4cout<<G4endl<<fParticleGun->GetParticleDefinition()->GetParticleName()<<G4endl;
 	if(fNumberOfDecayingLaBrDetectors != 0) {
 		G4double crystalRadius    = 2.54*cm;
@@ -177,7 +188,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 		fParticleGun->SetParticleMomentumDirection(thisDirection);
 		fParticleGun->SetParticleEnergy(thisEnergy);
 	} else  {
-		// Changed so that most grsi "/Detsys/gun/" commands still effect gun when using
+		// Changed so that most grsi "/DetSys/gun/" commands still effect gun when using
 		// Underlying geant4 commands such as '/gun/particle ion" & "/gun/ion"
 		if(fEffParticleBool) {
 			G4ParticleDefinition* effPart;
@@ -259,15 +270,13 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 		fParticleGun->SetParticlePosition(thisEffPosition);
 		fParticleGun->SetParticleMomentumDirection(effdirection);
 		fParticleGun->SetParticleEnergy(fEffEnergy);
-        
-        
-        if(fDetector->RecordingGun()){
-            fHistoManager->BeamEnergy(fEffEnergy);
-            fHistoManager->BeamTheta(effdirection.theta());
-            fHistoManager->BeamPhi(effdirection.phi());
-            fHistoManager->BeamPos(thisEffPosition);
-        }
-        
+
+		if(fHistoManager->RecordGun()){
+			fHistoManager->BeamEnergy(fEffEnergy);
+			fHistoManager->BeamTheta(effdirection.theta());
+			fHistoManager->BeamPhi(effdirection.phi());
+			fHistoManager->BeamPos(thisEffPosition);
+		}
 	}
 
 
@@ -281,17 +290,20 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	fParticleGun->GeneratePrimaryVertex(anEvent);
 }
 
-void PrimaryGeneratorAction::PassEfficiencyPosition(G4ThreeVector  num){
+void PrimaryGeneratorAction::PassEfficiencyPosition(G4ThreeVector  num)
+{
 	fDetector->PassEfficiencyPosition(num);
 }
 
-void PrimaryGeneratorAction::PrepareBeamFile(G4String filename){
+void PrimaryGeneratorAction::PrepareBeamFile(G4String filename)
+{
 	fBeamDistribution = new BeamDistribution(filename);
 	if(fBeamDistribution->Good())fNeedFileDistro = true;
 }
 
 
-void PrimaryGeneratorAction::SetLayeredTargetBeamDistro(G4int layer){
+void PrimaryGeneratorAction::SetLayeredTargetBeamDistro(G4int layer)
+{
 	fTargetDistro=true;
 	fLayerStart=fDetector->LayeredTargetLayerStart(layer);
 	fLayerLength=fDetector->LayeredTargetLayerStart(layer+1);
@@ -299,7 +311,8 @@ void PrimaryGeneratorAction::SetLayeredTargetBeamDistro(G4int layer){
 }
 
 
-void PrimaryGeneratorAction::LaBrinit() {
+void PrimaryGeneratorAction::LaBrinit()
+{
 	//default LaBr properties
 	G4double triangleThetaAngle = 54.735610317245360*deg;
 	// theta
@@ -348,4 +361,106 @@ void PrimaryGeneratorAction::LaBrinit() {
 	fDetectorAnglesLaBr3[6][4] 	= 202.5*deg;
 	fDetectorAnglesLaBr3[7][4] 	= 292.5*deg;
 }
+
+void PrimaryGeneratorAction::SetKentuckyEnergy(G4double val)
+{
+	if(fVerbosityLevel > 0) {
+		G4cout<<__PRETTY_FUNCTION__<<": fKentucky "<<fKentucky<<G4endl;
+	}
+	if(fKentucky == nullptr) {
+		fKentucky = new Kentucky(fMinimumPhi, fMaximumPhi, fMinimumTheta, fMaximumTheta);
+	}
+	fKentucky->Energy(val);
+	fKentucky->VerbosityLevel(fVerbosityLevel);
+	if(fVerbosityLevel > 0) {
+		G4cout<<__PRETTY_FUNCTION__<<": set energy to "<<val<<", verbosity to "<<fVerbosityLevel<<", fKentucky is now "<<fKentucky<<G4endl;
+	}
+}
+
+void PrimaryGeneratorAction::SetKentuckyReaction(G4String reaction)
+{
+	if(fVerbosityLevel > 0) {
+		G4cout<<__PRETTY_FUNCTION__<<": fKentucky "<<fKentucky<<G4endl;
+	}
+	if(fKentucky == nullptr) {
+		fKentucky = new Kentucky(fMinimumPhi, fMaximumPhi, fMinimumTheta, fMaximumTheta);
+	}
+	fKentucky->Reaction(reaction);
+	fKentucky->VerbosityLevel(fVerbosityLevel);
+}
+
+void PrimaryGeneratorAction::SetMinimumPhi(G4double val)
+{
+	if(val > fMaximumPhi) { 
+		G4cerr<<"Minimum phi ("<<val/deg<<" degree) can't be larger than maximum phi ("<<fMaximumPhi/deg<<" degree), leaving minimum phi at "<<fMinimumPhi/deg<<" degree)"<<G4endl;
+		return;
+	}
+	fMinimumPhi = val;
+}
+
+void PrimaryGeneratorAction::SetMaximumPhi(G4double val)
+{
+	if(val < fMinimumPhi) { 
+		G4cerr<<"Maximum phi ("<<val/deg<<" degree) can't be smaller than minimum phi ("<<fMinimumPhi/deg<<" degree), leaving maximum phi at "<<fMaximumPhi/deg<<" degree)"<<G4endl;
+		return;
+	}
+	fMaximumPhi = val;
+}
+
+void PrimaryGeneratorAction::SetMinimumTheta(G4double val)
+{
+	if(val > fMaximumTheta) { 
+		G4cerr<<"Minimum theta ("<<val/deg<<" degree) can't be larger than maximum theta ("<<fMaximumTheta/deg<<" degree), leaving minimum theta at "<<fMinimumTheta/deg<<" degree)"<<G4endl;
+		return;
+	}
+	fMinimumTheta = val;
+}
+
+void PrimaryGeneratorAction::SetMaximumTheta(G4double val)
+{
+	if(val < fMinimumTheta) { 
+		G4cerr<<"Maximum theta ("<<val/deg<<" degree) can't be smaller than minimum theta ("<<fMinimumTheta/deg<<" degree), leaving maximum theta at "<<fMaximumTheta/deg<<" degree)"<<G4endl;
+		return;
+	}
+	fMaximumTheta = val;
+}
+
+void PrimaryGeneratorAction::GenerateKentuckyPrimaries(G4Event* anEvent)
+{
+	if(fVerbosityLevel > 1) {
+		G4cout<<__PRETTY_FUNCTION__<<": fKentucky "<<fKentucky<<G4endl;
+	}
+	// we always use neutrons
+	fParticleGun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->FindParticle("neutron"));
+
+	// calculate the position in the gas cell (depending on the size of the gas cell)
+	// pencil beam shape
+	G4double rho = sqrt(G4UniformRand())*5.*mm;
+	G4double theta = G4UniformRand()*2.*M_PI;
+	G4double x = rho*cos(theta);
+	G4double y = rho*sin(theta);
+	// uniform distribution over length of gas cell
+	G4double z = -31.*mm/2.+G4UniformRand()*31.*mm;
+
+	G4ThreeVector position = G4ThreeVector(x,y,z);//in constructor
+
+	fParticleGun->SetParticlePosition(position);
+
+	// Get the direction and energy of the neutron from the Kentucky class
+	fKentucky->DirectionAndEnergy(fParticleGun);
+
+	if(fHistoManager->RecordGun()){
+		if(fVerbosityLevel > 0) {
+			G4cout<<__PRETTY_FUNCTION__<<": setting beam parameters "<<fParticleGun->GetParticleEnergy()<<", "<<fParticleGun->GetParticleMomentumDirection().theta()<<", "<<fParticleGun->GetParticleMomentumDirection().phi()<<", "<<position.x()<<", "<<position.y()<<", "<<position.z()<<", from "<<rho<<", "<<theta<<G4endl;
+		}
+		fHistoManager->BeamEnergy(fParticleGun->GetParticleEnergy());
+		fHistoManager->BeamTheta(fParticleGun->GetParticleMomentumDirection().theta());
+		fHistoManager->BeamPhi(fParticleGun->GetParticleMomentumDirection().phi());
+		fHistoManager->BeamPos(position);
+	}
+
+	// fire gun
+	fParticleGun->GeneratePrimaryVertex(anEvent);
+}
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

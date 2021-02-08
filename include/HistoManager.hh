@@ -41,6 +41,7 @@
 #include "G4SystemOfUnits.hh" // new version geant4.10 requires units
 
 #include "DetectorConstruction.hh"
+#include "HistoMessenger.hh"
 
 const G4int MAXNTCOL            = 21;
 
@@ -85,7 +86,9 @@ public:
 	void Book();
 	void Save();
 
+	void FillHitNtuple(G4int eventNumber);
 	void FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ);
+	void FillStepNtuple(G4int eventNumber);
 	void FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ);
 
 	void FillHistogram(G4int ih, G4double e, G4double weight = 1.0);
@@ -99,7 +102,9 @@ public:
 	G4bool GetStepTrackerBool() { return fStepTrackerBool; }
 	G4bool GetHitTrackerBool()  { return fHitTrackerBool; }
 
-	void BeamEnergy(G4double val) { fBeamEnergy = val*1000.; }//default is in MeV, but other outputs are keV
+	void PushBack(G4double depEnergy, G4double kinEnergy, G4int particleType) { fEdepVector.push_back(depEnergy); fEkinVector.push_back(kinEnergy); fParticleTypeVector.push_back(particleType); }
+	void ClearVariables() { fEdepVector.clear(); fEkinVector.clear(); fParticleTypeVector.clear(); }
+	void BeamEnergy(G4double val) { fBeamEnergy = val; }
 	void BeamTheta(G4double val)  { fBeamTheta = val; }
 	void BeamPhi(G4double val)    { fBeamPhi = val; }
 	void BeamPos(G4ThreeVector val)    { fBeamPos = val; }
@@ -108,6 +113,14 @@ public:
 	G4double BeamTheta() { return fBeamTheta; }
 	G4double BeamPhi() { return fBeamPhi; }
 	G4ThreeVector BeamPos() {return fBeamPos; }
+
+	G4double RecordGun() { return fRecordGun; }
+	G4double RecordAll() { return fRecordAll; }
+
+	void RecordGun(G4bool val) { fRecordGun = val; }
+	void RecordAll(G4bool val) { fRecordAll = val; }
+
+	void FileName(G4String val) { fFileName = val; }
 
 private:
 	void MakeHistogram(G4AnalysisManager* analysisManager, G4String filename,  G4String title, G4double xmin, G4double xmax, G4int nbins);
@@ -120,23 +133,33 @@ private:
 	DetectorConstruction* fDetectorConstruction;
 	G4bool        fFactoryOn;
 	G4int         fMakeHistogramIndex;
-	G4String      fFileName[2];
+	G4String      fFileName;
 
 	G4int         fHistId[MAXHISTO];
-	G4AnaH1*      fHistPt[MAXHISTO];
-	G4AnaH2*      fHistPt2[MAXHISTO];
+	G4H1*      fHistPt[MAXHISTO];
+	G4H2*      fHistPt2[MAXHISTO];
 
 	G4int         fNtColId[MAXNTCOL];
 	G4int         fNtColIdHit[MAXNTCOL];
 	G4int         fNtColIdStep[MAXNTCOL];
 
+	G4int         fFirstRecordingId;
+
 	G4bool fStepTrackerBool;
 	G4bool fHitTrackerBool;
+
+	std::vector<G4double> fEdepVector;
+	std::vector<G4double> fEkinVector;
+	std::vector<G4int> fParticleTypeVector;
 
 	G4double fBeamEnergy;
 	G4double fBeamTheta;
 	G4double fBeamPhi;
 	G4ThreeVector fBeamPos;
+
+	HistoMessenger* fMessenger;
+	G4bool          fRecordGun;
+	G4bool          fRecordAll;
 
 public:
 	short PacesHistNumbers(int i) { return fPacesHistNumbers[i]; }

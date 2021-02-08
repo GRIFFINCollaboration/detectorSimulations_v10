@@ -337,27 +337,22 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
 	fUseTIGRESSPositionsCmd->SetGuidance("Use TIGRESS detector positions rather than GRIFFIN");
 	fUseTIGRESSPositionsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
     
-   	fRecordGunCmd = new G4UIcmdWithABool("/DetSys/det/RecordGun",this);
-	fRecordGunCmd->SetGuidance("Record the particle for each event in the tree");
-	fRecordGunCmd->AvailableForStates(G4State_PreInit,G4State_Idle); 
-        
-    
-   	fTrifFlatCmd = new G4UIcmdWithABool("/DetSys/det/TrificFlatWindow",this);
+	fTrifFlatCmd = new G4UIcmdWithABool("/DetSys/det/TrificFlatWindow",this);
 	fTrifFlatCmd->SetGuidance("Set the window to be flat for future trific instances");
 	fTrifFlatCmd->AvailableForStates(G4State_PreInit,G4State_Idle); 
-    
-   	fTrifAluCmd = new G4UIcmdWithABool("/DetSys/det/TrificAluWindow",this);
+
+	fTrifAluCmd = new G4UIcmdWithABool("/DetSys/det/TrificAluWindow",this);
 	fTrifAluCmd->SetGuidance("Set the window to be aluminsed for future trific instances");
 	fTrifAluCmd->AvailableForStates(G4State_PreInit,G4State_Idle); 
-    
- 	fTrifWinCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/det/TrificWindowThickness", this);
+
+	fTrifWinCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/det/TrificWindowThickness", this);
 	fTrifWinCmd->SetGuidance("Set the window thickness for future trific instances");
 	fTrifWinCmd->AvailableForStates(G4State_PreInit, G4State_Idle);  
-	
- 	fTrifDegCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/det/TrificDegraderThickness", this);
+
+	fTrifDegCmd = new G4UIcmdWithADoubleAndUnit("/DetSys/det/TrificDegraderThickness", this);
 	fTrifDegCmd->SetGuidance("Set the thickness of trific upstream degrader");
 	fTrifDegCmd->AvailableForStates(G4State_PreInit, G4State_Idle); 
-	
+
 	fTrifDMatCmd = new G4UIcmdWithAString("/DetSys/det/TrificDegraderMaterial",this);
 	fTrifDMatCmd->SetGuidance("Select material of trific upstream degrader.");
 	fTrifDMatCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
@@ -444,14 +439,12 @@ DetectorMessenger::~DetectorMessenger()
 	delete fAddDetectionSystemGriffinSetDeadLayerCmd;
 
 	delete fUseTIGRESSPositionsCmd;
-	delete fRecordGunCmd;
 
 	delete fTrifWinCmd;
 	delete fTrifDegCmd;
 	delete fTrifAluCmd;
 	delete fTrifFlatCmd;
 	delete fTrifDMatCmd;
-    
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -644,15 +637,14 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	}
 	if(command == fAddDetectionSystemSpiceCmd) {
 		fDetector->AddDetectionSystemSpice(); 
-		fDetector->RecordGun(true);
 	}
 	if(command == fAddDetectionSystemTrificCmd) {
 		//Done as a string because Torr isnt a default unit 
 		G4double torr;
 		std::istringstream is(newValue);///string
 		is>>torr;
-		if(torr>1)fDetector->AddDetectionSystemTrific(torr);
-		else fDetector->AddDetectionSystemTrific(760.0);
+		if(torr>1) fDetector->AddDetectionSystemTrific(torr);
+		else       fDetector->AddDetectionSystemTrific(760.0);
 	}
 	if(command == fAddDetectionSystemPacesCmd) {
 		fDetector->AddDetectionSystemPaces(fAddDetectionSystemPacesCmd->GetNewIntValue(newValue));
@@ -660,26 +652,21 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	if(command == fUseTIGRESSPositionsCmd) {
 		fDetector->UseTIGRESSPositions(fUseTIGRESSPositionsCmd->GetNewBoolValue(newValue));
 	}
-	if(command == fRecordGunCmd) {
-		fDetector->RecordGun(fRecordGunCmd->GetNewBoolValue(newValue));
-	}
-
 	if(command == fTrifWinCmd) {
 		fDetector->fTrifWindowThickness=fTrifWinCmd->GetNewDoubleValue(newValue);
-    }
+	}
 	if(command == fTrifDegCmd) {
 		fDetector->fTrifDegraderThickness=fTrifDegCmd->GetNewDoubleValue(newValue);
-    }	
+	}	
 	if(command == fTrifAluCmd) {
 		fDetector->fTrifAluminised=fTrifAluCmd->GetNewBoolValue(newValue);
-    }
-    if(command == fTrifDMatCmd) {
+	}
+	if(command == fTrifDMatCmd) {
 		fDetector->fTrifDegraderMat=newValue;
-    }
+	}
 	if(command == fTrifFlatCmd) {
 		fDetector->fTrifFlatWindow=fTrifFlatCmd->GetNewBoolValue(newValue);
-    }
-
+	}
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

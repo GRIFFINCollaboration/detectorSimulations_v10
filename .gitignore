@@ -1,6 +1,4 @@
 DetectionSystemGriffinSuppressed.cc
 DetectorConstructionSuppressed.cc
-testXYZ.cc
 .DS_Store
-myBuild
-suppressed
+g4out_t*.root
