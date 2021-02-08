@@ -33,6 +33,11 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+#include <ctime>
+#include <functional>
+#include <string>
+#include <unistd.h>
+
 #include "DetectorConstruction.hh"
 #include "PhysicsList.hh"
 #include "ActionInitialization.hh"
@@ -58,8 +63,18 @@ int main(int argc, char** argv)
 {
 	// Choose the Random engine
 	G4Random::setTheEngine(new CLHEP::RanecuEngine);
-	// G4long is at least 32 bits. 
-	G4long seed = time(NULL);
+	// Calculate seed from the product of PID, hostname hash, and time
+	pid_t pid = getpid();
+
+	char* hostname = new char[1024];
+	gethostname(hostname, 1024);
+	hostname[1023] = '\0';
+	size_t hostnamehash = std::hash<std::string>{}(hostname);
+
+	size_t time = std::time(nullptr);
+
+	size_t seed = time*pid*hostnamehash;
+
 	G4Random::setTheSeed(seed);
 
 	// Construct the default run manager
