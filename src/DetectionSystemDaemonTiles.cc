@@ -105,9 +105,9 @@ DetectionSystemDaemonTiles::DetectionSystemDaemonTiles(G4double thickness, G4int
 	// This was last check on May 29th, 2015. - GOOD!, but...
 	// The green, yellow and blue detectors had small overlaps, this is probably due to taking the pure mathematical model
 	// of DESCANT, and then Saint Gobain rounding the result to generate the data files (below).
-	fSurfCheck = false;
+	fSurfCheck = true;
 	// set DAEMON Wrap and segment on/off
-	fAddSegment = true;
+	fAddSegment = false;
 	fAddWrap = true;
 
 
@@ -503,11 +503,12 @@ G4int DetectionSystemDaemonTiles::PlaceDetector(G4LogicalVolume* expHallLog, G4i
 	G4RotationMatrix* rotate;
 
 	G4cout << "Blue detectors" << G4endl;	
-	G4cout << "DetNum (i), x, y, z" << G4endl;
+	//G4cout << "DetNum (i), x, y, z" << G4endl;
 	// Place Blue Detector
 	for(G4int i=0; i<(detectorNumber-55); i++) {
 		move = G4ThreeVector(x,y,z);
 		idx = i;
+		G4cout << "i:" << i<< " , and idx: " << idx << G4endl;
 		move.rotateZ(fBlueAlphaBetaGamma[idx][2]);
 		move.rotateY(fBlueAlphaBetaGamma[idx][1]);
 		move.rotateZ(fBlueAlphaBetaGamma[idx][0]);
@@ -520,7 +521,7 @@ G4int DetectionSystemDaemonTiles::PlaceDetector(G4LogicalVolume* expHallLog, G4i
 
 		//To get coordinates of pmt
 		//Unsegmented
-		if (fAddSegment == false) {
+	/*	if (fAddSegment == false) {
 			x2 = 0;
 			y2 = 0;
 			z2 = position - zpmt;
@@ -550,7 +551,7 @@ G4int DetectionSystemDaemonTiles::PlaceDetector(G4LogicalVolume* expHallLog, G4i
 			R = move2.mag();
 			G4cout << "Top PMT: DetNum (i), x, y, z" << G4endl;
 			G4cout << "{" << R << " , " << x2 << " , " <<  y2 << " , " << z2 << "}," << G4endl;
-	/*		x2 = -xypmt;
+			x2 = -xypmt;
 			y2 = xypmt;
 			z2 = position - zpmt;
 			move2 = G4ThreeVector(x2,y2,z2);
@@ -589,15 +590,17 @@ G4int DetectionSystemDaemonTiles::PlaceDetector(G4LogicalVolume* expHallLog, G4i
 			R = move2.mag();
 			G4cout << "Front Bottom PMT: DetNum (i), x, y, z" << G4endl;
 			G4cout << "{" << R << " , " << x2 << " , " <<  y2 << " , " << z2 << "}," << G4endl;
-		*/}
+		}
+		*/
 
 	}
 	
 	G4cout << "White detectors" << G4endl;	
-	G4cout << "DetNum (i), x, y, z" << G4endl;
+	//G4cout << "DetNum (i), x, y, z" << G4endl;
 	// Place White Detector
 	for(G4int i=40; i<(detectorNumber-10); i++) {
 		idx = i-40;
+		G4cout << "i:" << i<< " , and idx: " << idx << G4endl;
 		move = G4ThreeVector(x,y,z);
 		move.rotateZ(fWhiteAlphaBetaGamma[idx][2]);
 		move.rotateY(fWhiteAlphaBetaGamma[idx][1]);
@@ -610,7 +613,7 @@ G4int DetectionSystemDaemonTiles::PlaceDetector(G4LogicalVolume* expHallLog, G4i
 		fAssemblyWhite->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
 		//To get coordinates of pmt
 		//Unsegmented
-		if (fAddSegment == false) {
+	/*	if (fAddSegment == false) {
 			x2 = 0;
 			y2 = 0;
 			z2 = position - zpmt;
@@ -640,7 +643,7 @@ G4int DetectionSystemDaemonTiles::PlaceDetector(G4LogicalVolume* expHallLog, G4i
 			R = move2.mag();
 			G4cout << "Top PMT: DetNum (i), x, y, z" << G4endl;
 			G4cout << "{" << R << " , " << x2 << " , " <<  y2 << " , " << z2 << "}," << G4endl;
-	/*		x2 = -xypmt;
+			x2 = -xypmt;
 			y2 = xypmt;
 			z2 = position - zpmt;
 			move2 = G4ThreeVector(x2,y2,z2);
@@ -679,13 +682,15 @@ G4int DetectionSystemDaemonTiles::PlaceDetector(G4LogicalVolume* expHallLog, G4i
 			R = move2.mag();
 			G4cout << "Front Bottom PMT: DetNum (i), x, y, z" << G4endl;
 			G4cout << "{" << R << " , " << x2 << " , " <<  y2 << " , " << z2 << "}," << G4endl;
-		*/}
+		}
+		*/
 	}
 	G4cout << "Red detectors" << G4endl;	
-	G4cout << "DetNum (i), x, y, z" << G4endl;
+	//G4cout << "DetNum (i), x, y, z" << G4endl;
 	// Place Red Detector
 	for(G4int i=25; i<(detectorNumber-30); i++) {
 		idx = i-25;
+		G4cout << "i:" << i<< " , and idx: " << idx << G4endl;
 		move = G4ThreeVector(x,y,z);
 		move.rotateZ(fRedAlphaBetaGamma[idx][2]);
 		move.rotateY(fRedAlphaBetaGamma[idx][1]);
@@ -698,7 +703,7 @@ G4int DetectionSystemDaemonTiles::PlaceDetector(G4LogicalVolume* expHallLog, G4i
 		fAssemblyRed->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
 		//To get coordinates of pmt
 		//Unsegmented
-		if (fAddSegment == false) {
+	/*	if (fAddSegment == false) {
 			x2 = 0;
 			y2 = 0;
 			z2 = position - zpmt;
@@ -728,7 +733,7 @@ G4int DetectionSystemDaemonTiles::PlaceDetector(G4LogicalVolume* expHallLog, G4i
 			R = move2.mag();
 			G4cout << "Top PMT: DetNum (i), x, y, z" << G4endl;
 			G4cout << "{" << R << " , " << x2 << " , " <<  y2 << " , " << z2 << "}," << G4endl;
-	/*		x2 = -xypmt;
+			x2 = -xypmt;
 			y2 = xypmt;
 			z2 = position - zpmt;
 			move2 = G4ThreeVector(x2,y2,z2);
@@ -767,14 +772,16 @@ G4int DetectionSystemDaemonTiles::PlaceDetector(G4LogicalVolume* expHallLog, G4i
 			R = move2.mag();
 			G4cout << "Front Bottom PMT: DetNum (i), x, y, z" << G4endl;
 			G4cout << "{" << R << " , " << x2 << " , " <<  y2 << " , " << z2 << "}," << G4endl;
-		*/}
+		}
+		*/
 	}
 
 	G4cout << "Green detectors" << G4endl;	
-	G4cout << "DetNum (i), x, y, z" << G4endl;
+	//G4cout << "DetNum (i), x, y, z" << G4endl;
 	// Place Green Detector
 	for(G4int i=15; i<(detectorNumber-45); i++) {
 		idx = i-15;
+		G4cout << "i:" << i<< " , and idx: " << idx << G4endl;
 		move = G4ThreeVector(x,y,z);
 		move.rotateZ(fGreenAlphaBetaGamma[idx][2]);
 		move.rotateY(fGreenAlphaBetaGamma[idx][1]);
@@ -787,7 +794,7 @@ G4int DetectionSystemDaemonTiles::PlaceDetector(G4LogicalVolume* expHallLog, G4i
 		fAssemblyGreen->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
 		//To get coordinates of pmt
 		//Unsegmented
-		if (fAddSegment == false) {
+	/*	if (fAddSegment == false) {
 			x2 = 0;
 			y2 = 0;
 			z2 = position - zpmt;
@@ -817,7 +824,7 @@ G4int DetectionSystemDaemonTiles::PlaceDetector(G4LogicalVolume* expHallLog, G4i
 			R = move2.mag();
 			G4cout << "Top PMT: DetNum (i), x, y, z" << G4endl;
 			G4cout << "{" << R << " , " << x2 << " , " <<  y2 << " , " << z2 << "}," << G4endl;
-	/*		x2 = -xypmt;
+			x2 = -xypmt;
 			y2 = xypmt;
 			z2 = position - zpmt;
 			move2 = G4ThreeVector(x2,y2,z2);
@@ -856,14 +863,16 @@ G4int DetectionSystemDaemonTiles::PlaceDetector(G4LogicalVolume* expHallLog, G4i
 			R = move2.mag();
 			G4cout << "Front Bottom PMT: DetNum (i), x, y, z" << G4endl;
 			G4cout << "{" << R << " , " << x2 << " , " <<  y2 << " , " << z2 << "}," << G4endl;
-		*/}
+		}
+		*/
 	}
 
 	G4cout << "Yellow detectors" << G4endl;	
-	G4cout << "DetNum (i), x, y, z" << G4endl;
+	//G4cout << "DetNum (i), x, y, z" << G4endl;
 	// Place Yellow Detector
 	for(G4int i=60; i<(detectorNumber); i++) {
 		idx = i-60;
+		G4cout << "i:" << i<< " , and idx: " << idx << G4endl;
 		move = G4ThreeVector(x,y,z);
 		move.rotateZ(fYellowAlphaBetaGamma[idx][2]);
 		move.rotateY(fYellowAlphaBetaGamma[idx][1]);
@@ -876,7 +885,7 @@ G4int DetectionSystemDaemonTiles::PlaceDetector(G4LogicalVolume* expHallLog, G4i
 		fAssemblyYellow->MakeImprint(expHallLog, move, rotate, i, fSurfCheck);
 		//To get coordinates of pmt
 		//Unsegmented
-		if (fAddSegment == false) {
+	/*	if (fAddSegment == false) {
 			x2 = 0;
 			y2 = 0;
 			z2 = position - zpmt;
@@ -907,7 +916,7 @@ G4int DetectionSystemDaemonTiles::PlaceDetector(G4LogicalVolume* expHallLog, G4i
 			R = move2.mag();
 			G4cout << "Top PMT: DetNum (i), x, y, z" << G4endl;
 			G4cout << "{" << R << " , " << x2 << " , " <<  y2 << " , " << z2 << "}," << G4endl;
-	/*		x2 = -xypmt;
+			x2 = -xypmt;
 			y2 = xypmt;
 			z2 = position - zpmt;
 			move2 = G4ThreeVector(x2,y2,z2);
@@ -946,7 +955,8 @@ G4int DetectionSystemDaemonTiles::PlaceDetector(G4LogicalVolume* expHallLog, G4i
 			R = move2.mag();
 			G4cout << "Front Bottom PMT: DetNum (i), x, y, z" << G4endl;
 			G4cout << "{" << R << " , " << x2 << " , " <<  y2 << " , " << z2 << "}," << G4endl;
-		*/}
+		}
+		*/
 	}
 
 	return 1;

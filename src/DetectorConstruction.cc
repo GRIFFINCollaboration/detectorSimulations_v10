@@ -72,6 +72,7 @@
 #include "DetectionSystemTestcan.hh"
 #include "DetectionSystemPlastics.hh"
 #include "DetectionSystemDaemonTiles.hh"
+#include "DetectionSystemZDS.hh"
 
 #include "G4FieldManager.hh"
 #include "G4UniformMagField.hh"
@@ -194,6 +195,7 @@ DetectorConstruction::DetectorConstruction() :
 	fTestcan  = false;
 	fPlastics  = false;
 	fDaemonTiles  = false;
+	fZDS  = false;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -874,6 +876,17 @@ void DetectorConstruction::AddDetectionSystemTestcan(G4ThreeVector input) {
 
 	fTestcan = true;
 }
+void DetectorConstruction::AddDetectionSystemZDS() {
+	if(fLogicWorld == nullptr) {
+		Construct();
+	}
+
+	DetectionSystemZDS* pDetectionSystemZDS = new DetectionSystemZDS();
+	pDetectionSystemZDS->Build();
+	pDetectionSystemZDS->PlaceDetector(fLogicWorld);
+
+	fZDS = true;
+}
 void DetectorConstruction::AddDetectionSystemPlastics(G4ThreeVector input) {
 	if(fLogicWorld == nullptr) {
 		Construct();
@@ -1028,6 +1041,7 @@ bool DetectorConstruction::CheckVolumeName(G4String volumeName) {
 	if(volumeName.find("RedTilePlasticDet") != G4String::npos) return true;
 	if(volumeName.find("GreenTilePlasticDet") != G4String::npos) return true;
 	if(volumeName.find("YellowTilePlasticDet") != G4String::npos) return true;
+	if(volumeName.find("ZDS") != G4String::npos) return true;
 	return false;
 }
 
@@ -1163,6 +1177,7 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 	}
 
 	if(volumeName.find("sceptarSquareScintillatorLog") != G4String::npos) {
+		result.detectorNumber = imprintNumber-1;
 		// to number SCEPTAR paddles correctly:
 		switch(result.detectorNumber) {
 			case 0:
@@ -1204,6 +1219,7 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 	}
 
 	if(volumeName.find("sceptarAngledScintillatorLog") != G4String::npos) {
+		result.detectorNumber = imprintNumber-1;
 		// to number SCEPTAR paddles correctly (1 stays 1):
 		switch(result.detectorNumber) {
 			case 0:
@@ -1313,7 +1329,7 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 */		result.crystalNumber = 0;
 		//is>>result.detectorNumber>>result.crystalNumber;
 		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
-		result.detectorNumber = imprintNumber;
+		result.detectorNumber = imprintNumber - 1; //Range from 0-14
 		//result.detectorNumber = result.detectorNumber+1;
 		return result;
 	}
@@ -1331,7 +1347,7 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 */		result.crystalNumber = 0;
 		//is>>result.detectorNumber>>result.crystalNumber;
 		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
-		result.detectorNumber = imprintNumber;
+		result.detectorNumber = imprintNumber - 1 + 15; // Range from 15 - 34
 		//result.detectorNumber = result.detectorNumber+1;
 		return result;
 	}
@@ -1349,7 +1365,7 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 */		result.crystalNumber = 0;
 		//is>>result.detectorNumber>>result.crystalNumber;
 		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
-		result.detectorNumber = imprintNumber;
+		result.detectorNumber = imprintNumber - 1 + 15 + 20;
 		//result.detectorNumber = result.detectorNumber+1;
 		return result;
 	}
@@ -1367,7 +1383,7 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 */		result.crystalNumber = 0;
 		//is>>result.detectorNumber>>result.crystalNumber;
 		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
-		result.detectorNumber = imprintNumber;
+		result.detectorNumber = imprintNumber - 1 + 15 + 20 + 15;
 		//result.detectorNumber = result.detectorNumber+1;
 		return result;
 	}
@@ -1385,7 +1401,7 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 */		result.crystalNumber = 0;
 		//is>>result.detectorNumber>>result.crystalNumber;
 		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
-		result.detectorNumber = imprintNumber;
+		result.detectorNumber = imprintNumber - 1 + 15 + 20 + 15 + 10;
 		//result.detectorNumber = result.detectorNumber+1;
 		return result;
 	}
@@ -1403,6 +1419,11 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		//result.detectorNumber = result.detectorNumber+1;
 		result.detectorNumber = result.detectorNumber;
 		result.systemID = 8700;
+		return result;
+	}
+	if(volumeName.find("ZDS") != G4String::npos) {
+		result.detectorNumber = 0;
+		result.systemID = 9000;
 		return result;
 	}
 	return result;

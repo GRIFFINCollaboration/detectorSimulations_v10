@@ -103,6 +103,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		target = hadrProcess->GetTargetIsotope();
 		if(target != nullptr) {
 			targetZ = target->GetZ();
+			//G4cout << "TargetZ: " << targetZ << G4endl;
 		}
 	}
 
@@ -183,18 +184,21 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	//Get angle when leaving Detector
 	G4double final_angle = -1;
 	found = volname.find("PlasticDet");
-	if(aStep->GetTrack()->GetParentID() == 0 && fEventAction->GetFinalAngle() == -1 && found != G4String::npos && prePoint->GetStepStatus() == fGeomBoundary && postPoint->GetStepStatus() != fGeomBoundary) { 
+	//if(aStep->GetTrack()->GetParentID() == 0 && fEventAction->GetFinalAngle() == -1 && found != G4String::npos && prePoint->GetStepStatus() == fGeomBoundary && postPoint->GetStepStatus() != fGeomBoundary) { //firing neutrons only
+	if(particleType == 4 && fEventAction->GetFinalAngle() == -1 && found != G4String::npos && prePoint->GetStepStatus() == fGeomBoundary && postPoint->GetStepStatus() != fGeomBoundary) { 
 		G4ThreeVector momentum_3 = prePoint->GetMomentum();
 		//Set initial momenturm 
 		fEventAction->SetInitialMomentum(momentum_3);
 	}
-	if(aStep->GetTrack()->GetParentID() == 0 && fEventAction->GetFinalAngle() == -1 && found != G4String::npos && postPoint->GetStepStatus() == fGeomBoundary && prePoint->GetStepStatus() != fGeomBoundary) { 
+	//if(aStep->GetTrack()->GetParentID() == 0 && fEventAction->GetFinalAngle() == -1 && found != G4String::npos && postPoint->GetStepStatus() == fGeomBoundary && prePoint->GetStepStatus() != fGeomBoundary) { //firing only neutrons
+	if(particleType == 4 && fEventAction->GetFinalAngle() == -1 && found != G4String::npos && postPoint->GetStepStatus() == fGeomBoundary && prePoint->GetStepStatus() != fGeomBoundary) { 
 		G4ThreeVector momentum_4 = postPoint->GetMomentum();
 		//Set final momentum
 		fEventAction->SetFinalMomentum(momentum_4);
 	}
 	G4ThreeVector check = G4ThreeVector(0., 0., 0.);
-	if(aStep->GetTrack()->GetParentID() == 0 && fEventAction->GetFinalAngle() == -1 && found != G4String::npos && fEventAction->GetInitialMomentum() != check && fEventAction->GetFinalMomentum() != check) {
+	//if(aStep->GetTrack()->GetParentID() == 0 && fEventAction->GetFinalAngle() == -1 && found != G4String::npos && fEventAction->GetInitialMomentum() != check && fEventAction->GetFinalMomentum() != check) { //firing neutrons only
+	if(particleType == 4 && fEventAction->GetFinalAngle() == -1 && found != G4String::npos && fEventAction->GetInitialMomentum() != check && fEventAction->GetFinalMomentum() != check) {
 		G4ThreeVector initialM = fEventAction->GetInitialMomentum();
 		G4ThreeVector finalM = fEventAction->GetFinalMomentum();
 		final_angle = finalM.angle(initialM);
@@ -206,7 +210,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	//Counting hits for efficiencies
 	//By not initilalizing counters in event action to zero, they keep counting for whole run, which is good
 	found = volname.find("PlasticDet");
-	if(found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && prePoint->GetStepStatus() == fGeomBoundary) {
+	//if(found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && prePoint->GetStepStatus() == fGeomBoundary) { //firing neutrons only
+	if(particleType == 4 && found != G4String::npos && prePoint->GetStepStatus() == fGeomBoundary) {
 		if(postPoint->GetProcessDefinedStep()->GetProcessName() == "hadElastic") {
 			//	fEventAction->totalCounter();
 			fEventAction->elasticCounter();
@@ -249,7 +254,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	G4double TOFMulti;
 	G4ThreeVector TOFPosMulti;
 	found  = volname.find("PlasticDet");
-	if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && prePoint->GetStepStatus() == fGeomBoundary && postPoint->GetStepStatus() != fGeomBoundary) {	
+	//if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && prePoint->GetStepStatus() == fGeomBoundary && postPoint->GetStepStatus() != fGeomBoundary) {	//firing neutrons only
+	if (particleType == 4 && found != G4String::npos && prePoint->GetStepStatus() == fGeomBoundary && postPoint->GetStepStatus() != fGeomBoundary) {	
 		fEventAction->SetTOFMulti(postTime);
 		fEventAction->SetTOFPosMulti(postPos);
 		fEventAction->totalCounter();
@@ -535,31 +541,52 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		fEventAction->SetScintPhotonEnergyTime(preTimeGlobal, ekin, detNumber);
 		fEventAction->SetOldTrackID(trackID);
 	}
+	
 	//Top PMT (positive x positive y) if unsegmented this one is filled
 	found = volname.find("PMT_1");
 	if(found!=G4String::npos && particleType == 8 && prePoint->GetStepStatus()==fGeomBoundary){
-		G4int detNumber = imprintNumber;
+		G4int detNumber = -1;
+		if (volname.find("Blue") != G4String::npos) detNumber = imprintNumber - 1;
+		if (volname.find("White") != G4String::npos) detNumber = imprintNumber - 1 + 15;
+		if (volname.find("Red") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20;
+		if (volname.find("Green") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20 + 15;
+		if (volname.find("Yellow") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20 + 15 + 10;
 		fEventAction->SetScintPhotonTimeTop1(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 	}
 	//Front Top PMT (negative x positive y)
 	found = volname.find("PMT_2");
 	if(found!=G4String::npos && particleType == 8 && prePoint->GetStepStatus()==fGeomBoundary){
-		G4int detNumber = imprintNumber;
+		G4int detNumber = -1;
+		if (volname.find("Blue") != G4String::npos) detNumber = imprintNumber - 1;
+		if (volname.find("White") != G4String::npos) detNumber = imprintNumber - 1 + 15;
+		if (volname.find("Red") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20;
+		if (volname.find("Green") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20 + 15;
+		if (volname.find("Yellow") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20 + 15 + 10;
 		fEventAction->SetScintPhotonTimeFrontTop1(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 	}
 	//Bottom PMT (positive x negative y)
 	found = volname.find("PMT_3");
 	if(found!=G4String::npos && particleType == 8 && prePoint->GetStepStatus()==fGeomBoundary){
-		G4int detNumber = imprintNumber;
+		G4int detNumber = -1;
+		if (volname.find("Blue") != G4String::npos) detNumber = imprintNumber - 1;
+		if (volname.find("White") != G4String::npos) detNumber = imprintNumber - 1 + 15;
+		if (volname.find("Red") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20;
+		if (volname.find("Green") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20 + 15;
+		if (volname.find("Yellow") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20 + 15 + 10;
 		fEventAction->SetScintPhotonTimeBottom1(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 	}
 	//Front Bottom PMT (negative x negative y)
 	found = volname.find("PMT_4");
 	if(found!=G4String::npos && particleType == 8 && prePoint->GetStepStatus()==fGeomBoundary){
-		G4int detNumber = imprintNumber;
+		G4int detNumber = -1;
+		if (volname.find("Blue") != G4String::npos) detNumber = imprintNumber - 1;
+		if (volname.find("White") != G4String::npos) detNumber = imprintNumber - 1 + 15;
+		if (volname.find("Red") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20;
+		if (volname.find("Green") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20 + 15;
+		if (volname.find("Yellow") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20 + 15 + 10;
 		fEventAction->SetScintPhotonTimeFrontBottom1(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 	}

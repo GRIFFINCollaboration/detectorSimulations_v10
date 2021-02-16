@@ -138,6 +138,7 @@ private:
 	G4UIcmdWith3Vector*       fAddDetectionSystemDaemonTilesCmd;
 	//G4UIcmdWithAnInteger*       fAddDetectionSystemDaemonTilesCmd;
 	G4UIcmdWithAnInteger*       fAddDetectionSystemDescantNoLeadCmd;
+	G4UIcmdWithoutParameter*	fAddDetectionSystemZDSCmd;
 
 	G4UIcmdWithAnInteger*       fAddDetectionSystemSceptarCmd;
 	G4UIcmdWithAnInteger*       fAddDetectionSystemGriffinForwardCmd;

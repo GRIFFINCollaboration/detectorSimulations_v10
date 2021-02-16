@@ -269,6 +269,10 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
 	fAddDetectionSystemDaemonTilesCmd = new G4UIcmdWith3Vector("/DetSys/det/addDaemonTiles",this);
 	fAddDetectionSystemDaemonTilesCmd->SetGuidance("Add Detection System Daemon Tile Configuration");
 	fAddDetectionSystemDaemonTilesCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	
+       	fAddDetectionSystemZDSCmd = new G4UIcmdWithoutParameter("/DetSys/det/addZDS",this);
+        fAddDetectionSystemZDSCmd->SetGuidance("Add ZDS.");
+        fAddDetectionSystemZDSCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 	fSetDetectionSystemDescantColorCmd = new G4UIcmdWithAString("/DetSys/det/setDescantColor", this);
 	fSetDetectionSystemDescantColorCmd->SetGuidance("Set color of next descant detector to be added via addDescantCart or addDescantSpher");
@@ -421,6 +425,7 @@ DetectorMessenger::~DetectorMessenger()
 	delete fAddDetectionSystemPlasticsCmd;
 	delete fAddDetectionSystemPlasticsNoWrapCmd;
 	delete fAddDetectionSystemDaemonTilesCmd;
+	delete fAddDetectionSystemZDSCmd;
 	delete fAddDetectionSystemDescantNoLeadCmd;
 
 	delete fSetDetectionSystemDescantColorCmd;
@@ -611,6 +616,9 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	if(command == fAddDetectionSystemDaemonTilesCmd) {
 		//fDetector->AddDetectionSystemDaemonTiles(fAddDetectionSystemDaemonTilesCmd->GetNewIntValue(newValue));
 		fDetector->AddDetectionSystemDaemonTiles(fAddDetectionSystemDaemonTilesCmd->GetNew3VectorValue(newValue));
+	}
+	if(command == fAddDetectionSystemZDSCmd) { 
+		fDetector->AddDetectionSystemZDS();
 	}
 
 	if(command == fAddDetectionSystemSceptarCmd) {
