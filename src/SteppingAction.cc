@@ -591,6 +591,33 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 	}
 
+	//////////////// TestingPlastic //////////////////
+	//Scint photon in plastic
+	found = volname.find("TestPlastic");
+	//if(found!=G4String::npos && particleType == 8 && fEventAction->GetOldTrackID() != trackID  && aStep->IsFirstStepInVolume() == true){ //should prepoint->GetStepStatus()==fGeomBoundary be in here?
+	if(found!=G4String::npos && particleType == 8 && fEventAction->GetOldTrackID() != trackID  && preTimeLocal == 0){ //should prepoint->GetStepStatus()==fGeomBoundary be in here?
+		G4int detNumber=0;
+		//fEventAction->SetScintPhotonEnergyTime(postTime, ekin, detNumber);
+		fEventAction->SetScintPhotonEnergyTime(preTimeGlobal, ekin, detNumber);
+		fEventAction->SetOldTrackID(trackID);
+	}
+	//Top PMT
+	found = volname.find("TestPMT1");
+	//if(found!=G4String::npos && particleType == 8){ 
+	if(found!=G4String::npos && particleType == 8 && prePoint->GetStepStatus()==fGeomBoundary){
+		G4int detNumber=0;
+		fEventAction->SetScintPhotonTimeTop1(postTime, detNumber);
+		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
+	//	G4cout << "Calling kill track and Secondaries" << G4endl;
+	}
+	found = volname.find("TestPMT2");
+	//if(found!=G4String::npos && particleType == 8){ 
+	if(found!=G4String::npos && particleType == 8 && prePoint->GetStepStatus()==fGeomBoundary){
+		G4int detNumber=0;
+		fEventAction->SetScintPhotonTimeBottom1(postTime, detNumber);
+		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
+	//	G4cout << "Calling kill track and Secondaries" << G4endl;
+	}
 
 
 	// check if this volume has its properties set, i.e. it's an active detector

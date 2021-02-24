@@ -70,6 +70,7 @@ class DetectionSystemLanthanumBromide;
 class DetectionSystemBox;
 class DetectionSystemAncillaryBGO;
 
+class DetectionSystemTestPlastics;
 class DetectionSystemPlastics;
 class DetectionSystemDaemonTiles;
 class DetectionSystemZDS;
@@ -160,6 +161,7 @@ public:
 	void AddApparatusDescantStructure();
 
 	void AddDetectionSystemTestcan(G4ThreeVector input);
+	void AddDetectionSystemTestPlastics(G4ThreeVector input);
 	void AddDetectionSystemPlastics(G4ThreeVector input);
 	void AddDetectionSystemPlasticsNoWrap(G4ThreeVector input);
 	//void AddDetectionSystemDaemonTiles(G4int ndet);
@@ -207,6 +209,7 @@ public:
 	G4bool   Paces()      { return fPaces;      }
 	G4bool   Descant()    { return fDescant;    }
 	G4bool   Testcan()    { return fTestcan;    }
+	G4bool   TestPlastics()    { return fTestPlastics;    }
 	G4bool   Plastics()    { return fPlastics;    }
 	G4bool   DaemonTiles()    { return fDaemonTiles;    }
 	G4bool   ZDS()    { return fZDS;    }
@@ -306,6 +309,7 @@ private:
 	G4bool fTestcan;
 	G4bool fSpice;
 	G4bool fPaces;
+	G4bool fTestPlastics;
 	G4bool fPlastics;
 	G4bool fZDS;
 	G4bool fDaemonTiles;

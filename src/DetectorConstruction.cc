@@ -70,6 +70,7 @@
 #include "ApparatusDescantStructure.hh"
 
 #include "DetectionSystemTestcan.hh"
+#include "DetectionSystemTestPlastics.hh"
 #include "DetectionSystemPlastics.hh"
 #include "DetectionSystemDaemonTiles.hh"
 #include "DetectionSystemZDS.hh"
@@ -193,6 +194,7 @@ DetectorConstruction::DetectorConstruction() :
 	fPaces    = false;
 	fDescant  = false;
 	fTestcan  = false;
+	fTestPlastics  = false;
 	fPlastics  = false;
 	fDaemonTiles  = false;
 	fZDS  = false;
@@ -887,6 +889,21 @@ void DetectorConstruction::AddDetectionSystemZDS() {
 
 	fZDS = true;
 }
+void DetectorConstruction::AddDetectionSystemTestPlastics(G4ThreeVector input) {
+	if(fLogicWorld == nullptr) {
+		Construct();
+	}
+
+	G4double thickness = G4double(input.x())*cm;
+	G4int material = G4double(input.y());
+	G4double numDet = G4double(input.z());
+
+	DetectionSystemTestPlastics* pDetectionSystemTestPlastics = new DetectionSystemTestPlastics(thickness, material, numDet);
+	pDetectionSystemTestPlastics->Build();
+	pDetectionSystemTestPlastics->PlaceDetector(fLogicWorld);
+
+	fTestPlastics = true;
+}
 void DetectorConstruction::AddDetectionSystemPlastics(G4ThreeVector input) {
 	if(fLogicWorld == nullptr) {
 		Construct();
@@ -1035,6 +1052,7 @@ bool DetectorConstruction::CheckVolumeName(G4String volumeName) {
 	if(volumeName.find("whiteScintillatorVolumeLog") != G4String::npos) return true;
 	if(volumeName.find("yellowScintillatorVolumeLog") != G4String::npos) return true;
 	if(volumeName.find("testcanScintillatorLog") != G4String::npos) return true;
+	if(volumeName.find("TestPlastic") != G4String::npos) return true;
 	if(volumeName.find("BarsPlasticDet") != G4String::npos) return true;
 	if(volumeName.find("BlueTilePlasticDet") != G4String::npos) return true;
 	if(volumeName.find("WhiteTilePlasticDet") != G4String::npos) return true;
@@ -1419,6 +1437,11 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		//result.detectorNumber = result.detectorNumber+1;
 		result.detectorNumber = result.detectorNumber;
 		result.systemID = 8700;
+		return result;
+	}
+	if(volumeName.find("TestPlastic") != G4String::npos) {
+		result.detectorNumber = 0;
+		result.systemID = 8800;
 		return result;
 	}
 	if(volumeName.find("ZDS") != G4String::npos) {

@@ -257,6 +257,10 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
 	fAddDetectionSystemTestcanCmd->SetGuidance("Add Testcan Detection System");
 	fAddDetectionSystemTestcanCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 	
+	fAddDetectionSystemTestPlasticsCmd = new G4UIcmdWith3Vector("/DetSys/det/addTestPlastics",this);
+	fAddDetectionSystemTestPlasticsCmd->SetGuidance("Add TestPlastics Detection System");
+	fAddDetectionSystemTestPlasticsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	
 	fAddDetectionSystemPlasticsCmd = new G4UIcmdWith3Vector("/DetSys/det/addPlastics",this);
 	fAddDetectionSystemPlasticsCmd->SetGuidance("Add Plastics Detection System");
 	fAddDetectionSystemPlasticsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
@@ -422,6 +426,7 @@ DetectorMessenger::~DetectorMessenger()
 	delete fAddApparatusDescantStructureCmd;
 
 	delete fAddDetectionSystemTestcanCmd;
+	delete fAddDetectionSystemTestPlasticsCmd;
 	delete fAddDetectionSystemPlasticsCmd;
 	delete fAddDetectionSystemPlasticsNoWrapCmd;
 	delete fAddDetectionSystemDaemonTilesCmd;
@@ -606,6 +611,9 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	}
 	if(command == fAddDetectionSystemTestcanCmd) { 
 		fDetector->AddDetectionSystemTestcan(fAddDetectionSystemTestcanCmd->GetNew3VectorValue(newValue));
+	}
+	if(command == fAddDetectionSystemTestPlasticsCmd) { 
+		fDetector->AddDetectionSystemTestPlastics(fAddDetectionSystemTestPlasticsCmd->GetNew3VectorValue(newValue));
 	}
 	if(command == fAddDetectionSystemPlasticsCmd) { 
 		fDetector->AddDetectionSystemPlastics(fAddDetectionSystemPlasticsCmd->GetNew3VectorValue(newValue));
