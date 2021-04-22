@@ -114,6 +114,8 @@ public:
 	void CountOneScintPhoton() {++fTotScintPhotons;};
 	G4int GetTotScintPhoton() {return fTotScintPhotons;};
 	void SetTotScintPhoton(G4int total) {fTotScintPhotons = total;};
+	//PDE for collecting photons
+	bool PhotonDetectionEfficiency(G4double ekin);
 	//Collection Time Top
 	void SetScintPhotonTimeTop1(G4double top, G4int detNum);
 	void SetScintPhotonTimeTop2(G4double top, G4int detNum);

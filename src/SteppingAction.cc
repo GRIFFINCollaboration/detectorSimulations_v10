@@ -37,6 +37,7 @@
 
 #include "DetectorConstruction.hh"
 #include "EventAction.hh"
+#include "Randomize.hh"
 
 #include "G4Step.hh"
 #include "G4VProcess.hh"
@@ -261,7 +262,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		fEventAction->totalCounter();
 
 		if (fEventAction->GetPEkin()==-1) {
-			fEventAction->SetPEkin(ekin);
+	//		fEventAction->SetPEkin(ekin); //Also assign to electrons leaving plastic part
 			fEventAction->SetTOF(postTime);
 			fEventAction->SetTOFPos(postPos);
 			//	G4cout << "Stepping action ekin, postTime, posPos " << ekin << "  " << postTime << "  " << postPos << G4endl;
@@ -278,13 +279,13 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 
 	//Energy Deposited in Plastic Scintillators for quick reference
 	G4double PlasticEdep;		
-	found  = volname.find("PlasticDet");
+/*	found  = volname.find("PlasticDet");
 	if (found != G4String::npos && edep >  0 && fDetector->HasProperties(volume)) {	
 		//fEventAction->AddPEdep(edep);
 		fEventAction->SetPEdep(edep);
 	}
 	PlasticEdep = fEventAction->GetPEdep();
-
+*/
 
 	//////////////// Bars //////////////////
 	//Scint photon in plastic
@@ -592,12 +593,42 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	}
 
 	//////////////// TestingPlastic //////////////////
+	found = volname.find("TestPlastic");
+	//Are the electrons escaping the plastics after a gamma deposits energy? Initial energy of electrons (should be same as edep unless they are escaping)
+	if(found!=G4String::npos && particleType == 2 && preTimeLocal==0 && parentID==1){
+	//	G4cout << "Calling pretime local" << G4endl;
+		if(fEventAction->GetPEdep()!=-1){
+		PlasticEdep = fEventAction->GetPEdep();
+		ekin = ekin+PlasticEdep;
+	//	G4cout << "Calling pretime local Twice" << G4endl;
+		}
+		G4ThreeVector momentum_5 = prePoint->GetMomentum();
+		fEventAction->SetPEdep(ekin);
+	}
+	PlasticEdep = fEventAction->GetPEdep();
+	//G4cout << "plastic Edep " << PlasticEdep<< G4endl;
+	//G4cout << "Event Number " << evntNb << G4endl;
+	//Are the electrons escaping the plastics after a gamma deposits energy?  (energy of the ones escaping)
+	found = volname.find("TestPlastic");
+	if(found!=G4String::npos && particleType == 2 && postPoint->GetStepStatus()==fGeomBoundary && fEventAction->GetPEkin()==-1){
+	//	G4cout << "Calling postpoint" << G4endl;
+		G4ThreeVector momentum_5 = prePoint->GetMomentum();
+			fEventAction->SetPEkin(ekin);
+	}
+	PlasticEkin = fEventAction->GetPEkin();
+	//	G4cout << "plastic Ekin" << PlasticEkin<< G4endl;
 	//Scint photon in plastic
 	found = volname.find("TestPlastic");
 	//if(found!=G4String::npos && particleType == 8 && fEventAction->GetOldTrackID() != trackID  && aStep->IsFirstStepInVolume() == true){ //should prepoint->GetStepStatus()==fGeomBoundary be in here?
 	if(found!=G4String::npos && particleType == 8 && fEventAction->GetOldTrackID() != trackID  && preTimeLocal == 0){ //should prepoint->GetStepStatus()==fGeomBoundary be in here?
 		G4int detNumber=0;
 		//fEventAction->SetScintPhotonEnergyTime(postTime, ekin, detNumber);
+		//Test if pde vs QE vs this method are equivalent
+	//	G4double prob = 0.3;
+	//	G4double uni = G4UniformRand();
+	//	if (uni > prob)
+	//	theTrack->SetTrackStatus(fKillTrackAndSecondaries);
+		
 		fEventAction->SetScintPhotonEnergyTime(preTimeGlobal, ekin, detNumber);
 		fEventAction->SetOldTrackID(trackID);
 	}
@@ -606,7 +637,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	//if(found!=G4String::npos && particleType == 8){ 
 	if(found!=G4String::npos && particleType == 8 && prePoint->GetStepStatus()==fGeomBoundary){
 		G4int detNumber=0;
-		fEventAction->SetScintPhotonTimeTop1(postTime, detNumber);
+ 		if (fEventAction->PhotonDetectionEfficiency(ekin)==true)
+			fEventAction->SetScintPhotonTimeTop1(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 	//	G4cout << "Calling kill track and Secondaries" << G4endl;
 	}
@@ -614,11 +646,39 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	//if(found!=G4String::npos && particleType == 8){ 
 	if(found!=G4String::npos && particleType == 8 && prePoint->GetStepStatus()==fGeomBoundary){
 		G4int detNumber=0;
-		fEventAction->SetScintPhotonTimeBottom1(postTime, detNumber);
+ 		if (fEventAction->PhotonDetectionEfficiency(ekin)==true)
+			fEventAction->SetScintPhotonTimeBottom1(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 	//	G4cout << "Calling kill track and Secondaries" << G4endl;
 	}
 
+	//////////////// Testing ZDS //////////////////
+	found = volname.find("ZDS");
+	//Are the electrons escaping the zds after a gamma deposits energy? Initial energy of electrons (should be same as edep unless they are escaping)
+	if(found!=G4String::npos && particleType == 2 && preTimeLocal==0 && parentID==1){
+		G4cout << "Calling pretime local" << G4endl;
+		if(fEventAction->GetPEdep()!=-1){
+		PlasticEdep = fEventAction->GetPEdep();
+		ekin = ekin+PlasticEdep;
+		G4cout << "Calling pretime local Twice" << G4endl;
+		}
+		G4ThreeVector momentum_5 = prePoint->GetMomentum();
+		fEventAction->SetPEdep(ekin);
+	}
+	PlasticEdep = fEventAction->GetPEdep();
+	//G4cout << "plastic Edep " << PlasticEdep<< G4endl;
+	//G4cout << "Event Number " << evntNb << G4endl;
+	//Are the electrons escaping the plastics after a gamma deposits energy?  (energy of the ones escaping)
+	found = volname.find("ZDS");
+	if(found!=G4String::npos && particleType == 2 && postPoint->GetStepStatus()==fGeomBoundary && fEventAction->GetPEkin()==-1){
+	//	G4cout << "Calling postpoint" << G4endl;
+		G4ThreeVector momentum_5 = prePoint->GetMomentum();
+		//Only electrons leaving out the back
+		if (momentum_5.getZ()>0)	
+		fEventAction->SetPEkin(ekin);
+	}
+	PlasticEkin = fEventAction->GetPEkin();
+	//	G4cout << "plastic Ekin" << PlasticEkin<< G4endl;
 
 	// check if this volume has its properties set, i.e. it's an active detector
 	if((edep > 0 || (fDetector->GridCell() && ekin > 0)) && fDetector->HasProperties(volume)) {

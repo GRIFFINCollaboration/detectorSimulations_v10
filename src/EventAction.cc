@@ -127,12 +127,12 @@ void EventAction::EndOfEventAction(const G4Event*) {
 				for(j = 0; j < fPlasticHits; ++j) {
 //G4cout<<i<<", "<<j<<": "<<fProperties[i].systemID<<", "<<fProperties[i].detectorNumber<<" == "<<fPlasticNumber[j]<<G4endl;
 					if(fProperties[i].systemID >= 8700 && fProperties[i].systemID <= 8800 && fProperties[i].detectorNumber == fPlasticNumber[j]) {	
-						fHistoManager->FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i], GetTotalCounter(), GetElasticCounter(), GetInelasticCounter(), GetTotScintPhoton(), fHitTrackerD[9][i]/degree, fHitTrackerD[10][i]/degree, fHitTrackerD[11][i]/nanosecond, fHitTrackerD[12][i]/cm, fHitTrackerD[13][i]/cm, fHitTrackerD[14][i]/cm, fHitTrackerD[15][i]/nanosecond, fHitTrackerD[16][i]/cm, fHitTrackerD[17][i]/cm, fHitTrackerD[18][i]/cm, fHitTrackerD[19][i]/keV, fHitTrackerD[20][i]/keV, fTop1Counter[j], fTop2Counter[j], fTop3Counter[j], fBottom1Counter[j], fBottom2Counter[j], fBottom3Counter[j], fFrontTop1Counter[j], fFrontTop2Counter[j], fFrontMid1Counter[j], fFrontMid2Counter[j], fFrontBottom1Counter[j], fFrontBottom2Counter[j], fCollectionTimeTop1Vector[j], fCollectionTimeTop2Vector[j], fCollectionTimeTop3Vector[j], fCollectionTimeBottom1Vector[j], fCollectionTimeBottom2Vector[j], fCollectionTimeBottom3Vector[j], fCollectionTimeFrontTop1Vector[j], fCollectionTimeFrontTop2Vector[j], fCollectionTimeFrontMid1Vector[j], fCollectionTimeFrontMid2Vector[j], fCollectionTimeFrontBottom1Vector[j], fCollectionTimeFrontBottom2Vector[j], fOpTimeVector[j], fOpEnergyVector[j]);
+						fHistoManager->FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i], GetTotalCounter(), GetElasticCounter(), GetInelasticCounter(), GetTotScintPhoton(), fHitTrackerD[9][i]/degree, fHitTrackerD[10][i]/degree, fHitTrackerD[11][i]/nanosecond, fHitTrackerD[12][i]/cm, fHitTrackerD[13][i]/cm, fHitTrackerD[14][i]/cm, fHitTrackerD[15][i]/nanosecond, fHitTrackerD[16][i]/cm, fHitTrackerD[17][i]/cm, fHitTrackerD[18][i]/cm, GetPEkin()/keV, GetPEdep()/keV, fTop1Counter[j], fTop2Counter[j], fTop3Counter[j], fBottom1Counter[j], fBottom2Counter[j], fBottom3Counter[j], fFrontTop1Counter[j], fFrontTop2Counter[j], fFrontMid1Counter[j], fFrontMid2Counter[j], fFrontBottom1Counter[j], fFrontBottom2Counter[j], fCollectionTimeTop1Vector[j], fCollectionTimeTop2Vector[j], fCollectionTimeTop3Vector[j], fCollectionTimeBottom1Vector[j], fCollectionTimeBottom2Vector[j], fCollectionTimeBottom3Vector[j], fCollectionTimeFrontTop1Vector[j], fCollectionTimeFrontTop2Vector[j], fCollectionTimeFrontMid1Vector[j], fCollectionTimeFrontMid2Vector[j], fCollectionTimeFrontBottom1Vector[j], fCollectionTimeFrontBottom2Vector[j], fOpTimeVector[j], fOpEnergyVector[j]);
 						break;
 					}					
 				}			
 				if(j == fPlasticHits) {
-					fHistoManager->FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i], GetTotalCounter(), GetElasticCounter(), GetInelasticCounter(), GetTotScintPhoton(), fHitTrackerD[9][i]/degree, fHitTrackerD[10][i]/degree, fHitTrackerD[11][i]/nanosecond, fHitTrackerD[12][i]/cm, fHitTrackerD[13][i]/cm, fHitTrackerD[14][i]/cm, fHitTrackerD[15][i]/nanosecond, fHitTrackerD[16][i]/cm, fHitTrackerD[17][i]/cm, fHitTrackerD[18][i]/cm, fHitTrackerD[19][i]/keV, fHitTrackerD[20][i]/keV);
+					fHistoManager->FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i], GetTotalCounter(), GetElasticCounter(), GetInelasticCounter(), GetTotScintPhoton(), fHitTrackerD[9][i]/degree, fHitTrackerD[10][i]/degree, fHitTrackerD[11][i]/nanosecond, fHitTrackerD[12][i]/cm, fHitTrackerD[13][i]/cm, fHitTrackerD[14][i]/cm, fHitTrackerD[15][i]/nanosecond, fHitTrackerD[16][i]/cm, fHitTrackerD[17][i]/cm, fHitTrackerD[18][i]/cm, GetPEkin()/keV, GetPEdep()/keV);
 				}
 			}		
 			for(G4int i = 0; i < fNumberOfSteps; i++) {
@@ -167,7 +167,7 @@ void EventAction::AddHitTracker(const DetectorProperties& properties, const G4in
 			// Optical photons do not obey energy conservation and their energy must not be tallied
 			//if (particleType == 8) continue;
 			fHitTrackerD[0][i] = fHitTrackerD[0][i] + depEnergy;
-			fHitTrackerD[20][i] = fHitTrackerD[20][i] + PEdep;
+			//fHitTrackerD[20][i] = fHitTrackerD[20][i] + PEdep;
 
 			return;
 			}
@@ -205,8 +205,9 @@ void EventAction::AddHitTracker(const DetectorProperties& properties, const G4in
 	fHitTrackerD[16][fNumberOfHits] = TOFPosMulti.x(); //based on >2 scatter
 	fHitTrackerD[17][fNumberOfHits] = TOFPosMulti.y(); //based on >2 scatter
 	fHitTrackerD[18][fNumberOfHits] = TOFPosMulti.z(); //based on >2 scatter
-	fHitTrackerD[19][fNumberOfHits] = PEkin; //kinetic energy of neutron in plastic
-	fHitTrackerD[20][fNumberOfHits] = PEdep; //energy is plastic
+	//fHitTrackerD[19][fNumberOfHits] = PEkin; //kinetic energy of neutron in plastic
+	fHitTrackerD[19][fNumberOfHits] = GetPEkin(); //kinetic energy of neutron in plastic
+	fHitTrackerD[20][fNumberOfHits] = GetPEdep(); //energy is plastic
 
 	++fNumberOfHits;
 
@@ -433,9 +434,34 @@ G4double EventAction::SpiceErfc() {
 	return 0.;
 }
 
+bool EventAction::PhotonDetectionEfficiency(G4double ekin) {
+	G4double uni = G4UniformRand();
+	G4double wave = 1239.8/(ekin*1.e6); //nm
 
+	//G4cout << "Uni: " << uni << G4endl;
+	//G4cout << "ekin: " << ekin << G4endl;
+	//G4cout << "wavelength: " << wave << G4endl;
+        G4double prob = 0;
+	G4bool pde = false;
+	if (wave < 325) prob = 0.05;
+	if (wave >= 325 && wave < 350) prob = 0.25;
+	if (wave >= 350 && wave < 375) prob = 0.3;
+	if (wave >= 375 && wave < 400) prob = 0.38;
+	if (wave >= 400 && wave < 450) prob = 0.4;
+	if (wave >= 450 && wave < 475) prob = 0.38;
+	if (wave >= 475 && wave < 500) prob = 0.32;
+	if (wave >= 500 && wave < 525) prob = 0.28;
+	if (wave >= 525 && wave < 550) prob = 0.2;
+	if (wave > 550) prob = 0.15;
+	
+	//prob = 0.3;
+	
+	if (uni <= prob) pde = true;
+	pde=true;
+	return pde;
+}
 void EventAction::SetScintPhotonTimeTop1(G4double top, G4int detNum) {
-//	G4cout << "Top hit: " << fPlasticHits << G4endl;
+	//	G4cout << "Top hit: " << fPlasticHits << G4endl;
 	for(G4int i = 0; i < fPlasticHits; i++) {
 		if(fPlasticNumber[i]== detNum) {
 

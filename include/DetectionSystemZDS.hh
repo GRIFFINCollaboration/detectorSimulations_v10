@@ -54,18 +54,22 @@ private:
 
     // Assembly volumes
     G4AssemblyVolume* fAssemblyZDS;                 // Contains all non-sensitive materials
-
+    
+    G4bool fAddWrap;
     G4double fStartPhi;
     G4double fDeltaPhi;
     G4double fDiameter;
     G4double fRadialDistance;
+    G4double fWrapThickness;
     G4double fScintillatorWidth;
     G4double fPMTWidth;
     G4String fZDSMaterial;
     G4String fPMTMaterial;
+    G4String fWrapMaterial;
    
     G4LogicalVolume*  fZDSLog;
     G4LogicalVolume*  fPMTLog;
+    G4LogicalVolume*  fWrapLog;
    
     G4Color bronze;
     G4Color black;

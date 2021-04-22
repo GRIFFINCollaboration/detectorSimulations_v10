@@ -107,7 +107,7 @@ DetectionSystemDaemonTiles::DetectionSystemDaemonTiles(G4double thickness, G4int
 	// of DESCANT, and then Saint Gobain rounding the result to generate the data files (below).
 	fSurfCheck = true;
 	// set DAEMON Wrap and segment on/off
-	fAddSegment = false;
+	fAddSegment = true;
 	fAddWrap = true;
 
 
@@ -1002,7 +1002,7 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 	//If no scintillation yield for p,d,t,a,C then they all default to the electron yield.
 	//Have to uncomment line in ConstructOp that allows for this to work with boolean (true)
 	//The following data is for BC400, very similar in properties and composition then BC408.
-	const G4int num2 = 4;
+/*	const G4int num2 = 4;
 	G4double e_range[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
 	G4double yield_e[num2] = {10., 1000., 10000., 100000.};//More realistic
 	//G4double yield_e[num2] = {1000., 10000., 10000., 100000.}; //testing
@@ -1011,12 +1011,6 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 	G4double yield_t[num2] = {1., 65., 1500., 45000.};//no data provided, assume same order of magnitude as proton
 	G4double yield_a[num2] = {1., 20., 200., 14000.};
 	G4double yield_C[num2] = {1., 10., 70., 600.};
-	assert(sizeof(e_test) == sizeof(num_test));
-	assert(sizeof(p_test) == sizeof(num_test));
-	assert(sizeof(d_test) == sizeof(num_test));
-	assert(sizeof(t_test) == sizeof(num_test));
-	assert(sizeof(a_test) == sizeof(num_test));
-	assert(sizeof(C_test) == sizeof(num_test));
 
 	scintillatorMPT->AddProperty("ELECTRONSCINTILLATIONYIELD", e_range, yield_e, num2)->SetSpline(true);
 	scintillatorMPT->AddProperty("PROTONSCINTILLATIONYIELD", e_range, yield_p, num2)->SetSpline(true);
@@ -1024,6 +1018,61 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 	scintillatorMPT->AddProperty("TRITONSCINTILLATIONYIELD", e_range, yield_t, num2)->SetSpline(true);
 	scintillatorMPT->AddProperty("ALPHASCINTILLATIONYIELD", e_range, yield_a, num2)->SetSpline(true);
 	scintillatorMPT->AddProperty("IONSCINTILLATIONYIELD", e_range, yield_C, num2)->SetSpline(true);
+*/	
+	int energyPoints = 26;
+	G4double pEF = 0.4; //SiPM efficiency (TODO - discuss it)
+	//G4double protonScalingFact = 1.35;
+	G4double protonScalingFact = 1;
+	G4double psF = protonScalingFact;
+
+
+	//light yield - data taken form V.V. Verbinski et al, Nucl. Instrum. & Meth. 65 (1968) 8-25
+	G4double particleEnergy[] = { 0.001*MeV, 0.1*MeV, 0.13*MeV, 0.17*MeV, 
+		0.2*MeV, 0.24*MeV, 0.3*MeV, 0.34*MeV, 
+		0.4*MeV, 0.48*MeV, 0.6*MeV, 0.72*MeV, 0.84*MeV,
+		1.*MeV, 1.3*MeV, 1.7*MeV, 2.*MeV, 
+		2.4*MeV, 3.*MeV, 3.4*MeV, 4.*MeV, 4.8*MeV, 
+		6.*MeV, 7.2*MeV, 8.4*MeV, 10.*MeV };
+	G4double electronYield[] = {1*pEF, 1000*pEF, 1300*pEF, 1700*pEF,
+		2000*pEF, 2400*pEF, 3000*pEF, 3400*pEF,
+		4000*pEF, 4800*pEF, 6000*pEF, 7200*pEF,
+		8400*pEF,10000*pEF, 13000*pEF, 17000*pEF,
+		20000*pEF, 24000*pEF, 30000*pEF, 34000*pEF,
+		40000*pEF, 48000*pEF, 60000*pEF, 72000*pEF,
+		84000*pEF, 100000*pEF };
+	G4double protonYield[] = { 0.6*pEF*psF, 67.1*pEF*psF, 88.6*pEF*psF,
+		120.7*pEF*psF,
+		146.5*pEF*psF, 183.8*pEF*psF, 246*pEF*psF, 290*pEF*psF,
+		365*pEF*psF, 483*pEF*psF, 678*pEF*psF, 910*pEF*psF,
+		1175*pEF*psF, 1562*pEF*psF, 2385*pEF*psF, 3660*pEF*psF,
+		4725*pEF*psF,6250*pEF*psF, 8660*pEF*psF, 10420*pEF*psF,
+		13270*pEF*psF,17180*pEF*psF, 23100*pEF*psF,
+		29500*pEF*psF, 36200*pEF*psF, 45500*pEF*psF};
+	G4double alphaYield[] = { 0.2*pEF, 16.4*pEF, 20.9*pEF, 27.2*pEF,
+		32*pEF, 38.6*pEF, 49*pEF, 56.4*pEF,
+		67.5*pEF, 83*pEF, 108*pEF, 135*pEF,
+		165.6*pEF, 210*pEF, 302*pEF, 441*pEF,
+		562*pEF, 750*pEF, 1100*pEF, 1365*pEF,
+		1815*pEF, 2555*pEF, 4070*pEF, 6070*pEF,
+		8700*pEF, 13200*pEF };
+
+	G4double ionYield[] = { 0.2*pEF, 10.4*pEF, 12.7*pEF, 15.7*pEF,
+		17.9*pEF, 20.8*pEF, 25.1*pEF, 27.9*pEF,
+		31.9*pEF, 36.8*pEF, 43.6*pEF, 50.2*pEF,
+		56.9*pEF, 65.7*pEF, 81.3*pEF, 101.6*pEF,
+		116.5*pEF, 136.3*pEF, 166.15*pEF, 187.1*pEF,
+		218.6*pEF, 260.54*pEF, 323.5*pEF, 387.5*pEF,
+		451.54*pEF, 539.9*pEF };
+	assert(sizeof(electronYield) == sizeof(particleEnergy));
+	assert(sizeof(protonYield) == sizeof(particleEnergy));
+	assert(sizeof(alphaYield) == sizeof(particleEnergy));
+	assert(sizeof(ionYield) == sizeof(particleEnergy));
+	scintillatorMPT->AddProperty("ELECTRONSCINTILLATIONYIELD", particleEnergy, electronYield, energyPoints)->SetSpline(true);
+	scintillatorMPT->AddProperty("PROTONSCINTILLATIONYIELD", particleEnergy, protonYield, energyPoints)->SetSpline(true);
+	scintillatorMPT->AddProperty("DEUTERONSCINTILLATIONYIELD", particleEnergy, protonYield, energyPoints)->SetSpline(true);
+	scintillatorMPT->AddProperty("TRITONSCINTILLATIONYIELD", particleEnergy, protonYield, energyPoints)->SetSpline(true);
+	scintillatorMPT->AddProperty("ALPHASCINTILLATIONYIELD", particleEnergy, alphaYield, energyPoints)->SetSpline(true);
+	scintillatorMPT->AddProperty("IONSCINTILLATIONYIELD", particleEnergy, ionYield, energyPoints)->SetSpline(true);
 
 	//scintillatorMPT->AddConstProperty("SCINTILLATIONYIELD", 10000./MeV); //Scintillation Efficiency - characteristic light yield //10000./MeV
 	///////
@@ -1136,8 +1185,7 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 	*/
 	G4double rIndex_Teflon[numShort] = {1.35, 1.35, 1.35}; //Taken from wikipedia
 	ScintWrapperMPT->AddProperty("RINDEX", photonEnergyShort, rIndex_Teflon, nEntriesShort)->SetSpline(true);  //refractive index can change with energy
-	G4double reflectivity[numShort] = {0.95, 0.95, 0.95};
-	//G4double reflectivity[numShort] = {0.9999, 0.9999, 0.9999};
+	G4double reflectivity[numShort] = {0.99, 0.99, 0.99};
 	ScintWrapperMPT->AddProperty("REFLECTIVITY", photonEnergyShort, reflectivity, nEntriesShort)->SetSpline(true);  // light reflected / incident light.
 	//G4double efficiency[numShort] = {0.95, 0.95, 0.95};
 	//ScintWrapperMPT->AddProperty("EFFICIENCY",photonEnergyShort,efficiency,nEntriesShort); //This is the Quantum Efficiency of the photocathode = # electrons / # of incident photons

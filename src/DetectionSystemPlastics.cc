@@ -184,7 +184,7 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	//If no scintillation yield for p,d,t,a,C then they all default to the electron yield.
 	//Have to uncomment line in ConstructOp that allows for this to work with boolean (true)
 	//The following data is for BC400, very similar in properties and composition then BC408.
-	const G4int num2 = 4;
+/*	const G4int num2 = 4;
 	G4double e_range[num2] = {1.*keV, 0.1*MeV, 1.*MeV, 10.*MeV};
 	G4double yield_e[num2] = {10., 1000., 10000., 100000.};//More realistic
 	//G4double yield_e[num2] = {1000., 10000., 10000., 100000.}; //testing
@@ -193,12 +193,6 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	G4double yield_t[num2] = {1., 65., 1500., 45000.};//no data provided, assume same order of magnitude as proton
 	G4double yield_a[num2] = {1., 20., 200., 14000.};
 	G4double yield_C[num2] = {1., 10., 70., 600.};
-	assert(sizeof(e_test) == sizeof(num_test));
-	assert(sizeof(p_test) == sizeof(num_test));
-	assert(sizeof(d_test) == sizeof(num_test));
-	assert(sizeof(t_test) == sizeof(num_test));
-	assert(sizeof(a_test) == sizeof(num_test));
-	assert(sizeof(C_test) == sizeof(num_test));
 
 	scintillatorMPT->AddProperty("ELECTRONSCINTILLATIONYIELD", e_range, yield_e, num2)->SetSpline(true);
 	scintillatorMPT->AddProperty("PROTONSCINTILLATIONYIELD", e_range, yield_p, num2)->SetSpline(true);
@@ -206,6 +200,61 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	scintillatorMPT->AddProperty("TRITONSCINTILLATIONYIELD", e_range, yield_t, num2)->SetSpline(true);
 	scintillatorMPT->AddProperty("ALPHASCINTILLATIONYIELD", e_range, yield_a, num2)->SetSpline(true);
 	scintillatorMPT->AddProperty("IONSCINTILLATIONYIELD", e_range, yield_C, num2)->SetSpline(true);
+*/	
+	int energyPoints = 26;
+	G4double pEF = 0.4; //SiPM efficiency (TODO - discuss it)
+	//G4double protonScalingFact = 1.35;
+	G4double protonScalingFact = 1;
+	G4double psF = protonScalingFact;
+
+
+	//light yield - data taken form V.V. Verbinski et al, Nucl. Instrum. & Meth. 65 (1968) 8-25
+	G4double particleEnergy[] = { 0.001*MeV, 0.1*MeV, 0.13*MeV, 0.17*MeV, 
+		0.2*MeV, 0.24*MeV, 0.3*MeV, 0.34*MeV, 
+		0.4*MeV, 0.48*MeV, 0.6*MeV, 0.72*MeV, 0.84*MeV,
+		1.*MeV, 1.3*MeV, 1.7*MeV, 2.*MeV, 
+		2.4*MeV, 3.*MeV, 3.4*MeV, 4.*MeV, 4.8*MeV, 
+		6.*MeV, 7.2*MeV, 8.4*MeV, 10.*MeV };
+	G4double electronYield[] = {1*pEF, 1000*pEF, 1300*pEF, 1700*pEF,
+		2000*pEF, 2400*pEF, 3000*pEF, 3400*pEF,
+		4000*pEF, 4800*pEF, 6000*pEF, 7200*pEF,
+		8400*pEF,10000*pEF, 13000*pEF, 17000*pEF,
+		20000*pEF, 24000*pEF, 30000*pEF, 34000*pEF,
+		40000*pEF, 48000*pEF, 60000*pEF, 72000*pEF,
+		84000*pEF, 100000*pEF };
+	G4double protonYield[] = { 0.6*pEF*psF, 67.1*pEF*psF, 88.6*pEF*psF,
+		120.7*pEF*psF,
+		146.5*pEF*psF, 183.8*pEF*psF, 246*pEF*psF, 290*pEF*psF,
+		365*pEF*psF, 483*pEF*psF, 678*pEF*psF, 910*pEF*psF,
+		1175*pEF*psF, 1562*pEF*psF, 2385*pEF*psF, 3660*pEF*psF,
+		4725*pEF*psF,6250*pEF*psF, 8660*pEF*psF, 10420*pEF*psF,
+		13270*pEF*psF,17180*pEF*psF, 23100*pEF*psF,
+		29500*pEF*psF, 36200*pEF*psF, 45500*pEF*psF};
+	G4double alphaYield[] = { 0.2*pEF, 16.4*pEF, 20.9*pEF, 27.2*pEF,
+		32*pEF, 38.6*pEF, 49*pEF, 56.4*pEF,
+		67.5*pEF, 83*pEF, 108*pEF, 135*pEF,
+		165.6*pEF, 210*pEF, 302*pEF, 441*pEF,
+		562*pEF, 750*pEF, 1100*pEF, 1365*pEF,
+		1815*pEF, 2555*pEF, 4070*pEF, 6070*pEF,
+		8700*pEF, 13200*pEF };
+
+	G4double ionYield[] = { 0.2*pEF, 10.4*pEF, 12.7*pEF, 15.7*pEF,
+		17.9*pEF, 20.8*pEF, 25.1*pEF, 27.9*pEF,
+		31.9*pEF, 36.8*pEF, 43.6*pEF, 50.2*pEF,
+		56.9*pEF, 65.7*pEF, 81.3*pEF, 101.6*pEF,
+		116.5*pEF, 136.3*pEF, 166.15*pEF, 187.1*pEF,
+		218.6*pEF, 260.54*pEF, 323.5*pEF, 387.5*pEF,
+		451.54*pEF, 539.9*pEF };
+	assert(sizeof(electronYield) == sizeof(particleEnergy));
+	assert(sizeof(protonYield) == sizeof(particleEnergy));
+	assert(sizeof(alphaYield) == sizeof(particleEnergy));
+	assert(sizeof(ionYield) == sizeof(particleEnergy));
+	scintillatorMPT->AddProperty("ELECTRONSCINTILLATIONYIELD", particleEnergy, electronYield, energyPoints)->SetSpline(true);
+	scintillatorMPT->AddProperty("PROTONSCINTILLATIONYIELD", particleEnergy, protonYield, energyPoints)->SetSpline(true);
+	scintillatorMPT->AddProperty("DEUTERONSCINTILLATIONYIELD", particleEnergy, protonYield, energyPoints)->SetSpline(true);
+	scintillatorMPT->AddProperty("TRITONSCINTILLATIONYIELD", particleEnergy, protonYield, energyPoints)->SetSpline(true);
+	scintillatorMPT->AddProperty("ALPHASCINTILLATIONYIELD", particleEnergy, alphaYield, energyPoints)->SetSpline(true);
+	scintillatorMPT->AddProperty("IONSCINTILLATIONYIELD", particleEnergy, ionYield, energyPoints)->SetSpline(true);
 	
 	//scintillatorMPT->AddConstProperty("SCINTILLATIONYIELD", 10000./MeV); //Scintillation Efficiency - characteristic light yield //10000./MeV
 	///////
@@ -299,12 +348,17 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	G4MaterialPropertiesTable * ScintWrapperMPT = new G4MaterialPropertiesTable();
 	ScintWrapper->SetModel(unified);  // unified or glisur
 	ScintWrapper->SetType(dielectric_dielectric);  // dielectric and dielectric or metal?
+	//ScintWrapper->SetType(dielectric_metal);  // dielectric and dielectric or metal?
 	// teflon wrapping on polished surface->front/back painted // Teflon should be Lambertian in air, specular in optical grease
 	//polished front painted is more simplified. Only specular spike reflection
 	ScintWrapper->SetFinish(polishedfrontpainted);  
+	//ScintWrapper->SetFinish(polished);  
+	//ground front painted is more simplified. Only lambertain reflection
+	//ScintWrapper->SetFinish(groundfrontpainted);  
 
-	/*	//poished back painted is maybe more realistic, need to then include sigma alpha (angle of the micro facet to the average normal surface) 
+/*		//poished back painted is maybe more realistic, need to then include sigma alpha (angle of the micro facet to the average normal surface) 
 		ScintWrapper->SetFinish(polishedbackpainted);	
+		//ScintWrapper->SetFinish(groundbackpainted);	
 		ScintWrapper->SetSigmaAlpha(0.1); // 0 for smooth, 1 for max roughness
 		const G4int NUM =3;
 		G4double pp[NUM] = {2.038*eV, 4.144*eV};
@@ -317,10 +371,16 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	ScintWrapperMPT->AddProperty("BACKSCATTERCONSTANT",pp,backscatter,NUM); //probability of exact back scatter based on mutiple reflections within the deep groove
 	//end of polished back painted
 	*/
+/*	ScintWrapper->SetModel(DAVIS);  // unified or glisur
+	ScintWrapper->SetType(dielectric_LUTDAVIS);  // dielectric and dielectric or metal?
+	ScintWrapper->SetFinish(PolishedESR_LUT);  
+*/	//ScintWrapper->SetFinish(polishedtyvekair);  
+	
+	
 	G4double rIndex_Teflon[numShort] = {1.35, 1.35, 1.35}; //Taken from wikipedia
 	ScintWrapperMPT->AddProperty("RINDEX", photonEnergyShort, rIndex_Teflon, nEntriesShort)->SetSpline(true);  //refractive index can change with energy
-	G4double reflectivity[numShort] = {0.95, 0.95, 0.95};
-	//G4double reflectivity[numShort] = {0.9999, 0.9999, 0.9999};
+	//G4double reflectivity[numShort] = {0.95, 0.95, 0.95};
+	G4double reflectivity[numShort] = {0.99, 0.99, 0.99};
 	ScintWrapperMPT->AddProperty("REFLECTIVITY", photonEnergyShort, reflectivity, nEntriesShort)->SetSpline(true);  // light reflected / incident light.
 	//G4double efficiency[numShort] = {0.95, 0.95, 0.95};
 	//ScintWrapperMPT->AddProperty("EFFICIENCY",photonEnergyShort,efficiency,nEntriesShort); //This is the Quantum Efficiency of the photocathode = # electrons / # of incident photons
@@ -385,9 +445,12 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	//G4double pmtSize = 4.5*cm;
 	//G4double pmtThick = 0.6*cm;//for 1 by 8 array pmtThick = 6 mm
 	G4double pmtThick = 1.2*cm;
+	pmtThick = fScintillatorWidth*pmtThick/1.5/10.; //Normalize to 1.5cm thickness
+	G4double detWidth14 = 56.1429; //mm
 	G4double calcRadii = (outerRadius - innerRadius - pmtThick)/2.; 
 	//G4double pmt_width = 0.5*cm;
-	G4double pmt_width = pmtThick;
+	G4double pmt_width = 1.2*cm;
+	pmt_width = pmt_width*detWidth/detWidth14;
 	G4double pmtSize = pmtThick+1.*cm;
 	G4double BeamLineXY = 6.5*cm;
 	//G4VSolid * boxBars = new G4Box("boxBars", detWidth/2., 1.*m , 1.*m); //old geometry, new is inside loop currently
@@ -403,8 +466,8 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	G4IntersectionSolid * interSolidWrap;
 	G4SubtractionSolid * subtractSolidWrap;
 	G4VSolid * SphereInnerWrap = new G4Sphere("SphereInnerWrap", innerRadius-fAirGap, outerRadius+fAirGap, startPhi, deltaPhi, startTheta, deltaThetaWrap); //changed from innerRadius->Wrap
-	G4VSolid * SpherePMT_Face1 = new G4Sphere("SpherePMT_Face1", innerRadius-pmt_width, innerRadius, startPhi, deltaPhi, startTheta, deltaTheta);
-	G4VSolid * SpherePMT_FaceLarger = new G4Sphere("SpherePMT_FaceLarger", innerRadius-pmt_width, innerRadius+fWrapThickness, startPhi, deltaPhi, startTheta, deltaTheta);
+	G4VSolid * SpherePMT_Face1 = new G4Sphere("SpherePMT_Face1", innerRadius-pmtThick, innerRadius, startPhi, deltaPhi, startTheta, deltaTheta);
+	G4VSolid * SpherePMT_FaceLarger = new G4Sphere("SpherePMT_FaceLarger", innerRadius-pmtThick, innerRadius+fWrapThickness, startPhi, deltaPhi, startTheta, deltaTheta);
 	G4VSolid * SpherePMT1 = new G4Sphere("SpherePMT1", innerRadius+calcRadii, outerRadius-calcRadii, startPhiPMT1, deltaPhiPMT1, startThetaPMT, deltaThetaPMT); //changed from innerRadius->Wrap
 	G4VSolid * SpherePMT2 = new G4Sphere("SpherePMT2", innerRadius+calcRadii, outerRadius-calcRadii, startPhiPMT2, deltaPhiPMT2, startThetaPMT, deltaThetaPMT);//changed from innerRadius->Wrap
 	//G4VSolid * SpherePMT1 = new G4Sphere("SpherePMT1", innerRadius+0.1*mm, outerRadius-0.1*mm, startPhiPMT1, deltaPhiPMT1, startThetaPMT, deltaThetaPMT); //changed from innerRadius->Wrap
@@ -518,13 +581,13 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		//G4VSolid * boxBarsPMTSmaller = new G4Box("boxBarsPMTSmaller", detWidth/2.-0.1*mm, pmt_width/2. , 1.*m);
 		//PMT1 = new G4IntersectionSolid("PMT1", SpherePMT1, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos, YFacePMT1+pmt_width/2., 50*cm));
 		//PMT2 = new G4IntersectionSolid("PMT2", SpherePMT2, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos, -YFacePMT1-pmt_width/2., 50*cm));
-		G4VSolid * boxBarsPMTSmaller = new G4Box("boxBarsPMTSmaller", pmtThick/2., pmt_width/2. , 1.*m);
-		PMT11 = new G4IntersectionSolid("PMT11", SpherePMT1, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos - pmtThick -1.*mm, YFacePMT1+pmt_width/2., 50*cm));
+		G4VSolid * boxBarsPMTSmaller = new G4Box("boxBarsPMTSmaller", pmt_width/2., pmt_width/2. , 1.*m);
+		PMT11 = new G4IntersectionSolid("PMT11", SpherePMT1, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos - pmt_width -1.*mm, YFacePMT1+pmt_width/2., 50*cm));
 		PMT12 = new G4IntersectionSolid("PMT12", SpherePMT1, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos, YFacePMT1+pmt_width/2., 50*cm));
-		PMT13 = new G4IntersectionSolid("PMT13", SpherePMT1, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos + pmtThick+1.*mm, YFacePMT1+pmt_width/2., 50*cm));
-		PMT21 = new G4IntersectionSolid("PMT21", SpherePMT2, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos - pmtThick -1.*mm, -YFacePMT1-pmt_width/2., 50*cm));
+		PMT13 = new G4IntersectionSolid("PMT13", SpherePMT1, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos + pmt_width+1.*mm, YFacePMT1+pmt_width/2., 50*cm));
+		PMT21 = new G4IntersectionSolid("PMT21", SpherePMT2, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos - pmt_width -1.*mm, -YFacePMT1-pmt_width/2., 50*cm));
 		PMT22 = new G4IntersectionSolid("PMT22", SpherePMT2, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos, -YFacePMT1-pmt_width/2., 50*cm));
-		PMT23 = new G4IntersectionSolid("PMT23", SpherePMT2, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos + pmtThick +1.*mm, -YFacePMT1-pmt_width/2., 50*cm));
+		PMT23 = new G4IntersectionSolid("PMT23", SpherePMT2, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos + pmt_width +1.*mm, -YFacePMT1-pmt_width/2., 50*cm));
 
 		//Calc beamline middle face pmt placement above/below beamline
 		G4double y1=YFacePMT1, y2=(BeamLineXY+pmtSize) , z1, z2, y3, z3;
@@ -547,24 +610,24 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		//Face PMTs, placing them along the vertical at -1/3 and +1/3
 		//G4VSolid * boxBarsPMTFace = new G4Box("boxBarsPMTFace", detWidth/2.-0.1*mm, pmtThick/2. , 1.*m); //for the 1 by 8 configuration
 		//G4VSolid * boxBarsPMTFace = new G4Box("boxBarsPMTFace", detWidth/2.-0.1*mm, pmtThick , 1.*m); // for the 2, 4 by 4 configuration
-		G4VSolid * boxBarsPMTFace1 = new G4Box("boxBarsPMTFace1", pmtThick, pmtThick , 1.*m); // for the 2, 4 by 4 configuration, independant 1
+		G4VSolid * boxBarsPMTFace1 = new G4Box("boxBarsPMTFace1", pmt_width, pmt_width , 1.*m); // for the 2, 4 by 4 configuration, independant 1
 		//PMT_Front1 = new G4IntersectionSolid("PMT_Front1", SpherePMT_Face1, boxBarsPMTFace, rot1, G4ThreeVector(startPos, YFrontPlacement, 50*cm)); //Y used to be YFacePMT1/3.
 		//PMT_Front2 = new G4IntersectionSolid("PMT_Front2", SpherePMT_Face1, boxBarsPMTFace, rot1, G4ThreeVector(startPos, -YFrontPlacement, 50.*cm)); //Y used to be -YFacePMT1/3.
-		PMT_Front11 = new G4IntersectionSolid("PMT_Front11", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmtThick-1.*mm, YFrontPlacement, 50*cm)); //Y used to be YFacePMT1/3. independant 1
-		PMT_Front12 = new G4IntersectionSolid("PMT_Front12", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmtThick+1.*mm, YFrontPlacement, 50*cm)); //Y used to be YFacePMT1/3. independant 2
-		PMT_Front21 = new G4IntersectionSolid("PMT_Front21", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmtThick-1.*mm, -YFrontPlacement, 50.*cm)); //Y used to be -YFacePMT1/3. independant 1
-		PMT_Front22 = new G4IntersectionSolid("PMT_Front22", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmtThick+1.*mm, -YFrontPlacement, 50.*cm)); //Y used to be -YFacePMT1/3. independant 2
+		PMT_Front11 = new G4IntersectionSolid("PMT_Front11", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmt_width-1.*mm, YFrontPlacement, 50*cm)); //Y used to be YFacePMT1/3. independant 1
+		PMT_Front12 = new G4IntersectionSolid("PMT_Front12", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmt_width+1.*mm, YFrontPlacement, 50*cm)); //Y used to be YFacePMT1/3. independant 2
+		PMT_Front21 = new G4IntersectionSolid("PMT_Front21", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmt_width-1.*mm, -YFrontPlacement, 50.*cm)); //Y used to be -YFacePMT1/3. independant 1
+		PMT_Front22 = new G4IntersectionSolid("PMT_Front22", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmt_width+1.*mm, -YFrontPlacement, 50.*cm)); //Y used to be -YFacePMT1/3. independant 2
 
 		//Face PMTs, placing the mid pmts  the vertical at 0 for first and last, or the middle wrt to the beamline if above or below
 		if (i == 0 || i == (fNumDet-1) ) {
 			//PMT_FrontMid = new G4IntersectionSolid("PMT_FrontMid", SpherePMT_Face1, boxBarsPMTFace, rot1, G4ThreeVector(startPos, 0., 0.));
-			PMT_FrontMid1 = new G4IntersectionSolid("PMT_FrontMid1", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmtThick-1.*mm, 0., 0.)); //independant 1
-			PMT_FrontMid2 = new G4IntersectionSolid("PMT_FrontMid2", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmtThick+1.*mm, 0., 0.)); //independant 2
+			PMT_FrontMid1 = new G4IntersectionSolid("PMT_FrontMid1", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmt_width-1.*mm, 0., 0.)); //independant 1
+			PMT_FrontMid2 = new G4IntersectionSolid("PMT_FrontMid2", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmt_width+1.*mm, 0., 0.)); //independant 2
 		} else{
 			//PMT_FrontMid = new G4IntersectionSolid("PMT_FrontMid", SpherePMT_Face1, boxBarsPMTFace, rot1, G4ThreeVector(startPos, (YFacePMT1+pmtSize+BeamLineXY)/2., 0.)); //Y centered
 			//PMT_FrontMid = new G4IntersectionSolid("PMT_FrontMid", SpherePMT_Face1, boxBarsPMTFace, rot1, G4ThreeVector(startPos, BeamlineY, 0.)); //Center of arc
-			PMT_FrontMid1 = new G4IntersectionSolid("PMT_FrontMid1", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmtThick-1.*mm, BeamlineY, 0.)); //Center of arc, independant 1
-			PMT_FrontMid2 = new G4IntersectionSolid("PMT_FrontMid2", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmtThick+1.*mm, BeamlineY, 0.)); //Center of arc, independant 2
+			PMT_FrontMid1 = new G4IntersectionSolid("PMT_FrontMid1", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmt_width-1.*mm, BeamlineY, 0.)); //Center of arc, independant 1
+			PMT_FrontMid2 = new G4IntersectionSolid("PMT_FrontMid2", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmt_width+1.*mm, BeamlineY, 0.)); //Center of arc, independant 2
 		}
 
 
@@ -579,29 +642,29 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		//G4VSolid * boxBarsPMTSmaller2 = new G4Box("boxBarsPMTSmaller2", detWidth/2.-0.1*mm, pmt_width/2.+fWrapThickness , 1.*m);
 		//PMT1Larger = new G4IntersectionSolid("PMT1Larger", SpherePMT1, boxBarsPMTSmaller2, rot1, G4ThreeVector(startPos, YFacePMT1+pmt_width/2., 50*cm));
 		//PMT2Larger = new G4IntersectionSolid("PMT2Larger", SpherePMT2, boxBarsPMTSmaller2, rot1, G4ThreeVector(startPos, -YFacePMT1-pmt_width/2., 50*cm));
-		G4VSolid * boxBarsPMTSmaller2 = new G4Box("boxBarsPMTSmaller2", pmtThick/2., pmt_width/2.+fWrapThickness , 1.*m);
-		PMT11Larger = new G4IntersectionSolid("PMT11Larger", SpherePMT1, boxBarsPMTSmaller2, rot1, G4ThreeVector(startPos- pmtThick -1.*mm, YFacePMT1+pmt_width/2., 50*cm));
+		G4VSolid * boxBarsPMTSmaller2 = new G4Box("boxBarsPMTSmaller2", pmt_width/2., pmt_width/2.+fWrapThickness , 1.*m);
+		PMT11Larger = new G4IntersectionSolid("PMT11Larger", SpherePMT1, boxBarsPMTSmaller2, rot1, G4ThreeVector(startPos- pmt_width -1.*mm, YFacePMT1+pmt_width/2., 50*cm));
 		PMT12Larger = new G4IntersectionSolid("PMT12Larger", SpherePMT1, boxBarsPMTSmaller2, rot1, G4ThreeVector(startPos, YFacePMT1+pmt_width/2., 50*cm));
-		PMT13Larger = new G4IntersectionSolid("PMT13Larger", SpherePMT1, boxBarsPMTSmaller2, rot1, G4ThreeVector(startPos+ pmtThick +1.*mm, YFacePMT1+pmt_width/2., 50*cm));
-		PMT21Larger = new G4IntersectionSolid("PMT21Larger", SpherePMT2, boxBarsPMTSmaller2, rot1, G4ThreeVector(startPos- pmtThick -1.*mm, -YFacePMT1-pmt_width/2., 50*cm));
+		PMT13Larger = new G4IntersectionSolid("PMT13Larger", SpherePMT1, boxBarsPMTSmaller2, rot1, G4ThreeVector(startPos+ pmt_width +1.*mm, YFacePMT1+pmt_width/2., 50*cm));
+		PMT21Larger = new G4IntersectionSolid("PMT21Larger", SpherePMT2, boxBarsPMTSmaller2, rot1, G4ThreeVector(startPos- pmt_width -1.*mm, -YFacePMT1-pmt_width/2., 50*cm));
 		PMT22Larger = new G4IntersectionSolid("PMT22Larger", SpherePMT2, boxBarsPMTSmaller2, rot1, G4ThreeVector(startPos, -YFacePMT1-pmt_width/2., 50*cm));
-		PMT23Larger = new G4IntersectionSolid("PMT23Larger", SpherePMT2, boxBarsPMTSmaller2, rot1, G4ThreeVector(startPos+ pmtThick +1.*mm, -YFacePMT1-pmt_width/2., 50*cm));
+		PMT23Larger = new G4IntersectionSolid("PMT23Larger", SpherePMT2, boxBarsPMTSmaller2, rot1, G4ThreeVector(startPos+ pmt_width +1.*mm, -YFacePMT1-pmt_width/2., 50*cm));
 
 		//PMT_FrontLarger1 = new G4IntersectionSolid("PMT_FrontLarger1", SpherePMT_FaceLarger, boxBarsPMTFace, rot1, G4ThreeVector(startPos, YFrontPlacement, 50*cm)); //Y used to be YFacePMT1/3.
 		//PMT_FrontLarger2 = new G4IntersectionSolid("PMT_FrontLarger2", SpherePMT_FaceLarger, boxBarsPMTFace, rot1, G4ThreeVector(startPos, -YFrontPlacement, 50.*cm)); //Y used to be -YFacePMT1/3.
-		PMT_FrontLarger11 = new G4IntersectionSolid("PMT_FrontLarger11", SpherePMT_FaceLarger, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmtThick-1.*mm, YFrontPlacement, 50*cm)); //Y used to be YFacePMT1/3., independant 1
-		PMT_FrontLarger12 = new G4IntersectionSolid("PMT_FrontLarger12", SpherePMT_FaceLarger, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmtThick+1.*mm, YFrontPlacement, 50*cm)); //Y used to be YFacePMT1/3., independant 2
-		PMT_FrontLarger21 = new G4IntersectionSolid("PMT_FrontLarger21", SpherePMT_FaceLarger, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmtThick-1.*mm, -YFrontPlacement, 50.*cm)); //Y used to be -YFacePMT1/3., independant 1
-		PMT_FrontLarger22 = new G4IntersectionSolid("PMT_FrontLarger22", SpherePMT_FaceLarger, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmtThick+1.*mm, -YFrontPlacement, 50.*cm)); //Y used to be -YFacePMT1/3., independant 2
+		PMT_FrontLarger11 = new G4IntersectionSolid("PMT_FrontLarger11", SpherePMT_FaceLarger, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmt_width-1.*mm, YFrontPlacement, 50*cm)); //Y used to be YFacePMT1/3., independant 1
+		PMT_FrontLarger12 = new G4IntersectionSolid("PMT_FrontLarger12", SpherePMT_FaceLarger, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmt_width+1.*mm, YFrontPlacement, 50*cm)); //Y used to be YFacePMT1/3., independant 2
+		PMT_FrontLarger21 = new G4IntersectionSolid("PMT_FrontLarger21", SpherePMT_FaceLarger, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmt_width-1.*mm, -YFrontPlacement, 50.*cm)); //Y used to be -YFacePMT1/3., independant 1
+		PMT_FrontLarger22 = new G4IntersectionSolid("PMT_FrontLarger22", SpherePMT_FaceLarger, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmt_width+1.*mm, -YFrontPlacement, 50.*cm)); //Y used to be -YFacePMT1/3., independant 2
 		if (i == 0 || i == (fNumDet-1) ) {
 			//PMT_FrontLargerMid = new G4IntersectionSolid("PMT_FrontLargerMid", SpherePMT_FaceLarger, boxBarsPMTFace, rot1, G4ThreeVector(startPos, 0., 0.));
-			PMT_FrontLargerMid1 = new G4IntersectionSolid("PMT_FrontLargerMid1", SpherePMT_FaceLarger, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmtThick-1.*mm, 0., 0.)); //independant 1
-			PMT_FrontLargerMid2 = new G4IntersectionSolid("PMT_FrontLargerMid2", SpherePMT_FaceLarger, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmtThick+1.*mm, 0., 0.)); //independant 2
+			PMT_FrontLargerMid1 = new G4IntersectionSolid("PMT_FrontLargerMid1", SpherePMT_FaceLarger, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmt_width-1.*mm, 0., 0.)); //independant 1
+			PMT_FrontLargerMid2 = new G4IntersectionSolid("PMT_FrontLargerMid2", SpherePMT_FaceLarger, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmt_width+1.*mm, 0., 0.)); //independant 2
 		} else{
 			//PMT_FrontLargerMid = new G4IntersectionSolid("PMT_FrontLargerMid", SpherePMT_FaceLarger, boxBarsPMTFace, rot1, G4ThreeVector(startPos, (YFacePMT1+pmtSize+BeamLineXY)/2., 0.)); //YCentered
 			//PMT_FrontLargerMid = new G4IntersectionSolid("PMT_FrontLargerMid", SpherePMT_FaceLarger, boxBarsPMTFace, rot1, G4ThreeVector(startPos, BeamlineY, 0.)); //Center of Arc
-			PMT_FrontLargerMid1 = new G4IntersectionSolid("PMT_FrontLargerMid1", SpherePMT_FaceLarger, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmtThick-1.*mm, BeamlineY, 0.)); //Center of Arc, independant 1
-			PMT_FrontLargerMid2 = new G4IntersectionSolid("PMT_FrontLargerMid2", SpherePMT_FaceLarger, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmtThick+1.*mm, BeamlineY, 0.)); //Center of Arc, independant 2
+			PMT_FrontLargerMid1 = new G4IntersectionSolid("PMT_FrontLargerMid1", SpherePMT_FaceLarger, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmt_width-1.*mm, BeamlineY, 0.)); //Center of Arc, independant 1
+			PMT_FrontLargerMid2 = new G4IntersectionSolid("PMT_FrontLargerMid2", SpherePMT_FaceLarger, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmt_width+1.*mm, BeamlineY, 0.)); //Center of Arc, independant 2
 		}
 
 
@@ -652,9 +715,9 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 
 			//Only Need to only make bottom pmt here, note SpherePMT1 because above y=0
 			//PMT2BeamLine = new G4IntersectionSolid("PMT2BeamLine", SpherePMT1, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos, pmtSize+BeamLineXY-pmt_width/2., 50*cm));
-			PMT21BeamLine = new G4IntersectionSolid("PMT21BeamLine1", SpherePMT1, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos- pmtThick -1.*mm, pmtSize+BeamLineXY-pmt_width/2., 50*cm));
+			PMT21BeamLine = new G4IntersectionSolid("PMT21BeamLine1", SpherePMT1, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos- pmt_width -1.*mm, pmtSize+BeamLineXY-pmt_width/2., 50*cm));
 			PMT22BeamLine = new G4IntersectionSolid("PMT22BeamLine2", SpherePMT1, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos, pmtSize+BeamLineXY-pmt_width/2., 50*cm));
-			PMT23BeamLine = new G4IntersectionSolid("PMT23BeamLine3", SpherePMT1, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos+ pmtThick +1.*mm, pmtSize+BeamLineXY-pmt_width/2., 50*cm));
+			PMT23BeamLine = new G4IntersectionSolid("PMT23BeamLine3", SpherePMT1, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos+ pmt_width +1.*mm, pmtSize+BeamLineXY-pmt_width/2., 50*cm));
 
 			//For wrapping Made slightly larger versions of all pmts and bar to be subtracted from the optical wrapping
 			//Slightly larger Bar
@@ -669,13 +732,13 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 			//G4VSolid * boxBarsPMTSmaller3 = new G4Box("boxBarsPMTSmaller3", detWidth/2.-0.1*mm, pmt_width/2.+fWrapThickness , 1.*m);
 			//PMT1Larger = new G4IntersectionSolid("PMT1Larger", SpherePMT1, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos, YFacePMT1+pmt_width/2., 50*cm));
 			//PMT2Larger = new G4IntersectionSolid("PMT2Larger", SpherePMT1, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos, pmtSize+BeamLineXY-pmt_width/2., 50*cm));
-			G4VSolid * boxBarsPMTSmaller3 = new G4Box("boxBarsPMTSmaller3", pmtThick/2., pmt_width/2.+fWrapThickness , 1.*m);
-			PMT11Larger = new G4IntersectionSolid("PMT11Larger", SpherePMT1, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos- pmtThick -1.*mm, YFacePMT1+pmt_width/2., 50*cm));
+			G4VSolid * boxBarsPMTSmaller3 = new G4Box("boxBarsPMTSmaller3", pmt_width/2., pmt_width/2.+fWrapThickness , 1.*m);
+			PMT11Larger = new G4IntersectionSolid("PMT11Larger", SpherePMT1, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos- pmt_width -1.*mm, YFacePMT1+pmt_width/2., 50*cm));
 			PMT12Larger = new G4IntersectionSolid("PMT12Larger", SpherePMT1, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos, YFacePMT1+pmt_width/2., 50*cm));
-			PMT13Larger = new G4IntersectionSolid("PMT13Larger", SpherePMT1, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos+ pmtThick +1.*mm, YFacePMT1+pmt_width/2., 50*cm));
-			PMT21Larger = new G4IntersectionSolid("PMT21Larger", SpherePMT1, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos- pmtThick -1.*mm, pmtSize+BeamLineXY-pmt_width/2., 50*cm));
+			PMT13Larger = new G4IntersectionSolid("PMT13Larger", SpherePMT1, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos+ pmt_width +1.*mm, YFacePMT1+pmt_width/2., 50*cm));
+			PMT21Larger = new G4IntersectionSolid("PMT21Larger", SpherePMT1, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos- pmt_width -1.*mm, pmtSize+BeamLineXY-pmt_width/2., 50*cm));
 			PMT22Larger = new G4IntersectionSolid("PMT22Larger", SpherePMT1, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos, pmtSize+BeamLineXY-pmt_width/2., 50*cm));
-			PMT23Larger = new G4IntersectionSolid("PMT23Larger", SpherePMT1, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos+ pmtThick +1.*mm, pmtSize+BeamLineXY-pmt_width/2., 50*cm));
+			PMT23Larger = new G4IntersectionSolid("PMT23Larger", SpherePMT1, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos+ pmt_width +1.*mm, pmtSize+BeamLineXY-pmt_width/2., 50*cm));
 
 			//Adding all Larger volumes together to be subtracted later
 			//Bar_PMT1 = new G4UnionSolid("Bar_PMT1", PMT1Larger, interSolidBarsLarger, rot1, G4ThreeVector(0.,0.,0.));
@@ -845,15 +908,15 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		//For PMT's Top & Bottom New
 		//G4VSolid * boxBarsPMTSmaller = new G4Box("boxBarsPMTSmaller", detWidth/2.-0.1*mm, pmt_width/2. , 1.*m);
 		//PMT2 = new G4IntersectionSolid("PMT2", SpherePMT2, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos, -YFacePMT1-pmt_width/2., 50*cm));
-		G4VSolid * boxBarsPMTSmaller = new G4Box("boxBarsPMTSmaller", pmtThick/2., pmt_width/2. , 1.*m);
-		PMT21 = new G4IntersectionSolid("PMT21", SpherePMT2, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos - pmtThick -1.*mm, -YFacePMT1-pmt_width/2., 50*cm));
+		G4VSolid * boxBarsPMTSmaller = new G4Box("boxBarsPMTSmaller", pmt_width/2., pmt_width/2. , 1.*m);
+		PMT21 = new G4IntersectionSolid("PMT21", SpherePMT2, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos - pmt_width -1.*mm, -YFacePMT1-pmt_width/2., 50*cm));
 		PMT22 = new G4IntersectionSolid("PMT22", SpherePMT2, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos, -YFacePMT1-pmt_width/2., 50*cm));
-		PMT23 = new G4IntersectionSolid("PMT23", SpherePMT2, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos + pmtThick +1.*mm, -YFacePMT1-pmt_width/2., 50*cm));
+		PMT23 = new G4IntersectionSolid("PMT23", SpherePMT2, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos + pmt_width +1.*mm, -YFacePMT1-pmt_width/2., 50*cm));
 		//Only Need to only make top pmt here, note SpherePMT2 because below y=0
 		//PMT1BeamLine = new G4IntersectionSolid("PMT1BeamLine", SpherePMT2, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos, -pmtSize-BeamLineXY+pmt_width/2., 50*cm));
-		PMT11BeamLine = new G4IntersectionSolid("PMT11BeamLine1", SpherePMT2, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos- pmtThick -1.*mm, -pmtSize-BeamLineXY+pmt_width/2., 50*cm));
+		PMT11BeamLine = new G4IntersectionSolid("PMT11BeamLine1", SpherePMT2, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos- pmt_width -1.*mm, -pmtSize-BeamLineXY+pmt_width/2., 50*cm));
 		PMT12BeamLine = new G4IntersectionSolid("PMT12BeamLine2", SpherePMT2, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos, -pmtSize-BeamLineXY+pmt_width/2., 50*cm));
-		PMT13BeamLine = new G4IntersectionSolid("PMT13BeamLine3", SpherePMT2, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos+ pmtThick +1.*mm, -pmtSize-BeamLineXY+pmt_width/2., 50*cm));
+		PMT13BeamLine = new G4IntersectionSolid("PMT13BeamLine3", SpherePMT2, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos+ pmt_width +1.*mm, -pmtSize-BeamLineXY+pmt_width/2., 50*cm));
 
 		//Calc beamline middle face pmt placement above/below beamline
 		G4double y1=YFacePMT1, y2=(BeamLineXY+pmtSize) , z1, z2, y3, z3;
@@ -875,19 +938,19 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		//Face PMTs, placing them along the vertical at -1/3 and +1/3
 		//G4VSolid * boxBarsPMTFace = new G4Box("boxBarsPMTFace", detWidth/2.-0.1*mm, pmtThick/2. , 1.*m); // for the 1 by 8 configuration
 		//G4VSolid * boxBarsPMTFace = new G4Box("boxBarsPMTFace", detWidth/2.-0.1*mm, pmtThick , 1.*m); // for the 2, 4 by 4 configuration
-		G4VSolid * boxBarsPMTFace1 = new G4Box("boxBarsPMTFace1", pmtThick, pmtThick , 1.*m); // for the 2, 4 by 4 configuration, independant 1
+		G4VSolid * boxBarsPMTFace1 = new G4Box("boxBarsPMTFace1", pmt_width, pmt_width , 1.*m); // for the 2, 4 by 4 configuration, independant 1
 		//PMT_Front1 = new G4IntersectionSolid("PMT_Front1", SpherePMT_Face1, boxBarsPMTFace, rot1, G4ThreeVector(startPos, YFrontPlacement, 50*cm));
 		//PMT_Front2 = new G4IntersectionSolid("PMT_Front2", SpherePMT_Face1, boxBarsPMTFace, rot1, G4ThreeVector(startPos, -YFrontPlacement, 50.*cm));
-		PMT_Front11 = new G4IntersectionSolid("PMT_Front11", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmtThick-1.*mm, YFrontPlacement, 50*cm)); //Y used to be YFacePMT1/3. independant 1
-		PMT_Front12 = new G4IntersectionSolid("PMT_Front12", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmtThick+1.*mm, YFrontPlacement, 50*cm)); //Y used to be YFacePMT1/3. independant 2
-		PMT_Front21 = new G4IntersectionSolid("PMT_Front21", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmtThick-1.*mm, -YFrontPlacement, 50.*cm)); //Y used to be -YFacePMT1/3. independant 1
-		PMT_Front22 = new G4IntersectionSolid("PMT_Front22", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmtThick+1.*mm, -YFrontPlacement, 50.*cm)); //Y used to be -YFacePMT1/3. independant 2
+		PMT_Front11 = new G4IntersectionSolid("PMT_Front11", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmt_width-1.*mm, YFrontPlacement, 50*cm)); //Y used to be YFacePMT1/3. independant 1
+		PMT_Front12 = new G4IntersectionSolid("PMT_Front12", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmt_width+1.*mm, YFrontPlacement, 50*cm)); //Y used to be YFacePMT1/3. independant 2
+		PMT_Front21 = new G4IntersectionSolid("PMT_Front21", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmt_width-1.*mm, -YFrontPlacement, 50.*cm)); //Y used to be -YFacePMT1/3. independant 1
+		PMT_Front22 = new G4IntersectionSolid("PMT_Front22", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmt_width+1.*mm, -YFrontPlacement, 50.*cm)); //Y used to be -YFacePMT1/3. independant 2
 
 		//Face PMTs, placing the mid pmts  the vertical at 0 for first and last, or the middle wrt to the beamline if above or below
 		//PMT_FrontMid = new G4IntersectionSolid("PMT_FrontMid", SpherePMT_Face1, boxBarsPMTFace, rot1, G4ThreeVector(startPos, (YFacePMT1+pmtSize+BeamLineXY)/2., 0.)); //Y centered
 		//PMT_FrontMid = new G4IntersectionSolid("PMT_FrontMid", SpherePMT_Face1, boxBarsPMTFace, rot1, G4ThreeVector(startPos, -BeamlineY, 0.)); //Center of arc
-		PMT_FrontMid1 = new G4IntersectionSolid("PMT_FrontMid1", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmtThick-1.*mm, -BeamlineY, 0.)); //Center of arc, independant 1
-		PMT_FrontMid2 = new G4IntersectionSolid("PMT_FrontMid2", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmtThick+1.*mm, -BeamlineY, 0.)); //Center of arc, independant 2
+		PMT_FrontMid1 = new G4IntersectionSolid("PMT_FrontMid1", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmt_width-1.*mm, -BeamlineY, 0.)); //Center of arc, independant 1
+		PMT_FrontMid2 = new G4IntersectionSolid("PMT_FrontMid2", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmt_width+1.*mm, -BeamlineY, 0.)); //Center of arc, independant 2
 
 		//For wrapping Made slightly larger versions of all pmts and bar to be subtracted from the optical wrapping
 		//Slightly larger Bar
@@ -902,17 +965,17 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		//G4VSolid * boxBarsPMTSmaller3 = new G4Box("boxBarsPMTSmaller3", detWidth/2.-0.1*mm, pmt_width/2.+fWrapThickness , 1.*m);
 		//PMT2Larger = new G4IntersectionSolid("PMT2Larger", SpherePMT2, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos, -YFacePMT1-pmt_width/2., 50*cm));
 		//PMT1Larger = new G4IntersectionSolid("PMT1Larger", SpherePMT2, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos, -pmtSize-BeamLineXY+pmt_width/2., 50*cm));
-		G4VSolid * boxBarsPMTSmaller3 = new G4Box("boxBarsPMTSmaller3", pmtThick/2., pmt_width/2.+fWrapThickness , 1.*m);
-		PMT21Larger = new G4IntersectionSolid("PMT21Larger", SpherePMT2, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos- pmtThick -1.*mm, -YFacePMT1-pmt_width/2., 50*cm));
+		G4VSolid * boxBarsPMTSmaller3 = new G4Box("boxBarsPMTSmaller3", pmt_width/2., pmt_width/2.+fWrapThickness , 1.*m);
+		PMT21Larger = new G4IntersectionSolid("PMT21Larger", SpherePMT2, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos- pmt_width -1.*mm, -YFacePMT1-pmt_width/2., 50*cm));
 		PMT22Larger = new G4IntersectionSolid("PMT22Larger", SpherePMT2, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos, -YFacePMT1-pmt_width/2., 50*cm));
-		PMT23Larger = new G4IntersectionSolid("PMT23Larger", SpherePMT2, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos+ pmtThick +1.*mm, -YFacePMT1-pmt_width/2., 50*cm));
-		PMT11Larger = new G4IntersectionSolid("PMT11Larger", SpherePMT2, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos- pmtThick -1.*mm, -pmtSize-BeamLineXY+pmt_width/2., 50*cm));
+		PMT23Larger = new G4IntersectionSolid("PMT23Larger", SpherePMT2, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos+ pmt_width +1.*mm, -YFacePMT1-pmt_width/2., 50*cm));
+		PMT11Larger = new G4IntersectionSolid("PMT11Larger", SpherePMT2, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos- pmt_width -1.*mm, -pmtSize-BeamLineXY+pmt_width/2., 50*cm));
 		PMT12Larger = new G4IntersectionSolid("PMT12Larger", SpherePMT2, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos, -pmtSize-BeamLineXY+pmt_width/2., 50*cm));
-		PMT13Larger = new G4IntersectionSolid("PMT13Larger", SpherePMT2, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos+ pmtThick +1.*mm, -pmtSize-BeamLineXY+pmt_width/2., 50*cm));
+		PMT13Larger = new G4IntersectionSolid("PMT13Larger", SpherePMT2, boxBarsPMTSmaller3, rot1, G4ThreeVector(startPos+ pmt_width +1.*mm, -pmtSize-BeamLineXY+pmt_width/2., 50*cm));
 		//PMT_FrontLargerMid = new G4IntersectionSolid("PMT_FrontLargerMid", SpherePMT_FaceLarger, boxBarsPMTFace, rot1, G4ThreeVector(startPos, (YFacePMT1+pmtSize+BeamLineXY)/2., 0.)); //YCentered
 		//PMT_FrontLargerMid = new G4IntersectionSolid("PMT_FrontLargerMid", SpherePMT_FaceLarger, boxBarsPMTFace, rot1, G4ThreeVector(startPos, -BeamlineY, 0.)); //Center of Arc
-		PMT_FrontLargerMid1 = new G4IntersectionSolid("PMT_FrontLargerMid1", SpherePMT_FaceLarger, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmtThick-1.*mm, -BeamlineY, 0.)); //Center of Arc, independant 1
-		PMT_FrontLargerMid2 = new G4IntersectionSolid("PMT_FrontLargerMid2", SpherePMT_FaceLarger, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmtThick+1.*mm, -BeamlineY, 0.)); //Center of Arc, independant 2
+		PMT_FrontLargerMid1 = new G4IntersectionSolid("PMT_FrontLargerMid1", SpherePMT_FaceLarger, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmt_width-1.*mm, -BeamlineY, 0.)); //Center of Arc, independant 1
+		PMT_FrontLargerMid2 = new G4IntersectionSolid("PMT_FrontLargerMid2", SpherePMT_FaceLarger, boxBarsPMTFace1, rot1, G4ThreeVector(startPos+pmt_width+1.*mm, -BeamlineY, 0.)); //Center of Arc, independant 2
 
 		//Adding all Larger volumes together to be subtracted later
 		//Bar_PMT1 = new G4UnionSolid("Bar_PMT1", PMT1Larger, interSolidBarsLarger, rot1, G4ThreeVector(0.,0.,0.));
