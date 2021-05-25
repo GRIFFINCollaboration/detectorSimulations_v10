@@ -148,6 +148,7 @@ private:
 
     G4bool fAddWrap;
     G4bool fAddSegment;
+    G4bool fAddTwo;
     G4double fAirGap;
     G4double fWrapThickness;
     G4double fPlasticThickness;
