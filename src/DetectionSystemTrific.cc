@@ -3,6 +3,8 @@
 
 #include "G4Material.hh"
 
+#include "CLHEP/Units/PhysicalConstants.h"
+
 #include "G4Tubs.hh"
 #include "G4Box.hh"
 #include "G4Sphere.hh"
@@ -57,8 +59,8 @@ DetectionSystemTrific::DetectionSystemTrific(G4double setpressure,G4double setwi
 	G4Element* ElC = new G4Element(name="C", symbol="C", z=6., a = 12.01*g/mole);
 	G4Element* ElF  = new G4Element(name="F" , symbol="F" , z=9. , a= 18.9984 *g/mole);
 
-	temperature = STP_Temperature;
-	pressure = (setpressure/760.)*STP_Pressure;
+	temperature = CLHEP::STP_Temperature;
+	pressure = (setpressure/760.)*CLHEP::STP_Pressure;
 	density = (setpressure/760.)*3.72*mg/cm3;
 
 	G4Material* TrificCF4 = new G4Material(name="TrificCF4",  density,ncomponents=2,kStateGas,temperature,pressure);
@@ -172,7 +174,7 @@ void DetectionSystemTrific::BuildPCB()
 	G4VSolid* CellB=GasCell(1);
 
 	fGasCell = new G4LogicalVolume(CellB, material, "TrificGasCell", 0, 0, 0);
-	fGasCell->SetVisAttributes (G4VisAttributes::Invisible); 
+	fGasCell->SetVisAttributes (G4VisAttributes::GetInvisible()); 
 
 	//Original version was box with tube cut (so defined verticle and rotated later)
 	//but for some reason that didnt work here, though that method is used for the PCB next
@@ -397,7 +399,7 @@ void DetectionSystemTrific::BuildPlaceXSense(G4LogicalVolume* TrificGasVol)
 				}
 				//         
 				G4LogicalVolume* GasCellPartA = new G4LogicalVolume(CellA, material, "XSensePart", 0, 0, 0);
-				// 	GasCellPartA->SetVisAttributes (G4VisAttributes::Invisible);   
+				// 	GasCellPartA->SetVisAttributes (G4VisAttributes::GetInvisible());   
 
 				bool colour=i%2;
 				if(k%2)colour=!colour;
@@ -435,7 +437,7 @@ void DetectionSystemTrific::BuildPlacePipe(G4LogicalVolume*  ExpHallLog) {
 	TrificPipe->SetVisAttributes(vis_att);
 
 	//For Debugging
-	//TrificPipe->SetVisAttributes(G4VisAttributes::Invisible); 
+	//TrificPipe->SetVisAttributes(G4VisAttributes::GetInvisible()); 
 
 	G4double sPosZ = fTargetChamberZOffset+fChamberLength/2; 
 	G4ThreeVector sTranslate(0, 0, sPosZ);
@@ -471,7 +473,7 @@ void DetectionSystemTrific::BuildGasVolume(G4LogicalVolume* ExpHallLog)
 
 	G4Tubs* Pipe = new G4Tubs("Pipe",0, (fChamberInnerD/2)-0.05*mm, fChamberLength/2, 0, 360.*CLHEP::deg);
 	G4LogicalVolume* TrificGasVol = new G4LogicalVolume(Pipe, material, "TrificGasVol", 0, 0, 0);
-	TrificGasVol->SetVisAttributes(G4VisAttributes::Invisible); 
+	TrificGasVol->SetVisAttributes(G4VisAttributes::GetInvisible()); 
 
 	BuildPCB();
 	PlacePCBs(TrificGasVol);	
@@ -532,7 +534,7 @@ void DetectionSystemTrific::BuildPlaceWindow(G4LogicalVolume* TrificGasVol)
 	G4Tubs* VacTube = new G4Tubs("VacTube",0,(fWindowInnerD/2)-0.1*mm, winframhalflength, 0, 360.*deg);
 	G4VSolid* VacSolid = new G4SubtractionSolid("VacSolid", VacTube, CutBox,rotate, G4ThreeVector(0,0,cutZ));
 	G4LogicalVolume* VacLog = new G4LogicalVolume(VacSolid, material, "VacLog", 0, 0, 0);
-	VacLog->SetVisAttributes(G4VisAttributes::Invisible); 
+	VacLog->SetVisAttributes(G4VisAttributes::GetInvisible()); 
 	new G4PVPlacement(0, sTranslate, VacLog, "fVacLog", TrificGasVol, false, 0);
 
 	//
@@ -646,7 +648,7 @@ void DetectionSystemTrific::BuildPlaceFlatWindow(G4LogicalVolume* TrificGasVol)
 
 	G4Tubs* VacTube = new G4Tubs("VacTube",0,(fWindowInnerD/2)-0.1*mm, winframhalflength, 0, 360.*deg);
 	G4LogicalVolume* VacLog = new G4LogicalVolume(VacTube, material, "VacLog", 0, 0, 0);
-	VacLog->SetVisAttributes(G4VisAttributes::Invisible); 
+	VacLog->SetVisAttributes(G4VisAttributes::GetInvisible()); 
 	new G4PVPlacement(0, sTranslate, VacLog, "fVacLog", TrificGasVol, false, 0);
 
 	//

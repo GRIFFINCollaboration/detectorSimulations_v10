@@ -239,7 +239,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 
 	// Visualization Attributes
 
-	fLogicWorld->SetVisAttributes (G4VisAttributes::Invisible); // The following block of code works too.
+	fLogicWorld->SetVisAttributes (G4VisAttributes::GetInvisible()); // The following block of code works too.
 
 	//  G4VisAttributes* worldVisAtt = new G4VisAttributes(G4Colour(0.0,1.0,1.0));
 	//  worldVisAtt->SetForceWireframe(true);
