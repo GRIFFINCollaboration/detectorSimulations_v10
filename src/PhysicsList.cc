@@ -110,7 +110,7 @@ PhysicsList::PhysicsList() :
 
 	// Scintillation phyics
 	fScintProcess = new G4Scintillation();
-	fScintProcess->SetScintillationYieldFactor(1.);
+	//fScintProcess->SetScintillationYieldFactor(1.);
 	fScintProcess->SetTrackSecondariesFirst(true);
 
 }
