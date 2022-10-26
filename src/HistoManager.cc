@@ -71,7 +71,7 @@ void HistoManager::Book() {
 	// Create or get analysis manager
 	// The choice of analysis technology is done via selection of a namespace
 	// in HistoManager.hh
-	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+	G4RootAnalysisManager* analysisManager = G4RootAnalysisManager::Instance();
 	// this merges the root files at the end, but puts all branches inside a branch called ntuple ...
 	//analysisManager->SetNtupleMerging(true);
 	//analysisManager->SetVerboseLevel(4);
@@ -152,11 +152,11 @@ void HistoManager::Book() {
 
 void HistoManager::Save() {
 	if(fFactoryOn) {
-		G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+		G4RootAnalysisManager* analysisManager = G4RootAnalysisManager::Instance();
 		analysisManager->Write();
 		analysisManager->CloseFile();
 
-		delete G4AnalysisManager::Instance();
+		delete G4RootAnalysisManager::Instance();
 		fFactoryOn = false;
 	}
 }
@@ -167,7 +167,7 @@ void HistoManager::FillHitNtuple(G4int eventNumber) {
 
 void HistoManager::FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ) {
 	if(fHitTrackerBool) {
-		G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+		G4RootAnalysisManager* analysisManager = G4RootAnalysisManager::Instance();
 		analysisManager->FillNtupleIColumn(fNtColIdHit[0], eventNumber);
 		analysisManager->FillNtupleIColumn(fNtColIdHit[1], trackID);
 		analysisManager->FillNtupleIColumn(fNtColIdHit[2], parentID);
@@ -203,7 +203,7 @@ void HistoManager::FillStepNtuple(G4int eventNumber) {
 
 void HistoManager::FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ) {
 	if(fStepTrackerBool) {
-		G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+		G4RootAnalysisManager* analysisManager = G4RootAnalysisManager::Instance();
 		analysisManager->FillNtupleIColumn(fNtColIdStep[0], eventNumber);
 		analysisManager->FillNtupleIColumn(fNtColIdStep[1], trackID);
 		analysisManager->FillNtupleIColumn(fNtColIdStep[2], parentID);
@@ -240,7 +240,7 @@ G4String HistoManager::G4intToG4String(G4int value) {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void HistoManager::MakeHistogram(G4AnalysisManager* analysisManager, G4String name,  G4String title, G4double xmin, G4double xmax, G4int nbins) {
+void HistoManager::MakeHistogram(G4RootAnalysisManager* analysisManager, G4String name,  G4String title, G4double xmin, G4double xmax, G4int nbins) {
 	fMakeHistogramIndex++;
 	if(fMakeHistogramIndex >= MAXHISTO) {
 		G4cout<<"---> Exceeded maximum number of histograms. Increase MAXHISTO in HistoManager.hh"<<G4endl;
@@ -251,7 +251,7 @@ void HistoManager::MakeHistogram(G4AnalysisManager* analysisManager, G4String na
 	fHistPt[fMakeHistogramIndex] = analysisManager->GetH1(fHistId[fMakeHistogramIndex]);
 }
 
-void HistoManager::Make2DHistogram(G4AnalysisManager* analysisManager, const G4String& name, const G4String& title,
+void HistoManager::Make2DHistogram(G4RootAnalysisManager* analysisManager, const G4String& name, const G4String& title,
 		G4int nxbins, G4double xmin, G4double xmax, 
 		G4int nybins, G4double ymin, G4double ymax) {
 	fMakeHistogramIndex++; //global in Histomanager so allowed in this scope unaltered
