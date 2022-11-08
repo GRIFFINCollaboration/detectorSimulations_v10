@@ -1,7 +1,7 @@
 detectorSimulations_v10
 ===================
 
-The detectorSimulations_v10 package contains the Geant4 simulations for GRIFFIN, TIGRESS, and all of their auxiliary detectors.  Please note that in order to respect our non-disclosure agreements, all source containing third party IP have been omitted from this repo (see #-getting-the-code on how to get the suppressed files).
+The detectorSimulations_v10 package contains the Geant4 simulations for GRIFFIN, TIGRESS, and all of their auxiliary detectors.  Please note that in order to respect our non-disclosure agreements, all source containing third party IP have been omitted from this repo (see "Getting the code" in "Setup" on how to get the suppressed files).
 
 # Release
 
