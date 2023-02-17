@@ -12,9 +12,9 @@ version | DOI
 # Setup
 
 ### Requirements
-detectorSimulations is confirmed to run on geant4.10.02 and ROOT 6.04.00. Do not use geant4.10.01 as it has a bug in the gamma de-excitation (see issue #35).
+The main branch of detectorSimulations is confirmed to run on geant4.10.04 and ROOT 6.10.08. Do not use geant4.10.01 as it has a bug in the gamma de-excitation (see issue #35). For angular correlations there is a special branch (called angular-correlations) which runs with earlier geant4 versions.
 
-There is a new branch geant4.10.04, which was used to compile the simulation sucessfully against geant4.10.01.p01 (using ROOT 6.10/08). The main (untested) change to the branch is the removal of the explicit use of the obsolete G4FermiBreakup model in PhysListHadon. It has only been tested (so far) with a simulation of one million gamma rays of 1000 keV using only GRIFFIN (with 20 mm delrin). See also issue #40.
+The main (untested) change to the main branch compared to the angular-correlation branch is the removal of the explicit use of the obsolete G4FermiBreakup model in PhysListHadon. It has only been tested (so far) with a simulation of one million gamma rays of 1000 keV using only GRIFFIN (with 20 mm delrin). See also issue #40.
 
 ### Getting the code
 
