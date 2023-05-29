@@ -166,6 +166,7 @@ public:
 	void AddDetectionSystemPlasticsNoWrap(G4ThreeVector input);
 	//void AddDetectionSystemDaemonTiles(G4int ndet);
 	void AddDetectionSystemDaemonTiles(G4ThreeVector input);
+	void AddDetectionSystemDaemonAuxPorts(G4ThreeVector input);
 	void AddDetectionSystemZDS();
 
 	void AddDetectionSystem8piDetector(G4int ndet);

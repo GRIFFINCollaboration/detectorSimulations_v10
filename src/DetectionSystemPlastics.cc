@@ -37,7 +37,9 @@
 
 DetectionSystemPlastics::DetectionSystemPlastics(G4double thickness, G4int material, G4double numDet)
 {
+	fAddMidSiPM = false;
 	fAddFrontPMTs = true;
+	//fAddFrontPMTs = false;
 	fAddWrap = true;
 	// detector dimensions  properties
 	fScintillatorLength        = 6.*cm;
@@ -64,7 +66,8 @@ DetectionSystemPlastics::DetectionSystemPlastics(G4double thickness, G4int mater
 	fPMTFace22LogArray.resize(numDet, NULL);
 	fPMTFaceMid1LogArray.resize(numDet, NULL);
 	fPMTFaceMid2LogArray.resize(numDet, NULL);
-
+		
+	//Set back to 0.5 mm 03/01/2023
 	fWrapThickness = 0.5 * mm; //Factor of 10 should be  applied later for visualization purposes.  0.05 for simulations, 0.5 for visualization
 	fSpacing = fWrapThickness; //assuming no lead on DESCANT but taking into account the optical wrapping
 	//fWrapThickness = 0.1 * cm;
@@ -72,7 +75,8 @@ DetectionSystemPlastics::DetectionSystemPlastics(G4double thickness, G4int mater
 	//fAirGap = 0.000001*m;
 	fAirGap = 0.;
 	fWrapMaterial = "Teflon";
-	fPMTMaterial = "G4_SILICON_DIOXIDE";
+	//fPMTMaterial = "G4_SILICON_DIOXIDE";
+	fPMTMaterial = "Silicon";
 
 	//blue=G4Color(0.,0.,1.);
 	bronze=G4Color(0.8,0.5,0.2);
@@ -202,7 +206,8 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	scintillatorMPT->AddProperty("IONSCINTILLATIONYIELD", e_range, yield_C, num2)->SetSpline(true);
 */	
 	int energyPoints = 26;
-	G4double pEF = 0.4; //SiPM efficiency (TODO - discuss it)
+	//G4double pEF = 0.4; //SiPM efficiency (TODO - discuss it)
+	G4double pEF = 1.; //SiPM efficiency (TODO - discuss it)
 	//G4double protonScalingFact = 1.35;
 	G4double protonScalingFact = 1;
 	G4double psF = protonScalingFact;
@@ -215,14 +220,14 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		1.*MeV, 1.3*MeV, 1.7*MeV, 2.*MeV, 
 		2.4*MeV, 3.*MeV, 3.4*MeV, 4.*MeV, 4.8*MeV, 
 		6.*MeV, 7.2*MeV, 8.4*MeV, 10.*MeV };
-	G4double electronYield[] = {1*pEF, 1000*pEF, 1300*pEF, 1700*pEF,
+	G4double electronYield[] = {10*pEF, 1000*pEF, 1300*pEF, 1700*pEF,
 		2000*pEF, 2400*pEF, 3000*pEF, 3400*pEF,
 		4000*pEF, 4800*pEF, 6000*pEF, 7200*pEF,
 		8400*pEF,10000*pEF, 13000*pEF, 17000*pEF,
 		20000*pEF, 24000*pEF, 30000*pEF, 34000*pEF,
 		40000*pEF, 48000*pEF, 60000*pEF, 72000*pEF,
 		84000*pEF, 100000*pEF };
-	G4double protonYield[] = { 0.6*pEF*psF, 67.1*pEF*psF, 88.6*pEF*psF,
+	G4double protonYield[] = { 0.671*pEF*psF, 67.1*pEF*psF, 88.6*pEF*psF,
 		120.7*pEF*psF,
 		146.5*pEF*psF, 183.8*pEF*psF, 246*pEF*psF, 290*pEF*psF,
 		365*pEF*psF, 483*pEF*psF, 678*pEF*psF, 910*pEF*psF,
@@ -230,7 +235,7 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		4725*pEF*psF,6250*pEF*psF, 8660*pEF*psF, 10420*pEF*psF,
 		13270*pEF*psF,17180*pEF*psF, 23100*pEF*psF,
 		29500*pEF*psF, 36200*pEF*psF, 45500*pEF*psF};
-	G4double alphaYield[] = { 0.2*pEF, 16.4*pEF, 20.9*pEF, 27.2*pEF,
+	G4double alphaYield[] = { 0.164*pEF, 16.4*pEF, 20.9*pEF, 27.2*pEF,
 		32*pEF, 38.6*pEF, 49*pEF, 56.4*pEF,
 		67.5*pEF, 83*pEF, 108*pEF, 135*pEF,
 		165.6*pEF, 210*pEF, 302*pEF, 441*pEF,
@@ -238,7 +243,7 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		1815*pEF, 2555*pEF, 4070*pEF, 6070*pEF,
 		8700*pEF, 13200*pEF };
 
-	G4double ionYield[] = { 0.2*pEF, 10.4*pEF, 12.7*pEF, 15.7*pEF,
+	G4double ionYield[] = { 0.104*pEF, 10.4*pEF, 12.7*pEF, 15.7*pEF,
 		17.9*pEF, 20.8*pEF, 25.1*pEF, 27.9*pEF,
 		31.9*pEF, 36.8*pEF, 43.6*pEF, 50.2*pEF,
 		56.9*pEF, 65.7*pEF, 81.3*pEF, 101.6*pEF,
@@ -261,12 +266,12 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	//
 
 	if (fPlasticMaterial == "BC408"){
-	const G4int num = 12; //BC408
-	G4cout << "BC408 and num = " << num << G4endl;
-	G4double photonEnergy[num] = {1.7*eV, 2.38*eV, 2.48*eV, 2.58*eV, 2.70*eV, 2.76*eV, 2.82*eV, 2.91*eV, 2.95*eV, 3.1*eV, 3.26*eV, 3.44*eV}; //BC408 emission spectra & corresponding energies
-	G4double RIndex1[num] = {1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58}; //BC408
-	G4double absorption[num] = {380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm}; ///light attenuation BC408
-	G4double scint[num] = {3., 3., 8., 18., 43., 55., 80., 100., 80., 20., 7., 3. }; ///// Based off emission spectra for BC408
+		const G4int num = 20; //BC408
+		G4cout << "BC408 and num = " << num << G4endl;
+		G4double photonEnergy[num] = {1.7*eV, 2.43*eV, 2.48*eV, 2.58*eV, 2.64*eV, 2.70*eV, 2.76*eV, 2.79*eV, 2.82*eV, 2.85*eV, 2.91*eV, 2.92*eV, 2.95*eV, 2.99*eV, 3.02*eV, 3.1*eV, 3.18*eV, 3.26*eV, 3.35*eV, 3.44*eV}; //BC408 emission spectra & corresponding energies
+		G4double RIndex1[num] = {1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58}; //BC408
+		G4double absorption[num] = {380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm}; ///light attenuation BC408
+		G4double scint[num] = {1., 5., 8., 18., 25., 43., 55., 65., 80., 95., 100., 90., 80., 70., 50., 20., 12., 7., 5., 3. }; ///// Based off emission spectra for BC408
 	
 	assert(sizeof(RIndex1) == sizeof(photonEnergy));
 	const G4int nEntries = sizeof(photonEnergy)/sizeof(G4double);
@@ -334,7 +339,8 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	}
 	
 	// The number of photons produced per interaction is sampled from a Gaussian distribution with a full-width at half-maximum set to 20% of the number of produced photons. From Joeys Thesis
-	scintillatorMPT->AddConstProperty("RESOLUTIONSCALE", 1.2); // broadens the statistical distribution of generated photons, sqrt(num generated)* resScale, gaussian based on SCINTILLATIONYIELD, >1 broadens, 0 no distribution. 20%
+	scintillatorMPT->AddConstProperty("RESOLUTIONSCALE", 5.0); // broadens the statistical distribution of generated photons, sqrt(num generated)* resScale, gaussian based on SCINTILLATIONYIELD, >1 broadens, 0 no distribution. 20%
+	//scintillatorMPT->AddConstProperty("RESOLUTIONSCALE", 1.2); // broadens the statistical distribution of generated photons, sqrt(num generated)* resScale, gaussian based on SCINTILLATIONYIELD, >1 broadens, 0 no distribution. 20%
 	scintillatorMPT->AddConstProperty("YIELDRATIO", 1.0); //The relative strength of the fast component as a fraction of total scintillation yield is given by the YIELDRATIO.
 	
 	//properties I may be missing: scintillation, rayleigh
@@ -390,7 +396,8 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 
 	//////// Quartz  ////////////
 	G4MaterialPropertiesTable * QuartzMPT = new G4MaterialPropertiesTable();
-	G4double rIndex_Quartz[numShort] = {1.474, 1.474, 1.474}; //Taken from Joey github
+	G4double rIndex_Quartz[numShort] = {1.53, 1.53,1.53}; //
+	//G4double rIndex_Quartz[numShort] = {1.474, 1.474, 1.474}; //Taken from Joey github
 	QuartzMPT->AddProperty("RINDEX", photonEnergyShort, rIndex_Quartz, nEntriesShort)->SetSpline(true);  //refractive index can change with energy
 	QuartzMPT->AddConstProperty("ABSLENGTH", 40.*cm); //from Joeys github
 	PMTG4material->SetMaterialPropertiesTable(QuartzMPT);
@@ -449,8 +456,11 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	G4double detWidth14 = 56.1429; //mm
 	G4double calcRadii = (outerRadius - innerRadius - pmtThick)/2.; 
 	//G4double pmt_width = 0.5*cm;
-	G4double pmt_width = 1.2*cm;
-	pmt_width = pmt_width*detWidth/detWidth14;
+	//G4double pmt_width = 1.2*cm;
+	//G4double pmt_width = 2.*6.13*mm;
+	
+	G4double pmt_width = 7.98*mm; // size for equal tile coverage&number
+	//pmt_width = pmt_width*detWidth/detWidth14; //uncomment to scale
 	G4double pmtSize = pmtThick+1.*cm;
 	G4double BeamLineXY = 6.5*cm;
 	//G4VSolid * boxBars = new G4Box("boxBars", detWidth/2., 1.*m , 1.*m); //old geometry, new is inside loop currently
@@ -476,6 +486,7 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 	//G4IntersectionSolid * interSolidBarsPMT2;
 	//G4IntersectionSolid * PMT1;
 	//G4IntersectionSolid * PMT2;
+	
 	G4IntersectionSolid * PMT11;
 	G4IntersectionSolid * PMT12;
 	G4IntersectionSolid * PMT13;
@@ -545,6 +556,10 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		G4String nameLog=name0+std::to_string(i);
 		G4String name1 = "wrapper_";
 		G4String nameWrapper = name1+std::to_string(i);
+		G4String name11 = "wrapper1_";
+		G4String nameWrapper1 = name11+std::to_string(i);
+		G4String name12 = "wrapper2_";
+		G4String nameWrapper2 = name12+std::to_string(i);
 		G4String name21 = "PMT_top1_";
 		G4String namePMT11 = name21+std::to_string(i);
 		G4String name22 = "PMT_top2_";
@@ -582,6 +597,10 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		//PMT1 = new G4IntersectionSolid("PMT1", SpherePMT1, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos, YFacePMT1+pmt_width/2., 50*cm));
 		//PMT2 = new G4IntersectionSolid("PMT2", SpherePMT2, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos, -YFacePMT1-pmt_width/2., 50*cm));
 		G4VSolid * boxBarsPMTSmaller = new G4Box("boxBarsPMTSmaller", pmt_width/2., pmt_width/2. , 1.*m);
+		//G4VSolid * PMT11 = new G4Box("PMT11", pmt_width/2., pmt_width/2. , pmt_width/2.);
+		//G4double place = sqrt((innerRadius+outerRadius)*(innerRadius+outerRadius)/4. - (startPos - pmt_width -1.*mm)*(startPos - pmt_width -1.*mm) -(YFacePMT1+pmt_width)*(YFacePMT1+pmt_width));
+		//G4double place = sqrt(pow( (innerRadius+outerRadius)/2., 2.0) - pow(startPos- pmt_width -1.*mm, 2.0) - pow(YFacePMT1+pmt_width/2., 2.));
+		//PMT11 = new G4IntersectionSolid("PMT11", SpherePMT1, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos - pmt_width -1.*mm, YFacePMT1+pmt_width/2., place));
 		PMT11 = new G4IntersectionSolid("PMT11", SpherePMT1, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos - pmt_width -1.*mm, YFacePMT1+pmt_width/2., 50*cm));
 		PMT12 = new G4IntersectionSolid("PMT12", SpherePMT1, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos, YFacePMT1+pmt_width/2., 50*cm));
 		PMT13 = new G4IntersectionSolid("PMT13", SpherePMT1, boxBarsPMTSmaller, rot1, G4ThreeVector(startPos + pmt_width+1.*mm, YFacePMT1+pmt_width/2., 50*cm));
@@ -610,7 +629,8 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		//Face PMTs, placing them along the vertical at -1/3 and +1/3
 		//G4VSolid * boxBarsPMTFace = new G4Box("boxBarsPMTFace", detWidth/2.-0.1*mm, pmtThick/2. , 1.*m); //for the 1 by 8 configuration
 		//G4VSolid * boxBarsPMTFace = new G4Box("boxBarsPMTFace", detWidth/2.-0.1*mm, pmtThick , 1.*m); // for the 2, 4 by 4 configuration
-		G4VSolid * boxBarsPMTFace1 = new G4Box("boxBarsPMTFace1", pmt_width, pmt_width , 1.*m); // for the 2, 4 by 4 configuration, independant 1
+		G4VSolid * boxBarsPMTFace1 = new G4Box("boxBarsPMTFace1", pmt_width/2., pmt_width/2. , 1.*m); // for the 2, 4 by 4 configuration, independant 1 // Conserving 4x4 size.  04.01.2023
+		//G4VSolid * boxBarsPMTFace1 = new G4Box("boxBarsPMTFace1", 2*pmt_width, 2*pmt_width , 1.*m); // for the 2, 4 by 4 configuration, independant 1 // Testing by revert to old code 04.01.2023
 		//PMT_Front1 = new G4IntersectionSolid("PMT_Front1", SpherePMT_Face1, boxBarsPMTFace, rot1, G4ThreeVector(startPos, YFrontPlacement, 50*cm)); //Y used to be YFacePMT1/3.
 		//PMT_Front2 = new G4IntersectionSolid("PMT_Front2", SpherePMT_Face1, boxBarsPMTFace, rot1, G4ThreeVector(startPos, -YFrontPlacement, 50.*cm)); //Y used to be -YFacePMT1/3.
 		PMT_Front11 = new G4IntersectionSolid("PMT_Front11", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmt_width-1.*mm, YFrontPlacement, 50*cm)); //Y used to be YFacePMT1/3. independant 1
@@ -671,6 +691,7 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		//Adding all Larger volumes together to be subtracted later
 		//Bar_PMT1 = new G4UnionSolid("Bar_PMT1", PMT1Larger, interSolidBarsLarger, rot1, G4ThreeVector(0.,0.,0.));
 		//outsidePMT_bar = new G4UnionSolid("outsidePMT_bar", Bar_PMT1, PMT2Larger, rot1, G4ThreeVector(0.,0.,0.));
+		//Bar_PMT11 = new G4UnionSolid("Bar_PMT11", PMT11Larger1, interSolidBarsLarger, rot1, G4ThreeVector(startPos- pmt_width -1.*mm, YFacePMT1+pmt_width/2., place));
 		Bar_PMT11 = new G4UnionSolid("Bar_PMT11", PMT11Larger, interSolidBarsLarger, rot1, G4ThreeVector(0.,0.,0.));
 		Bar_PMT12 = new G4UnionSolid("Bar_PMT12", Bar_PMT11, PMT12Larger, rot1, G4ThreeVector(0.,0.,0.));
 		Bar_PMT13 = new G4UnionSolid("Bar_PMT13", Bar_PMT12, PMT13Larger, rot1, G4ThreeVector(0.,0.,0.));
@@ -762,10 +783,16 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 			fPlasticLogArray[i] = new G4LogicalVolume(interSolidBars, plasticG4material, nameLog,0,0,0);
 			fWrapLogArray[i] = new G4LogicalVolume(subtractSolidWrap, wrapG4material, nameWrapper,0,0,0); 
 			fPMT11LogArray[i] = new G4LogicalVolume(PMT11, PMTG4material, namePMT11,0,0,0);
-			fPMT12LogArray[i] = new G4LogicalVolume(PMT12, PMTG4material, namePMT12,0,0,0);
+			
+			if (fAddMidSiPM == true) fPMT12LogArray[i] = new G4LogicalVolume(PMT12, PMTG4material, namePMT12,0,0,0);
+			else fPMT12LogArray[i] = new G4LogicalVolume(PMT12, wrapG4material, nameWrapper1,0,0,0);
+			
 			fPMT13LogArray[i] = new G4LogicalVolume(PMT13, PMTG4material, namePMT13,0,0,0);
 			fPMT21LogArray[i] = new G4LogicalVolume(PMT21BeamLine, PMTG4material, namePMT21,0,0,0);
-			fPMT22LogArray[i] = new G4LogicalVolume(PMT22BeamLine, PMTG4material, namePMT22,0,0,0);
+			
+			if (fAddMidSiPM == true) fPMT22LogArray[i] = new G4LogicalVolume(PMT22BeamLine, PMTG4material, namePMT22,0,0,0);
+			else fPMT22LogArray[i] = new G4LogicalVolume(PMT22BeamLine, wrapG4material, nameWrapper2,0,0,0);
+			
 			fPMT23LogArray[i] = new G4LogicalVolume(PMT23BeamLine, PMTG4material, namePMT23,0,0,0);
 			fPMTFace11LogArray[i] = new G4LogicalVolume(PMT_Front11, PMTG4material, namePMTFront11,0,0,0);
 			fPMTFace12LogArray[i] = new G4LogicalVolume(PMT_Front12, PMTG4material, namePMTFront12,0,0,0);
@@ -781,10 +808,8 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 			fPlasticLogArray[i] = new G4LogicalVolume(interSolidBars, plasticG4material, nameLog,0,0,0);
 			fWrapLogArray[i] = new G4LogicalVolume(subtractSolidWrap, wrapG4material, nameWrapper,0,0,0);
 			fPMT11LogArray[i] = new G4LogicalVolume(PMT11, PMTG4material, namePMT11,0,0,0);
-			fPMT12LogArray[i] = new G4LogicalVolume(PMT12, PMTG4material, namePMT12,0,0,0);
 			fPMT13LogArray[i] = new G4LogicalVolume(PMT13, PMTG4material, namePMT13,0,0,0);
 			fPMT21LogArray[i] = new G4LogicalVolume(PMT21, PMTG4material, namePMT21,0,0,0);
-			fPMT22LogArray[i] = new G4LogicalVolume(PMT22, PMTG4material, namePMT22,0,0,0);
 			fPMT23LogArray[i] = new G4LogicalVolume(PMT23, PMTG4material, namePMT23,0,0,0);
 			fPMTFace11LogArray[i] = new G4LogicalVolume(PMT_Front11, PMTG4material, namePMTFront11,0,0,0);
 			fPMTFace12LogArray[i] = new G4LogicalVolume(PMT_Front12, PMTG4material, namePMTFront12,0,0,0);
@@ -792,6 +817,15 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 			fPMTFace22LogArray[i] = new G4LogicalVolume(PMT_Front22, PMTG4material, namePMTFront22,0,0,0);
 			fPMTFaceMid1LogArray[i] = new G4LogicalVolume(PMT_FrontMid1, PMTG4material, namePMTFrontMid1,0,0,0);
 			fPMTFaceMid2LogArray[i] = new G4LogicalVolume(PMT_FrontMid2, PMTG4material, namePMTFrontMid2,0,0,0);
+			if ( (i == 0 || i == (fNumDet-1) ) && fAddMidSiPM == false ) {
+				fPMT12LogArray[i] = new G4LogicalVolume(PMT12, wrapG4material, nameWrapper1,0,0,0);
+				fPMT22LogArray[i] = new G4LogicalVolume(PMT22, wrapG4material, nameWrapper2,0,0,0);
+			
+			}else {
+				fPMT12LogArray[i] = new G4LogicalVolume(PMT12, PMTG4material, namePMT12,0,0,0);
+				fPMT22LogArray[i] = new G4LogicalVolume(PMT22, PMTG4material, namePMT22,0,0,0);
+			
+			}
 		}
 
 		//Set Logical Skin for optical photons on wrapping
@@ -801,10 +835,18 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		fPlasticLogArray[i]->SetVisAttributes(plastic_vis);
 		fWrapLogArray[i]->SetVisAttributes(wrap_vis);
 		fPMT11LogArray[i]->SetVisAttributes(pmt_vis);
-		fPMT12LogArray[i]->SetVisAttributes(pmt_vis);
+		//fPMT12LogArray[i]->SetVisAttributes(pmt_vis);
 		fPMT13LogArray[i]->SetVisAttributes(pmt_vis);
 		fPMT21LogArray[i]->SetVisAttributes(pmt_vis);
-		fPMT22LogArray[i]->SetVisAttributes(pmt_vis);
+		if	( fAddMidSiPM == false && ( abs(startPos-detWidth/2.) < BeamLineXY || abs(startPos+detWidth/2.) < BeamLineXY || abs(startPos) < BeamLineXY || i == 0 || i == (fNumDet-1) ) ) {
+			G4LogicalSkinSurface * Surface11 = new G4LogicalSkinSurface(nameWrapper1, fPMT12LogArray[i], ScintWrapper);
+			G4LogicalSkinSurface * Surface12 = new G4LogicalSkinSurface(nameWrapper2, fPMT22LogArray[i], ScintWrapper);
+			fPMT12LogArray[i]->SetVisAttributes(wrap_vis);
+		       	fPMT22LogArray[i]->SetVisAttributes(wrap_vis);
+		} else {
+			fPMT12LogArray[i]->SetVisAttributes(pmt_vis);
+			fPMT22LogArray[i]->SetVisAttributes(pmt_vis);
+		}
 		fPMT23LogArray[i]->SetVisAttributes(pmt_vis);
 		fPMTFaceMid1LogArray[i]->SetVisAttributes(pmt_vis);
 		fPMTFaceMid2LogArray[i]->SetVisAttributes(pmt_vis);
@@ -817,12 +859,26 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		//if(i%2==0) {}
 		//Place detectors
 		fAssemblyPlastics->AddPlacedVolume(fPlasticLogArray[i], move, rotate);
+		//move = G4ThreeVector(0., YFacePMT1+pmt_width/2., place);
+		//move.rotateY((startPos - pmt_width -1.*mm) / (innerRadius+outerRadius)/2.);
+		//move = G4ThreeVector(startPos- pmt_width -1.*mm, YFacePMT1+pmt_width/2., place);
+		//rotate = new G4RotationMatrix;
+		//if (startPos>0) 
+			//rotate->rotateY( deg*(startPos - pmt_width -1.*mm*cm) / (innerRadius+outerRadius)*cm/2.);
+		//else rotate->rotateY(-180./3.14159*(startPos - pmt_width -1.*mm) / (innerRadius+outerRadius)/2.);
 		fAssemblyPlastics->AddPlacedVolume(fPMT11LogArray[i], move, rotate);
-		fAssemblyPlastics->AddPlacedVolume(fPMT12LogArray[i], move, rotate);
+		//rotate = new G4RotationMatrix;
+		//move = G4ThreeVector(0., 0., 0.);
+		//fAssemblyPlastics->AddPlacedVolume(fPMT12LogArray[i], move, rotate);
 		fAssemblyPlastics->AddPlacedVolume(fPMT13LogArray[i], move, rotate);
 		fAssemblyPlastics->AddPlacedVolume(fPMT21LogArray[i], move, rotate);
-		fAssemblyPlastics->AddPlacedVolume(fPMT22LogArray[i], move, rotate);
+		//fAssemblyPlastics->AddPlacedVolume(fPMT22LogArray[i], move, rotate);
 		fAssemblyPlastics->AddPlacedVolume(fPMT23LogArray[i], move, rotate);
+			if(!( abs(startPos-detWidth/2.) < BeamLineXY || abs(startPos+detWidth/2.) < BeamLineXY || abs(startPos) < BeamLineXY || i == 0 || i == (fNumDet-1) ) ){
+		fAssemblyPlastics->AddPlacedVolume(fPMT22LogArray[i], move, rotate);
+		fAssemblyPlastics->AddPlacedVolume(fPMT12LogArray[i], move, rotate);
+	
+			}
 		if(fAddFrontPMTs == true) {
 			if( abs(startPos-detWidth/2.) < BeamLineXY || abs(startPos+detWidth/2.) < BeamLineXY || abs(startPos) < BeamLineXY || i == 0 || i == (fNumDet-1) ) {
 				fAssemblyPlastics->AddPlacedVolume(fPMTFaceMid1LogArray[i], move, rotate);
@@ -873,6 +929,10 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		G4String nameLog=name0+std::to_string(detNumBottom);
 		G4String name1 = "wrapper_";
 		G4String nameWrapper = name1+std::to_string(detNumBottom);
+		G4String name11 = "wrapper1_";
+		G4String nameWrapper1 = name11+std::to_string(detNumBottom);
+		G4String name12 = "wrapper2_";
+		G4String nameWrapper2 = name12+std::to_string(detNumBottom);
 		G4String name21 = "PMT_top1_";
 		G4String namePMT11 = name21+std::to_string(detNumBottom);
 		G4String name22 = "PMT_top2_";
@@ -938,7 +998,8 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		//Face PMTs, placing them along the vertical at -1/3 and +1/3
 		//G4VSolid * boxBarsPMTFace = new G4Box("boxBarsPMTFace", detWidth/2.-0.1*mm, pmtThick/2. , 1.*m); // for the 1 by 8 configuration
 		//G4VSolid * boxBarsPMTFace = new G4Box("boxBarsPMTFace", detWidth/2.-0.1*mm, pmtThick , 1.*m); // for the 2, 4 by 4 configuration
-		G4VSolid * boxBarsPMTFace1 = new G4Box("boxBarsPMTFace1", pmt_width, pmt_width , 1.*m); // for the 2, 4 by 4 configuration, independant 1
+		G4VSolid * boxBarsPMTFace1 = new G4Box("boxBarsPMTFace1", pmt_width/2., pmt_width/2. , 1.*m); // for the 2, 4 by 4 configuration, independant 1 //04.01.2023
+		//G4VSolid * boxBarsPMTFace1 = new G4Box("boxBarsPMTFace1", 2*pmt_width, 2*pmt_width, 1.*m); // for the 2, 4 by 4 configuration, independant 1 //04.01.2023
 		//PMT_Front1 = new G4IntersectionSolid("PMT_Front1", SpherePMT_Face1, boxBarsPMTFace, rot1, G4ThreeVector(startPos, YFrontPlacement, 50*cm));
 		//PMT_Front2 = new G4IntersectionSolid("PMT_Front2", SpherePMT_Face1, boxBarsPMTFace, rot1, G4ThreeVector(startPos, -YFrontPlacement, 50.*cm));
 		PMT_Front11 = new G4IntersectionSolid("PMT_Front11", SpherePMT_Face1, boxBarsPMTFace1, rot1, G4ThreeVector(startPos-pmt_width-1.*mm, YFrontPlacement, 50*cm)); //Y used to be YFacePMT1/3. independant 1
@@ -999,10 +1060,16 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		fPlasticLogArray[detNumBottom] = new G4LogicalVolume(interSolidBars, plasticG4material, nameLog,0,0,0);
 		fWrapLogArray[detNumBottom] = new G4LogicalVolume(subtractSolidWrap, wrapG4material, nameWrapper,0,0,0); 
 		fPMT11LogArray[detNumBottom] = new G4LogicalVolume(PMT11BeamLine, PMTG4material, namePMT11,0,0,0);
-		fPMT12LogArray[detNumBottom] = new G4LogicalVolume(PMT12BeamLine, PMTG4material, namePMT12,0,0,0);
+		
+		if (fAddMidSiPM == true) fPMT12LogArray[detNumBottom] = new G4LogicalVolume(PMT12BeamLine, PMTG4material, namePMT12,0,0,0);
+		else fPMT12LogArray[detNumBottom] = new G4LogicalVolume(PMT12BeamLine, wrapG4material, nameWrapper1,0,0,0);
+		
 		fPMT13LogArray[detNumBottom] = new G4LogicalVolume(PMT13BeamLine, PMTG4material, namePMT13,0,0,0);
 		fPMT21LogArray[detNumBottom] = new G4LogicalVolume(PMT21, PMTG4material, namePMT21,0,0,0);
-		fPMT22LogArray[detNumBottom] = new G4LogicalVolume(PMT22, PMTG4material, namePMT22,0,0,0);
+		
+		if (fAddMidSiPM == true) fPMT22LogArray[detNumBottom] = new G4LogicalVolume(PMT22, PMTG4material, namePMT22,0,0,0);
+		else fPMT22LogArray[detNumBottom] = new G4LogicalVolume(PMT22, wrapG4material, nameWrapper2,0,0,0);
+		
 		fPMT23LogArray[detNumBottom] = new G4LogicalVolume(PMT23, PMTG4material, namePMT23,0,0,0);
 		fPMTFace11LogArray[detNumBottom] = new G4LogicalVolume(PMT_Front11, PMTG4material, namePMTFront11,0,0,0);
 		fPMTFace12LogArray[detNumBottom] = new G4LogicalVolume(PMT_Front12, PMTG4material, namePMTFront12,0,0,0);
@@ -1018,10 +1085,8 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		fPlasticLogArray[detNumBottom]->SetVisAttributes(plastic_vis);
 		fWrapLogArray[detNumBottom]->SetVisAttributes(wrap_vis);
 		fPMT11LogArray[detNumBottom]->SetVisAttributes(pmt_vis);
-		fPMT12LogArray[detNumBottom]->SetVisAttributes(pmt_vis);
 		fPMT13LogArray[detNumBottom]->SetVisAttributes(pmt_vis);
 		fPMT21LogArray[detNumBottom]->SetVisAttributes(pmt_vis);
-		fPMT22LogArray[detNumBottom]->SetVisAttributes(pmt_vis);
 		fPMT23LogArray[detNumBottom]->SetVisAttributes(pmt_vis);
 		fPMTFaceMid1LogArray[detNumBottom]->SetVisAttributes(pmt_vis);
 		fPMTFaceMid2LogArray[detNumBottom]->SetVisAttributes(pmt_vis);
@@ -1029,16 +1094,25 @@ G4int DetectionSystemPlastics::BuildPlastics() {
 		fPMTFace12LogArray[detNumBottom]->SetVisAttributes(pmt_vis);
 		fPMTFace21LogArray[detNumBottom]->SetVisAttributes(pmt_vis);
 		fPMTFace22LogArray[detNumBottom]->SetVisAttributes(pmt_vis);
-
+		if (fAddMidSiPM == false) {	
+		G4LogicalSkinSurface * Surface21 = new G4LogicalSkinSurface(nameWrapper1, fPMT12LogArray[detNumBottom], ScintWrapper);
+		G4LogicalSkinSurface * Surface22 = new G4LogicalSkinSurface(nameWrapper2, fPMT22LogArray[detNumBottom], ScintWrapper);
+		fPMT12LogArray[detNumBottom]->SetVisAttributes(wrap_vis);
+		fPMT22LogArray[detNumBottom]->SetVisAttributes(wrap_vis);
+		 }
+		else {
+		fPMT12LogArray[detNumBottom]->SetVisAttributes(pmt_vis);
+		fPMT22LogArray[detNumBottom]->SetVisAttributes(pmt_vis);
+		}
 		//build every second detector
 		//if(i%2==0) {}
 		//Place detectors
 		fAssemblyPlastics->AddPlacedVolume(fPlasticLogArray[detNumBottom], move, rotate);
 		fAssemblyPlastics->AddPlacedVolume(fPMT11LogArray[detNumBottom], move, rotate);
-		fAssemblyPlastics->AddPlacedVolume(fPMT12LogArray[detNumBottom], move, rotate);
+	//	fAssemblyPlastics->AddPlacedVolume(fPMT12LogArray[detNumBottom], move, rotate);
 		fAssemblyPlastics->AddPlacedVolume(fPMT13LogArray[detNumBottom], move, rotate);
 		fAssemblyPlastics->AddPlacedVolume(fPMT21LogArray[detNumBottom], move, rotate);
-		fAssemblyPlastics->AddPlacedVolume(fPMT22LogArray[detNumBottom], move, rotate);
+	//	fAssemblyPlastics->AddPlacedVolume(fPMT22LogArray[detNumBottom], move, rotate);
 		fAssemblyPlastics->AddPlacedVolume(fPMT23LogArray[detNumBottom], move, rotate);
 		if(fAddFrontPMTs == true) {
 			fAssemblyPlastics->AddPlacedVolume(fPMTFaceMid1LogArray[detNumBottom], move, rotate);

@@ -52,6 +52,7 @@ public:
 
     G4int Build();
     G4int PlaceDetector(G4LogicalVolume* expHallLog, G4int detectorNumber);
+    G4int PlaceDetectorAuxPorts(G4LogicalVolume* expHallLog, G4int detectorNumber, G4double radialpos);
     void SetWrapping(G4bool wrap){fAddWrap = wrap;};
 
   //Get DESCANT values for Plastics
@@ -149,6 +150,8 @@ private:
     G4bool fAddWrap;
     G4bool fAddSegment;
     G4bool fAddTwo;
+    G4bool fAdd2x2;
+    G4bool fAddSide;
     G4double fAirGap;
     G4double fWrapThickness;
     G4double fPlasticThickness;

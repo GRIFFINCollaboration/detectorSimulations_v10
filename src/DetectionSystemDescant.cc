@@ -583,8 +583,11 @@ G4int DetectionSystemDescant::PlaceDetectorAuxPorts(G4LogicalVolume* expHallLog,
 
 	G4int copyNumber = detectorCopyID + detectorNumber;
 
-	G4double position = radialpos + fCanThicknessFront +(fCanLength / 2.0) ;
+	G4double position = radialpos + (fCanLength / 2.0) ;
 	fSetRadialPos = radialpos;
+	G4cout<<"position = "<< position <<G4endl;
+	G4cout<<"radialpos = "<< radialpos <<G4endl;
+	G4cout<<"fCanLength/2 = "<< fCanLength/2.0 <<G4endl;
 
 	G4double theta  = fDetectorAngles[detectorNumber][0];
 	G4double phi    = fDetectorAngles[detectorNumber][1];

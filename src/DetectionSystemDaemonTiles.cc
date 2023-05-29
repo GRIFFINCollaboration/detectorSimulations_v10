@@ -89,7 +89,8 @@ DetectionSystemDaemonTiles::DetectionSystemDaemonTiles(G4double thickness, G4int
 
 	//Materials
 	fWrapMaterial = "Teflon";
-	fPMTMaterial = "G4_SILICON_DIOXIDE";
+	//fPMTMaterial = "G4_SILICON_DIOXIDE";
+	fPMTMaterial = "Silicon";
 
 	if(material == 1)  fPlasticMaterial = "BC404";
 	else if (material == 2) fPlasticMaterial = "BC408";
@@ -109,8 +110,10 @@ DetectionSystemDaemonTiles::DetectionSystemDaemonTiles(G4double thickness, G4int
 	fSurfCheck = true;
 	// set DAEMON Wrap and segment on/off
 	fAddSegment = false;
-	fAddTwo = true;
+	fAddTwo = false;
 	fAddWrap = true;
+	fAdd2x2 = false; //Only white det implemented right now
+	fAddSide = false; //Only white det implemented right now
 
 
 
@@ -369,7 +372,8 @@ DetectionSystemDaemonTiles::DetectionSystemDaemonTiles(G4double thickness, G4int
 	fMagentaColour  = G4Colour(1.0, 0.0, 1.0); 
 	fBlackColour    = G4Colour(0.0, 0.0, 0.0);
 	fBronzeColour   = G4Colour(0.8,0.5,0.2);
-	fSilverColour   = G4Colour(0.75,0.75,0.75);
+	//fSilverColour   = G4Colour(0.75,0.75,0.75);
+	fSilverColour    = G4Colour(255.0/255.0,255.0/255.0,255.0/255.0);
 
 	// for lanthanum bromide locations
 	//G4double triangleThetaAngle = (180/M_PI)*(atan((1/sqrt(3))/sqrt((11/12) + (1/sqrt(2))))+atan((sqrt(2))/(1+sqrt(2))))*deg;
@@ -963,6 +967,45 @@ G4int DetectionSystemDaemonTiles::PlaceDetector(G4LogicalVolume* expHallLog, G4i
 
 	return 1;
 }
+G4int DetectionSystemDaemonTiles::PlaceDetectorAuxPorts(G4LogicalVolume* expHallLog, G4int detectorNumber, G4double radialpos) {
+	G4int detectorCopyID = 0;
+
+	G4cout<<"Daemon Detector Number = "<<detectorNumber<<G4endl;
+
+	G4int copyNumber = detectorCopyID + detectorNumber;
+	G4double fCanLength              = 150.0*mm;
+
+	//G4double position = radialpos + fCanThicknessFront +(fCanLength / 2.0) ;
+	G4double position = radialpos + fCanLength/2. - (fPlasticThickness/2. + fWrapThickness) ;
+	fSetRadialPos = radialpos;
+	G4cout<<"position = "<< position <<G4endl;
+	//G4cout<<"radialpos = "<< radialpos <<G4endl;
+
+	G4double theta  = fDetectorAngles[detectorNumber][0];
+	G4double phi    = fDetectorAngles[detectorNumber][1];
+	//G4double alpha  = fDetectorAngles[detectorNumber][2]; // yaw
+	G4double beta   = fDetectorAngles[detectorNumber][3]; // pitch
+	G4double gamma  = fDetectorAngles[detectorNumber][4]; // roll
+
+	G4double x = 0;
+	G4double y = 0;
+	G4double z = position;
+
+	G4RotationMatrix* rotate = new G4RotationMatrix;    // rotation matrix corresponding to direction vector
+	//rotate->rotateY(M_PI);
+	rotate->rotateZ(90.0*deg);
+	rotate->rotateY(M_PI+beta);
+	rotate->rotateZ(gamma);
+
+	G4ThreeVector move(TransX(x,y,z,theta,phi), TransY(x,y,z,theta,phi), TransZ(x,y,z,theta)); //Commented out for testing
+	
+	//rotate = new G4RotationMatrix;    // rotation matrix corresponding to direction vector
+	//G4ThreeVector move(0,0,0);
+
+	fAssemblyWhite->MakeImprint(expHallLog, move, rotate, copyNumber, fSurfCheck);
+
+	return 1;
+}
 
 G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 	G4ThreeVector moveCut, move, direction;
@@ -1022,7 +1065,8 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 	scintillatorMPT->AddProperty("IONSCINTILLATIONYIELD", e_range, yield_C, num2)->SetSpline(true);
 */	
 	int energyPoints = 26;
-	G4double pEF = 0.4; //SiPM efficiency (TODO - discuss it)
+	G4double pEF = 1.; //SiPM efficiency (TODO - discuss it)
+	//G4double pEF = 1.; //SiPM efficiency (TODO - discuss it)
 	//G4double protonScalingFact = 1.35;
 	G4double protonScalingFact = 1;
 	G4double psF = protonScalingFact;
@@ -1035,14 +1079,14 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 		1.*MeV, 1.3*MeV, 1.7*MeV, 2.*MeV, 
 		2.4*MeV, 3.*MeV, 3.4*MeV, 4.*MeV, 4.8*MeV, 
 		6.*MeV, 7.2*MeV, 8.4*MeV, 10.*MeV };
-	G4double electronYield[] = {1*pEF, 1000*pEF, 1300*pEF, 1700*pEF,
+	G4double electronYield[] = {10*pEF, 1000*pEF, 1300*pEF, 1700*pEF,
 		2000*pEF, 2400*pEF, 3000*pEF, 3400*pEF,
 		4000*pEF, 4800*pEF, 6000*pEF, 7200*pEF,
 		8400*pEF,10000*pEF, 13000*pEF, 17000*pEF,
 		20000*pEF, 24000*pEF, 30000*pEF, 34000*pEF,
 		40000*pEF, 48000*pEF, 60000*pEF, 72000*pEF,
 		84000*pEF, 100000*pEF };
-	G4double protonYield[] = { 0.6*pEF*psF, 67.1*pEF*psF, 88.6*pEF*psF,
+	G4double protonYield[] = { 0.671*pEF*psF, 67.1*pEF*psF, 88.6*pEF*psF,
 		120.7*pEF*psF,
 		146.5*pEF*psF, 183.8*pEF*psF, 246*pEF*psF, 290*pEF*psF,
 		365*pEF*psF, 483*pEF*psF, 678*pEF*psF, 910*pEF*psF,
@@ -1050,7 +1094,7 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 		4725*pEF*psF,6250*pEF*psF, 8660*pEF*psF, 10420*pEF*psF,
 		13270*pEF*psF,17180*pEF*psF, 23100*pEF*psF,
 		29500*pEF*psF, 36200*pEF*psF, 45500*pEF*psF};
-	G4double alphaYield[] = { 0.2*pEF, 16.4*pEF, 20.9*pEF, 27.2*pEF,
+	G4double alphaYield[] = { 0.164*pEF, 16.4*pEF, 20.9*pEF, 27.2*pEF,
 		32*pEF, 38.6*pEF, 49*pEF, 56.4*pEF,
 		67.5*pEF, 83*pEF, 108*pEF, 135*pEF,
 		165.6*pEF, 210*pEF, 302*pEF, 441*pEF,
@@ -1058,7 +1102,7 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 		1815*pEF, 2555*pEF, 4070*pEF, 6070*pEF,
 		8700*pEF, 13200*pEF };
 
-	G4double ionYield[] = { 0.2*pEF, 10.4*pEF, 12.7*pEF, 15.7*pEF,
+	G4double ionYield[] = { 0.104*pEF, 10.4*pEF, 12.7*pEF, 15.7*pEF,
 		17.9*pEF, 20.8*pEF, 25.1*pEF, 27.9*pEF,
 		31.9*pEF, 36.8*pEF, 43.6*pEF, 50.2*pEF,
 		56.9*pEF, 65.7*pEF, 81.3*pEF, 101.6*pEF,
@@ -1081,12 +1125,12 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 	//
 
 	if (fPlasticMaterial == "BC408"){
-		const G4int num = 12; //BC408
+		const G4int num = 20; //BC408
 		G4cout << "BC408 and num = " << num << G4endl;
-		G4double photonEnergy[num] = {1.7*eV, 2.38*eV, 2.48*eV, 2.58*eV, 2.70*eV, 2.76*eV, 2.82*eV, 2.91*eV, 2.95*eV, 3.1*eV, 3.26*eV, 3.44*eV}; //BC408 emission spectra & corresponding energies
-		G4double RIndex1[num] = {1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58}; //BC408
-		G4double absorption[num] = {380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm}; ///light attenuation BC408
-		G4double scint[num] = {3., 3., 8., 18., 43., 55., 80., 100., 80., 20., 7., 3. }; ///// Based off emission spectra for BC408
+		G4double photonEnergy[num] = {1.7*eV, 2.43*eV, 2.48*eV, 2.58*eV, 2.64*eV, 2.70*eV, 2.76*eV, 2.79*eV, 2.82*eV, 2.85*eV, 2.91*eV, 2.92*eV, 2.95*eV, 2.99*eV, 3.02*eV, 3.1*eV, 3.18*eV, 3.26*eV, 3.35*eV, 3.44*eV}; //BC408 emission spectra & corresponding energies
+		G4double RIndex1[num] = {1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58}; //BC408
+		G4double absorption[num] = {380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm}; ///light attenuation BC408
+		G4double scint[num] = {1., 5., 8., 18., 25., 43., 55., 65., 80., 95., 100., 90., 80., 70., 50., 20., 12., 7., 5., 3. }; ///// Based off emission spectra for BC408
 
 		assert(sizeof(RIndex1) == sizeof(photonEnergy));
 		const G4int nEntries = sizeof(photonEnergy)/sizeof(G4double);
@@ -1153,7 +1197,8 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 	}
 
 	// The number of photons produced per interaction is sampled from a Gaussian distribution with a full-width at half-maximum set to 20% of the number of produced photons. From Joeys Thesis
-	scintillatorMPT->AddConstProperty("RESOLUTIONSCALE", 1.2); // broadens the statistical distribution of generated photons, sqrt(num generated)* resScale, gaussian based on SCINTILLATIONYIELD, >1 broadens, 0 no distribution. 20%
+	scintillatorMPT->AddConstProperty("RESOLUTIONSCALE", 5.0); // broadens the statistical distribution of generated photons, sqrt(num generated)* resScale, gaussian based on SCINTILLATIONYIELD, >1 broadens, 0 no distribution. 20%
+	//scintillatorMPT->AddConstProperty("RESOLUTIONSCALE", 0); // broadens the statistical distribution of generated photons, sqrt(num generated)* resScale, gaussian based on SCINTILLATIONYIELD, >1 broadens, 0 no distribution. 20%
 	scintillatorMPT->AddConstProperty("YIELDRATIO", 1.0); //The relative strength of the fast component as a fraction of total scintillation yield is given by the YIELDRATIO.
 
 	//properties I may be missing: scintillation, rayleigh
@@ -1196,7 +1241,8 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 
 	//////// Quartz  ////////////
 	G4MaterialPropertiesTable * QuartzMPT = new G4MaterialPropertiesTable();
-	G4double rIndex_Quartz[numShort] = {1.474, 1.474, 1.474}; //Taken from Joey github
+	//G4double rIndex_Quartz[numShort] = {1.474, 1.474, 1.474}; //Taken from Joey github
+	G4double rIndex_Quartz[numShort] = {1.53, 1.53,1.53}; //
 	QuartzMPT->AddProperty("RINDEX", photonEnergyShort, rIndex_Quartz, nEntriesShort)->SetSpline(true);  //refractive index can change with energy
 	QuartzMPT->AddConstProperty("ABSLENGTH", 40.*cm); //from Joeys github
 	PMTG4material->SetMaterialPropertiesTable(QuartzMPT);
@@ -1204,6 +1250,7 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 	//Visualization properties
 	//Uniform
 	G4VisAttributes* PlasticVisAtt = new G4VisAttributes(fSilverColour);
+	//G4VisAttributes* PlasticVisAtt = new G4VisAttributes(fBlackColour);
 	PlasticVisAtt->SetVisibility(true);
 	G4VisAttributes* PMTVisAtt = new G4VisAttributes(fBronzeColour);
 	PMTVisAtt->SetVisibility(true);
@@ -1211,36 +1258,46 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 	WrapVisAtt->SetVisibility(true);
 	//Blue
 	G4VisAttributes* bluePlasticVisAtt = new G4VisAttributes(fSilverColour);
+	//G4VisAttributes* bluePlasticVisAtt = new G4VisAttributes(fBlackColour);
 	bluePlasticVisAtt->SetVisibility(true);
 	G4VisAttributes* blueWrapVisAtt = new G4VisAttributes(fBlueColour);
+	//G4VisAttributes* blueWrapVisAtt = new G4VisAttributes(fBlackColour);
 	blueWrapVisAtt->SetVisibility(true);
 	G4VisAttributes* bluePMTVisAtt = new G4VisAttributes(fBronzeColour);
 	bluePMTVisAtt->SetVisibility(true);
 	//White
 	G4VisAttributes* whitePlasticVisAtt = new G4VisAttributes(fSilverColour);
+	//G4VisAttributes* whitePlasticVisAtt = new G4VisAttributes(fBlackColour);
 	whitePlasticVisAtt->SetVisibility(true);
-	G4VisAttributes* whiteWrapVisAtt = new G4VisAttributes(fWhiteColour);
+	//G4VisAttributes* whiteWrapVisAtt = new G4VisAttributes(fWhiteColour);
+	G4VisAttributes* whiteWrapVisAtt = new G4VisAttributes(fBlackColour);
 	whiteWrapVisAtt->SetVisibility(true);
 	G4VisAttributes* whitePMTVisAtt = new G4VisAttributes(fBronzeColour);
 	whitePMTVisAtt->SetVisibility(true);
 	//Red
 	G4VisAttributes* redPlasticVisAtt = new G4VisAttributes(fSilverColour);
+	//G4VisAttributes* redPlasticVisAtt = new G4VisAttributes(fBlackColour);
 	redPlasticVisAtt->SetVisibility(true);
 	G4VisAttributes* redWrapVisAtt = new G4VisAttributes(fRedColour);
+	//G4VisAttributes* redWrapVisAtt = new G4VisAttributes(fBlackColour);
 	redWrapVisAtt->SetVisibility(true);
 	G4VisAttributes* redPMTVisAtt = new G4VisAttributes(fBronzeColour);
 	redPMTVisAtt->SetVisibility(true);
 	//Green
 	G4VisAttributes* greenPlasticVisAtt = new G4VisAttributes(fSilverColour);
+	//G4VisAttributes* greenPlasticVisAtt = new G4VisAttributes(fBlackColour);
 	greenPlasticVisAtt->SetVisibility(true);
 	G4VisAttributes* greenWrapVisAtt = new G4VisAttributes(fGreenColour);
+	//G4VisAttributes* greenWrapVisAtt = new G4VisAttributes(fBlackColour);
 	greenWrapVisAtt->SetVisibility(true);
 	G4VisAttributes* greenPMTVisAtt = new G4VisAttributes(fBronzeColour);
 	greenPMTVisAtt->SetVisibility(true);
 	//Yellow
 	G4VisAttributes* yellowPlasticVisAtt = new G4VisAttributes(fSilverColour);
+	//G4VisAttributes* yellowPlasticVisAtt = new G4VisAttributes(fBlackColour);
 	yellowPlasticVisAtt->SetVisibility(true);
 	G4VisAttributes* yellowWrapVisAtt = new G4VisAttributes(fYellowColour);
+	//G4VisAttributes* yellowWrapVisAtt = new G4VisAttributes(fBlackColour);
 	yellowWrapVisAtt->SetVisibility(true);
 	G4VisAttributes* yellowPMTVisAtt = new G4VisAttributes(fBronzeColour);
 	yellowPMTVisAtt->SetVisibility(true);
@@ -1256,22 +1313,36 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 	G4double pmtSize, pmtSizeZ, pmtx, pmty;
 	//PMT sizes Unsegmented
 	if(!fAddSegment){
-		pmtSize = 1.2*cm;
+		//pmtSize = 1.2*cm; //original
+		pmtSize = 2*6.13*mm; //no divide by 2 since this represents a full 2x2 array
+		//pmtSize = 0.6*cm;
+		//pmtSize = 1.2*cm;
+		//pmtSize = 2.0*cm;
+		//pmtSize = 5.0*cm;
 		pmtSizeZ = 0.5*cm;
 		pmtx = 0.*cm;
 		pmty = 0.*cm;
 		if(fAddTwo) {
-			pmtSize = 0.6*cm;
+			pmtSize = 2*6.13*mm; //no divide by 2 since this represents a full 2x2 array
 			pmtx = 1.*cm;
+		}
+		if(fAdd2x2) {
+			pmtSize = 6.13*mm; //instead of dividing by 2 everywhere, do it here
+			pmtx = (2.*pmtSize + 0.2*mm)/2.;
 		}
 	}
 	//PMT sizes Segmented
 	if(fAddSegment){
-		pmtSize = 0.6*cm;
+		//pmtSize = 8.67*mm; //Scaling surface area to unseg 2 sipm
+		pmtSize = 2*6.13*mm; //no divide by 2 since this represents a full 2x2 array
+		//pmtSize = 0.6*cm;
 		pmtSizeZ = 0.5*cm;
 		pmtx = 2.5*cm;
 		pmty = 2.5*cm;
 	}	
+	//Divide by 2 for actual size
+	pmtSize = pmtSize/2.;
+
 	//For Segment cutting
 	G4double thick = 5.*cm;
 	G4double SegPosition = thick + fWrapThickness + fAirGap;
@@ -1291,8 +1362,10 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 		move = G4ThreeVector(0.0, 0.0, fPlasticThickness/2.); //+pmtSize?
 		G4SubtractionSolid* blueWrapVolume3;
 		G4SubtractionSolid* blueWrapVolume4;
+		G4SubtractionSolid* blueWrapVolume5;
+		G4SubtractionSolid* blueWrapVolume6;
 	       	
-		if (!fAddTwo) blueWrapVolume3	= new G4SubtractionSolid("blueWrapVolume3", blueWrapVolume2, bluePMT, rotate, move);
+		if (!fAddTwo && !fAdd2x2) blueWrapVolume3	= new G4SubtractionSolid("blueWrapVolume3", blueWrapVolume2, bluePMT, rotate, move);
 		if (fAddTwo) {
 			move = G4ThreeVector(pmtx, 0.0, fPlasticThickness/2.);
 			blueWrapVolume4	= new G4SubtractionSolid("blueWrapVolume4", blueWrapVolume2, bluePMT, rotate, move);
@@ -1300,6 +1373,16 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 			blueWrapVolume3	= new G4SubtractionSolid("blueWrapVolume3", blueWrapVolume4, bluePMT, rotate, move);
 		}
 
+		if (fAdd2x2) {
+			move = G4ThreeVector(pmtx, pmtx, fPlasticThickness/2.);
+			blueWrapVolume4	= new G4SubtractionSolid("blueWrapVolume4", blueWrapVolume2, bluePMT, rotate, move);
+			move = G4ThreeVector(-pmtx, pmtx, fPlasticThickness/2.);
+			blueWrapVolume5	= new G4SubtractionSolid("blueWrapVolume5", blueWrapVolume4, bluePMT, rotate, move);
+			move = G4ThreeVector(pmtx, -pmtx, fPlasticThickness/2.);
+			blueWrapVolume6	= new G4SubtractionSolid("blueWrapVolume6", blueWrapVolume5, bluePMT, rotate, move);
+			move = G4ThreeVector(-pmtx, -pmtx, fPlasticThickness/2.);
+			blueWrapVolume3	= new G4SubtractionSolid("blueWrapVolume3", blueWrapVolume6, bluePMT, rotate, move);
+		}
 
 		// Define rotation and movement objects
 		direction 	= G4ThreeVector(0,0,1);
@@ -1323,6 +1406,22 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 			fBluePMTLogArray[0] = new G4LogicalVolume(bluePMT, PMTG4material, "BluePMT_2", 0, 0, 0);
 			fBluePMTLogArray[0]->SetVisAttributes(PMTVisAtt);
 		}
+		if(fBluePMTLogArray[0] == nullptr && fAdd2x2) {
+			fBluePMTLogArray[0] = new G4LogicalVolume(bluePMT, PMTG4material, "BluePMT_1", 0, 0, 0);
+			fBluePMTLogArray[0]->SetVisAttributes(PMTVisAtt);
+		}
+		if(fBluePMTLogArray[1] == nullptr && fAdd2x2) {
+			fBluePMTLogArray[1] = new G4LogicalVolume(bluePMT, PMTG4material, "BluePMT_2", 0, 0, 0);
+			fBluePMTLogArray[1]->SetVisAttributes(PMTVisAtt);
+		}
+		if(fBluePMTLogArray[2] == nullptr && fAdd2x2) {
+			fBluePMTLogArray[2] = new G4LogicalVolume(bluePMT, PMTG4material, "BluePMT_3", 0, 0, 0);
+			fBluePMTLogArray[2]->SetVisAttributes(PMTVisAtt);
+		}
+		if(fBluePMTLogArray[3] == nullptr && fAdd2x2) {
+			fBluePMTLogArray[3] = new G4LogicalVolume(bluePMT, PMTG4material, "BluePMT_4", 0, 0, 0);
+			fBluePMTLogArray[3]->SetVisAttributes(PMTVisAtt);
+		}
 		if(fBluePlasticLog == nullptr) {
 			fBluePlasticLog = new G4LogicalVolume(bluePlasticVolume1, plasticG4material, "BlueTilePlasticDet_1", 0, 0, 0);
 			fBluePlasticLog->SetVisAttributes(PlasticVisAtt);
@@ -1333,7 +1432,9 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 			fAssemblyBlue->AddPlacedVolume(fBlueWrapLog, move, rotate);
 		}
 		direction 	= G4ThreeVector(0,0,1);
-		if (!fAddTwo){
+		zPosition    = fPlasticThickness + pmtSizeZ + fWrapThickness/2.;
+		move          = zPosition * direction;
+		if (!fAddTwo && !fAdd2x2){
 		zPosition    = fPlasticThickness + pmtSizeZ + fWrapThickness/2.;		
 		move          = zPosition * direction;
 		fAssemblyBlue->AddPlacedVolume(fBluePMTLog, move, rotate);
@@ -1344,6 +1445,16 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 		fAssemblyBlue->AddPlacedVolume(fBluePMTLog, move, rotate);
 		move = G4ThreeVector(-pmtx, 0., zPosition);
 		fAssemblyBlue->AddPlacedVolume(fBluePMTLogArray[0], move, rotate);
+		}
+		if (fAdd2x2){
+		move = G4ThreeVector(pmtx, pmtx, zPosition);
+		fAssemblyBlue->AddPlacedVolume(fBluePMTLogArray[0], move, rotate);
+		move = G4ThreeVector(-pmtx, pmtx, zPosition);
+		fAssemblyBlue->AddPlacedVolume(fBluePMTLogArray[1], move, rotate);
+		move = G4ThreeVector(pmtx, -pmtx, zPosition);
+		fAssemblyBlue->AddPlacedVolume(fBluePMTLogArray[2], move, rotate);
+		move = G4ThreeVector(-pmtx, -pmtx, zPosition);
+		fAssemblyBlue->AddPlacedVolume(fBluePMTLogArray[3], move, rotate);
 		}
 
 	}
@@ -1461,7 +1572,8 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 
 	// WHITE Detectors
 
-	if(!fAddSegment){
+	//if(!fAddSegment){
+	if(!fAddSegment && !fAddSide){
 
 		G4SubtractionSolid* whitePlasticVolume1 = CanVolumeDaemon(true, fPlasticThickness, fWhiteDetector, fWhitePhi, false);
 		G4SubtractionSolid* whiteWrapVolume1 = CanVolumeDaemon(false, fPlasticThickness+fWrapThickness, fWhiteDetector, fWhitePhi, false);
@@ -1473,13 +1585,25 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 		//G4SubtractionSolid* whiteWrapVolume3 = new G4SubtractionSolid("whiteWrapVolume3", whiteWrapVolume2, whitePMT, rotate, move);
 		G4SubtractionSolid* whiteWrapVolume3;
 		G4SubtractionSolid* whiteWrapVolume4;
+		G4SubtractionSolid* whiteWrapVolume5;
+		G4SubtractionSolid* whiteWrapVolume6;
 		
-		if (!fAddTwo) whiteWrapVolume3	= new G4SubtractionSolid("whiteWrapVolume3", whiteWrapVolume2, whitePMT, rotate, move);
+		if (!fAddTwo && !fAdd2x2) whiteWrapVolume3	= new G4SubtractionSolid("whiteWrapVolume3", whiteWrapVolume2, whitePMT, rotate, move);
 		if (fAddTwo) {
 			move = G4ThreeVector(pmtx, 0.0, fPlasticThickness/2.);
 			whiteWrapVolume4	= new G4SubtractionSolid("whiteWrapVolume4", whiteWrapVolume2, whitePMT, rotate, move);
 			move = G4ThreeVector(-pmtx, 0.0, fPlasticThickness/2.);
 			whiteWrapVolume3	= new G4SubtractionSolid("whiteWrapVolume3", whiteWrapVolume4, whitePMT, rotate, move);
+		}
+		if (fAdd2x2) {
+			move = G4ThreeVector(pmtx, pmtx, fPlasticThickness/2.);
+			whiteWrapVolume4	= new G4SubtractionSolid("whiteWrapVolume4", whiteWrapVolume2, whitePMT, rotate, move);
+			move = G4ThreeVector(-pmtx, pmtx, fPlasticThickness/2.);
+			whiteWrapVolume5	= new G4SubtractionSolid("whiteWrapVolume5", whiteWrapVolume4, whitePMT, rotate, move);
+			move = G4ThreeVector(pmtx, -pmtx, fPlasticThickness/2.);
+			whiteWrapVolume6	= new G4SubtractionSolid("whiteWrapVolume6", whiteWrapVolume5, whitePMT, rotate, move);
+			move = G4ThreeVector(-pmtx, -pmtx, fPlasticThickness/2.);
+			whiteWrapVolume3	= new G4SubtractionSolid("whiteWrapVolume3", whiteWrapVolume6, whitePMT, rotate, move);
 		}
 
 		// Define rotation and movement objects
@@ -1504,6 +1628,22 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 			fWhitePMTLogArray[0] = new G4LogicalVolume(whitePMT, PMTG4material, "WhitePMT_2", 0, 0, 0);
 			fWhitePMTLogArray[0]->SetVisAttributes(PMTVisAtt);
 		}
+		if(fWhitePMTLogArray[0] == nullptr && fAdd2x2) {
+			fWhitePMTLogArray[0] = new G4LogicalVolume(whitePMT, PMTG4material, "WhitePMT_1", 0, 0, 0);
+			fWhitePMTLogArray[0]->SetVisAttributes(PMTVisAtt);
+		}
+		if(fWhitePMTLogArray[1] == nullptr && fAdd2x2) {
+			fWhitePMTLogArray[1] = new G4LogicalVolume(whitePMT, PMTG4material, "WhitePMT_2", 0, 0, 0);
+			fWhitePMTLogArray[1]->SetVisAttributes(PMTVisAtt);
+		}
+		if(fWhitePMTLogArray[2] == nullptr && fAdd2x2) {
+			fWhitePMTLogArray[2] = new G4LogicalVolume(whitePMT, PMTG4material, "WhitePMT_3", 0, 0, 0);
+			fWhitePMTLogArray[2]->SetVisAttributes(PMTVisAtt);
+		}
+		if(fWhitePMTLogArray[3] == nullptr && fAdd2x2) {
+			fWhitePMTLogArray[3] = new G4LogicalVolume(whitePMT, PMTG4material, "WhitePMT_4", 0, 0, 0);
+			fWhitePMTLogArray[3]->SetVisAttributes(PMTVisAtt);
+		}
 		if(fWhitePlasticLog == nullptr) {
 			fWhitePlasticLog = new G4LogicalVolume(whitePlasticVolume1, plasticG4material, "WhiteTilePlasticDet_1", 0, 0, 0);
 			fWhitePlasticLog->SetVisAttributes(PlasticVisAtt);
@@ -1517,7 +1657,7 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 		zPosition    = fPlasticThickness + pmtSizeZ + fWrapThickness/2.;
 		move          = zPosition * direction;
 		
-		if (!fAddTwo){
+		if (!fAddTwo && !fAdd2x2){
 		fAssemblyWhite->AddPlacedVolume(fWhitePMTLog, move, rotate);
 		}
 		if (fAddTwo){
@@ -1526,6 +1666,128 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 		move = G4ThreeVector(-pmtx, 0., zPosition);
 		fAssemblyWhite->AddPlacedVolume(fWhitePMTLogArray[0], move, rotate);
 		}
+		if (fAdd2x2){
+		move = G4ThreeVector(pmtx, pmtx, zPosition);
+		fAssemblyWhite->AddPlacedVolume(fWhitePMTLogArray[0], move, rotate);
+		move = G4ThreeVector(-pmtx, pmtx, zPosition);
+		fAssemblyWhite->AddPlacedVolume(fWhitePMTLogArray[1], move, rotate);
+		move = G4ThreeVector(pmtx, -pmtx, zPosition);
+		fAssemblyWhite->AddPlacedVolume(fWhitePMTLogArray[2], move, rotate);
+		move = G4ThreeVector(-pmtx, -pmtx, zPosition);
+		fAssemblyWhite->AddPlacedVolume(fWhitePMTLogArray[3], move, rotate);
+		}
+	}
+	
+	if(fAddSide){
+		G4SubtractionSolid* whitePlasticVolume2 = CanVolumeDaemon(true, fPlasticThickness, fWhiteDetector, fWhitePhi, false);
+		G4SubtractionSolid* whiteWrapVolume1 = CanVolumeDaemon(false, fPlasticThickness+fWrapThickness, fWhiteDetector, fWhitePhi, false);
+		move = G4ThreeVector(0.0, 0.0, 0.0);
+		rotate = new G4RotationMatrix;
+		G4SubtractionSolid* whiteWrapVolume2 = new G4SubtractionSolid("whiteWrapVolume2", whiteWrapVolume1, whitePlasticVolume2, rotate, move);
+		G4Box * whitePMT = new G4Box("whitePMT", pmtSize, pmtSize, pmtSize);
+		//G4SubtractionSolid* whitePMT = CanVolumeDaemon(true, pmtSize, fWhiteDetector, fWhitePhi, false);
+		move = G4ThreeVector(0.0, 0.0, fPlasticThickness/2.); //+pmtSize?
+		//G4SubtractionSolid* whiteWrapVolume3 = new G4SubtractionSolid("whiteWrapVolume3", whiteWrapVolume2, whitePMT, rotate, move);
+		G4SubtractionSolid* whiteWrapVolume3;
+		
+		zPosition    = 1.-1.21869*um;  
+		move          = zPosition * direction;
+		move = G4ThreeVector(0.0, 5.6305*cm+2*pmtSize-0.3*cm+0.519812*mm+0.01*mm+1.07017*um , zPosition); //+pmtSize?
+		rotate = new G4RotationMatrix;
+		rotate->rotateX(-7*deg);
+		whiteWrapVolume3	= new G4SubtractionSolid("whiteWrapVolume3", whiteWrapVolume2, whitePMT, rotate, move);
+		G4SubtractionSolid* whitePlasticVolume1 = new G4SubtractionSolid("whitePlasticVolume1", whitePlasticVolume2, whitePMT, rotate, move);
+		
+		 // Define rotation and movement objects
+		direction 	= G4ThreeVector(0,0,1);
+		// fWrapThickness/2.  stops overlap with descant
+		zPosition    = fPlasticThickness/2.0+fWrapThickness/2.;
+		move          = zPosition * direction;
+
+		rotate = new G4RotationMatrix;
+
+		if(fWhiteWrapLog == nullptr) {
+			fWhiteWrapLog = new G4LogicalVolume(whiteWrapVolume3, wrapG4material, nameWrapperW, 0, 0, 0);
+			fWhiteWrapLog->SetVisAttributes(whiteWrapVisAtt);
+			//Set Logical Skin for optical photons on wrapping
+			G4LogicalSkinSurface * Surface = new G4LogicalSkinSurface(nameWrapperW, fWhiteWrapLog, ScintWrapper);
+		}
+		if(fWhitePMTLog == nullptr) {
+			fWhitePMTLog = new G4LogicalVolume(whitePMT, PMTG4material, "WhitePMT_1", 0, 0, 0);
+			fWhitePMTLog->SetVisAttributes(PMTVisAtt);
+		}
+		if(fWhitePMTLogArray[0] == nullptr && fAddTwo) {
+			fWhitePMTLogArray[0] = new G4LogicalVolume(whitePMT, PMTG4material, "WhitePMT_2", 0, 0, 0);
+			fWhitePMTLogArray[0]->SetVisAttributes(PMTVisAtt);
+		}
+		if(fWhitePMTLogArray[0] == nullptr && fAdd2x2) {
+			fWhitePMTLogArray[0] = new G4LogicalVolume(whitePMT, PMTG4material, "WhitePMT_1", 0, 0, 0);
+			fWhitePMTLogArray[0]->SetVisAttributes(PMTVisAtt);
+		}
+		if(fWhitePMTLogArray[1] == nullptr && fAdd2x2) {
+			fWhitePMTLogArray[1] = new G4LogicalVolume(whitePMT, PMTG4material, "WhitePMT_2", 0, 0, 0);
+			fWhitePMTLogArray[1]->SetVisAttributes(PMTVisAtt);
+		}
+		if(fWhitePMTLogArray[2] == nullptr && fAdd2x2) {
+			fWhitePMTLogArray[2] = new G4LogicalVolume(whitePMT, PMTG4material, "WhitePMT_3", 0, 0, 0);
+			fWhitePMTLogArray[2]->SetVisAttributes(PMTVisAtt);
+		}
+		if(fWhitePMTLogArray[3] == nullptr && fAdd2x2) {
+			fWhitePMTLogArray[3] = new G4LogicalVolume(whitePMT, PMTG4material, "WhitePMT_4", 0, 0, 0);
+			fWhitePMTLogArray[3]->SetVisAttributes(PMTVisAtt);
+		}
+		if(fWhitePlasticLog == nullptr) {
+			fWhitePlasticLog = new G4LogicalVolume(whitePlasticVolume1, plasticG4material, "WhiteTilePlasticDet_1", 0, 0, 0);
+			fWhitePlasticLog->SetVisAttributes(PlasticVisAtt);
+		}
+
+		fAssemblyWhite->AddPlacedVolume(fWhitePlasticLog, move, rotate);
+		if(fAddWrap){
+			fAssemblyWhite->AddPlacedVolume(fWhiteWrapLog, move, rotate);
+		}
+		direction 	= G4ThreeVector(0,0,1);
+		zPosition    = fPlasticThickness  - 2*pmtSize+0.6*cm;  
+		move          = zPosition * direction;
+		move = G4ThreeVector(0.0, 5.6305*cm+2*pmtSize-0.3*cm+0.519812*mm+0.01*mm, zPosition); //+pmtSize?
+		rotate = new G4RotationMatrix;
+		//rotate->rotateX(6.4751*deg);
+		rotate->rotateX(7*deg);
+		/*
+		int i = 3;
+		G4ThreeVector frontP1(fWhiteDetector[i][0], fWhiteDetector[i][1], fWhiteDetector[i][2]);
+		G4ThreeVector backP1(fWhiteDetector[i+6][0], fWhiteDetector[i+6][1], fWhiteDetector[i+6][2]);
+		double theta1 = frontP1.angle(backP1); 
+		rotate->rotateX(-theta1);
+		*/
+		// first set of points
+	/*	int idx1 = 1;
+		int idx2 = idx1+1;
+		G4ThreeVector frontP1(fWhiteDetector[0+idx1][0], fWhiteDetector[0+idx1][1],fWhiteDetector[0+idx1][2]);
+		G4ThreeVector frontP2(fWhiteDetector[0+idx2][0], fWhiteDetector[0+idx2][1],fWhiteDetector[0+idx2][2]);
+		G4double theta = 0;
+		G4double phi = 0;
+		// find the equation of the line defined by the two front face points.
+		// then using a circle of radius r, solve for the minimum r to get the minimum theta angle to that plane!
+		G4double slope  = (frontP2.y() - frontP1.y())/(frontP2.x() - frontP1.x());
+		G4double intcp  = (frontP1.y()) - (slope*frontP1.x());
+		//have y = m*x + b.  Now wnt to find the min x and y to go from origin to the line. therefore setup y = 1/m*x+c is perpendicular line from origin. 
+		//Sub in point on new line (0, 0) since comes from origin, get c = 0.
+		//Want point where 2 lines meet: set y = 1/m *x = m*x+b.  Get formula below.
+		G4double minx   = (-1.0*slope*intcp)/(1+slope*slope);
+		G4double miny   = slope*minx + intcp;
+
+		// make vectors, and get angle between vectors
+		G4ThreeVector newV1 = G4ThreeVector(minx,miny, zPosition);
+		G4ThreeVector newV2 = G4ThreeVector(0.0*mm,0.0*mm, zPosition);
+		//Theta is definition of angle between vectors
+		theta   = acos((newV1.dot(newV2))/(newV1.mag() * newV2.mag()));
+		phi     = fWhitePhi[idx1];
+		rotate->rotateZ(1.0*phi);
+		rotate->rotateX(-1.0*theta);
+		//rotate->rotateX(-1.0*phi);
+*/
+		fAssemblyWhite->AddPlacedVolume(fWhitePMTLog, move, rotate);
+
 	}
 
 	if(fAddSegment){
@@ -1628,13 +1890,26 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 		//G4SubtractionSolid* redWrapVolume3 = new G4SubtractionSolid("redWrapVolume3", redWrapVolume2, redPMT, rotate, move);
 		G4SubtractionSolid* redWrapVolume3;
 		G4SubtractionSolid* redWrapVolume4;
-		
-		if (!fAddTwo) redWrapVolume3	= new G4SubtractionSolid("redWrapVolume3", redWrapVolume2, redPMT, rotate, move);
+		G4SubtractionSolid* redWrapVolume5;
+		G4SubtractionSolid* redWrapVolume6;
+
+		if (!fAddTwo && !fAdd2x2) redWrapVolume3	= new G4SubtractionSolid("redWrapVolume3", redWrapVolume2, redPMT, rotate, move);
 		if (fAddTwo) {
 			move = G4ThreeVector(pmtx, 0.0, fPlasticThickness/2.);
 			redWrapVolume4	= new G4SubtractionSolid("redWrapVolume4", redWrapVolume2, redPMT, rotate, move);
 			move = G4ThreeVector(-pmtx, 0.0, fPlasticThickness/2.);
 			redWrapVolume3	= new G4SubtractionSolid("redWrapVolume3", redWrapVolume4, redPMT, rotate, move);
+		}
+
+		if (fAdd2x2) {
+			move = G4ThreeVector(pmtx, pmtx, fPlasticThickness/2.);
+			redWrapVolume4	= new G4SubtractionSolid("redWrapVolume4", redWrapVolume2, redPMT, rotate, move);
+			move = G4ThreeVector(-pmtx, pmtx, fPlasticThickness/2.);
+			redWrapVolume5	= new G4SubtractionSolid("redWrapVolume5", redWrapVolume4, redPMT, rotate, move);
+			move = G4ThreeVector(pmtx, -pmtx, fPlasticThickness/2.);
+			redWrapVolume6	= new G4SubtractionSolid("redWrapVolume6", redWrapVolume5, redPMT, rotate, move);
+			move = G4ThreeVector(-pmtx, -pmtx, fPlasticThickness/2.);
+			redWrapVolume3	= new G4SubtractionSolid("redWrapVolume3", redWrapVolume6, redPMT, rotate, move);
 		}
 
 		// Define rotation and movement objects
@@ -1659,6 +1934,22 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 			fRedPMTLogArray[0] = new G4LogicalVolume(redPMT, PMTG4material, "RedPMT_2", 0, 0, 0);
 			fRedPMTLogArray[0]->SetVisAttributes(PMTVisAtt);
 		}
+		if(fRedPMTLogArray[0] == nullptr && fAdd2x2) {
+			fRedPMTLogArray[0] = new G4LogicalVolume(redPMT, PMTG4material, "RedPMT_1", 0, 0, 0);
+			fRedPMTLogArray[0]->SetVisAttributes(PMTVisAtt);
+		}
+		if(fRedPMTLogArray[1] == nullptr && fAdd2x2) {
+			fRedPMTLogArray[1] = new G4LogicalVolume(redPMT, PMTG4material, "RedPMT_2", 0, 0, 0);
+			fRedPMTLogArray[1]->SetVisAttributes(PMTVisAtt);
+		}
+		if(fRedPMTLogArray[2] == nullptr && fAdd2x2) {
+			fRedPMTLogArray[2] = new G4LogicalVolume(redPMT, PMTG4material, "RedPMT_3", 0, 0, 0);
+			fRedPMTLogArray[2]->SetVisAttributes(PMTVisAtt);
+		}
+		if(fRedPMTLogArray[3] == nullptr && fAdd2x2) {
+			fRedPMTLogArray[3] = new G4LogicalVolume(redPMT, PMTG4material, "RedPMT_4", 0, 0, 0);
+			fRedPMTLogArray[3]->SetVisAttributes(PMTVisAtt);
+		}
 		if(fRedPlasticLog == nullptr) {
 			fRedPlasticLog = new G4LogicalVolume(redPlasticVolume1, plasticG4material, "RedTilePlasticDet_1", 0, 0, 0);
 			fRedPlasticLog->SetVisAttributes(PlasticVisAtt);
@@ -1671,17 +1962,27 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 		direction 	= G4ThreeVector(0,0,1);
 		zPosition    = fPlasticThickness + pmtSizeZ + fWrapThickness/2.;
 		move          = zPosition * direction;
-		if (!fAddTwo){
-		zPosition    = fPlasticThickness + pmtSizeZ + fWrapThickness/2.;		
-		move          = zPosition * direction;
-		fAssemblyRed->AddPlacedVolume(fRedPMTLog, move, rotate);
+		if (!fAddTwo && !fAdd2x2){
+			zPosition    = fPlasticThickness + pmtSizeZ + fWrapThickness/2.;		
+			move          = zPosition * direction;
+			fAssemblyRed->AddPlacedVolume(fRedPMTLog, move, rotate);
 		}
 		if (fAddTwo){
-		zPosition    = fPlasticThickness + pmtSizeZ + fWrapThickness/2.;		
-		move = G4ThreeVector(pmtx, 0., zPosition);
-		fAssemblyRed->AddPlacedVolume(fRedPMTLog, move, rotate);
-		move = G4ThreeVector(-pmtx, 0., zPosition);
-		fAssemblyRed->AddPlacedVolume(fRedPMTLogArray[0], move, rotate);
+			zPosition    = fPlasticThickness + pmtSizeZ + fWrapThickness/2.;		
+			move = G4ThreeVector(pmtx, 0., zPosition);
+			fAssemblyRed->AddPlacedVolume(fRedPMTLog, move, rotate);
+			move = G4ThreeVector(-pmtx, 0., zPosition);
+			fAssemblyRed->AddPlacedVolume(fRedPMTLogArray[0], move, rotate);
+		}	
+		if (fAdd2x2){
+			move = G4ThreeVector(pmtx, pmtx, zPosition);
+			fAssemblyRed->AddPlacedVolume(fRedPMTLogArray[0], move, rotate);
+			move = G4ThreeVector(-pmtx, pmtx, zPosition);
+			fAssemblyRed->AddPlacedVolume(fRedPMTLogArray[1], move, rotate);
+			move = G4ThreeVector(pmtx, -pmtx, zPosition);
+			fAssemblyRed->AddPlacedVolume(fRedPMTLogArray[2], move, rotate);
+			move = G4ThreeVector(-pmtx, -pmtx, zPosition);
+			fAssemblyRed->AddPlacedVolume(fRedPMTLogArray[3], move, rotate);
 		}
 	}
 
@@ -1785,13 +2086,26 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 		//G4SubtractionSolid* greenWrapVolume3 = new G4SubtractionSolid("greenWrapVolume3", greenWrapVolume2, greenPMT, rotate, move);
 		G4SubtractionSolid* greenWrapVolume3;
 		G4SubtractionSolid* greenWrapVolume4;
-		
-		if (!fAddTwo) greenWrapVolume3	= new G4SubtractionSolid("greenWrapVolume3", greenWrapVolume2, greenPMT, rotate, move);
+		G4SubtractionSolid* greenWrapVolume5;
+		G4SubtractionSolid* greenWrapVolume6;
+
+		if (!fAddTwo && !fAdd2x2) greenWrapVolume3	= new G4SubtractionSolid("greenWrapVolume3", greenWrapVolume2, greenPMT, rotate, move);
 		if (fAddTwo) {
 			move = G4ThreeVector(pmtx, 0.0, fPlasticThickness/2.);
 			greenWrapVolume4	= new G4SubtractionSolid("greenWrapVolume4", greenWrapVolume2, greenPMT, rotate, move);
 			move = G4ThreeVector(-pmtx, 0.0, fPlasticThickness/2.);
 			greenWrapVolume3	= new G4SubtractionSolid("greenWrapVolume3", greenWrapVolume4, greenPMT, rotate, move);
+		}
+
+		if (fAdd2x2) {
+			move = G4ThreeVector(pmtx, pmtx, fPlasticThickness/2.);
+			greenWrapVolume4	= new G4SubtractionSolid("greenWrapVolume4", greenWrapVolume2, greenPMT, rotate, move);
+			move = G4ThreeVector(-pmtx, pmtx, fPlasticThickness/2.);
+			greenWrapVolume5	= new G4SubtractionSolid("greenWrapVolume5", greenWrapVolume4, greenPMT, rotate, move);
+			move = G4ThreeVector(pmtx, -pmtx, fPlasticThickness/2.);
+			greenWrapVolume6	= new G4SubtractionSolid("greenWrapVolume6", greenWrapVolume5, greenPMT, rotate, move);
+			move = G4ThreeVector(-pmtx, -pmtx, fPlasticThickness/2.);
+			greenWrapVolume3	= new G4SubtractionSolid("greenWrapVolume3", greenWrapVolume6, greenPMT, rotate, move);
 		}
 
 		// Define rotation and movement objects
@@ -1816,6 +2130,22 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 			fGreenPMTLogArray[0] = new G4LogicalVolume(greenPMT, PMTG4material, "GreenPMT_2", 0, 0, 0);
 			fGreenPMTLogArray[0]->SetVisAttributes(PMTVisAtt);
 		}
+		if(fGreenPMTLogArray[0] == nullptr && fAdd2x2) {
+			fGreenPMTLogArray[0] = new G4LogicalVolume(greenPMT, PMTG4material, "GreenPMT_1", 0, 0, 0);
+			fGreenPMTLogArray[0]->SetVisAttributes(PMTVisAtt);
+		}
+		if(fGreenPMTLogArray[1] == nullptr && fAdd2x2) {
+			fGreenPMTLogArray[1] = new G4LogicalVolume(greenPMT, PMTG4material, "GreenPMT_2", 0, 0, 0);
+			fGreenPMTLogArray[1]->SetVisAttributes(PMTVisAtt);
+		}
+		if(fGreenPMTLogArray[2] == nullptr && fAdd2x2) {
+			fGreenPMTLogArray[2] = new G4LogicalVolume(greenPMT, PMTG4material, "GreenPMT_3", 0, 0, 0);
+			fGreenPMTLogArray[2]->SetVisAttributes(PMTVisAtt);
+		}
+		if(fGreenPMTLogArray[3] == nullptr && fAdd2x2) {
+			fGreenPMTLogArray[3] = new G4LogicalVolume(greenPMT, PMTG4material, "GreenPMT_4", 0, 0, 0);
+			fGreenPMTLogArray[3]->SetVisAttributes(PMTVisAtt);
+		}
 		if(fGreenPlasticLog == nullptr) {
 			fGreenPlasticLog = new G4LogicalVolume(greenPlasticVolume1, plasticG4material, "GreenTilePlasticDet_1", 0, 0, 0);
 			fGreenPlasticLog->SetVisAttributes(PlasticVisAtt);
@@ -1828,17 +2158,27 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 		direction 	= G4ThreeVector(0,0,1);
 		zPosition    = fPlasticThickness + pmtSizeZ + fWrapThickness/2.;
 		move          = zPosition * direction;
-		if (!fAddTwo){
-		zPosition    = fPlasticThickness + pmtSizeZ + fWrapThickness/2.;		
-		move          = zPosition * direction;
-		fAssemblyGreen->AddPlacedVolume(fGreenPMTLog, move, rotate);
+		if (!fAddTwo && !fAdd2x2){
+			zPosition    = fPlasticThickness + pmtSizeZ + fWrapThickness/2.;		
+			move          = zPosition * direction;
+			fAssemblyGreen->AddPlacedVolume(fGreenPMTLog, move, rotate);
 		}
 		if (fAddTwo){
-		zPosition    = fPlasticThickness + pmtSizeZ + fWrapThickness/2.;		
-		move = G4ThreeVector(pmtx, 0., zPosition);
-		fAssemblyGreen->AddPlacedVolume(fGreenPMTLog, move, rotate);
-		move = G4ThreeVector(-pmtx, 0., zPosition);
-		fAssemblyGreen->AddPlacedVolume(fGreenPMTLogArray[0], move, rotate);
+			zPosition    = fPlasticThickness + pmtSizeZ + fWrapThickness/2.;		
+			move = G4ThreeVector(pmtx, 0., zPosition);
+			fAssemblyGreen->AddPlacedVolume(fGreenPMTLog, move, rotate);
+			move = G4ThreeVector(-pmtx, 0., zPosition);
+			fAssemblyGreen->AddPlacedVolume(fGreenPMTLogArray[0], move, rotate);
+		}
+		if (fAdd2x2){
+			move = G4ThreeVector(pmtx, pmtx, zPosition);
+			fAssemblyGreen->AddPlacedVolume(fGreenPMTLogArray[0], move, rotate);
+			move = G4ThreeVector(-pmtx, pmtx, zPosition);
+			fAssemblyGreen->AddPlacedVolume(fGreenPMTLogArray[1], move, rotate);
+			move = G4ThreeVector(pmtx, -pmtx, zPosition);
+			fAssemblyGreen->AddPlacedVolume(fGreenPMTLogArray[2], move, rotate);
+			move = G4ThreeVector(-pmtx, -pmtx, zPosition);
+			fAssemblyGreen->AddPlacedVolume(fGreenPMTLogArray[3], move, rotate);
 		}
 	}
 
@@ -1943,13 +2283,26 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 		//G4SubtractionSolid* yellowWrapVolume3 = new G4SubtractionSolid("yellowWrapVolume3", yellowWrapVolume2, yellowPMT, rotate, move);
 		G4SubtractionSolid* yellowWrapVolume3;
 		G4SubtractionSolid* yellowWrapVolume4;
-		
-		if (!fAddTwo) yellowWrapVolume3	= new G4SubtractionSolid("yellowWrapVolume3", yellowWrapVolume2, yellowPMT, rotate, move);
+		G4SubtractionSolid* yellowWrapVolume5;
+		G4SubtractionSolid* yellowWrapVolume6;
+
+		if (!fAddTwo && !fAdd2x2) yellowWrapVolume3	= new G4SubtractionSolid("yellowWrapVolume3", yellowWrapVolume2, yellowPMT, rotate, move);
 		if (fAddTwo) {
 			move = G4ThreeVector(pmtx, 0.0, fPlasticThickness/2.);
 			yellowWrapVolume4	= new G4SubtractionSolid("yellowWrapVolume4", yellowWrapVolume2, yellowPMT, rotate, move);
 			move = G4ThreeVector(-pmtx, 0.0, fPlasticThickness/2.);
 			yellowWrapVolume3	= new G4SubtractionSolid("yellowWrapVolume3", yellowWrapVolume4, yellowPMT, rotate, move);
+		}
+
+		if (fAdd2x2) {
+			move = G4ThreeVector(pmtx, pmtx, fPlasticThickness/2.);
+			yellowWrapVolume4	= new G4SubtractionSolid("yellowWrapVolume4", yellowWrapVolume2, yellowPMT, rotate, move);
+			move = G4ThreeVector(-pmtx, pmtx, fPlasticThickness/2.);
+			yellowWrapVolume5	= new G4SubtractionSolid("yellowWrapVolume5", yellowWrapVolume4, yellowPMT, rotate, move);
+			move = G4ThreeVector(pmtx, -pmtx, fPlasticThickness/2.);
+			yellowWrapVolume6	= new G4SubtractionSolid("yellowWrapVolume6", yellowWrapVolume5, yellowPMT, rotate, move);
+			move = G4ThreeVector(-pmtx, -pmtx, fPlasticThickness/2.);
+			yellowWrapVolume3	= new G4SubtractionSolid("yellowWrapVolume3", yellowWrapVolume6, yellowPMT, rotate, move);
 		}
 
 		// Define rotation and movement objects
@@ -1974,6 +2327,22 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 			fYellowPMTLogArray[0] = new G4LogicalVolume(yellowPMT, PMTG4material, "YellowPMT_2", 0, 0, 0);
 			fYellowPMTLogArray[0]->SetVisAttributes(PMTVisAtt);
 		}
+		if(fYellowPMTLogArray[0] == nullptr && fAdd2x2) {
+			fYellowPMTLogArray[0] = new G4LogicalVolume(yellowPMT, PMTG4material, "YellowPMT_1", 0, 0, 0);
+			fYellowPMTLogArray[0]->SetVisAttributes(PMTVisAtt);
+		}
+		if(fYellowPMTLogArray[1] == nullptr && fAdd2x2) {
+			fYellowPMTLogArray[1] = new G4LogicalVolume(yellowPMT, PMTG4material, "YellowPMT_2", 0, 0, 0);
+			fYellowPMTLogArray[1]->SetVisAttributes(PMTVisAtt);
+		}
+		if(fYellowPMTLogArray[2] == nullptr && fAdd2x2) {
+			fYellowPMTLogArray[2] = new G4LogicalVolume(yellowPMT, PMTG4material, "YellowPMT_3", 0, 0, 0);
+			fYellowPMTLogArray[2]->SetVisAttributes(PMTVisAtt);
+		}
+		if(fYellowPMTLogArray[3] == nullptr && fAdd2x2) {
+			fYellowPMTLogArray[3] = new G4LogicalVolume(yellowPMT, PMTG4material, "YellowPMT_4", 0, 0, 0);
+			fYellowPMTLogArray[3]->SetVisAttributes(PMTVisAtt);
+		}
 		if(fYellowPlasticLog == nullptr) {
 			fYellowPlasticLog = new G4LogicalVolume(yellowPlasticVolume1, plasticG4material, "YellowTilePlasticDet_1", 0, 0, 0);
 			fYellowPlasticLog->SetVisAttributes(PlasticVisAtt);
@@ -1986,17 +2355,27 @@ G4int DetectionSystemDaemonTiles::BuildCanVolume() {
 		direction 	= G4ThreeVector(0,0,1);
 		zPosition    = fPlasticThickness + pmtSizeZ + fWrapThickness/2.;
 		move          = zPosition * direction;
-		if (!fAddTwo){
-		zPosition    = fPlasticThickness + pmtSizeZ + fWrapThickness/2.;		
-		move          = zPosition * direction;
-		fAssemblyYellow->AddPlacedVolume(fYellowPMTLog, move, rotate);
+		if (!fAddTwo && !fAdd2x2){
+			zPosition    = fPlasticThickness + pmtSizeZ + fWrapThickness/2.;		
+			move          = zPosition * direction;
+			fAssemblyYellow->AddPlacedVolume(fYellowPMTLog, move, rotate);
 		}
 		if (fAddTwo){
-		zPosition    = fPlasticThickness + pmtSizeZ + fWrapThickness/2.;		
-		move = G4ThreeVector(pmtx, 0., zPosition);
-		fAssemblyYellow->AddPlacedVolume(fYellowPMTLog, move, rotate);
-		move = G4ThreeVector(-pmtx, 0., zPosition);
-		fAssemblyYellow->AddPlacedVolume(fYellowPMTLogArray[0], move, rotate);
+			zPosition    = fPlasticThickness + pmtSizeZ + fWrapThickness/2.;		
+			move = G4ThreeVector(pmtx, 0., zPosition);
+			fAssemblyYellow->AddPlacedVolume(fYellowPMTLog, move, rotate);
+			move = G4ThreeVector(-pmtx, 0., zPosition);
+			fAssemblyYellow->AddPlacedVolume(fYellowPMTLogArray[0], move, rotate);
+		}
+		if (fAdd2x2){
+			move = G4ThreeVector(pmtx, pmtx, zPosition);
+			fAssemblyYellow->AddPlacedVolume(fYellowPMTLogArray[0], move, rotate);
+			move = G4ThreeVector(-pmtx, pmtx, zPosition);
+			fAssemblyYellow->AddPlacedVolume(fYellowPMTLogArray[1], move, rotate);
+			move = G4ThreeVector(pmtx, -pmtx, zPosition);
+			fAssemblyYellow->AddPlacedVolume(fYellowPMTLogArray[2], move, rotate);
+			move = G4ThreeVector(-pmtx, -pmtx, zPosition);
+			fAssemblyYellow->AddPlacedVolume(fYellowPMTLogArray[3], move, rotate);
 		}
 	}
 

@@ -443,21 +443,24 @@ bool EventAction::PhotonDetectionEfficiency(G4double ekin) {
 	//G4cout << "wavelength: " << wave << G4endl;
         G4double prob = 0;
 	G4bool pde = false;
-	if (wave < 325) prob = 0.05;
-	if (wave >= 325 && wave < 350) prob = 0.25;
-	if (wave >= 350 && wave < 375) prob = 0.3;
-	if (wave >= 375 && wave < 400) prob = 0.38;
-	if (wave >= 400 && wave < 450) prob = 0.4;
-	if (wave >= 450 && wave < 475) prob = 0.38;
-	if (wave >= 475 && wave < 500) prob = 0.32;
-	if (wave >= 500 && wave < 525) prob = 0.28;
-	if (wave >= 525 && wave < 550) prob = 0.2;
-	if (wave > 550) prob = 0.15;
+	if (wave < 250) prob = 0.05;
+	else if (wave >= 250 && wave < 350) prob = 0.2;
+	else if (wave >= 325 && wave < 350) prob = 0.3;
+	else if (wave >= 350 && wave < 375) prob = 0.35;
+	else if (wave >= 375 && wave < 390) prob = 0.38;
+	else if (wave >= 390 && wave < 460) prob = 0.4;
+	else if (wave >= 460 && wave < 475) prob = 0.38;
+	else if (wave >= 475 && wave < 500) prob = 0.32;
+	else if (wave >= 500 && wave < 525) prob = 0.28;
+	else if (wave >= 525 && wave < 550) prob = 0.2;
+	else if (wave >= 550 && wave < 625) prob = 0.15;
+	else if (wave >= 625 && wave < 675) prob = 0.1;
+	else if (wave > 675) prob = 0.05;
 	
-	//prob = 0.3;
+	//prob = 0.4;
 	
 	if (uni <= prob) pde = true;
-	pde=true;
+	//pde=true;//Using the scaling instead to limit computation time
 	return pde;
 }
 void EventAction::SetScintPhotonTimeTop1(G4double top, G4int detNum) {

@@ -59,6 +59,7 @@ private:
     G4double fWrapThickness;
     G4double fAirGap;
 
+    G4String fAlMaterial;
     G4String fPMTMaterial;
     G4String fWrapMaterial;
     G4String fPlasticMaterial;
@@ -69,8 +70,12 @@ private:
     G4LogicalVolume*  fPMTLog;
     G4LogicalVolume*  fPMT1Log;
     G4LogicalVolume*  fPMT2Log;
+    G4LogicalVolume*  fPMT3Log;
+    G4LogicalVolume*  fPMT4Log;
     G4LogicalVolume*  fZDSLog;
     G4LogicalVolume*  fZDSPMTLog;
+    G4LogicalVolume*  fSourceLog;
+    G4LogicalVolume*  fAlLog;
     
     G4double fStartPhi;
     G4double fDeltaPhi;

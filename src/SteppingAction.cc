@@ -255,6 +255,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	G4double TOFMulti;
 	G4ThreeVector TOFPosMulti;
 	found  = volname.find("PlasticDet");
+	//found  = volname.find("Plastic");
 	//if (found != G4String::npos && aStep->GetTrack()->GetParentID() == 0 && prePoint->GetStepStatus() == fGeomBoundary && postPoint->GetStepStatus() != fGeomBoundary) {	//firing neutrons only
 	if (particleType == 4 && found != G4String::npos && prePoint->GetStepStatus() == fGeomBoundary && postPoint->GetStepStatus() != fGeomBoundary) {	
 		fEventAction->SetTOFMulti(postTime);
@@ -321,7 +322,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		G4int detNumber;
 		is>>detNumber;
 		//G4cout << detNumber << " : is the detector number stepping action"<<G4endl;
-		fEventAction->SetScintPhotonTimeTop1(postTime, detNumber);
+		 if (fEventAction->PhotonDetectionEfficiency(ekin)==true) fEventAction->SetScintPhotonTimeTop1(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 		//G4cout << "Calling kill track and Secondaries" << G4endl;
 		//G4cout << "Top Count: " <<  fEventAction->GetTotScintPhotonTop()<< G4endl;
@@ -341,7 +342,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		G4int detNumber;
 		is>>detNumber;
 		//G4cout << detNumber << " : is the detector number stepping action"<<G4endl;
-		fEventAction->SetScintPhotonTimeTop2(postTime, detNumber);
+		 if (fEventAction->PhotonDetectionEfficiency(ekin)==true) fEventAction->SetScintPhotonTimeTop2(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 		//G4cout << "Calling kill track and Secondaries" << G4endl;
 		//G4cout << "Top Count: " <<  fEventAction->GetTotScintPhotonTop()<< G4endl;
@@ -361,7 +362,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		G4int detNumber;
 		is>>detNumber;
 		//G4cout << detNumber << " : is the detector number stepping action"<<G4endl;
-		fEventAction->SetScintPhotonTimeTop3(postTime, detNumber);
+		 if (fEventAction->PhotonDetectionEfficiency(ekin)==true) fEventAction->SetScintPhotonTimeTop3(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 		//G4cout << "Calling kill track and Secondaries" << G4endl;
 		//G4cout << "Top Count: " <<  fEventAction->GetTotScintPhotonTop()<< G4endl;
@@ -382,7 +383,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		G4int detNumber;
 		is>>detNumber;
 		//G4cout << detNumber << " : is the detector number stepping action"<<G4endl;
-		fEventAction->SetScintPhotonTimeBottom1(postTime, detNumber);
+		 if (fEventAction->PhotonDetectionEfficiency(ekin)==true) fEventAction->SetScintPhotonTimeBottom1(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 		//G4cout << "Calling kill track and Secondaries" << G4endl;
 	}
@@ -399,7 +400,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		G4int detNumber;
 		is>>detNumber;
 		//G4cout << detNumber << " : is the detector number stepping action"<<G4endl;
-		fEventAction->SetScintPhotonTimeBottom2(postTime, detNumber);
+		 if (fEventAction->PhotonDetectionEfficiency(ekin)==true) fEventAction->SetScintPhotonTimeBottom2(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 		//G4cout << "Calling kill track and Secondaries" << G4endl;
 	}
@@ -416,7 +417,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		G4int detNumber;
 		is>>detNumber;
 		//G4cout << detNumber << " : is the detector number stepping action"<<G4endl;
-		fEventAction->SetScintPhotonTimeBottom3(postTime, detNumber);
+		 if (fEventAction->PhotonDetectionEfficiency(ekin)==true)  fEventAction->SetScintPhotonTimeBottom3(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 		//G4cout << "Calling kill track and Secondaries" << G4endl;
 	}
@@ -436,7 +437,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		G4int detNumber;
 		is>>detNumber;
 		//G4cout << detNumber << " : is the detector number stepping action"<<G4endl;
-		fEventAction->SetScintPhotonTimeFrontTop1(postTime, detNumber);
+		 if (fEventAction->PhotonDetectionEfficiency(ekin)==true)  fEventAction->SetScintPhotonTimeFrontTop1(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 		//G4cout << "Calling kill track and Secondaries" << G4endl;
 	}
@@ -453,7 +454,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		G4int detNumber;
 		is>>detNumber;
 		//G4cout << detNumber << " : is the detector number stepping action"<<G4endl;
-		fEventAction->SetScintPhotonTimeFrontTop2(postTime, detNumber);
+		 if (fEventAction->PhotonDetectionEfficiency(ekin)==true) fEventAction->SetScintPhotonTimeFrontTop2(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 		//G4cout << "Calling kill track and Secondaries" << G4endl;
 	}
@@ -473,7 +474,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		G4int detNumber;
 		is>>detNumber;
 		//G4cout << detNumber << " : is the detector number stepping action"<<G4endl;
-		fEventAction->SetScintPhotonTimeFrontMid1(postTime, detNumber);
+		 if (fEventAction->PhotonDetectionEfficiency(ekin)==true) fEventAction->SetScintPhotonTimeFrontMid1(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 		//G4cout << "Calling kill track and Secondaries" << G4endl;
 	}
@@ -490,7 +491,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		G4int detNumber;
 		is>>detNumber;
 		//G4cout << detNumber << " : is the detector number stepping action"<<G4endl;
-		fEventAction->SetScintPhotonTimeFrontMid2(postTime, detNumber);
+		 if (fEventAction->PhotonDetectionEfficiency(ekin)==true) fEventAction->SetScintPhotonTimeFrontMid2(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 		//G4cout << "Calling kill track and Secondaries" << G4endl;
 	}
@@ -509,7 +510,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		G4int detNumber;
 		is>>detNumber;
 		//G4cout << detNumber << " : is the detector number stepping action"<<G4endl;
-		fEventAction->SetScintPhotonTimeFrontBottom1(postTime, detNumber);
+		 if (fEventAction->PhotonDetectionEfficiency(ekin)==true) fEventAction->SetScintPhotonTimeFrontBottom1(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 		//G4cout << "Calling kill track and Secondaries" << G4endl;
 	}
@@ -526,7 +527,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		G4int detNumber;
 		is>>detNumber;
 		//G4cout << detNumber << " : is the detector number stepping action"<<G4endl;
-		fEventAction->SetScintPhotonTimeFrontBottom2(postTime, detNumber);
+		 if (fEventAction->PhotonDetectionEfficiency(ekin)==true) fEventAction->SetScintPhotonTimeFrontBottom2(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 		//G4cout << "Calling kill track and Secondaries" << G4endl;
 	}
@@ -552,7 +553,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		if (volname.find("Red") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20;
 		if (volname.find("Green") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20 + 15;
 		if (volname.find("Yellow") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20 + 15 + 10;
-		fEventAction->SetScintPhotonTimeTop1(postTime, detNumber);
+		 if (fEventAction->PhotonDetectionEfficiency(ekin)==true)fEventAction->SetScintPhotonTimeTop1(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 	}
 	//Front Top PMT (negative x positive y)
@@ -564,7 +565,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		if (volname.find("Red") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20;
 		if (volname.find("Green") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20 + 15;
 		if (volname.find("Yellow") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20 + 15 + 10;
-		fEventAction->SetScintPhotonTimeFrontTop1(postTime, detNumber);
+		 if (fEventAction->PhotonDetectionEfficiency(ekin)==true)fEventAction->SetScintPhotonTimeFrontTop1(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 	}
 	//Bottom PMT (positive x negative y)
@@ -576,7 +577,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		if (volname.find("Red") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20;
 		if (volname.find("Green") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20 + 15;
 		if (volname.find("Yellow") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20 + 15 + 10;
-		fEventAction->SetScintPhotonTimeBottom1(postTime, detNumber);
+		 if (fEventAction->PhotonDetectionEfficiency(ekin)==true)fEventAction->SetScintPhotonTimeBottom1(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 	}
 	//Front Bottom PMT (negative x negative y)
@@ -588,7 +589,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		if (volname.find("Red") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20;
 		if (volname.find("Green") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20 + 15;
 		if (volname.find("Yellow") != G4String::npos) detNumber = imprintNumber - 1 + 15 + 20 + 15 + 10;
-		fEventAction->SetScintPhotonTimeFrontBottom1(postTime, detNumber);
+		 if (fEventAction->PhotonDetectionEfficiency(ekin)==true)fEventAction->SetScintPhotonTimeFrontBottom1(postTime, detNumber);
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 	}
 
@@ -609,8 +610,9 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	//G4cout << "plastic Edep " << PlasticEdep<< G4endl;
 	//G4cout << "Event Number " << evntNb << G4endl;
 	//Are the electrons escaping the plastics after a gamma deposits energy?  (energy of the ones escaping)
-	found = volname.find("TestPlastic");
-	if(found!=G4String::npos && particleType == 2 && postPoint->GetStepStatus()==fGeomBoundary && fEventAction->GetPEkin()==-1){
+	found = volname.find("Plastic");
+	//if(found!=G4String::npos && particleType == 2 && postPoint->GetStepStatus()==fGeomBoundary && fEventAction->GetPEkin()==-1){
+	if(found!=G4String::npos && postPoint->GetStepStatus()==fGeomBoundary && fEventAction->GetPEkin()==-1){
 	//	G4cout << "Calling postpoint" << G4endl;
 		G4ThreeVector momentum_5 = prePoint->GetMomentum();
 			fEventAction->SetPEkin(ekin);
@@ -651,16 +653,34 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
 	//	G4cout << "Calling kill track and Secondaries" << G4endl;
 	}
+	found = volname.find("TestPMT3");
+	//if(found!=G4String::npos && particleType == 8){ 
+	if(found!=G4String::npos && particleType == 8 && prePoint->GetStepStatus()==fGeomBoundary){
+		G4int detNumber=0;
+ 		if (fEventAction->PhotonDetectionEfficiency(ekin)==true)
+			fEventAction->SetScintPhotonTimeFrontTop1(postTime, detNumber);
+		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
+	//	G4cout << "Calling kill track and Secondaries" << G4endl;
+	}
+	found = volname.find("TestPMT4");
+	//if(found!=G4String::npos && particleType == 8){ 
+	if(found!=G4String::npos && particleType == 8 && prePoint->GetStepStatus()==fGeomBoundary){
+		G4int detNumber=0;
+ 		if (fEventAction->PhotonDetectionEfficiency(ekin)==true)
+			fEventAction->SetScintPhotonTimeFrontBottom1(postTime, detNumber);
+		theTrack->SetTrackStatus(fKillTrackAndSecondaries);
+	//	G4cout << "Calling kill track and Secondaries" << G4endl;
+	}
 
 	//////////////// Testing ZDS //////////////////
 	found = volname.find("ZDS");
 	//Are the electrons escaping the zds after a gamma deposits energy? Initial energy of electrons (should be same as edep unless they are escaping)
 	if(found!=G4String::npos && particleType == 2 && preTimeLocal==0 && parentID==1){
-		G4cout << "Calling pretime local" << G4endl;
+		//G4cout << "Calling pretime local" << G4endl;
 		if(fEventAction->GetPEdep()!=-1){
 		PlasticEdep = fEventAction->GetPEdep();
 		ekin = ekin+PlasticEdep;
-		G4cout << "Calling pretime local Twice" << G4endl;
+		//G4cout << "Calling pretime local Twice" << G4endl;
 		}
 		G4ThreeVector momentum_5 = prePoint->GetMomentum();
 		fEventAction->SetPEdep(ekin);
@@ -674,8 +694,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 	//	G4cout << "Calling postpoint" << G4endl;
 		G4ThreeVector momentum_5 = prePoint->GetMomentum();
 		//Only electrons leaving out the back
-		if (momentum_5.getZ()>0)	
-		fEventAction->SetPEkin(ekin);
+		//if (momentum_5.getZ()>0)	
+		//fEventAction->SetPEkin(ekin);
 	}
 	PlasticEkin = fEventAction->GetPEkin();
 	//	G4cout << "plastic Ekin" << PlasticEkin<< G4endl;

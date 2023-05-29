@@ -274,6 +274,12 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
 	fAddDetectionSystemDaemonTilesCmd->SetGuidance("Add Detection System Daemon Tile Configuration");
 	fAddDetectionSystemDaemonTilesCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 	
+	fAddDetectionSystemDaemonAuxPortsCmd = new G4UIcmdWith3Vector("/DetSys/det/addDaemonAuxPorts",this);
+	fAddDetectionSystemDaemonAuxPortsCmd->SetGuidance("Add 8 DAEMON detectors in the auxillary LaBr3 detector locations");
+	fAddDetectionSystemDaemonAuxPortsCmd->SetGuidance("/DetSys/det/addDaemonAuxPorts _nDet_ _radialPos_ _leadShield_");
+	fAddDetectionSystemDaemonAuxPortsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+
        	fAddDetectionSystemZDSCmd = new G4UIcmdWithoutParameter("/DetSys/det/addZDS",this);
         fAddDetectionSystemZDSCmd->SetGuidance("Add ZDS.");
         fAddDetectionSystemZDSCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
@@ -432,6 +438,7 @@ DetectorMessenger::~DetectorMessenger()
 	delete fAddDetectionSystemDaemonTilesCmd;
 	delete fAddDetectionSystemZDSCmd;
 	delete fAddDetectionSystemDescantNoLeadCmd;
+	delete fAddDetectionSystemDaemonAuxPortsCmd;
 
 	delete fSetDetectionSystemDescantColorCmd;
 	delete fSetDetectionSystemDescantRotationCmd;	 
@@ -627,6 +634,9 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	}
 	if(command == fAddDetectionSystemZDSCmd) { 
 		fDetector->AddDetectionSystemZDS();
+	}
+	if(command == fAddDetectionSystemDaemonAuxPortsCmd)  {
+		fDetector->AddDetectionSystemDaemonAuxPorts(fAddDetectionSystemDaemonAuxPortsCmd->GetNew3VectorValue(newValue));
 	}
 
 	if(command == fAddDetectionSystemSceptarCmd) {

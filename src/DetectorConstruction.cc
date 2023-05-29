@@ -954,6 +954,26 @@ void DetectorConstruction::AddDetectionSystemDaemonTiles(G4ThreeVector input) {
 
 	fDaemonTiles = true;
 }
+void DetectorConstruction::AddDetectionSystemDaemonAuxPorts(G4ThreeVector input) {
+	if(fLogicWorld == nullptr) {
+		Construct();
+	}
+
+	G4int ndet = G4int(input.x());
+	G4double radialpos = input.y()*cm;
+	G4int thickness = input.z()*cm;
+
+	//DetectionSystemDaemonTiles *  pDetectionSystemDaemonTiles = new DetectionSystemDaemonTiles(thickness, 1) ; //BC404
+	DetectionSystemDaemonTiles *  pDetectionSystemDaemonTiles = new DetectionSystemDaemonTiles(thickness, 2) ; //BC408
+	pDetectionSystemDaemonTiles->Build() ;
+
+	for(G4int detectorNumber = 0; detectorNumber < ndet; detectorNumber++)
+	{
+		pDetectionSystemDaemonTiles->PlaceDetectorAuxPorts(fLogicWorld, detectorNumber, radialpos);
+	}
+
+	fDaemonTiles = true;
+}
 
 void DetectorConstruction::AddDetectionSystemSpice() {
 	if(fLogicWorld == nullptr) {

@@ -41,15 +41,19 @@ DetectionSystemTestPlastics::DetectionSystemTestPlastics(G4double thickness, G4i
 	fPMTWidth         = 1.*mm;
 	fScintillatorWidth         = 1.*mm;
 	fDiameter         = 25.*mm;
-	fRadialDistance = 5.*mm; //Says in GRIFFIN nim can move from a few mm to 5 cm.  At closest covers roughly 25% of 4pi
+	//fRadialDistance = 5.*mm; //Says in GRIFFIN nim can move from a few mm to 5 cm.  At closest covers roughly 25% of 4pi
+	fRadialDistance = 2.*cm; //Says in GRIFFIN nim can move from a few mm to 5 cm.  At closest covers roughly 25% of 4pi
 	fStartPhi = 0.;
 	fDeltaPhi = 2*M_PI;
 
 	fWrapThickness = 0.5 * mm; //Factor of 10 should be  applied later for visualization purposes.  0.05 for simulations, 0.5 for visualization
 	fAirGap = 0.;
 	fWrapMaterial = "Teflon";
-	fPMTMaterial = "G4_SILICON_DIOXIDE";
+	//fPMTMaterial = "G4_SILICON_DIOXIDE";
+	//fPMTMaterial = "Silicone";
+	fPMTMaterial = "Silicon";
 	fZDSMaterial = "BC422";
+	fAlMaterial = "G4_Al";
 	//fZDSMaterial = "Dense"; // for Solid Angle test
 
 	//blue=G4Color(0.,0.,1.);
@@ -68,7 +72,6 @@ DetectionSystemTestPlastics::DetectionSystemTestPlastics(G4double thickness, G4i
 	else if (material == 8) fPlasticMaterial = "BC537";
 	else G4cout<< "Material Unknown" << G4endl;
 
-
 	G4cout << "Calling Constructor" << G4endl;
 }
 /////
@@ -78,8 +81,14 @@ DetectionSystemTestPlastics::~DetectionSystemTestPlastics() {
 	delete fPlasticLog;
 	delete fWrapLog;
 	delete fPMTLog;
+	delete fPMT1Log;
+	delete fPMT2Log;
+	delete fPMT3Log;
+	delete fPMT4Log;
 	delete fZDSLog;
 	delete fZDSPMTLog;
+	delete fSourceLog;
+	delete fAlLog;
 	G4cout << "Calling Destructor" << G4endl;
 
 }
@@ -147,6 +156,14 @@ G4int DetectionSystemTestPlastics::BuildTestPlastics() {
 	else {
 		G4cout << zdsG4material->GetName() << " is the name of the detector material" << G4endl;
 	}
+	G4Material* AlG4material = G4Material::GetMaterial(fAlMaterial);
+	if( !AlG4material ) {
+		G4cout << " ----> Material " << fAlMaterial << " not found, cannot build! " << G4endl;
+		return 0;
+	}
+	else {
+		G4cout << AlG4material->GetName() << " is the name of the detector material" << G4endl;
+	}
 
 	////////Scintillation Properties ////////  --------- Might have to be put before the material is constructed
 	//Based on BC408 data
@@ -179,7 +196,8 @@ G4int DetectionSystemTestPlastics::BuildTestPlastics() {
 	scintillatorMPT->AddProperty("IONSCINTILLATIONYIELD", e_range, yield_C, num2)->SetSpline(true);
 */
 	int energyPoints = 26;
-	G4double pEF = 0.4; //SiPM efficiency (TODO - discuss it)
+	//G4double pEF = 0.4; //SiPM efficiency (TODO - discuss it)
+	G4double pEF = 1.; //SiPM efficiency (TODO - discuss it)
 	//G4double protonScalingFact = 1.35;
 	G4double protonScalingFact = 1;
 	G4double psF = protonScalingFact;
@@ -192,14 +210,14 @@ G4int DetectionSystemTestPlastics::BuildTestPlastics() {
 		1.*MeV, 1.3*MeV, 1.7*MeV, 2.*MeV, 
 		2.4*MeV, 3.*MeV, 3.4*MeV, 4.*MeV, 4.8*MeV, 
 		6.*MeV, 7.2*MeV, 8.4*MeV, 10.*MeV };
-	G4double electronYield[] = {1*pEF, 1000*pEF, 1300*pEF, 1700*pEF,
+	G4double electronYield[] = {10*pEF, 1000*pEF, 1300*pEF, 1700*pEF,
 		2000*pEF, 2400*pEF, 3000*pEF, 3400*pEF,
 		4000*pEF, 4800*pEF, 6000*pEF, 7200*pEF,
 		8400*pEF,10000*pEF, 13000*pEF, 17000*pEF,
 		20000*pEF, 24000*pEF, 30000*pEF, 34000*pEF,
 		40000*pEF, 48000*pEF, 60000*pEF, 72000*pEF,
 		84000*pEF, 100000*pEF };
-	G4double protonYield[] = { 0.6*pEF*psF, 67.1*pEF*psF, 88.6*pEF*psF,
+	G4double protonYield[] = { 0.671*pEF*psF, 67.1*pEF*psF, 88.6*pEF*psF,
 		120.7*pEF*psF,
 		146.5*pEF*psF, 183.8*pEF*psF, 246*pEF*psF, 290*pEF*psF,
 		365*pEF*psF, 483*pEF*psF, 678*pEF*psF, 910*pEF*psF,
@@ -207,7 +225,7 @@ G4int DetectionSystemTestPlastics::BuildTestPlastics() {
 		4725*pEF*psF,6250*pEF*psF, 8660*pEF*psF, 10420*pEF*psF,
 		13270*pEF*psF,17180*pEF*psF, 23100*pEF*psF,
 		29500*pEF*psF, 36200*pEF*psF, 45500*pEF*psF};
-	G4double alphaYield[] = { 0.2*pEF, 16.4*pEF, 20.9*pEF, 27.2*pEF,
+	G4double alphaYield[] = { 0.164*pEF, 16.4*pEF, 20.9*pEF, 27.2*pEF,
 		32*pEF, 38.6*pEF, 49*pEF, 56.4*pEF,
 		67.5*pEF, 83*pEF, 108*pEF, 135*pEF,
 		165.6*pEF, 210*pEF, 302*pEF, 441*pEF,
@@ -215,7 +233,7 @@ G4int DetectionSystemTestPlastics::BuildTestPlastics() {
 		1815*pEF, 2555*pEF, 4070*pEF, 6070*pEF,
 		8700*pEF, 13200*pEF };
 
-	G4double ionYield[] = { 0.2*pEF, 10.4*pEF, 12.7*pEF, 15.7*pEF,
+	G4double ionYield[] = { 0.104*pEF, 10.4*pEF, 12.7*pEF, 15.7*pEF,
 		17.9*pEF, 20.8*pEF, 25.1*pEF, 27.9*pEF,
 		31.9*pEF, 36.8*pEF, 43.6*pEF, 50.2*pEF,
 		56.9*pEF, 65.7*pEF, 81.3*pEF, 101.6*pEF,
@@ -235,12 +253,12 @@ G4int DetectionSystemTestPlastics::BuildTestPlastics() {
 	//
 
 	if (fPlasticMaterial == "BC408"){
-		const G4int num = 12; //BC408
+		const G4int num = 20; //BC408
 		G4cout << "BC408 and num = " << num << G4endl;
-		G4double photonEnergy[num] = {1.7*eV, 2.38*eV, 2.48*eV, 2.58*eV, 2.70*eV, 2.76*eV, 2.82*eV, 2.91*eV, 2.95*eV, 3.1*eV, 3.26*eV, 3.44*eV}; //BC408 emission spectra & corresponding energies
-		G4double RIndex1[num] = {1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58}; //BC408
-		G4double absorption[num] = {380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm}; ///light attenuation BC408
-		G4double scint[num] = {3., 3., 8., 18., 43., 55., 80., 100., 80., 20., 7., 3. }; ///// Based off emission spectra for BC408
+		G4double photonEnergy[num] = {1.7*eV, 2.43*eV, 2.48*eV, 2.58*eV, 2.64*eV, 2.70*eV, 2.76*eV, 2.79*eV, 2.82*eV, 2.85*eV, 2.91*eV, 2.92*eV, 2.95*eV, 2.99*eV, 3.02*eV, 3.1*eV, 3.18*eV, 3.26*eV, 3.35*eV, 3.44*eV}; //BC408 emission spectra & corresponding energies
+		G4double RIndex1[num] = {1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58, 1.58}; //BC408
+		G4double absorption[num] = {380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm, 380.*cm}; ///light attenuation BC408
+		G4double scint[num] = {1., 5., 8., 18., 25., 43., 55., 65., 80., 95., 100., 90., 80., 70., 50., 20., 12., 7., 5., 3. }; ///// Based off emission spectra for BC408
 
 		assert(sizeof(RIndex1) == sizeof(photonEnergy));
 		const G4int nEntries = sizeof(photonEnergy)/sizeof(G4double);
@@ -308,7 +326,8 @@ G4int DetectionSystemTestPlastics::BuildTestPlastics() {
 	}
 
 	// The number of photons produced per interaction is sampled from a Gaussian distribution with a full-width at half-maximum set to 20% of the number of produced photons. From Joeys Thesis
-	scintillatorMPT->AddConstProperty("RESOLUTIONSCALE", 1.2); // broadens the statistical distribution of generated photons, sqrt(num generated)* resScale, gaussian based on SCINTILLATIONYIELD, >1 broadens, 0 no distribution. 20%
+	//scintillatorMPT->AddConstProperty("RESOLUTIONSCALE", 0.); // broadens the statistical distribution of generated photons, sqrt(num generated)* resScale, gaussian based on SCINTILLATIONYIELD, >1 broadens, 0 no distribution. 20%
+	scintillatorMPT->AddConstProperty("RESOLUTIONSCALE", 5.0); // broadens the statistical distribution of generated photons, sqrt(num generated)* resScale, gaussian based on SCINTILLATIONYIELD, >1 broadens, 0 no distribution. 20%
 	scintillatorMPT->AddConstProperty("YIELDRATIO", 1.0); //The relative strength of the fast component as a fraction of total scintillation yield is given by the YIELDRATIO.
 
 	//properties I may be missing: scintillation, rayleigh
@@ -320,17 +339,21 @@ G4int DetectionSystemTestPlastics::BuildTestPlastics() {
 	//////Optical Surface - Teflon wrapping //////
 	G4OpticalSurface * ScintWrapper = new G4OpticalSurface("wrapper");
 	G4MaterialPropertiesTable * ScintWrapperMPT = new G4MaterialPropertiesTable();
+//Uncomment this block to revert to OG note Oct 22/2022
+	
 	ScintWrapper->SetModel(unified);  // unified or glisur
 	ScintWrapper->SetType(dielectric_dielectric);  // dielectric and dielectric or metal?
 	// teflon wrapping on polished surface->front/back painted // Teflon should be Lambertian in air, specular in optical grease
 	//polished front painted is more simplified. Only specular spike reflection
 	ScintWrapper->SetFinish(polishedfrontpainted);  
-
 	//ground front painted is more simplified. Only lambertain reflection
 	//ScintWrapper->SetFinish(groundfrontpainted);  
 
+//To here
 
-	/*		//poished back painted is maybe more realistic, need to then include sigma alpha (angle of the micro facet to the average normal surface) 
+	
+	//poished back painted is maybe more realistic, need to then include sigma alpha (angle of the micro facet to the average normal surface) 
+/*
 	//ScintWrapper->SetFinish(polishedbackpainted);	
 	ScintWrapper->SetFinish(groundbackpainted);	
 	ScintWrapper->SetSigmaAlpha(0.1); // 0 for smooth, 1 for max roughness
@@ -343,11 +366,22 @@ G4int DetectionSystemTestPlastics::BuildTestPlastics() {
 	ScintWrapperMPT->AddProperty("SPECULARLOBECONSTANT",pp,specularlobe,NUM); //reflection probability about the normal of the micro facet
 	ScintWrapperMPT->AddProperty("SPECULARSPIKECONSTANT",pp,specularspike,NUM); //reflection probability about average surface normal
 	ScintWrapperMPT->AddProperty("BACKSCATTERCONSTANT",pp,backscatter,NUM); //probability of exact back scatter based on mutiple reflections within the deep groove
-	//end of polished back painted
-	*/	
+*/
+	//end of back painted
+	
+
+//Comment this block to use LUT Oct 22/2022: /opt/cern/geant/geant4.10.06.p02-install/data/RealSurface2.1.1/
+/*
+	ScintWrapper->SetModel(LUT);  // unified or glisur
+	ScintWrapper->SetType(dielectric_LUT);  // dielectric and dielectric or metal?
+	ScintWrapper->SetFinish(PolishedTeflon_LUT);  
+	//ScintWrapper->SetFinish(Polished_LUT);  
+*/
+	//To here
+
 	G4double rIndex_Teflon[numShort] = {1.35, 1.35, 1.35}; //Taken from wikipedia
 	ScintWrapperMPT->AddProperty("RINDEX", photonEnergyShort, rIndex_Teflon, nEntriesShort)->SetSpline(true);  //refractive index can change with energy
-	//G4double reflectivity[numShort] = {0.95, 0.95, 0.95};
+	//G4double reflectivity[numShort] = {0.80, 0.80, 0.80};
 	G4double reflectivity[numShort] = {0.99, 0.99, 0.99};
 	ScintWrapperMPT->AddProperty("REFLECTIVITY", photonEnergyShort, reflectivity, nEntriesShort)->SetSpline(true);  // light reflected / incident light.
 	//G4double efficiency[numShort] = {0.95, 0.95, 0.95};
@@ -356,20 +390,28 @@ G4int DetectionSystemTestPlastics::BuildTestPlastics() {
 	ScintWrapper->DumpInfo();
 
 
-	//////// Quartz  ////////////
+	//////// Glass  ////////////
 	G4MaterialPropertiesTable * QuartzMPT = new G4MaterialPropertiesTable();
-	G4double rIndex_Quartz[numShort] = {1.474, 1.474, 1.474}; //Taken from Joey github
+	//G4double rIndex_Quartz[numShort] = {1.474, 1.474, 1.474}; //Taken from Joey github
+	G4double rIndex_Quartz[numShort] = {1.53, 1.53,1.53}; //
 	QuartzMPT->AddProperty("RINDEX", photonEnergyShort, rIndex_Quartz, nEntriesShort)->SetSpline(true);  //refractive index can change with energy
 	QuartzMPT->AddConstProperty("ABSLENGTH", 40.*cm); //from Joeys github
 	PMTG4material->SetMaterialPropertiesTable(QuartzMPT);
-
+	//////// Silicone  ////////////
+/*	G4MaterialPropertiesTable * QuartzMPT = new G4MaterialPropertiesTable();
+	///G4double rIndex_Quartz[numShort] = {1.46, 1.46, 1.46}; //Taken from WLSMaterials.cc geant4 website
+	G4double rIndex_Quartz[numShort] = {1.60, 1.60, 1.60}; 
+	QuartzMPT->AddProperty("RINDEX", photonEnergyShort, rIndex_Quartz, nEntriesShort)->SetSpline(true);  //refractive index can change with energy
+	QuartzMPT->AddConstProperty("ABSLENGTH", 20.*m); //from Joeys github
+	PMTG4material->SetMaterialPropertiesTable(QuartzMPT);
+*/
 
 	G4RotationMatrix *rot1 = new G4RotationMatrix(0,0,0);
 
 	
 	///////// ZDS and 1x1x1 with 1 SiPM ///////////////////
-
-	double length = 5.*cm;
+/*
+	double length = 1.*cm;
 	G4VSolid * Scint = new G4Box("Scint", 1.*cm/2., length/2. , 1.*cm/2.);
 	//G4VSolid * Scint = new G4Box("Scint", 1.*cm/2., 1.*cm/2. , 1.*cm/2.);
 	G4VSolid * Wrap_Bigger = new G4Box("Wrap_Bigger", 1.*cm/2.+fWrapThickness, length/2.+fWrapThickness, 1.*cm/2.+fWrapThickness);
@@ -437,24 +479,151 @@ G4int DetectionSystemTestPlastics::BuildTestPlastics() {
 	rotate = new G4RotationMatrix;
 	rotate->rotateX(M_PI/2.); // flip the detector so that the face is pointing upstream.
 	fAssemblyTestPlastics->AddPlacedVolume(fZDSPMTLog, move, rotate);
+*/	
+	///////// ZDS and 1x1xlength with 2.x2. SiPM ///////////////////ARRAYJ-SERIES - Silicon Photomultiplier (SiPM) High Fill-Factor Arrays
+	bool addSource = true;
+	bool addAl = true;
+
+	double length = 6.*cm;
+	//double length = 1.*cm;
+	double AlThick = 1.27*mm;
+	G4VSolid * Scint = new G4Box("Scint", 1.*cm/2., length/2. , 1.*cm/2.);
+	//G4VSolid * Scint = new G4Box("Scint", 1.*cm/2., 1.*cm/2. , 1.*cm/2.);
+	G4VSolid * Wrap_Bigger = new G4Box("Wrap_Bigger", 1.*cm/2.+fWrapThickness, length/2.+fWrapThickness, 1.*cm/2.+fWrapThickness);
+	G4SubtractionSolid * subtractWrap = new G4SubtractionSolid("subtractWrap", Wrap_Bigger, Scint, rot1, G4ThreeVector(0,0,0));
+	//G4VSolid * Wrap_Bigger = new G4Box("Wrap_Bigger", 1.*cm/2.+fWrapThickness, 1.*cm/2.+fWrapThickness, 1.*cm/2.+fWrapThickness);
+	//G4SubtractionSolid * subtractWrap = new G4SubtractionSolid("subtractWrap", Wrap_Bigger, Scint, rot1, G4ThreeVector(0,0,0));
+	double pmtLength = 6.13*mm;
+	double pmtSpacing = 0.2*mm;
+	G4VSolid * PMT1 = new G4Box("PMT", pmtLength/2., pmtLength/2. , pmtLength/2.);
+	G4VSolid * PMT2 = new G4Box("PMT", pmtLength/2., pmtLength/2. , pmtLength/2.);
+	G4VSolid * PMT3 = new G4Box("PMT", pmtLength/2., pmtLength/2. , pmtLength/2.);
+	G4VSolid * PMT4 = new G4Box("PMT", pmtLength/2., pmtLength/2. , pmtLength/2.);
+	G4SubtractionSolid * subtractWrap2 = new G4SubtractionSolid("subtractWrap2", subtractWrap, PMT1, rot1, G4ThreeVector((pmtLength + pmtSpacing)/2.,-0.5*length-0.5*pmtLength+0.001*mm,(pmtLength + pmtSpacing)/2.));
+	G4SubtractionSolid * subtractWrap3 = new G4SubtractionSolid("subtractWrap3", subtractWrap2, PMT2, rot1, G4ThreeVector(-(pmtLength + pmtSpacing)/2.,-0.5*length-0.5*pmtLength+0.001*mm,(pmtLength + pmtSpacing)/2.));
+	G4SubtractionSolid * subtractWrap4 = new G4SubtractionSolid("subtractWrap4", subtractWrap3, PMT3, rot1, G4ThreeVector((pmtLength + pmtSpacing)/2.,-0.5*length-0.5*pmtLength+0.001*mm,-(pmtLength + pmtSpacing)/2.));
+	G4SubtractionSolid * subtractWrap5 = new G4SubtractionSolid("subtractWrap5", subtractWrap4, PMT4, rot1, G4ThreeVector(-(pmtLength + pmtSpacing)/2.,-0.5*length-0.5*pmtLength+0.001*mm,-(pmtLength + pmtSpacing)/2.));
+
+	///// Building the ZDS Geometry /////
+	G4Tubs * zds = new G4Tubs("zds", 0., fDiameter/2., fScintillatorWidth/2., fStartPhi, fDeltaPhi);
+	G4Tubs * pmt = new G4Tubs("pmt", 0., fDiameter/2., fPMTWidth/2., fStartPhi, fDeltaPhi);
 	
+	///// source plastic for Cs decay
+	G4VSolid * Source = new G4Box("Source", 1.*cm/2., 0.5*cm/2. , 2.*cm/2.);
+	G4VSolid * AlShield = new G4Box("AlShield", 20.*cm/2., AlThick/2., 20*cm/2);
+
+	//For placing volume
+	rotate = new G4RotationMatrix;
+
+	//Set visual attributes
+	G4VisAttributes * plastic_vis = new G4VisAttributes(silver);
+	plastic_vis->SetVisibility(true);
+	G4VisAttributes * wrapper_vis = new G4VisAttributes(black);
+	wrapper_vis->SetVisibility(true);
+	G4VisAttributes * zds_vis = new G4VisAttributes(silver);
+	zds_vis->SetVisibility(true);
+	G4VisAttributes * pmt_vis = new G4VisAttributes(bronze);
+	pmt_vis->SetVisibility(true);
+
+	//Names
+	G4String nameLog = "TestPlastic";
+	G4String nameWrapper = "wrapper";
+	G4String namePMT1 = "TestPMT1";
+	G4String namePMT2 = "TestPMT2";
+	G4String namePMT3 = "TestPMT3";
+	G4String namePMT4 = "TestPMT4";
+	G4String nameZDS = "ZDS";
+	G4String nameZDSPMT = "zdsWindow";
+	G4String nameSource = "sourceCase";
+	G4String nameAl = "AlShield";
+	//Assign Logical Volume for detectors and wrapping affected by beamline
+	fPlasticLog = new G4LogicalVolume(Scint, plasticG4material, nameLog,0,0,0);
+	fWrapLog = new G4LogicalVolume(subtractWrap5, wrapG4material, nameWrapper,0,0,0); 
+	fPMT1Log = new G4LogicalVolume(PMT1, PMTG4material, namePMT1,0,0,0);
+	fPMT2Log = new G4LogicalVolume(PMT2, PMTG4material, namePMT2,0,0,0);
+	fPMT3Log = new G4LogicalVolume(PMT3, PMTG4material, namePMT3,0,0,0);
+	fPMT4Log = new G4LogicalVolume(PMT4, PMTG4material, namePMT4,0,0,0);
+	fZDSLog = new G4LogicalVolume(zds, zdsG4material, nameZDS,0,0,0);
+	fZDSPMTLog = new G4LogicalVolume(pmt, PMTG4material, nameZDSPMT,0,0,0);
+	fSourceLog = new G4LogicalVolume(Source, zdsG4material, nameSource,0,0,0); //This should not be plasticG4material, it will have Optical properties
+	fAlLog = new G4LogicalVolume(AlShield, AlG4material, nameAl,0,0,0);
+
+	//Set Logical Skin for optical photons on wrapping
+	G4LogicalSkinSurface * Surface = new G4LogicalSkinSurface(nameWrapper, fWrapLog, ScintWrapper);
+
+	//Give everything colour
+	fZDSLog->SetVisAttributes(zds_vis);
+	fPMT1Log->SetVisAttributes(pmt_vis);
+	fPMT2Log->SetVisAttributes(pmt_vis);
+	fPMT3Log->SetVisAttributes(pmt_vis);
+	fPMT4Log->SetVisAttributes(pmt_vis);
+	fPlasticLog->SetVisAttributes(plastic_vis);
+	fWrapLog->SetVisAttributes(wrapper_vis);
+	fZDSPMTLog->SetVisAttributes(pmt_vis);
+
+	//Place Detectors
+	if (addSource) fAssemblyTestPlastics->AddPlacedVolume(fSourceLog, move, rotate);
 	
+	move = G4ThreeVector(0., (-length/2. - fRadialDistance)/2., 0.);
+	if (addAl) {
+		// Shielding with Tiles then uncomment////
+/*	G4double beta   =  54.735610317245360*deg; //pitch
+	G4double gamma  = 22.5; // roll
+	rotate = new G4RotationMatrix;    // rotation matrix corresponding to direction vector
+	rotate->rotateZ(90.0*deg);
+	rotate->rotateY(M_PI+beta);
+	rotate->rotateZ(gamma);
+	move = G4ThreeVector(0., 5.*cm, 0.);
+*/	// To here //
+		
+	fAssemblyTestPlastics->AddPlacedVolume(fAlLog, move, rotate);
+
+	}
+	rotate = new G4RotationMatrix;    // rotation matrix corresponding to direction vector
 	
-	///////// 1x1xlength and 2 SiPm ///////////////////
+	//Comment out if want tiles with shielding//
+	move = G4ThreeVector(0., -length/2. - fRadialDistance, 0.);
+	fAssemblyTestPlastics->AddPlacedVolume(fPlasticLog, move, rotate);
+	move = G4ThreeVector(0., -length/2. - fRadialDistance, 0.);
+	fAssemblyTestPlastics->AddPlacedVolume(fWrapLog, move, rotate);
+	move = G4ThreeVector((pmtLength + pmtSpacing)/2., -length-0.5*pmtLength-fRadialDistance, (pmtLength + pmtSpacing)/2.);
+	fAssemblyTestPlastics->AddPlacedVolume(fPMT1Log, move, rotate);
+	move = G4ThreeVector(-(pmtLength + pmtSpacing)/2., -length-0.5*pmtLength-fRadialDistance, (pmtLength + pmtSpacing)/2.);
+	fAssemblyTestPlastics->AddPlacedVolume(fPMT2Log, move, rotate);
+	move = G4ThreeVector((pmtLength + pmtSpacing)/2., -length-0.5*pmtLength-fRadialDistance, -(pmtLength + pmtSpacing)/2.);
+	fAssemblyTestPlastics->AddPlacedVolume(fPMT3Log, move, rotate);
+	move = G4ThreeVector(-(pmtLength + pmtSpacing)/2., -length-0.5*pmtLength-fRadialDistance, -(pmtLength + pmtSpacing)/2.);
+	fAssemblyTestPlastics->AddPlacedVolume(fPMT4Log, move, rotate);
+	move = G4ThreeVector(0., 0., fRadialDistance);
+	move.rotateX(-M_PI/2.);
+	rotate = new G4RotationMatrix;
+	rotate->rotateX(M_PI/2.); // flip the detector so that the face is pointing upstream.
+	fAssemblyTestPlastics->AddPlacedVolume(fZDSLog, move, rotate); //Uncomment to include ZDS
+	move = G4ThreeVector(0., 0., fRadialDistance+fScintillatorWidth);
+	move.rotateX(-M_PI/2.);
+	rotate = new G4RotationMatrix;
+	rotate->rotateX(M_PI/2.); // flip the detector so that the face is pointing upstream.
+	//fAssemblyTestPlastics->AddPlacedVolume(fZDSPMTLog, move, rotate); //Uncomment to include the ZDS
+	//To here//
+	
+	///////// 1x1xlength and 2 SiPm and ZDS ///////////////////
 /*
-	double length = 3.*cm;
+	double length = 5.*cm;
 	G4VSolid * Scint = new G4Box("Scint", 1.*cm/2., length/2. , 1.*cm/2.);
 	G4VSolid * Wrap_Bigger = new G4Box("Wrap_Bigger", 1.*cm/2.+fWrapThickness, length/2.+fWrapThickness, 1.*cm/2.+fWrapThickness);
 	G4SubtractionSolid * subtractWrap = new G4SubtractionSolid("subtractWrap", Wrap_Bigger, Scint, rot1, G4ThreeVector(0,0,0));
 	G4VSolid * PMT1 = new G4Box("PMT1", 0.4*cm/2., 0.4*cm/2. , 0.4*cm/2.);
 	G4VSolid * PMT2 = new G4Box("PMT2", 0.4*cm/2., 0.4*cm/2. , 0.4*cm/2.);
 	// For SiPM on either end ie on square face
-	//G4SubtractionSolid * subtractWrap2 = new G4SubtractionSolid("subtractWrap2", subtractWrap, PMT1, rot1, G4ThreeVector(0,-0.5*length-fWrapThickness,0));
-	//G4SubtractionSolid * subtractWrap3 = new G4SubtractionSolid("subtractWrap3", subtractWrap2, PMT2, rot1, G4ThreeVector(0,0.5*length+fWrapThickness,0));
+	G4SubtractionSolid * subtractWrap2 = new G4SubtractionSolid("subtractWrap2", subtractWrap, PMT1, rot1, G4ThreeVector(0,-0.5*length-fWrapThickness,0));
+	G4SubtractionSolid * subtractWrap3 = new G4SubtractionSolid("subtractWrap3", subtractWrap2, PMT2, rot1, G4ThreeVector(0,0.5*length+fWrapThickness,0));
 	// For SiPM on either end but on same long rectangular face
-	G4SubtractionSolid * subtractWrap2 = new G4SubtractionSolid("subtractWrap2", subtractWrap, PMT1, rot1, G4ThreeVector(0, -0.5*length + 0.2*cm, 0.5*cm + fWrapThickness));
-	G4SubtractionSolid * subtractWrap3 = new G4SubtractionSolid("subtractWrap3", subtractWrap2, PMT2, rot1, G4ThreeVector(0, 0.5*length - 0.2*cm, 0.5*cm + fWrapThickness));
+	//G4SubtractionSolid * subtractWrap2 = new G4SubtractionSolid("subtractWrap2", subtractWrap, PMT1, rot1, G4ThreeVector(0, -0.5*length + 0.2*cm, 0.5*cm + fWrapThickness));
+	//G4SubtractionSolid * subtractWrap3 = new G4SubtractionSolid("subtractWrap3", subtractWrap2, PMT2, rot1, G4ThreeVector(0, 0.5*length - 0.2*cm, 0.5*cm + fWrapThickness));
 
+	///// Building the ZDS Geometry /////
+	G4Tubs * zds = new G4Tubs("zds", 0., fDiameter/2., fScintillatorWidth/2., fStartPhi, fDeltaPhi);
+	G4Tubs * pmt = new G4Tubs("pmt", 0., fDiameter/2., fPMTWidth/2., fStartPhi, fDeltaPhi);
 
 	//For placing volume
 	rotate = new G4RotationMatrix;
@@ -466,17 +635,23 @@ G4int DetectionSystemTestPlastics::BuildTestPlastics() {
 	wrapper_vis->SetVisibility(true);
 	G4VisAttributes * pmt_vis = new G4VisAttributes(bronze);
 	pmt_vis->SetVisibility(true);
+	G4VisAttributes * zds_vis = new G4VisAttributes(silver);
+	zds_vis->SetVisibility(true);
 
 	//Names
 	G4String nameLog = "TestPlastic";
 	G4String nameWrapper = "wrapper";
 	G4String namePMT1 = "TestPMT1";
 	G4String namePMT2 = "TestPMT2";
+	G4String nameZDS = "ZDS";
+	G4String nameZDSPMT = "zdsWindow";
 	//Assign Logical Volume for detectors and wrapping affected by beamline
 	fPlasticLog = new G4LogicalVolume(Scint, plasticG4material, nameLog,0,0,0);
 	fWrapLog = new G4LogicalVolume(subtractWrap3, wrapG4material, nameWrapper,0,0,0); 
 	fPMT1Log = new G4LogicalVolume(PMT1, PMTG4material, namePMT1,0,0,0);
 	fPMT2Log = new G4LogicalVolume(PMT2, PMTG4material, namePMT2,0,0,0);
+	fZDSLog = new G4LogicalVolume(zds, zdsG4material, nameZDS,0,0,0);
+	fZDSPMTLog = new G4LogicalVolume(pmt, PMTG4material, nameZDSPMT,0,0,0);
 
 	//Set Logical Skin for optical photons on wrapping
 	G4LogicalSkinSurface * Surface = new G4LogicalSkinSurface(nameWrapper, fWrapLog, ScintWrapper);
@@ -486,6 +661,8 @@ G4int DetectionSystemTestPlastics::BuildTestPlastics() {
 	fPMT2Log->SetVisAttributes(pmt_vis);
 	fPlasticLog->SetVisAttributes(plastic_vis);
 	fWrapLog->SetVisAttributes(wrapper_vis);
+	fZDSLog->SetVisAttributes(zds_vis);
+	fZDSPMTLog->SetVisAttributes(pmt_vis);
 
 	//Place Detectors
 	//double yOffset = length/2. - 0.5*cm;
@@ -496,19 +673,31 @@ G4int DetectionSystemTestPlastics::BuildTestPlastics() {
 	move = G4ThreeVector(0., yOffset, zOffset);
 	fAssemblyTestPlastics->AddPlacedVolume(fWrapLog, move, rotate);
 
-		// For SiPM on either end ie on square face
-	//	move = G4ThreeVector(0., yOffset + 0.5*length+0.2*cm, zOffset);
-	//	fAssemblyTestPlastics->AddPlacedVolume(fPMT1Log, move, rotate);
-	//	move = G4ThreeVector(0., yOffset - 0.5*length-0.2*cm, zOffset);
-	//	fAssemblyTestPlastics->AddPlacedVolume(fPMT2Log, move, rotate);
+	// For SiPM on either end ie on square face
+	move = G4ThreeVector(0., yOffset + 0.5*length+0.2*cm, zOffset);
+	fAssemblyTestPlastics->AddPlacedVolume(fPMT1Log, move, rotate);
+	move = G4ThreeVector(0., yOffset - 0.5*length-0.2*cm, zOffset);
+	fAssemblyTestPlastics->AddPlacedVolume(fPMT2Log, move, rotate);
 			
 	// For SiPM on either end but on same long rectangular face
-	move = G4ThreeVector(0., yOffset + 0.5*length - 0.2*cm, zOffset + 0.2*cm + 0.5*cm);
-	fAssemblyTestPlastics->AddPlacedVolume(fPMT1Log, move, rotate);
-	move = G4ThreeVector(0., yOffset - 0.5*length + 0.2*cm, zOffset + 0.2*cm + 0.5*cm);
-	fAssemblyTestPlastics->AddPlacedVolume(fPMT2Log, move, rotate);
-*/
+//	move = G4ThreeVector(0., yOffset + 0.5*length - 0.2*cm, zOffset + 0.2*cm + 0.5*cm);
+//	fAssemblyTestPlastics->AddPlacedVolume(fPMT1Log, move, rotate);
+//	move = G4ThreeVector(0., yOffset - 0.5*length + 0.2*cm, zOffset + 0.2*cm + 0.5*cm);
+//	fAssemblyTestPlastics->AddPlacedVolume(fPMT2Log, move, rotate);
+	
+	//ZDS
+	move = G4ThreeVector(0., 0., fRadialDistance);
+	move.rotateX(-M_PI);
+	rotate = new G4RotationMatrix;
+	rotate->rotateX(M_PI); // flip the detector so that the face is pointing upstream.
+	fAssemblyTestPlastics->AddPlacedVolume(fZDSLog, move, rotate); //Uncomment to include ZDS
+	move = G4ThreeVector(0., 0., fRadialDistance+fScintillatorWidth);
+	move.rotateX(-M_PI);
+	rotate = new G4RotationMatrix;
+	rotate->rotateX(M_PI); // flip the detector so that the face is pointing upstream.
+	fAssemblyTestPlastics->AddPlacedVolume(fZDSPMTLog, move, rotate); //Uncomment to include the ZDS
 
+*/
 
 
 	return 1;

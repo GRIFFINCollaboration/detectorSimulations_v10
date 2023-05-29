@@ -68,6 +68,7 @@ private:
    
     G4bool fAddWrap;
     G4bool fAddFrontPMTs;
+    G4bool fAddMidSiPM;
 
     G4double fNumDet;
     G4double fNumDetBot;
