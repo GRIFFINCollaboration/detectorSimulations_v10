@@ -59,6 +59,8 @@ class ApparatusDescantStructure;
 class ApparatusLayeredTarget;
 class DetectionSystemDescant;
 
+class ApparatusLabFloor;
+
 class DetectionSystemSceptar;
 class DetectionSystemSpice;
 class DetectionSystemTrific;
@@ -68,6 +70,10 @@ class DetectionSystemLanthanumBromide;
 class DetectionSystemBox;
 class DetectionSystemAncillaryBGO;
 
+class DetectionSystemTestPlastics;
+class DetectionSystemPlastics;
+class DetectionSystemDaemonTiles;
+class DetectionSystemZDS;
 //class MagneticField;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -123,6 +129,7 @@ public:
 	void AddApparatus8piVacuumChamber();
 	void AddApparatus8piVacuumChamberAuxMatShell(G4double thickness);
 	void AddApparatusGriffinStructure(G4int selector);
+	void AddApparatusLabFloor();
 
 	G4double GetWorldSizeX()           {return fWorldSizeX;};
 	G4double GetWorldSizeY()           {return fWorldSizeY;};
@@ -144,6 +151,7 @@ public:
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void AddDetectionSystemDescant(G4int ndet);
 	void AddDetectionSystemDescantAuxPorts(G4ThreeVector input);
+	void AddDetectionSystemDescantNoLead(G4int ndet);
 
 	void SetDetectionSystemDescantRotation(G4ThreeVector input);
 	void SetDetectionSystemDescantColor(G4String input);
@@ -153,6 +161,13 @@ public:
 	void AddApparatusDescantStructure();
 
 	void AddDetectionSystemTestcan(G4ThreeVector input);
+	void AddDetectionSystemTestPlastics(G4ThreeVector input);
+	void AddDetectionSystemPlastics(G4ThreeVector input);
+	void AddDetectionSystemPlasticsNoWrap(G4ThreeVector input);
+	//void AddDetectionSystemDaemonTiles(G4int ndet);
+	void AddDetectionSystemDaemonTiles(G4ThreeVector input);
+	void AddDetectionSystemDaemonAuxPorts(G4ThreeVector input);
+	void AddDetectionSystemZDS();
 
 	void AddDetectionSystem8piDetector(G4int ndet);
 	void AddDetectionSystemGriffinForward(G4int ndet);
@@ -195,6 +210,10 @@ public:
 	G4bool   Paces()      { return fPaces;      }
 	G4bool   Descant()    { return fDescant;    }
 	G4bool   Testcan()    { return fTestcan;    }
+	G4bool   TestPlastics()    { return fTestPlastics;    }
+	G4bool   Plastics()    { return fPlastics;    }
+	G4bool   DaemonTiles()    { return fDaemonTiles;    }
+	G4bool   ZDS()    { return fZDS;    }
 
 	void UseTIGRESSPositions(G4bool input) { fUseTigressPositions = input; }
 
@@ -295,6 +314,10 @@ private:
 	G4bool fTestcan;
 	G4bool fSpice;
 	G4bool fPaces;
+	G4bool fTestPlastics;
+	G4bool fPlastics;
+	G4bool fZDS;
+	G4bool fDaemonTiles;
 
 	//unordered maps which hold properties of the physical volumes created
 	std::unordered_map<G4VPhysicalVolume*, DetectorProperties> fPropertiesMap;

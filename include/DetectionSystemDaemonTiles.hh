@@ -32,27 +32,28 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef DETECTIONSYSTEMDESCANT_HH
-#define DETECTIONSYSTEMDESCANT_HH
+#ifndef DETECTIONSYSTEMDAEMONTILES_HH
+#define DETECTIONSYSTEMDAEMONTILES_HH
 
 #include "G4SystemOfUnits.hh" // new version geant4.10 requires units
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 #include "G4SubtractionSolid.hh"
+#include "G4IntersectionSolid.hh"
 
 class G4AssemblyVolume;
 
-class DetectionSystemDescant
+class DetectionSystemDaemonTiles
 {
 public:
-    DetectionSystemDescant(G4bool leadShield);
-    ~DetectionSystemDescant();
+    //DetectionSystemDaemonTiles(G4bool leadShield);
+    DetectionSystemDaemonTiles(G4double thickness, G4int material);
+    ~DetectionSystemDaemonTiles();
 
     G4int Build();
     G4int PlaceDetector(G4LogicalVolume* expHallLog, G4int detectorNumber);
     G4int PlaceDetectorAuxPorts(G4LogicalVolume* expHallLog, G4int detectorNumber, G4double radialpos);
-
-    G4int PlaceDetector(G4LogicalVolume* expHallLog, G4String color, G4ThreeVector pos, G4ThreeVector rot);
+    void SetWrapping(G4bool wrap){fAddWrap = wrap;};
 
   //Get DESCANT values for Plastics
 	//G4double GetRadialDistance() {return fRadialDistance;};
@@ -60,70 +61,44 @@ public:
 
 private:
     // Logical volumes
-    G4LogicalVolume* fBlueVolumeLog;
-    G4LogicalVolume* fGreenVolumeLog;
-    G4LogicalVolume* fRedVolumeLog;
-    G4LogicalVolume* fWhiteVolumeLog;
-    G4LogicalVolume* fYellowVolumeLog;
-
-    G4LogicalVolume* fBlueScintillatorVolumeLog;
-    G4LogicalVolume* fGreenScintillatorVolumeLog;
-    G4LogicalVolume* fRedScintillatorVolumeLog;
-    G4LogicalVolume* fWhiteScintillatorVolumeLog;
-    G4LogicalVolume* fYellowScintillatorVolumeLog;
-
-    G4LogicalVolume* fBlueLeadVolumeLog;
-    G4LogicalVolume* fGreenLeadVolumeLog;
-    G4LogicalVolume* fRedLeadVolumeLog;
-    G4LogicalVolume* fWhiteLeadVolumeLog;
-    G4LogicalVolume* fYellowLeadVolumeLog;
+    // Daemon Blue
+    G4LogicalVolume* fBluePlasticLog;
+    G4LogicalVolume* fBluePMTLog;
+    G4LogicalVolume* fBlueWrapLog;
+    std::vector<G4LogicalVolume*>  fBluePlasticLogArray; // comment out if not using tiles
+    std::vector<G4LogicalVolume*>  fBluePMTLogArray;// comment out if not using tiles
+    //Daemon White
+    G4LogicalVolume* fWhitePlasticLog;
+    G4LogicalVolume* fWhitePMTLog;
+    G4LogicalVolume* fWhiteWrapLog;
+    std::vector<G4LogicalVolume*>  fWhitePlasticLogArray; // comment out if not using tiles
+    std::vector<G4LogicalVolume*>  fWhitePMTLogArray;// comment out if not using tiles
+    //Daemon Red
+    G4LogicalVolume* fRedPlasticLog;
+    G4LogicalVolume* fRedPMTLog;
+    G4LogicalVolume* fRedWrapLog;
+    std::vector<G4LogicalVolume*>  fRedPlasticLogArray; // comment out if not using tiles
+    std::vector<G4LogicalVolume*>  fRedPMTLogArray;// comment out if not using tiles
+    // Daemon Green
+    G4LogicalVolume* fGreenPlasticLog;
+    G4LogicalVolume* fGreenPMTLog;
+    G4LogicalVolume* fGreenWrapLog;
+    std::vector<G4LogicalVolume*>  fGreenPlasticLogArray; // comment out if not using tiles
+    std::vector<G4LogicalVolume*>  fGreenPMTLogArray;// comment out if not using tiles
+    // Daemon Yellow
+    G4LogicalVolume* fYellowPlasticLog;
+    G4LogicalVolume* fYellowPMTLog;
+    G4LogicalVolume* fYellowWrapLog;
+    std::vector<G4LogicalVolume*>  fYellowPlasticLogArray; // comment out if not using tiles
+    std::vector<G4LogicalVolume*>  fYellowPMTLogArray;// comment out if not using tiles
     
-    G4LogicalVolume* fQuartzWindow5inchLog;
-    G4LogicalVolume* fQuartzWindow3inchLog;   
-
     // Assembly volumes
     G4AssemblyVolume* fAssemblyBlue;                 // Contains all non-sensitive materials
-    G4AssemblyVolume* fAssemblyBlueScintillator;     // Contains all only sensitive materials, eg. the scintillation material
     G4AssemblyVolume* fAssemblyGreen;
-    G4AssemblyVolume* fAssemblyGreenScintillator;
     G4AssemblyVolume* fAssemblyRed;
-    G4AssemblyVolume* fAssemblyRedScintillator;
     G4AssemblyVolume* fAssemblyWhite;
-    G4AssemblyVolume* fAssemblyWhiteScintillator;
     G4AssemblyVolume* fAssemblyYellow;
-    G4AssemblyVolume* fAssemblyYellowScintillator;
 
-    G4double fCanLength;
-    G4double fCanThickness;
-    G4double fCanThicknessFront;
-    G4double fCanInnerRadius;
-    G4double fLeadShieldThickness;
-    G4double fRadialDistance;
-    G4String fCanMaterial;
-    G4String fLiquidMaterial;
-    G4String fLeadMaterial;
-    G4bool   fIncludeLead;
-
-
-
-    G4double fCanBackThickness;
-
-
-
-    // for making PMT cuts
-    G4double fStartPhi;
-    G4double fEndPhi;
-    G4double fInnerRadiusWindow;
-    G4double fOuterRadiusWindow5inch;
-    G4double fOuterRadiusWindow3inch;
-    G4double fHalfLengthZWindowCut;
-    G4double fWhitePMTOffsetY;
-    G4double fBluePMTOffsetX;
-    G4double fRedPMTOffsetX;
-    G4double fYellowGreenPMTOffsetX;
-    G4double fYellowGreenPMTOffsetY;
-    G4String fQuartzMaterial;
-    G4double fOpticalWindowHalfThickness;
 
     // Saint Gobain data files, 6 points around the front face of the can, and 6 on the back
     // from Dan Brennan
@@ -167,14 +142,28 @@ private:
     G4Colour fGreyColour;   // stainless steel pmt tube colour
     G4Colour fMagentaColour;  // optical window colour
     G4Colour fBlackColour;
+    G4Colour fBronzeColour;
+    G4Colour fSilverColour;
 
     G4bool fSurfCheck;
 
+    G4bool fAddWrap;
+    G4bool fAddSegment;
+    G4bool fAddTwo;
+    G4bool fAdd2x2;
+    G4bool fAddSide;
+    G4double fAirGap;
+    G4double fWrapThickness;
+    G4double fPlasticThickness;
+    G4double fRadialDistance;
+    G4String fPlasticMaterial;
+    G4String fWrapMaterial;
+    G4String fPMTMaterial;
+    
     G4int BuildCanVolume();
-    G4int BuildDetectorVolume();
-
-    G4SubtractionSolid* CanVolume(G4bool insideVol, G4double volumeLength, G4double detector[12][3], G4double detectorPhi[6]);
-    G4SubtractionSolid* CutVolumeOnFourPoints(G4int idx, G4bool insideVol, G4double volumeLength, G4double detectorPhi[6], G4SubtractionSolid* volume, G4ThreeVector frontP1, G4ThreeVector frontP2);
+    G4SubtractionSolid* CanVolumeDaemon(G4bool insideVol, G4double volumeLength, G4double detector[12][3], G4double detectorPhi[6], G4bool wrap);
+    G4SubtractionSolid* CutVolumeOnFourPointsDaemon(G4int idx, G4bool insideVol, G4double volumeLength, G4double detectorPhi[6], G4SubtractionSolid* volume, G4ThreeVector frontP1, G4ThreeVector frontP2, G4bool wrap);
+    G4SubtractionSolid* CutWrapperVolumeDaemon(G4SubtractionSolid * initialW, G4IntersectionSolid * topRight, G4IntersectionSolid * topLeft, G4IntersectionSolid * bottomRight, G4IntersectionSolid * bottomLeft, G4Box * pmt);
 
     G4ThreeVector GetDirectionXYZ(G4double theta, G4double phi);
 

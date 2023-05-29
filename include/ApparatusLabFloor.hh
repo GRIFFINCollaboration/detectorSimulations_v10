@@ -23,55 +23,49 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-// $Id: PhysicsListMessenger.hh 68007 2013-03-13 11:28:03Z gcosmo $
 //
-/// \file radioactivedecay/rdecay02/include/PhysicsListMessenger.hh
-/// \brief Definition of the PhysicsListMessenger class
+// $Id: DetectorConstruction.hh,v 1.1 2010-10-18 15:56:17 maire Exp $
+// GEANT4 tag $Name: geant4-09-04-patch-02 $
+//
 //
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef PHYSICSLISTMESSENGER_HH
-#define PHYSICSLISTMESSENGER_HH
+#ifndef APPARATUSLABFLOOR_HH
+#define APPARATUSLABFLOOR_HH
 
+#include "G4SystemOfUnits.hh" // new version geant4.10 requires units
+#include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
-#include "G4UImessenger.hh"
 
-class PhysicsList;
-class G4UIdirectory;
-class G4UIcmdWithADoubleAndUnit;
-class G4UIcmdWithAString;
-class G4UIcmdWithABool;
+class G4AssemblyVolume;
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-class PhysicsListMessenger: public G4UImessenger
+class ApparatusLabFloor
 {
 public:
+    ApparatusLabFloor();
+    ~ApparatusLabFloor();
 
-    PhysicsListMessenger(PhysicsList* );
-    virtual ~PhysicsListMessenger();
-
-    virtual void SetNewValue(G4UIcommand*, G4String);
+    G4int Build();
+    G4int PlaceLabFloor(G4LogicalVolume* expHallLog);
 
 private:
 
-    PhysicsList* fPPhysicsList;
+    G4AssemblyVolume* fAssemblyFloor;                 // Contains all non-sensitive materials
 
-    G4UIdirectory*             fPhysDir;
-    G4UIcmdWithADoubleAndUnit* fGammaCutCmd;
-    G4UIcmdWithADoubleAndUnit* fElectCutCmd;
-    G4UIcmdWithADoubleAndUnit* fProtoCutCmd;
-    G4UIcmdWithADoubleAndUnit* fNeutronCutCmd;
-    G4UIcmdWithADoubleAndUnit* fAllCutCmd;
-    G4UIcmdWithADoubleAndUnit* fMCutCmd;
-    G4UIcmdWithADoubleAndUnit* fECutCmd;
-    G4UIcmdWithAString*        fPListCmd;
-    G4UIcmdWithABool*          fConstructOpCmd;
-    G4UIcmdWithABool*          fSpiceStepperCmd;
+    G4double fFloorLength;
+    G4double fFloorHeight;
+    G4double fFloorWidth;
+
+    G4String fFloorMaterial;
+   
+    G4LogicalVolume * fFloorLog;
+   
+
+    G4int BuildFloor();
 
 };
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 #endif
+

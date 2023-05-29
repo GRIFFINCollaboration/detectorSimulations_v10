@@ -229,7 +229,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 		} else if(fNeedFileDistro){
 			z += fBeamDistribution->GetRandom();
 		}
-
+		//G4cout << "Position of Beam: " << x << " "<<y <<" "<< z << G4endl;
 		G4ThreeVector thisEffPosition = G4ThreeVector(x,y,z);//in constructor
 
 		//////////
@@ -265,6 +265,10 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			effdirection = G4ThreeVector(effRandSinTheta*cos(effRandPhi), effRandSinTheta*sin(effRandPhi), effRandCosTheta);
 			//converts from Spherical polar(physics def.) to cartesian via (rsin(theta)cos(phi),rsin(theta)cos(phi),rcos(theta)) r=1,unit length
 		}
+
+		//Set Direction of Beam Manually
+		//effdirection = G4ThreeVector(1. , 0. , 4.);
+		
 
 		//after running through if-statements above we now have particle type definition, position, mom. direction, and the energy (or their initialised values)
 		fParticleGun->SetParticlePosition(thisEffPosition);

@@ -77,6 +77,8 @@
 #include "G4OpAbsorption.hh"
 #include "G4OpRayleigh.hh"
 #include "G4Scintillation.hh"
+#include "G4OpBoundaryProcess.hh"
+#include "G4OpticalPhysics.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -84,6 +86,7 @@ PhysicsList::PhysicsList() :
 	G4VModularPhysicsList(),
 	fCutForGamma(1.*mm), fCutForElectron(0.01*mm),//e- cut to follow old code
 	fCutForPositron(1.*mm),//just sets defaults, can be altered through commands in a macro
+	fCutForNeutron(0.0*keV),//just sets defaults, can be altered through commands in a macro
 	fEmPhysicsList(0),
 	fRaddecayList(0),
 	fParticleList(0),
@@ -215,14 +218,17 @@ void PhysicsList::ConstructOp(G4bool constructOp)
 		G4cout<<"Building Optical Phyiscs... "<<G4endl;
 		// G4Cerenkov* cerenkovProcess = new G4Cerenkov("Cerenkov");
 
-		//   turning on particle-specific scintillation process
+		//   turning on scintillation process
 		G4Scintillation* scintillationProcess = new G4Scintillation("Scintillation");
+		//   making scintillation process  particle and energy-specific
 		scintillationProcess->SetScintillationByParticleType(true);
 
 		G4OpAbsorption* absorptionProcess = new G4OpAbsorption();
 		G4OpRayleigh* rayleighScatteringProcess = new G4OpRayleigh();
 		//G4OpMieHG* mieHGScatteringProcess = new G4OpMieHG();
-		//G4OpBoundaryProcess* boundaryProcess = new G4OpBoundaryProcess();
+		G4OpBoundaryProcess* boundaryProcess = new G4OpBoundaryProcess();
+		G4OpticalPhysics * opticalPhysics = new G4OpticalPhysics();
+		opticalPhysics->SetFiniteRiseTime(true);
 
 		// Use Birks Correction in the Scintillation process
 		if(!G4Threading::IsWorkerThread())
@@ -251,7 +257,7 @@ void PhysicsList::ConstructOp(G4bool constructOp)
 				pmanager->AddDiscreteProcess(absorptionProcess);
 				pmanager->AddDiscreteProcess(rayleighScatteringProcess);
 				// pmanager->AddDiscreteProcess(mieHGScatteringProcess);
-				//  pmanager->AddDiscreteProcess(boundaryProcess);
+				pmanager->AddDiscreteProcess(boundaryProcess);
 			}
 		}
 		G4cout<<"Done Building Optical Physics"<<G4endl;
@@ -339,6 +345,15 @@ void PhysicsList::SetCutForPositron(G4double cut)
 {
 	fCutForPositron = cut;
 	SetParticleCuts(fCutForPositron, G4Positron::Positron());
+}
+
+void PhysicsList::SetCutForNeutron(G4double cut)
+{
+	fCutForNeutron = cut;
+	G4NeutronTrackingCut * nCut = new G4NeutronTrackingCut();
+	nCut->SetKineticEnergyLimit(fCutForNeutron);
+	nCut->ConstructProcess();
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

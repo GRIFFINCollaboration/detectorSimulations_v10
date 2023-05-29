@@ -32,6 +32,10 @@
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+#include <ctime>
+#include <functional>
+#include <string>
+#include <unistd.h>
 
 #include <ctime>
 #include <functional>
@@ -57,6 +61,7 @@
 
 #include "G4UIExecutive.hh"
 
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 int main(int argc, char** argv)
@@ -78,18 +83,9 @@ int main(int argc, char** argv)
 	G4Random::setTheSeed(seed);
 
 	// Construct the default run manager
-#ifdef G4MULTITHREADED
-	G4int nThreads = 2;
-	if(argc == 3) {
-		nThreads = strtol(argv[2], nullptr, 10);
-	}
-	G4cout<<"RUNNING MULTITHREADED WITH "<<nThreads<<" THREADS"<<G4endl;
-	G4MTRunManager* runManager = new G4MTRunManager;
-	runManager->SetNumberOfThreads(nThreads);
-#else
+  // no multi-threaded for optical physics
 	G4cout<<"NOT RUNNING MULTITHREADED"<<G4endl;
 	G4RunManager* runManager = new G4RunManager;
-#endif
 
 	// turn off messages from particle HP manager (/process/had/particle_hp/verbose command does not work?)
 	G4ParticleHPManager::GetInstance()->SetVerboseLevel(0);

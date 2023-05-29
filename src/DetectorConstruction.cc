@@ -70,6 +70,10 @@
 #include "ApparatusDescantStructure.hh"
 
 #include "DetectionSystemTestcan.hh"
+#include "DetectionSystemTestPlastics.hh"
+#include "DetectionSystemPlastics.hh"
+#include "DetectionSystemDaemonTiles.hh"
+#include "DetectionSystemZDS.hh"
 
 #include "G4FieldManager.hh"
 #include "G4UniformMagField.hh"
@@ -89,6 +93,7 @@
 #include "Apparatus8piVacuumChamber.hh"
 #include "Apparatus8piVacuumChamberAuxMatShell.hh"
 #include "ApparatusGriffinStructure.hh"
+#include "ApparatusLabFloor.hh"
 
 #include "DetectionSystemBox.hh" // New file
 #include "DetectionSystemGrid.hh"
@@ -126,6 +131,7 @@ DetectorConstruction::DetectorConstruction() :
 
 
 	fMatWorldName = "G4_AIR";
+//	fMatWorldName = "G4_Galactic";
 
 	// Generic Target Apparatus
 	fSetGenericTargetMaterial   = false;
@@ -188,7 +194,10 @@ DetectorConstruction::DetectorConstruction() :
 	fPaces    = false;
 	fDescant  = false;
 	fTestcan  = false;
-
+	fTestPlastics  = false;
+	fPlastics  = false;
+	fDaemonTiles  = false;
+	fZDS  = false;
 	fTrifWindowThickness=6*um;
 	fTrifDegraderThickness=0;
 	fTrifDegraderMat="G4_Al";
@@ -406,6 +415,18 @@ void DetectorConstruction::AddApparatusGriffinStructure(G4int selector) {
 
 	pApparatusGriffinStructure->Place(fLogicWorld, selector);
 }
+
+void DetectorConstruction::AddApparatusLabFloor() {
+
+if(fLogicWorld == nullptr) {
+	Construct();
+}
+
+ApparatusLabFloor * pApparatusLabFloor = new ApparatusLabFloor();
+pApparatusLabFloor->Build();
+pApparatusLabFloor->PlaceLabFloor(fLogicWorld);
+}
+
 
 
 void DetectorConstruction::AddDetectionSystemSodiumIodide(G4int ndet) {
@@ -770,6 +791,17 @@ void DetectorConstruction::AddDetectionSystemDescant(G4int ndet) {
 	fDescant = true;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void DetectorConstruction::AddDetectionSystemDescantNoLead(G4int ndet) {
+	if(fLogicWorld == nullptr) {
+		Construct();
+	}
+
+	DetectionSystemDescant* pDetectionSystemDescant = new DetectionSystemDescant(false) ;
+	pDetectionSystemDescant->Build() ;
+	pDetectionSystemDescant->PlaceDetector(fLogicWorld, ndet) ;
+
+	fDescant = true;
+}
 
 void DetectorConstruction::AddDetectionSystemDescantAuxPorts(G4ThreeVector input) {
 	if(fLogicWorld == nullptr) {
@@ -852,6 +884,102 @@ void DetectorConstruction::AddDetectionSystemTestcan(G4ThreeVector input) {
 
 	fTestcan = true;
 }
+void DetectorConstruction::AddDetectionSystemZDS() {
+	if(fLogicWorld == nullptr) {
+		Construct();
+	}
+
+	DetectionSystemZDS* pDetectionSystemZDS = new DetectionSystemZDS();
+	pDetectionSystemZDS->Build();
+	pDetectionSystemZDS->PlaceDetector(fLogicWorld);
+
+	fZDS = true;
+}
+void DetectorConstruction::AddDetectionSystemTestPlastics(G4ThreeVector input) {
+	if(fLogicWorld == nullptr) {
+		Construct();
+	}
+
+	G4double thickness = G4double(input.x())*cm;
+	G4int material = G4double(input.y());
+	G4double numDet = G4double(input.z());
+
+	DetectionSystemTestPlastics* pDetectionSystemTestPlastics = new DetectionSystemTestPlastics(thickness, material, numDet);
+	pDetectionSystemTestPlastics->Build();
+	pDetectionSystemTestPlastics->PlaceDetector(fLogicWorld);
+
+	fTestPlastics = true;
+}
+void DetectorConstruction::AddDetectionSystemPlastics(G4ThreeVector input) {
+	if(fLogicWorld == nullptr) {
+		Construct();
+	}
+
+	G4double thickness = G4double(input.x())*cm;
+	G4int material = G4double(input.y());
+	G4double numDet = G4double(input.z());
+
+	DetectionSystemPlastics* pDetectionSystemPlastics = new DetectionSystemPlastics(thickness, material, numDet);
+	pDetectionSystemPlastics->SetWrapping(true);
+	pDetectionSystemPlastics->Build();
+	pDetectionSystemPlastics->PlaceDetector(fLogicWorld);
+
+	fPlastics = true;
+}
+void DetectorConstruction::AddDetectionSystemPlasticsNoWrap(G4ThreeVector input) {
+	if(fLogicWorld == nullptr) {
+		Construct();
+	}
+
+	G4double thickness = G4double(input.x())*cm;
+	G4int material = G4double(input.y());
+	G4double numDet = G4double(input.z());
+
+	DetectionSystemPlastics* pDetectionSystemPlastics = new DetectionSystemPlastics(thickness, material, numDet);
+	pDetectionSystemPlastics->SetWrapping(false);
+	pDetectionSystemPlastics->Build();
+	pDetectionSystemPlastics->PlaceDetector(fLogicWorld);
+
+	fPlastics = true;
+}
+//void DetectorConstruction::AddDetectionSystemDaemonTiles(G4int ndet) {
+void DetectorConstruction::AddDetectionSystemDaemonTiles(G4ThreeVector input) {
+	if(fLogicWorld == nullptr) {
+		Construct();
+	}
+	
+	G4double thickness = G4double(input.x())*cm;
+	G4int material = G4double(input.y());
+	G4double ndet = G4double(input.z());
+
+	//DetectionSystemDaemonTiles* pDetectionSystemDaemonTiles = new DetectionSystemDaemonTiles(true) ;
+	DetectionSystemDaemonTiles* pDetectionSystemDaemonTiles = new DetectionSystemDaemonTiles(thickness, material) ;
+	//pDetectionSystemDaemonTiles->SetWrapping(true);
+	pDetectionSystemDaemonTiles->Build() ;
+	pDetectionSystemDaemonTiles->PlaceDetector(fLogicWorld, ndet) ;
+
+	fDaemonTiles = true;
+}
+void DetectorConstruction::AddDetectionSystemDaemonAuxPorts(G4ThreeVector input) {
+	if(fLogicWorld == nullptr) {
+		Construct();
+	}
+
+	G4int ndet = G4int(input.x());
+	G4double radialpos = input.y()*cm;
+	G4int thickness = input.z()*cm;
+
+	//DetectionSystemDaemonTiles *  pDetectionSystemDaemonTiles = new DetectionSystemDaemonTiles(thickness, 1) ; //BC404
+	DetectionSystemDaemonTiles *  pDetectionSystemDaemonTiles = new DetectionSystemDaemonTiles(thickness, 2) ; //BC408
+	pDetectionSystemDaemonTiles->Build() ;
+
+	for(G4int detectorNumber = 0; detectorNumber < ndet; detectorNumber++)
+	{
+		pDetectionSystemDaemonTiles->PlaceDetectorAuxPorts(fLogicWorld, detectorNumber, radialpos);
+	}
+
+	fDaemonTiles = true;
+}
 
 void DetectorConstruction::AddDetectionSystemSpice() {
 	if(fLogicWorld == nullptr) {
@@ -907,7 +1035,6 @@ void DetectorConstruction::SetPropertiesRecursive(G4LogicalVolume* vol) {
 		}
 		SetPropertiesRecursive(vol->GetDaughter(i)->GetLogicalVolume());
 	}
-
 }
 
 void DetectorConstruction::Print() {
@@ -961,6 +1088,14 @@ bool DetectorConstruction::CheckVolumeName(G4String volumeName) {
 	if(volumeName.find("whiteScintillatorVolumeLog") != G4String::npos) return true;
 	if(volumeName.find("yellowScintillatorVolumeLog") != G4String::npos) return true;
 	if(volumeName.find("testcanScintillatorLog") != G4String::npos) return true;
+	if(volumeName.find("TestPlastic") != G4String::npos) return true;
+	if(volumeName.find("BarsPlasticDet") != G4String::npos) return true;
+	if(volumeName.find("BlueTilePlasticDet") != G4String::npos) return true;
+	if(volumeName.find("WhiteTilePlasticDet") != G4String::npos) return true;
+	if(volumeName.find("RedTilePlasticDet") != G4String::npos) return true;
+	if(volumeName.find("GreenTilePlasticDet") != G4String::npos) return true;
+	if(volumeName.find("YellowTilePlasticDet") != G4String::npos) return true;
+	if(volumeName.find("ZDS") != G4String::npos) return true;
 	return false;
 }
 
@@ -1122,6 +1257,7 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 	}
 
 	if(volumeName.find("sceptarSquareScintillatorLog") != G4String::npos) {
+		result.detectorNumber = imprintNumber-1;
 		// to number SCEPTAR paddles correctly:
 		switch(result.detectorNumber) {
 			case 0:
@@ -1163,6 +1299,7 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 	}
 
 	if(volumeName.find("sceptarAngledScintillatorLog") != G4String::npos) {
+		result.detectorNumber = imprintNumber-1;
 		// to number SCEPTAR paddles correctly (1 stays 1):
 		switch(result.detectorNumber) {
 			case 0:
@@ -1461,5 +1598,121 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 		return result;
 	}
 
+	if(volumeName.find("BlueTilePlasticDet") != G4String::npos) {
+		result.systemID = 8710;
+/*		// for "generic" detectors the detector number is the imprint number
+		result.detectorNumber = imprintNumber;
+		// strip "BlueTilePlasticDet_" (19 characters) and everything before from the string
+		std::string tmpString = volumeName.substr(volumeName.find("BlueTilePlasticDet")+19);
+		// replace all '_' with spaces so we can just use istringstream::operator>>
+		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
+		// create istringstream from the stripped and converted stream, and read detector and crystal number
+		std::istringstream is(tmpString);
+		is>>result.crystalNumber;
+*/		result.crystalNumber = 0;
+		//is>>result.detectorNumber>>result.crystalNumber;
+		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
+		result.detectorNumber = imprintNumber - 1; //Range from 0-14
+		//result.detectorNumber = result.detectorNumber+1;
+		return result;
+	}
+	if(volumeName.find("WhiteTilePlasticDet") != G4String::npos) {
+		result.systemID = 8720;
+/*		// for "generic" detectors the detector number is the imprint number
+		result.detectorNumber = imprintNumber;
+		// strip "WhiteTilePlasticDet_" (20 characters) and everything before from the string
+		std::string tmpString = volumeName.substr(volumeName.find("WhiteTilePlasticDet")+20);
+		// replace all '_' with spaces so we can just use istringstream::operator>>
+		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
+		// create istringstream from the stripped and converted stream, and read detector and crystal number
+		std::istringstream is(tmpString);
+		is>>result.crystalNumber;
+*/		result.crystalNumber = 0;
+		//is>>result.detectorNumber>>result.crystalNumber;
+		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
+		result.detectorNumber = imprintNumber - 1 + 15; // Range from 15 - 34
+		//result.detectorNumber = result.detectorNumber+1;
+		return result;
+	}
+	if(volumeName.find("RedTilePlasticDet") != G4String::npos) {
+		result.systemID = 8730;
+/*		// for "generic" detectors the detector number is the imprint number
+		result.detectorNumber = imprintNumber;
+		// strip "RedTilePlasticDet_" (18 characters) and everything before from the string
+		std::string tmpString = volumeName.substr(volumeName.find("RedTilePlasticDet")+18);
+		// replace all '_' with spaces so we can just use istringstream::operator>>
+		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
+		// create istringstream from the stripped and converted stream, and read detector and crystal number
+		std::istringstream is(tmpString);
+		is>>result.crystalNumber;
+*/		result.crystalNumber = 0;
+		//is>>result.detectorNumber>>result.crystalNumber;
+		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
+		result.detectorNumber = imprintNumber - 1 + 15 + 20;
+		//result.detectorNumber = result.detectorNumber+1;
+		return result;
+	}
+	if(volumeName.find("GreenTilePlasticDet") != G4String::npos) {
+		result.systemID = 8740;
+/*		// for "generic" detectors the detector number is the imprint number
+		result.detectorNumber = imprintNumber;
+		// strip "GreenTilePlasticDet_" (20 characters) and everything before from the string
+		std::string tmpString = volumeName.substr(volumeName.find("GreenTilePlasticDet")+20);
+		// replace all '_' with spaces so we can just use istringstream::operator>>
+		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
+		// create istringstream from the stripped and converted stream, and read detector and crystal number
+		std::istringstream is(tmpString);
+		is>>result.crystalNumber;
+*/		result.crystalNumber = 0;
+		//is>>result.detectorNumber>>result.crystalNumber;
+		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
+		result.detectorNumber = imprintNumber - 1 + 15 + 20 + 15;
+		//result.detectorNumber = result.detectorNumber+1;
+		return result;
+	}
+	if(volumeName.find("YellowTilePlasticDet") != G4String::npos) {
+		result.systemID = 8750;
+/*		// for "generic" detectors the detector number is the imprint number
+		result.detectorNumber = imprintNumber;
+		// strip "YellowTilePlasticDet_" (21 characters) and everything before from the string
+		std::string tmpString = volumeName.substr(volumeName.find("YellowTilePlasticDet")+21);
+		// replace all '_' with spaces so we can just use istringstream::operator>>
+		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
+		// create istringstream from the stripped and converted stream, and read detector and crystal number
+		std::istringstream is(tmpString);
+		is>>result.crystalNumber;
+*/		result.crystalNumber = 0;
+		//is>>result.detectorNumber>>result.crystalNumber;
+		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
+		result.detectorNumber = imprintNumber - 1 + 15 + 20 + 15 + 10;
+		//result.detectorNumber = result.detectorNumber+1;
+		return result;
+	}
+
+	if(volumeName.find("BarsPlasticDet") != G4String::npos) {
+		// strip "BarsPlasticDet_" (15 characters) and everything before from the string
+		std::string tmpString = volumeName.substr(volumeName.find("BarsPlasticDet")+15);
+		// replace all '_' with spaces so we can just use istringstream::operator>>
+		std::replace(tmpString.begin(), tmpString.end(), '_', ' ');
+		// create istringstream from the stripped and converted stream, and read detector and crystal number
+		std::istringstream is(tmpString);
+		is>>result.detectorNumber;
+		//is>>result.detectorNumber>>result.crystalNumber;
+		// converting this number to a "true" detector number isn't necessary anymore since we use the real number and not the assembly/imprint number
+		//result.detectorNumber = result.detectorNumber+1;
+		result.detectorNumber = result.detectorNumber;
+		result.systemID = 8700;
+		return result;
+	}
+	if(volumeName.find("TestPlastic") != G4String::npos) {
+		result.detectorNumber = 0;
+		result.systemID = 8800;
+		return result;
+	}
+	if(volumeName.find("ZDS") != G4String::npos) {
+		result.detectorNumber = 0;
+		result.systemID = 9000;
+		return result;
+	}
 	return result;
 }

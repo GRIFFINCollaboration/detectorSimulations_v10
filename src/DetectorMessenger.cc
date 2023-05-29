@@ -236,6 +236,9 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
 	fAddDetectionSystemDescantCmd->SetGuidance("Add Detection System DESCANT");
 	fAddDetectionSystemDescantCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	fAddDetectionSystemDescantNoLeadCmd = new G4UIcmdWithAnInteger("/DetSys/det/addDescantNoLead",this);
+	fAddDetectionSystemDescantNoLeadCmd->SetGuidance("Add Detection System DESCANT no lead");
+	fAddDetectionSystemDescantNoLeadCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 	fAddDetectionSystemDescantAuxPortsCmd = new G4UIcmdWith3Vector("/DetSys/det/addDescantAuxPorts",this);
 	fAddDetectionSystemDescantAuxPortsCmd->SetGuidance("Add 8 DESCANT detectors in the auxillary LaBr3 detector locations");
@@ -246,9 +249,40 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
 	fAddApparatusDescantStructureCmd->SetGuidance("Add DESCANT structure");
 	fAddApparatusDescantStructureCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+	fAddApparatusLabFloorCmd = new G4UIcmdWithoutParameter("/DetSys/app/addLabFloor",this);
+	fAddApparatusLabFloorCmd->SetGuidance("Add Lab Floor");
+	fAddApparatusLabFloorCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
 	fAddDetectionSystemTestcanCmd = new G4UIcmdWith3Vector("/DetSys/det/addTestcan",this);
 	fAddDetectionSystemTestcanCmd->SetGuidance("Add Testcan Detection System");
 	fAddDetectionSystemTestcanCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	
+	fAddDetectionSystemTestPlasticsCmd = new G4UIcmdWith3Vector("/DetSys/det/addTestPlastics",this);
+	fAddDetectionSystemTestPlasticsCmd->SetGuidance("Add TestPlastics Detection System");
+	fAddDetectionSystemTestPlasticsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	
+	fAddDetectionSystemPlasticsCmd = new G4UIcmdWith3Vector("/DetSys/det/addPlastics",this);
+	fAddDetectionSystemPlasticsCmd->SetGuidance("Add Plastics Detection System");
+	fAddDetectionSystemPlasticsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+	fAddDetectionSystemPlasticsNoWrapCmd = new G4UIcmdWith3Vector("/DetSys/det/addPlasticsNoWrap",this);
+	fAddDetectionSystemPlasticsNoWrapCmd->SetGuidance("Add Plastics Detection System without Optical Wrapping");
+	fAddDetectionSystemPlasticsNoWrapCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	
+	//fAddDetectionSystemDaemonTilesCmd = new G4UIcmdWithAnInteger("/DetSys/det/addDaemonTiles",this);
+	fAddDetectionSystemDaemonTilesCmd = new G4UIcmdWith3Vector("/DetSys/det/addDaemonTiles",this);
+	fAddDetectionSystemDaemonTilesCmd->SetGuidance("Add Detection System Daemon Tile Configuration");
+	fAddDetectionSystemDaemonTilesCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	
+	fAddDetectionSystemDaemonAuxPortsCmd = new G4UIcmdWith3Vector("/DetSys/det/addDaemonAuxPorts",this);
+	fAddDetectionSystemDaemonAuxPortsCmd->SetGuidance("Add 8 DAEMON detectors in the auxillary LaBr3 detector locations");
+	fAddDetectionSystemDaemonAuxPortsCmd->SetGuidance("/DetSys/det/addDaemonAuxPorts _nDet_ _radialPos_ _leadShield_");
+	fAddDetectionSystemDaemonAuxPortsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+
+       	fAddDetectionSystemZDSCmd = new G4UIcmdWithoutParameter("/DetSys/det/addZDS",this);
+        fAddDetectionSystemZDSCmd->SetGuidance("Add ZDS.");
+        fAddDetectionSystemZDSCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 	fSetDetectionSystemDescantColorCmd = new G4UIcmdWithAString("/DetSys/det/setDescantColor", this);
 	fSetDetectionSystemDescantColorCmd->SetGuidance("Set color of next descant detector to be added via addDescantCart or addDescantSpher");
@@ -398,7 +432,8 @@ DetectorMessenger::~DetectorMessenger()
 	delete fAddApparatus8piVacuumChamberCmd;
 	delete fAddApparatus8piVacuumChamberAuxMatShellCmd;
 	delete fAddApparatusGriffinStructureCmd;
-
+	
+	delete fAddApparatusLabFloorCmd;
 
 	delete fAddDetectionSystemSodiumIodideCmd;
 	delete fAddDetectionSystemLanthanumBromideCmd;
@@ -413,6 +448,13 @@ DetectorMessenger::~DetectorMessenger()
 	delete fAddApparatusDescantStructureCmd;
 
 	delete fAddDetectionSystemTestcanCmd;
+	delete fAddDetectionSystemTestPlasticsCmd;
+	delete fAddDetectionSystemPlasticsCmd;
+	delete fAddDetectionSystemPlasticsNoWrapCmd;
+	delete fAddDetectionSystemDaemonTilesCmd;
+	delete fAddDetectionSystemZDSCmd;
+	delete fAddDetectionSystemDescantNoLeadCmd;
+	delete fAddDetectionSystemDaemonAuxPortsCmd;
 
 	delete fSetDetectionSystemDescantColorCmd;
 	delete fSetDetectionSystemDescantRotationCmd;	 
@@ -569,12 +611,18 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	if(command == fAddDetectionSystemDescantCmd) {
 		fDetector->AddDetectionSystemDescant(fAddDetectionSystemDescantCmd->GetNewIntValue(newValue));
 	}
+	if(command == fAddDetectionSystemDescantNoLeadCmd) {
+		fDetector->AddDetectionSystemDescantNoLead(fAddDetectionSystemDescantNoLeadCmd->GetNewIntValue(newValue));
+	}
 	if(command == fAddDetectionSystemDescantAuxPortsCmd)  {
 		fDetector->AddDetectionSystemDescantAuxPorts(fAddDetectionSystemDescantAuxPortsCmd->GetNew3VectorValue(newValue));
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	if(command == fAddApparatusDescantStructureCmd) {
 		fDetector->AddApparatusDescantStructure();
+	}
+	if(command == fAddApparatusLabFloorCmd) {
+		fDetector->AddApparatusLabFloor();
 	}
 
 	if(command == fSetDetectionSystemDescantColorCmd) {
@@ -591,6 +639,25 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	}
 	if(command == fAddDetectionSystemTestcanCmd) { 
 		fDetector->AddDetectionSystemTestcan(fAddDetectionSystemTestcanCmd->GetNew3VectorValue(newValue));
+	}
+	if(command == fAddDetectionSystemTestPlasticsCmd) { 
+		fDetector->AddDetectionSystemTestPlastics(fAddDetectionSystemTestPlasticsCmd->GetNew3VectorValue(newValue));
+	}
+	if(command == fAddDetectionSystemPlasticsCmd) { 
+		fDetector->AddDetectionSystemPlastics(fAddDetectionSystemPlasticsCmd->GetNew3VectorValue(newValue));
+	}
+	if(command == fAddDetectionSystemPlasticsNoWrapCmd) { 
+		fDetector->AddDetectionSystemPlasticsNoWrap(fAddDetectionSystemPlasticsNoWrapCmd->GetNew3VectorValue(newValue));
+	}
+	if(command == fAddDetectionSystemDaemonTilesCmd) {
+		//fDetector->AddDetectionSystemDaemonTiles(fAddDetectionSystemDaemonTilesCmd->GetNewIntValue(newValue));
+		fDetector->AddDetectionSystemDaemonTiles(fAddDetectionSystemDaemonTilesCmd->GetNew3VectorValue(newValue));
+	}
+	if(command == fAddDetectionSystemZDSCmd) { 
+		fDetector->AddDetectionSystemZDS();
+	}
+	if(command == fAddDetectionSystemDaemonAuxPortsCmd)  {
+		fDetector->AddDetectionSystemDaemonAuxPorts(fAddDetectionSystemDaemonAuxPortsCmd->GetNew3VectorValue(newValue));
 	}
 
 	if(command == fAddDetectionSystemSceptarCmd) {
