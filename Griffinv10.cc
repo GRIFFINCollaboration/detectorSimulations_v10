@@ -37,11 +37,17 @@
 #include <string>
 #include <unistd.h>
 
+#include <ctime>
+#include <functional>
+#include <string>
+#include <unistd.h>
+
 #include "DetectorConstruction.hh"
 #include "PhysicsList.hh"
 #include "ActionInitialization.hh"
 
 #include "Randomize.hh"
+#include "G4ParticleHPManager.hh"
 
 #ifdef G4MULTITHREADED
 #include "G4MTRunManager.hh"
@@ -51,24 +57,18 @@
 
 #include "G4UImanager.hh"
 
-//#ifdef G4VIS_USE //uncomment later
 #include "G4VisExecutive.hh"
-//#endif
 
-//#ifdef G4UI_USE
 #include "G4UIExecutive.hh"
-//#endif
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 int main(int argc, char** argv)
 {
-    // Choose the Random engine
-    G4Random::setTheEngine(new CLHEP::RanecuEngine);
-	 // G4long is at least 32 bits. 
-//    G4long seed = time(NULL);
- //   G4Random::setTheSeed(seed);
-// Calculate seed from the product of PID, hostname hash, and time
+	// Choose the Random engine
+	G4Random::setTheEngine(new CLHEP::RanecuEngine);
+	// Calculate seed from the product of PID, hostname hash, and time
 	pid_t pid = getpid();
 
 	char* hostname = new char[1024];
@@ -82,66 +82,47 @@ int main(int argc, char** argv)
 
 	G4Random::setTheSeed(seed);
 
-    // Construct the default run manager
-#ifdef G4MULTITHREADED
-/*	 G4int nThreads = 3;
-	 if(argc == 3) {
-		 nThreads = strtol(argv[2], nullptr, 10);
-	 }
-	 G4cout<<"RUNNING MULTITHREADED WITH "<<nThreads<<" THREADS"<<G4endl;
-	 G4MTRunManager* runManager = new G4MTRunManager;
-	 runManager->SetNumberOfThreads(nThreads);
-*/
-//For Optical Physics
-	 G4cout<<"NOT RUNNING MULTITHREADED"<<G4endl;
-	 G4RunManager* runManager = new G4RunManager;
-#else
-	 G4cout<<"NOT RUNNING MULTITHREADED"<<G4endl;
-	 G4RunManager* runManager = new G4RunManager;
-#endif
+	// Construct the default run manager
+  // no multi-threaded for optical physics
+	G4cout<<"NOT RUNNING MULTITHREADED"<<G4endl;
+	G4RunManager* runManager = new G4RunManager;
 
-	 // Set mandatory initialization classes
-	 DetectorConstruction* detector = new DetectorConstruction;
-	 runManager->SetUserInitialization(detector);
-	 runManager->SetUserInitialization(new PhysicsList);
-	 runManager->SetUserInitialization(new ActionInitialization(detector));
+	// turn off messages from particle HP manager (/process/had/particle_hp/verbose command does not work?)
+	G4ParticleHPManager::GetInstance()->SetVerboseLevel(0);
 
-	 // We don't initialize the G4 kernel at run time so the physics list can be changed!
+	// Set mandatory initialization classes
+	DetectorConstruction* detector = new DetectorConstruction;
+	runManager->SetUserInitialization(detector);
+	runManager->SetUserInitialization(new PhysicsList);
+	runManager->SetUserInitialization(new ActionInitialization(detector));
 
-	 // Get the pointer to the User Interface manager
-	 G4UImanager* UImanager = G4UImanager::GetUIpointer();
+	// We don't initialize the G4 kernel at run time so the physics list can be changed!
 
-//#ifdef G4VIS_USE //uncomment later
-	 G4VisManager* visManager = new G4VisExecutive;
-	 visManager->Initialize();
-	 G4cout<<"VisManager"<<G4endl;
-//#endif
+	// Get the pointer to the User Interface manager
+	G4UImanager* UImanager = G4UImanager::GetUIpointer();
 
-	 if(argc != 1) { // batch mode
-		 G4String command = "/control/execute ";
-		 G4String fileName = argv[1];
-		 UImanager->ApplyCommand(command+fileName);
-	 } else { // interactive mode : define visualization and UI terminal
-//#ifdef G4UI_USE
-		 G4UIExecutive* ui = new G4UIExecutive(argc, argv);
-//#endif
-		 UImanager->ApplyCommand("/control/execute vis.mac");
+	G4VisManager* visManager = new G4VisExecutive;
+	visManager->Initialize();
 
-//#ifdef G4UI_USE
-		 ui->SessionStart();
+	if(argc != 1) { // batch mode
+		G4String command = "/control/execute ";
+		G4String fileName = argv[1];
+		UImanager->ApplyCommand(command+fileName);
+	} else { // interactive mode : define visualization and UI terminal
+		G4UIExecutive* ui = new G4UIExecutive(argc, argv);
+		UImanager->ApplyCommand("/control/execute vis.mac");
 
-		 delete ui;
-//#endif
-	 }
+		ui->SessionStart();
 
-//#ifdef G4VIS_USE //uncomment later
-		 delete visManager;
-//#endif
+		delete ui;
+	}
 
-	 // Job termination
-	 delete runManager;
+	delete visManager;
 
-	 return 0;
+	// Job termination
+	delete runManager;
+
+	return 0;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

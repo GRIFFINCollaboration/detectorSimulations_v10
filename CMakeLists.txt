@@ -3,6 +3,9 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 project(Griffinv10)
 
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
 # You can set WITH_GEANT4_UIVIS to OFF via the command line or ccmake/cmake-gui
@@ -23,7 +26,7 @@ include(${Geant4_USE_FILE})
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
 #
-include_directories(${PROJECT_SOURCE_DIR}/include 
+include_directories(${PROJECT_SOURCE_DIR}/include
                     ${Geant4_INCLUDE_DIR})
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
@@ -31,7 +34,7 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 #----------------------------------------------------------------------------
 # Get examples sources from common and shared
 #
-#list(APPEND sources 
+#list(APPEND sources
 #  ${PROJECT_SOURCE_DIR}/../shared/src/ActionInitialization.cc
 #  ${PROJECT_SOURCE_DIR}/../shared/src/DetectorConstruction.cc
 #  ${PROJECT_SOURCE_DIR}/../shared/src/DetectorMessenger.cc
@@ -42,15 +45,28 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 #  ${PROJECT_SOURCE_DIR}/../shared/src/SteppingAction.cc)
 
 #----------------------------------------------------------------------------
+# Find GSL library
+#
+find_package(GSL REQUIRED)
+
+#----------------------------------------------------------------------------
+# Find ROOT
+#
+list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
+find_package(ROOT REQUIRED COMPONENTS Hist)
+include_directories(include ${ROOT_INCLUDE_DIRS})
+include(${ROOT_USE_FILE})
+
+#----------------------------------------------------------------------------
 # Find HBOOK (optional package)
 #
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../common/analysis/cmake ${CMAKE_MODULE_PATH})
 find_package(HBOOK QUIET)
 if(NOT HBOOK_FOUND)
-  message(STATUS "G4 Examples: HBOOK package not found. --> g4tools/hbook analysis disabled")  
+  message(STATUS "G4 Examples: HBOOK package not found. --> g4tools/hbook analysis disabled")
 else()
-  message(STATUS "G4 Examples: HBOOK package found. --> g4tools/hbook analysis enabled")  
-  add_definitions(-DG4_USE_HBOOK)  
+  message(STATUS "G4 Examples: HBOOK package found. --> g4tools/hbook analysis enabled")
+  add_definitions(-DG4_USE_HBOOK)
 endif()
 
 #----------------------------------------------------------------------------
@@ -78,14 +94,14 @@ if (HBOOK_FOUND)
        OUTPUT  ${PROJECT_BINARY_DIR}/setntuc.o
        COMMAND gfortran
        ARGS  -c ${Geant4_INCLUDE_DIR}/tools/hbook/setntuc.f )
-  set(TOOLS_FORTRAN_OBJECTS close.o setpawc.o setntuc.o)       
-endif()       
+  set(TOOLS_FORTRAN_OBJECTS close.o setpawc.o setntuc.o)
+endif()
 
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
 add_executable(Griffinv10 Griffinv10.cc ${sources} ${headers} ${TOOLS_FORTRAN_OBJECTS})
-target_link_libraries(Griffinv10 ${Geant4_LIBRARIES} ${HBOOK_LIBRARIES})
+target_link_libraries(Griffinv10 ${Geant4_LIBRARIES} ${HBOOK_LIBRARIES} GSL::gsl GSL::gslcblas ${ROOT_LIBRARIES})
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we
@@ -93,7 +109,7 @@ target_link_libraries(Griffinv10 ${Geant4_LIBRARIES} ${HBOOK_LIBRARIES})
 # relies on these scripts being in the current working directory.
 #
 set(Griffinv10_SCRIPTS
-    Griffinv10.in run.mac vis.mac
+	Griffinv10.in run.mac vis.mac PTCrossSections.dat DTCrossSections.dat DDCrossSections.dat
   )
 
 foreach(_script ${Griffinv10_SCRIPTS})
@@ -108,4 +124,3 @@ endforeach()
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
 install(TARGETS Griffinv10 DESTINATION bin)
-

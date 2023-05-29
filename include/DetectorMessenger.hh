@@ -162,7 +162,12 @@ private:
 	G4UIcmdWith3Vector*         fAddDetectionSystemGriffinSetPositionCmd ;
 	G4UIcmdWith3Vector*         fAddDetectionSystemGriffinSetDeadLayerCmd ;
 	G4UIcmdWithABool*           fUseTIGRESSPositionsCmd;
-	G4UIcmdWithABool*           fUseSpiceResolutionCmd;
+    
+	G4UIcmdWithADoubleAndUnit*  fTrifWinCmd;
+	G4UIcmdWithADoubleAndUnit*  fTrifDegCmd;
+	G4UIcmdWithAString*         fTrifDMatCmd;
+	G4UIcmdWithABool*           fTrifAluCmd;
+	G4UIcmdWithABool*           fTrifFlatCmd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

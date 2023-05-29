@@ -41,6 +41,7 @@
 #include "G4SystemOfUnits.hh" // new version geant4.10 requires units
 
 #include "DetectorConstruction.hh"
+#include "HistoMessenger.hh"
 
 const G4int MAXNTCOL            = 57; // Number of Columns
 
@@ -50,8 +51,6 @@ const G4bool WRITETRACKLHISTOS  = true;
 
 const G4int MAXHISTO            = 500;//max number of histos in root file
 const G4int MAXNUMDET           = 20;
-const G4int MAXNUMDETSPICE	= 10;//10 rings
-const G4int MAXNUMSEGSPICE	= 12;//12 segments per ring
 const G4int MAXNUMDETPACES	= 5;
 const G4int MAXNUMDETGRIFFIN    = 16;
 const G4int MAXNUMCRYGRIFFIN    = 4;
@@ -61,25 +60,16 @@ const G4int NUMPARTICLETYPES    = 20;
 const G4int     EKINNBINS  = 10000;
 const G4double  EKINXMIN   = 0.5*keV;
 const G4double  EKINXMAX   = 10000.5*keV;
-const G4int     EKINNBINSSPICE  = 10000;//spice histos range may be different
-const G4double  EKINXMINSPICE   = 0.5*keV;
-const G4double  EKINXMAXSPICE   = 10000.5*keV;
 
 // edep histo properties    ///////////////////////
 const G4int     EDEPNBINS  = 10000;//was 10000
 const G4double  EDEPXMIN   = 0.0*keV;
 const G4double  EDEPXMAX   = 10000.0*keV;//was 10000.5
-const G4int     EDEPNBINSSPICE  = 2000;//was 10000
-const G4double  EDEPXMINSPICE   = 0.0*keV;
-const G4double  EDEPXMAXSPICE   = 2100.0*keV;//was 10000.5
 
 // trackl histo properties  ///////////////////////
 const G4int     TRACKLNBINS = 5000;
 const G4double  TRACKLXMIN  = 0.5*mm;
 const G4double  TRACKLXMAX  = 5000.5*mm;
-const G4int     TRACKLNBINSSPICE = 5000;
-const G4double  TRACKLXMINSPICE  = 0.5*mm;
-const G4double  TRACKLXMAXSPICE  = 5000.5*mm;
 
 ///////////////////////////////////////////////////
 const G4double MINENERGYTHRES   = 0.001*keV;
@@ -98,6 +88,8 @@ public:
 
 	void FillHitNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz, G4double TOFMulti, G4double TOFPosMultix, G4double TOFPosMultiy, G4double TOFPosMultiz, G4double PEkin, G4double PEdep, G4int numCollectedPhotonsTop1 = 0, G4int numCollectedPhotonsTop2 = 0, G4int numCollectedPhotonsTop3 = 0, G4int numCollectedPhotonsBottom1 = 0, G4int numCollectedPhotonsBottom2 = 0, G4int numCollectedPhotonsBottom3 = 0, G4int numCollectedPhotonsFrontTop1 = 0, G4int numCollectedPhotonsFrontTop2 = 0, G4int numCollectedPhotonsFrontMid1 = 0, G4int numCollectedPhotonsFrontMid2 = 0, G4int numCollectedPhotonsFrontBottom1 = 0, G4int numCollectedPhotonsFrontBottom2 = 0, std::vector<G4double> PhotonTimeTop1 = std::vector<G4double>(), std::vector<G4double> PhotonTimeTop2 = std::vector<G4double>(), std::vector<G4double> PhotonTimeTop3 = std::vector<G4double>(), std::vector<G4double> PhotonTimeBottom1 = std::vector<G4double>(), std::vector<G4double> PhotonTimeBottom2 = std::vector<G4double>(), std::vector<G4double> PhotonTimeBottom3 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontTop1 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontTop2 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontMid1 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontMid2 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontBottom1 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontBottom2 = std::vector<G4double>(), std::vector<G4double> OpTime = std::vector<G4double>(), std::vector<G4double> OpEnergy = std::vector<G4double>() );
 	void FillStepNtuple(G4int eventNumber, G4int trackID, G4int parentID, G4int stepNumber, G4int particleType, G4int processType, G4int systemID, G4int cryNumber, G4int detNumber, G4double depEnergy, G4double posx, G4double posy, G4double posz, G4double time, G4int targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4double TOFPosx, G4double TOFPosy, G4double TOFPosz, G4double TOFMulti, G4double TOFPosMultix, G4double TOFPosMultiy, G4double TOFPosMultiz, G4double PEkin, G4double PEdep, G4int numCollectedPhotonsTop1 = 0, G4int numCollectedPhotonsTop2 = 0, G4int numCollectedPhotonsTop3 = 0, G4int numCollectedPhotonsBottom1 = 0, G4int numCollectedPhotonsBottom2 = 0, G4int numCollectedPhotonsBottom3 = 0, G4int numCollectedPhotonsFrontTop1 = 0, G4int numCollectedPhotonsFrontTop2 = 0, G4int numCollectedPhotonsFrontMid1 = 0, G4int numCollectedPhotonsFrontMid2 = 0, G4int numCollectedPhotonsFrontBottom1 = 0, G4int numCollectedPhotonsFrontBottom2 = 0, std::vector<G4double> PhotonTimeTop1 = std::vector<G4double>(), std::vector<G4double> PhotonTimeTop2 = std::vector<G4double>(), std::vector<G4double> PhotonTimeTop3 = std::vector<G4double>(), std::vector<G4double> PhotonTimeBottom1 = std::vector<G4double>(), std::vector<G4double> PhotonTimeBottom2 = std::vector<G4double>(), std::vector<G4double> PhotonTimeBottom3 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontTop1 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontTop2 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontMid1 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontMid2 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontBottom1 = std::vector<G4double>(), std::vector<G4double> PhotonTimeFrontBottom2 = std::vector<G4double>(), std::vector<G4double> OpTime = std::vector<G4double>(), std::vector<G4double> OpEnergy = std::vector<G4double>() );
+	void FillHitNtuple(G4int eventNumber);
+	void FillStepNtuple(G4int eventNumber);
 
 	void FillHistogram(G4int ih, G4double e, G4double weight = 1.0);
 	void Fill2DHistogram(G4int ih, G4double xbin, G4double ybin, G4double weight = 1.0);
@@ -110,20 +102,31 @@ public:
 	G4bool GetStepTrackerBool() { return fStepTrackerBool; }
 	G4bool GetHitTrackerBool()  { return fHitTrackerBool; }
 
+	void PushBack(G4double depEnergy, G4double kinEnergy, G4int particleType) { fEdepVector.push_back(depEnergy); fEkinVector.push_back(kinEnergy); fParticleTypeVector.push_back(particleType); }
+	void ClearVariables() { fEdepVector.clear(); fEkinVector.clear(); fParticleTypeVector.clear(); }
 	void BeamEnergy(G4double val) { fBeamEnergy = val; }
 	void BeamTheta(G4double val)  { fBeamTheta = val; }
 	void BeamPhi(G4double val)    { fBeamPhi = val; }
+	void BeamPos(G4ThreeVector val)    { fBeamPos = val; }
 
 	void SetFileName(G4String file) {fFileName[0] = file;};
 
 	G4double BeamEnergy() { return fBeamEnergy; }
 	G4double BeamTheta() { return fBeamTheta; }
 	G4double BeamPhi() { return fBeamPhi; }
+	G4ThreeVector BeamPos() {return fBeamPos; }
+
+	G4double RecordGun() { return fRecordGun; }
+	G4double RecordAll() { return fRecordAll; }
+
+	void RecordGun(G4bool val) { fRecordGun = val; }
+	void RecordAll(G4bool val) { fRecordAll = val; }
+
+	void FileName(G4String val) { fFileName = val; }
 
 private:
-	void BookSpiceHistograms();
-	void MakeHistogram(G4AnalysisManager* analysisManager, G4String filename,  G4String title, G4double xmin, G4double xmax, G4int nbins);
-	void Make2DHistogram(G4AnalysisManager* analysisManager, const G4String& name, const G4String& title,
+	void MakeHistogram(G4RootAnalysisManager* analysisManager, G4String filename,  G4String title, G4double xmin, G4double xmax, G4int nbins);
+	void Make2DHistogram(G4RootAnalysisManager* analysisManager, const G4String& name, const G4String& title,
 	             G4int nxbins, G4double xmin, G4double xmax,
 	             G4int nybins, G4double ymin, G4double ymax);
 
@@ -132,24 +135,33 @@ private:
 	DetectorConstruction* fDetectorConstruction;
 	G4bool        fFactoryOn;
 	G4int         fMakeHistogramIndex;
-	G4String      fFileName[2];
+	G4String      fFileName;
 
 	G4int         fHistId[MAXHISTO];
-	//G4AnaH1*      fHistPt[MAXHISTO];
-	//G4AnaH2*      fHistPt2[MAXHISTO];
-	G4H1*      fHistPt[MAXHISTO];
-	G4H2*      fHistPt2[MAXHISTO];
+	G4H1*			  fHistPt[MAXHISTO];
+	G4H2* 		  fHistPt2[MAXHISTO];
 
 	G4int         fNtColId[MAXNTCOL];
 	G4int         fNtColIdHit[MAXNTCOL];
 	G4int         fNtColIdStep[MAXNTCOL];
 
+	G4int         fFirstRecordingId;
+
 	G4bool fStepTrackerBool;
 	G4bool fHitTrackerBool;
+
+	std::vector<G4double> fEdepVector;
+	std::vector<G4double> fEkinVector;
+	std::vector<G4int> fParticleTypeVector;
 
 	G4double fBeamEnergy;
 	G4double fBeamTheta;
 	G4double fBeamPhi;
+	G4ThreeVector fBeamPos;
+
+	HistoMessenger* fMessenger;
+	G4bool          fRecordGun;
+	G4bool          fRecordAll;
 
 	std::vector<G4double> fTop1TimeVector;
 	std::vector<G4double> fTop2TimeVector;
@@ -169,13 +181,9 @@ private:
 
 public:
 	short PacesHistNumbers(int i) { return fPacesHistNumbers[i]; }
-	short SpiceHistNumbers(int i) { return fSpiceHistNumbers[i]; }
-	short SpiceAngleHists(int i) { return fSpiceAngleHists[i]; }
 	short AngleDistro(int i) { return fAngleDistro[i]; }
 private:
 	short fPacesHistNumbers[MAXNUMDETPACES+2]; //+2 for edep and sum histos 
-	short fSpiceHistNumbers[MAXNUMDETSPICE*MAXNUMSEGSPICE+2]; //+2 for edep and sum histos 
-	short fSpiceAngleHists[120];
 	short fAngleDistro[10]; //this variable will hold the histogran ID for various beam distribution histograms
 };
 

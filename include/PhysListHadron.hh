@@ -37,15 +37,16 @@
 #include "globals.hh"
 
 #include "G4HadronElasticProcess.hh"
+#include "G4HadronInelasticProcess.hh"
 
-#include "G4ProtonInelasticProcess.hh"
-#include "G4NeutronInelasticProcess.hh"
-#include "G4DeuteronInelasticProcess.hh"
-#include "G4TritonInelasticProcess.hh"
-#include "G4AlphaInelasticProcess.hh"
-#include "G4IonInelasticProcess.hh"
-#include "G4HadronFissionProcess.hh"
-#include "G4HadronCaptureProcess.hh"
+//#include "G4ProtonInelasticProcess.hh"
+//#include "G4NeutronInelasticProcess.hh"
+//#include "G4DeuteronInelasticProcess.hh"
+//#include "G4TritonInelasticProcess.hh"
+//#include "G4AlphaInelasticProcess.hh"
+//#include "G4IonInelasticProcess.hh"
+#include "G4NeutronFissionProcess.hh"
+#include "G4NeutronCaptureProcess.hh"
 
 
 class PhysListHadron : public G4VPhysicsConstructor
@@ -64,15 +65,15 @@ private:
 
     G4HadronElasticProcess fTheElasticProcess;
     G4HadronElasticProcess fIonElasticProcess;
-    G4ProtonInelasticProcess fTheProtonInelastic;
-    G4NeutronInelasticProcess  fTheNeutronInelastic;
     G4HadronElasticProcess* fTheNeutronElasticProcess;
-    G4HadronFissionProcess* fTheFissionProcess;
-    G4HadronCaptureProcess* fTheCaptureProcess;
-    G4DeuteronInelasticProcess* fTheDeuteronInelasticProcess;
-    G4TritonInelasticProcess* fTheTritonInelasticProcess;
-    G4AlphaInelasticProcess* fTheAlphaInelasticProcess;
-    G4IonInelasticProcess* fTheIonInelasticProcess;
+    G4NeutronFissionProcess* fTheFissionProcess;
+    G4NeutronCaptureProcess* fTheCaptureProcess;
+    G4HadronInelasticProcess* fTheProtonInelastic;
+    G4HadronInelasticProcess* fTheNeutronInelastic;
+    G4HadronInelasticProcess* fTheDeuteronInelasticProcess;
+    G4HadronInelasticProcess* fTheTritonInelasticProcess;
+    G4HadronInelasticProcess* fTheAlphaInelasticProcess;
+    G4HadronInelasticProcess* fTheIonInelasticProcess;
 };
 
 #endif

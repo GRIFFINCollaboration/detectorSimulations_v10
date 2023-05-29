@@ -114,18 +114,10 @@ void EventAction::BeginOfEventAction(const G4Event* evt) {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void EventAction::EndOfEventAction(const G4Event*) {
-		//G4cout << "End of event activated "  << G4endl;
-
 	if(fHistoManager != nullptr) {
-	//G4cout << "testing if statement nullptr " << fNumberOfHits << " " << fNumberOfSteps << G4endl;
-		/*if(fHistoManager->GetDetectorConstruction()->Spice()) {
-			FillSpice();
-		} else*/ {  
-			for(G4int i = 0; i < fNumberOfHits; i++) {
-		//G4cout << "Filling HitNTuple, testing printing fHitTrackerD[4][i] time " << fHitTrackerD[4][i] << ", plastic hits "<<fPlasticHits<<G4endl;
+		for(G4int i = 0; i < fNumberOfHits; i++) {
 				G4int j;
 				for(j = 0; j < fPlasticHits; ++j) {
-//G4cout<<i<<", "<<j<<": "<<fProperties[i].systemID<<", "<<fProperties[i].detectorNumber<<" == "<<fPlasticNumber[j]<<G4endl;
 					if(fProperties[i].systemID >= 8700 && fProperties[i].systemID <= 8800 && fProperties[i].detectorNumber == fPlasticNumber[j]) {	
 						fHistoManager->FillHitNtuple(fHitTrackerI[0][i], fHitTrackerI[1][i], fHitTrackerI[2][i], fHitTrackerI[3][i],  fHitTrackerI[4][i], fHitTrackerI[5][i], fHitTrackerI[6][i], fHitTrackerI[7][i], fHitTrackerI[8][i], fHitTrackerD[0][i]/keV, fHitTrackerD[1][i]/mm, fHitTrackerD[2][i]/mm, fHitTrackerD[3][i]/mm, fHitTrackerD[4][i]/second, fHitTrackerI[9][i], GetTotalCounter(), GetElasticCounter(), GetInelasticCounter(), GetTotScintPhoton(), fHitTrackerD[9][i]/degree, fHitTrackerD[10][i]/degree, fHitTrackerD[11][i]/nanosecond, fHitTrackerD[12][i]/cm, fHitTrackerD[13][i]/cm, fHitTrackerD[14][i]/cm, fHitTrackerD[15][i]/nanosecond, fHitTrackerD[16][i]/cm, fHitTrackerD[17][i]/cm, fHitTrackerD[18][i]/cm, GetPEkin()/keV, GetPEdep()/keV, fTop1Counter[j], fTop2Counter[j], fTop3Counter[j], fBottom1Counter[j], fBottom2Counter[j], fBottom3Counter[j], fFrontTop1Counter[j], fFrontTop2Counter[j], fFrontMid1Counter[j], fFrontMid2Counter[j], fFrontBottom1Counter[j], fFrontBottom2Counter[j], fCollectionTimeTop1Vector[j], fCollectionTimeTop2Vector[j], fCollectionTimeTop3Vector[j], fCollectionTimeBottom1Vector[j], fCollectionTimeBottom2Vector[j], fCollectionTimeBottom3Vector[j], fCollectionTimeFrontTop1Vector[j], fCollectionTimeFrontTop2Vector[j], fCollectionTimeFrontMid1Vector[j], fCollectionTimeFrontMid2Vector[j], fCollectionTimeFrontBottom1Vector[j], fCollectionTimeFrontBottom2Vector[j], fOpTimeVector[j], fOpEnergyVector[j]);
 						break;
@@ -136,7 +128,6 @@ void EventAction::EndOfEventAction(const G4Event*) {
 				}
 			}		
 			for(G4int i = 0; i < fNumberOfSteps; i++) {
-	//	G4cout << "Filling StepNTuple, testing printing fStepTrackerD[4][i] time " << fStepTrackerD[4][i] << G4endl;
 				G4int j;
 				for(j = 0; j < fPlasticHits; ++j) {
 					if(fProperties[i].systemID >= 8700 && fProperties[i].systemID < 8800 && fProperties[i].detectorNumber == fPlasticNumber[j]) {	
@@ -149,7 +140,7 @@ void EventAction::EndOfEventAction(const G4Event*) {
 				fHistoManager->FillStepNtuple(fStepTrackerI[0][i], fStepTrackerI[1][i], fStepTrackerI[2][i], fStepTrackerI[3][i],  fStepTrackerI[4][i], fStepTrackerI[5][i], fStepTrackerI[6][i], fStepTrackerI[7][i], fStepTrackerI[8][i], fStepTrackerD[0][i]/keV, fStepTrackerD[1][i]/mm, fStepTrackerD[2][i]/mm, fStepTrackerD[3][i]/mm, fStepTrackerD[4][i]/second, fStepTrackerI[9][i], fStepTrackerD[5][i], fStepTrackerD[6][i], fStepTrackerD[7][i], fStepTrackerD[8][i], fStepTrackerD[9][i], fStepTrackerD[10][i], fStepTrackerD[11][i]/nanosecond, fStepTrackerD[12][i]/cm, fStepTrackerD[13][i]/cm, fStepTrackerD[14][i]/cm, fStepTrackerD[15][i]/nanosecond, fStepTrackerD[16][i]/cm, fStepTrackerD[17][i]/cm, fStepTrackerD[18][i]/cm, fStepTrackerD[19][i]/keV, fStepTrackerD[20][i]/keV);
 				}
 		}
-		}
+		if(fNumberOfHits == 0 && fHistoManager->RecordAll()) fHistoManager->FillHitNtuple(evt->GetEventID());
 		ClearVariables();
 	}
 
@@ -158,9 +149,6 @@ void EventAction::EndOfEventAction(const G4Event*) {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void EventAction::AddHitTracker(const DetectorProperties& properties, const G4int& eventNumber, const G4int& trackID, const G4int& parentID, const G4int& stepNumber, const G4int& particleType, const G4int& processType, const G4double& depEnergy, const G4ThreeVector& pos, const G4double& time, const G4int& targetZ, G4int total, G4int elastic, G4int inelastic, G4int numScintPhotons, G4double lab_angle, G4double final_angle, G4double TOF, G4ThreeVector TOFPos, G4double TOFMulti, G4ThreeVector TOFPosMulti, G4double PEkin, G4double PEdep) {
-
-//      G4cout << "ParentID,  edep, time " << parentID << "  " << depEnergy << "  " << time << G4endl;
-
 	for(G4int i = 0; i < fNumberOfHits; i++) {
 		if(fProperties[i] == properties) {
 			// sum the new enery
@@ -214,6 +202,10 @@ void EventAction::AddHitTracker(const DetectorProperties& properties, const G4in
 	if(fNumberOfHits >= MAXHITS) {
 		G4cout<<"ERROR! Too many hits!"<<G4endl;
 		throw;
+	}
+
+	if(fHistoManager->GetDetectorConstruction()->Descant() || fHistoManager->GetDetectorConstruction()->Testcan()) {
+		fHistoManager->PushBack(depEnergy, kinEnergy, particleType); //, time, processType);
 	}
 }
 
@@ -282,6 +274,10 @@ void EventAction::ClearVariables() {
 		}
 	}
 
+	if(fHistoManager->GetDetectorConstruction()->Descant() || fHistoManager->GetDetectorConstruction()->Testcan()) {
+		fHistoManager->ClearVariables();
+	}
+
 	if(fHistoManager->GetDetectorConstruction()->Spice()) {
 		for(G4int i = 0; i < 10; i++){
 			for(G4int j=0; j<12; j++) {
@@ -333,60 +329,59 @@ void EventAction::ClearVariables() {
 }
 
 
-void EventAction::FillSpice() {
-	G4double energySumDet = 0;
-	G4int fSpiceMultiplicity = 0;
-	G4double SpiceEnergy,SpiceEnergyRaw;
-	for(G4int ring=0; ring < MAXNUMDETSPICE; ring++) {
-		for(G4int seg=0; seg < 12; seg++) {
-			if(fSpiceEnergyDet[ring][seg] > 20.*CLHEP::keV&&WRITEEDEPHISTOS) {
-				SpiceEnergyRaw = fSpiceEnergyDet[ring][seg];// SpiceRawEnergy. No resolution applied
-				SpiceEnergy=SpiceEnergyRaw;
-				if(fHistoManager->GetDetectorConstruction()->SpiceRes()){
-					SpiceEnergy = ApplySpiceRes(SpiceEnergyRaw);
-					fHistoManager->FillHistogram(fHistoManager->AngleDistro(8),SpiceEnergy*1000);
-				}
-
-				//fill energies across all segments
-				fHistoManager->FillHistogram(fHistoManager->SpiceHistNumbers(0),(SpiceEnergy)*1000.);//+4keV for Bismuth
-				//fill standard energy spectra - no add-back
-
-				//2D all seg energies
-				fHistoManager->Fill2DHistogram(fHistoManager->AngleDistro(1), (G4double) MAXNUMSEGSPICE*ring+seg,SpiceEnergy*1000., 1.0);
-
-
-				fSpiceMultiplicity++;//iterates every deposition per fill to track multiplicity per event
-				energySumDet += SpiceEnergy;
-
-				//Gated angular histos
-				if(abs(SpiceEnergyRaw - fHistoManager->BeamEnergy()) < 10.*keV){//gating kinematics on (raw) detected energy
-
-					//Mapping phi to overlay mirrored segments
-					G4int remainder = seg%3;
-					G4double PhiMap = ((int)seg/3)*CLHEP::pi/2;
-					PhiMap = fHistoManager->BeamPhi()-PhiMap;
-					PhiMap = asin(sin(PhiMap));//if we went over 360
-
-					//THETA vs. PHI
-					fHistoManager->Fill2DHistogram(fHistoManager->SpiceAngleHists(MAXNUMSEGSPICE*ring+remainder), fHistoManager->BeamTheta(), PhiMap, 1.);//PHI M<AP!!!!!!!!!!!!!
-				}
-
-
-			}//end of filling histos with SPICE detections per individual seg
-		}//seg loop
-	}//ring loop
-
-	//wiritng add-backed energies
-	if(energySumDet > MINENERGYTHRES) {//after exiting loops for all rings/segs, will input summed (add-back) energy if above threshold
-		if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(fHistoManager->SpiceHistNumbers(1), energySumDet*1000.);
-	}
-}
+//void EventAction::FillSpice() {
+//	G4double energySumDet = 0;
+//	G4int fSpiceMultiplicity = 0;
+//	G4double SpiceEnergy,SpiceEnergyRaw;
+//	for(G4int ring=0; ring < MAXNUMDETSPICE; ring++) {
+//		for(G4int seg=0; seg < 12; seg++) {
+//			if(fSpiceEnergyDet[ring][seg] > 20.*CLHEP::keV&&WRITEEDEPHISTOS) {
+//				SpiceEnergyRaw = fSpiceEnergyDet[ring][seg];// SpiceRawEnergy. No resolution applied
+//				SpiceEnergy=SpiceEnergyRaw;
+//				if(fHistoManager->GetDetectorConstruction()->SpiceRes()){
+//					SpiceEnergy = ApplySpiceRes(SpiceEnergyRaw);
+//					fHistoManager->FillHistogram(fHistoManager->AngleDistro(8),SpiceEnergy*1000);
+//				}
+//
+//				//fill energies across all segments
+//				fHistoManager->FillHistogram(fHistoManager->SpiceHistNumbers(0),(SpiceEnergy)*1000.);//+4keV for Bismuth
+//				//fill standard energy spectra - no add-back
+//
+//				//2D all seg energies
+//				fHistoManager->Fill2DHistogram(fHistoManager->AngleDistro(1), (G4double) MAXNUMSEGSPICE*ring+seg,SpiceEnergy*1000., 1.0);
+//
+//
+//				fSpiceMultiplicity++;//iterates every deposition per fill to track multiplicity per event
+//				energySumDet += SpiceEnergy;
+//
+//				//Gated angular histos
+//				if(abs(SpiceEnergyRaw - fHistoManager->BeamEnergy()) < 10.*keV){//gating kinematics on (raw) detected energy
+//
+//					//Mapping phi to overlay mirrored segments
+//					G4int remainder = seg%3;
+//					G4double PhiMap = ((int)seg/3)*CLHEP::pi/2;
+//					PhiMap = fHistoManager->BeamPhi()-PhiMap;
+//					PhiMap = asin(sin(PhiMap));//if we went over 360
+//
+//					//THETA vs. PHI
+//					fHistoManager->Fill2DHistogram(fHistoManager->SpiceAngleHists(MAXNUMSEGSPICE*ring+remainder), fHistoManager->BeamTheta(), PhiMap, 1.);//PHI M<AP!!!!!!!!!!!!!
+//				}
+//
+//
+//			}//end of filling histos with SPICE detections per individual seg
+//		}//seg loop
+//	}//ring loop
+//
+//	//wiritng add-backed energies
+//	if(energySumDet > MINENERGYTHRES) {//after exiting loops for all rings/segs, will input summed (add-back) energy if above threshold
+//		if(WRITEEDEPHISTOS)     fHistoManager->FillHistogram(fHistoManager->SpiceHistNumbers(1), energySumDet*1000.);
+//	}
+//}
 
 
 G4bool EventAction::SpiceTest(){//is SPICE inputted
 	return fHistoManager->GetDetectorConstruction()->Spice();
 }
-
 
 G4double EventAction::ApplySpiceRes(G4double energy) {
 	//pre-calculated functions that scale with energy to give accurate resolution split
@@ -748,7 +743,3 @@ void EventAction::SetScintPhotonEnergyTime(G4double OpTime, G4double OpEnergy, G
 		throw;
 	}
 }
-
-
-
-

@@ -715,13 +715,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 				theTrack->SetTrackStatus(fStopAndKill);
 			}
 		}
-		if(fDetector->Spice()) {
-			G4double stepl = 0.;
-			if(theTrack->GetDefinition()->GetPDGCharge() != 0.) {
-				stepl = aStep->GetStepLength();
-			}
-			fEventAction->SpiceDet(edep, stepl, prop.detectorNumber, prop.crystalNumber);
-		}
 
 
 

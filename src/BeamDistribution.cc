@@ -29,7 +29,7 @@ void BeamDistribution::LoadDistribution(G4String filename){//Reads in the data f
 	std::ifstream distrodata;//create input object
 	distrodata.open(filename.c_str());//open data file
 	if(!distrodata.is_open()){
-		std::cout<<"File "<<filename<<" not opened."<<std::endl; 
+		G4cout<<"File "<<filename<<" not opened."<<G4endl; 
 		return;
 	}
 
@@ -45,7 +45,7 @@ void BeamDistribution::LoadDistribution(G4String filename){//Reads in the data f
 	distrodata.close();
 
 	if(xv.size()<2){
-		std::cout<<"Insufficient data points."<<std::endl; 
+		G4cout<<"Insufficient data points."<<G4endl; 
 		return;
 	}
 		

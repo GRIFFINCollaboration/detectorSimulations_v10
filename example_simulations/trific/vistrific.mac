@@ -1,0 +1,69 @@
+### After running ./Griffinv10
+### Run the following command in the "Session" box
+### /control/execute vistrific.mac
+
+/process/em/fluo true # atomic dexcitations (apparently required otherwise exception thrown)
+/process/em/auger false # auger electrons
+/process/em/pixe false # particle induced X-ray emission
+######Physics List END######################################################
+
+###### Verbosities ######
+### Defines terminal output - useful for debugging
+### 0 = no output, higher integers give greater output
+/control/verbose 2
+/run/verbose 2
+/event/verbose 0
+/tracking/verbose 0
+
+/run/initialize
+
+# When using heavy ions this bust me set to stop tracking so many many electrons
+/DetSys/phys/setECut 5 cm
+
+/DetSys/world/material Vacuum
+
+/DetSys/det/TrificFlatWindow false
+/DetSys/det/TrificAluWindow true
+/DetSys/det/TrificWindowThickness 6 um
+/DetSys/det/addTrificDetector 91.0
+
+### Required
+/vis/open OGL
+#/vis/open OGL 600x600-0+0
+
+### Choose Drawing Style
+/vis/viewer/set/style surface ### Optional - You will not be able to see inside, use the GUI to hide parts.
+#/vis/viewer/set/style wireframe ### Optional - Draw only wireframe so you can see through
+
+### Required
+/vis/drawVolume 
+/vis/scene/endOfEventAction accumulate
+/vis/scene/add/trajectories
+/vis/viewer/set/autoRefresh true
+
+/vis/viewer/set/viewpointThetaPhi 90 0 deg
+
+#First Grits at 53.4 cm
+#/DetSys/gun/position 0.0 0.0 53 cm 
+#/gun/particle ion
+#/gun/ion 2 4 0 0.0
+#/DetSys/gun/efficiencyEnergy 5.5 MeV
+
+/DetSys/gun/position 0.0 0.0 0.0 cm
+/gun/particle ion
+/gun/ion 38 80 0 0.0
+/grdm/nucleusLimits 1 1 1 1 # we dont want decay
+/DetSys/gun/efficiencyEnergy 700 MeV
+#/DetSys/gun/direction 0.0 0.0 1.0
+/DetSys/gun/coneMinAngle 0.0 deg
+/DetSys/gun/coneMaxAngle 4.0 deg
+
+/vis/modeling/trajectories/create/drawByParticleID
+/vis/modeling/trajectories/drawByParticleID-0/set gamma magenta
+/vis/modeling/trajectories/drawByParticleID-0/set photon cyan
+/vis/modeling/trajectories/drawByParticleID-0/set e+ blue
+/vis/modeling/trajectories/drawByParticleID-0/set Sr80 green
+/vis/modeling/trajectories/drawByParticleID-0/set Kr80 white
+/vis/modeling/trajectories/drawByParticleID-0/set e- yellow
+
+/run/beamOn 10

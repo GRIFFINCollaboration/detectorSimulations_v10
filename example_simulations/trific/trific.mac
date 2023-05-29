@@ -1,0 +1,53 @@
+/process/em/fluo true # atomic dexcitations (apparently required otherwise exception thrown)
+/process/em/auger false # auger electrons
+/process/em/pixe false # particle induced X-ray emission
+######Physics List END######################################################
+
+###### Verbosities ######
+### Defines terminal output - useful for debugging33
+### 0 = no output, higher integers give greater output
+/control/verbose 2
+/run/verbose 2
+/event/verbose 0
+/tracking/verbose 0
+
+/run/initialize
+
+## When using heavy ions this must me set to stop tracking so many many electrons
+/DetSys/phys/setECut 3 cm
+/gun/particle ion
+/DetSys/world/material Vacuum
+
+### These 3 lines may be omitted to use defaults
+### Options must be set BEFORE addTrificDetector
+/DetSys/det/TrificFlatWindow false
+/DetSys/det/TrificAluWindow true
+/DetSys/det/TrificWindowThickness 6 um
+
+### Optionally add a degrader when the energy is too high.
+/DetSys/det/TrificDegraderThickness 1 um
+/DetSys/det/TrificDegraderMaterial G4_Al
+
+## The number input is the gas pressure in Torr
+/DetSys/det/addTrificDetector 91.0
+
+
+## The first (zeroth) grid is at 53.4 cm
+## This is the position of the alpha source used in testing
+#/DetSys/gun/position 0.0 0.0 53.0 cm 
+#/gun/ion 2 4 0 0.0
+#/DetSys/gun/efficiencyEnergy 5.5 MeV
+
+## This is a standard beam setup, current Z=19 A=41
+/DetSys/gun/position 0.0 0.0 0.0 cm
+/gun/ion 19 41 0 0.0
+/DetSys/gun/efficiencyEnergy 250 MeV
+#/DetSys/gun/direction 0.0 0.0 1.0 # pencil beam
+/DetSys/gun/coneMinAngle 0.0 deg
+/DetSys/gun/coneMaxAngle 3.8 deg
+
+# Blur the beam spot
+/DetSys/gun/BeamSpot 0.5 mm
+/grdm/nucleusLimits 1 1 1 1 # we dont want decay
+
+/run/beamOn 20000

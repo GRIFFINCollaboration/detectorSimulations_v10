@@ -215,15 +215,21 @@ public:
 	G4bool   DaemonTiles()    { return fDaemonTiles;    }
 	G4bool   ZDS()    { return fZDS;    }
 
-	void SpiceRes(G4bool val) { fSpiceRes = val; }
-	bool SpiceRes() { return fSpiceRes; }
-	void UseTIGRESSPositions( G4bool input )                  {fUseTigressPositions = input;};
+	void UseTIGRESSPositions(G4bool input) { fUseTigressPositions = input; }
 
 	bool HasProperties(G4VPhysicalVolume* vol) { return fPropertiesMap.find(vol) != fPropertiesMap.end(); }
 	DetectorProperties GetProperties(G4VPhysicalVolume* vol) { return fPropertiesMap.at(vol); }
 	void SetProperties();
+	void SetPropertiesRecursive(G4LogicalVolume* vol);
 
 	void Print();
+	void PrintRecursive(G4LogicalVolume* vol);
+    
+    G4double  fTrifWindowThickness;
+    G4double  fTrifDegraderThickness;
+    G4String  fTrifDegraderMat; 
+    G4bool    fTrifAluminised;  
+    G4bool    fTrifFlatWindow;   
 
 private:
 	bool CheckVolumeName(G4String volumeName);
@@ -274,8 +280,6 @@ private:
 	G4String      fGenericTargetMaterial;
 	G4ThreeVector fGenericTargetDimensions;
 	G4ThreeVector fGenericTargetPosition;
-
-	G4bool        fSpiceRes;
 
 	G4bool        fSetFieldBoxMaterial;
 	G4bool        fSetFieldBoxDimensions;
