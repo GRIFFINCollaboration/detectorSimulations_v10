@@ -1124,34 +1124,34 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 	if(volumeName.find("sceptarSquareScintillatorLog") != G4String::npos) {
 		// to number SCEPTAR paddles correctly:
 		switch(result.detectorNumber) {
-			case 0:
+			case 1:
 				result.detectorNumber = 5;
 				break;
-			case 1:
+			case 2:
 				result.detectorNumber = 9;
 				break;
-			case 2:
+			case 3:
 				result.detectorNumber = 8;
 				break;
-			case 3:
+			case 4:
 				result.detectorNumber = 7;
 				break;
-			case 4:
+			case 5:
 				result.detectorNumber = 6;
 				break;
-			case 5:
+			case 6:
 				result.detectorNumber = 13;
 				break;
-			case 6:
+			case 7:
 				result.detectorNumber = 12;
 				break;
-			case 7:
+			case 8:
 				result.detectorNumber = 11;
 				break;
-			case 8:
+			case 9:
 				result.detectorNumber = 10;
 				break;
-			case 9:
+			case 10:
 				result.detectorNumber = 14;
 				break;
 			default:
@@ -1165,34 +1165,34 @@ DetectorProperties DetectorConstruction::ParseVolumeName(G4String volumeName) {
 	if(volumeName.find("sceptarAngledScintillatorLog") != G4String::npos) {
 		// to number SCEPTAR paddles correctly (1 stays 1):
 		switch(result.detectorNumber) {
-			case 0:
+			case 1:
 				result.detectorNumber = 0;
 				break;
-			case 1:
+			case 2:
 				result.detectorNumber = 4;
 				break;
-			case 2:
+			case 3:
 				result.detectorNumber = 3;
 				break;
-			case 3:
+			case 4:
 				result.detectorNumber = 2;
 				break;
-			case 4:
+			case 5:
 				result.detectorNumber = 1;
 				break;
-			case 5:
+			case 6:
 				result.detectorNumber = 18;
 				break;
-			case 6:
+			case 7:
 				result.detectorNumber = 17;
 				break;
-			case 7:
+			case 8:
 				result.detectorNumber = 16;
 				break;
-			case 8:
+			case 9:
 				result.detectorNumber = 15;
 				break;
-			case 9:
+			case 10:
 				result.detectorNumber = 19;
 				break;
 			default:
