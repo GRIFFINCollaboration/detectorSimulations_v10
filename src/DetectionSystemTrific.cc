@@ -3,6 +3,8 @@
 
 #include "G4Material.hh"
 
+#include "CLHEP/Units/PhysicalConstants.h"
+
 #include "G4Tubs.hh"
 #include "G4Box.hh"
 #include "G4Sphere.hh"
