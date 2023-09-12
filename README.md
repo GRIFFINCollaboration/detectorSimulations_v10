@@ -1,7 +1,8 @@
 detectorSimulations_v10
 ===================
 
-The detectorSimulations_v10 package contains the Geant4 simulations for GRIFFIN, TIGRESS, and all of their auxiliary detectors.  Please note that in order to respect our non-disclosure agreements, all source containing third party IP have been omitted from this repo, and can be obtained from your colleagues directly at the lab.
+The detectorSimulations_v10 package contains the Geant4 simulations for GRIFFIN, TIGRESS, and all of their auxiliary detectors.
+Please note that in order to respect our non-disclosure agreements, all source containing third party IP have been omitted from this repo (see "Getting the code" on how to get the suppressed files).
 
 # Release
 
@@ -22,7 +23,10 @@ To setup the simulation package on a computer with GEANT4 already present, just 
 
     git clone https://github.com/GRIFFINCollaboration/detectorSimulations_v10.git
     
-Then you'll need to get the files containing our NDA-protected parameters. To do this register on gitlab.com, have your account added to the GRIFFINCollaboration, and register your ssh-keys with gitlab. Then you can run the script SetupSuppressed.sh (in the detectorSimulation_v10 folder). This script can either be run as is, which will install the suppressed files in a sub-folder "suppressed" and create symbolic links in the src directory, or you can give it the path of the directory where you want the suppressed files installed (this directory has to be empty!).
+Then you'll need to get the files containing our NDA-protected parameters.
+To do this, register on gitlab.com, have your account added to the GRIFFINCollaboration, and register your ssh-keys with gitlab.
+Then you can run the script SetupSuppressed.sh (in the detectorSimulation_v10 folder).
+This script can either be run as is, which will install the suppressed files in a sub-folder "suppressed" and create symbolic links in the src directory, or you can give it the path of the directory where you want the suppressed files installed (this directory has to be empty!).
 
 ### Building
 

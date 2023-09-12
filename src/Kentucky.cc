@@ -58,6 +58,8 @@ bool Kentucky::Open(const char* fileName, bool tabulated)
 		stream.clear();
 		stream.str(line);
 
+		// files say it's projectile, target, recoil, ejectile
+		// reading it in this way means we want the recoil energies!
 		stream>>fProjectileMass>>fTargetMass>>fEjectileMass>>fRecoilMass;
 		if(fVerboseLevel > 1) {
 			G4cout<<__PRETTY_FUNCTION__<<"file '"<<fileName<<"': projectile mass = "<<fProjectileMass<<", target mass = "<<fTargetMass<<", recoil mass = "<<fRecoilMass<<", and ejectile mass = "<<fEjectileMass<<G4endl;
